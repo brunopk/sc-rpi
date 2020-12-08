@@ -1,6 +1,6 @@
 # Strip Controller Driver
 
-sc-driver runs on Raspberry Pi 3. It receives commands from the [sc-master](https://github.com/brunopk/sc-master) process them and convert it to signals for the W2812B strips using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
+Receives commands from the [sc-master](https://github.com/brunopk/sc-master) process them and convert it to signals for the W2812B strips using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. It's part of the sc project and it runs on Raspberry Pi 3. 
 
 ## Creating a virtual environment (venv)
 
