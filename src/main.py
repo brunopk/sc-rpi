@@ -5,8 +5,11 @@ import logging
 import argparse
 import socket
 import json
+import config
 
-from os.path import dirname, abspath
+from os.path import dirname,abspath
+#from rpi_ws281x import Color, PixelStrip
+#from m1.controller import Controller
 
 if __name__ == '__main__':
 
@@ -26,18 +29,18 @@ if __name__ == '__main__':
         exit(1)
 
     # Create NeoPixel object with appropriate configuration.
-    strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+    #strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
     # Intialize the library (must be called once before other functions).
-    strip.begin()
-    controller = Controller(strip)
+    #strip.begin()
+    #controller = Controller(strip)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((RPI_WS281x_HOST, RPI_WS281x_PORT))
-    server_socket.listen(TCP_MAX_QUEUE)
+    #server_socket.bind((RPI_WS281x_HOST, RPI_WS281x_PORT))
+    #server_socket.listen(TCP_MAX_QUEUE)
 
     logging.basicConfig(level=log_level)
 
-    print('Listening on IP address {ip} and port {port}.'.format(ip=RPI_WS281x_HOST, port=RPI_WS281x_PORT))
+    #print('Listening on IP address {ip} and port {port}.'.format(ip=RPI_WS281x_HOST, port=RPI_WS281x_PORT))
     print('Press Ctrl-C to quit.')
 
     # noinspection PyBroadException
@@ -48,10 +51,10 @@ if __name__ == '__main__':
 
             # TODO Try not opening and closing to much TCP connections
             raw_cmd = ''
-            chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
-            while chunk.__len__() > 0:
-                raw_cmd += chunk.decode(TCP_MSG_ENCODING)
-                chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
+            #chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
+            #while chunk.__len__() > 0:
+            #    raw_cmd += chunk.decode(TCP_MSG_ENCODING)
+            #    chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
             client_socket.close()
             logging.info('Command received, raw command: {raw_cmd}'.format(raw_cmd=raw_cmd))
 
@@ -62,23 +65,23 @@ if __name__ == '__main__':
                     action = json_cmd['action']
                     if action.__eq__('color'):
                         color = Color(json_cmd['red'], json_cmd['green'], json_cmd['blue'])
-                        controller.play_effect('static_color', color)
+                        #controller.play_effect('static_color', color)
                     elif action.__eq__('effect'):
                         if 'name' in json_cmd:
                             effect_name = json_cmd['name']
-                            try:
-                                if effect_name.__eq__('blink_color'):
-                                    color = Color(json_cmd['red'], json_cmd['green'], json_cmd['blue'])
-                                    controller.play_effect('blink_color', color)
-                                else:
-                                   controller.play_effect(effect_name)
-                            except ModuleNotFoundError:
-                                logging.warning('Wrong effect name: {effect_name}'.format(effect_name=effect_name))
+                            #try:
+                                #if effect_name.__eq__('blink_color'):
+                                    #color = Color(json_cmd['red'], json_cmd['green'], json_cmd['blue'])
+                                    #controller.play_effect('blink_color', color)
+                                #else:
+                                   #controller.play_effect(effect_name)
+                            #except ModuleNotFoundError:
+                                #logging.warning('Wrong effect name: {effect_name}'.format(effect_name=effect_name))
                         else:
                             logging.warning('Effect name undefined')
 
-                    elif action.__eq__('turn_off'):
-                        controller.turn_off_strip()
+                    #elif action.__eq__('turn_off'):
+                        #controller.turn_off_strip()
                     else:
                         logging.warning('Unrecognized action {action}'.format(action=action))
                 else:
@@ -94,5 +97,4 @@ if __name__ == '__main__':
         print('Closing socket...')
         server_socket.close()
         print('Turning strip off...')
-        controller.turn_off_strip()
-
+        #controller.turn_off_strip()
