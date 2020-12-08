@@ -2,6 +2,14 @@
 
 Receives commands from the [sc-master](https://github.com/brunopk/sc-master), process them and convert it to signals for the W2812B strips using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. It's part of the sc project and it runs on Raspberry Pi 3. 
 
+## Starting the server
+
+1. Create a virtual environment (venv) if it's not created yet.
+2. Activate the venv: `source <path of the venv>/bin/activate`.
+3. Go to `src` folder: `cd src`
+3. Give execution permissions to the main script: `chmod +x main.py`
+4. Start the main script: './main.py'
+
 ## Creating a virtual environment (venv)
 
 ```
