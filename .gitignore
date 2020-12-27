@@ -4,3 +4,4 @@ __pycache__/
 venv/
 static/css
 */*.pyc
+*.log
