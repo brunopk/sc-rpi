@@ -22,6 +22,13 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
+## Running automatic tests
+
+1. Create a virtual environment (venv) if it's not created yet.
+2. Activate the venv: `source <path of the venv>/bin/activate`.
+3. Go to `src` folder: `cd src`
+3. Invoke unittest: `python -m unittest discover`
+
 ## Building the circuit
 
 1. With level shifter conversor:
