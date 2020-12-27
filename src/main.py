@@ -1,100 +1,74 @@
 #!/usr/bin/env python3
 
-import sys
-import logging
-import argparse
-import socket
-import json
-import config
-
-from os.path import dirname,abspath
-#from rpi_ws281x import Color, PixelStrip
-#from m1.controller import Controller
+from command import CommandParser, ParseError, ExecutionError
+from network import NetworkManager, SCPError
+from response import Response
+from http import HTTPStatus
+from commands.disconnect import Disconnect
+from controller import Controller
+from configparser import ConfigParser
+from logging.handlers import RotatingFileHandler
+from logging import Formatter, basicConfig, getLogger
 
 if __name__ == '__main__':
 
-    # TODO validate invalid arguments eg: -level=INFO
-    # Process arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--loglevel',
-                        help='Logging level. Possible options : DEBUG, INFO, WARNING, ERROR, CRITICAL',
-                        nargs=1,
-                        type=str,
-                        default='INFO')
-    args = parser.parse_args()
-    log_level = args.loglevel if type(args.loglevel) == str else args.loglevel[0]
-    if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-        print('Invalid logging level {level}'.format(level=log_level))
-        parser.print_help()
-        exit(1)
+    config = ConfigParser()
+    config.read('../config.ini')
+    ctrl = Controller(config)
+    network_manager = NetworkManager(config)
+    parser = CommandParser()
 
-    # Create NeoPixel object with appropriate configuration.
-    #strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-    # Intialize the library (must be called once before other functions).
-    #strip.begin()
-    #controller = Controller(strip)
+    # Logging configuration
+    level = config['LOGGING'].get('level', 'ERROR')
+    filename = config['LOGGING'].get('filename', '/var/log/sc_driver.log')
+    max_bytes = int(config['LOGGING'].get('max_bytes', str(1024 * 1024)))
+    backup_count = int(config['LOGGING'].get('backup_count', str(5)))
+    log_format = '%(asctime)s - %(name)s - %(levelname)s -- %(message)s'
+    formatter = Formatter(log_format)
+    handler = RotatingFileHandler(filename, maxBytes=max_bytes, backupCount=backup_count)
+    handler.setFormatter(formatter)
+    # noinspection PyArgumentList
+    basicConfig(level=level, handlers=[handler])
+    logger = getLogger()
+    logger.info('Starting sc-driver')
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #server_socket.bind((RPI_WS281x_HOST, RPI_WS281x_PORT))
-    #server_socket.listen(TCP_MAX_QUEUE)
-
-    logging.basicConfig(level=log_level)
-
-    #print('Listening on IP address {ip} and port {port}.'.format(ip=RPI_WS281x_HOST, port=RPI_WS281x_PORT))
-    print('Press Ctrl-C to quit.')
-
-    # noinspection PyBroadException
     try:
+
+        network_manager.start()
+
         while True:
-            client_socket, address = server_socket.accept()
-            logging.info('Client connected {address}'.format(address=address))
 
-            # TODO Try not opening and closing to much TCP connections
-            raw_cmd = ''
-            #chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
-            #while chunk.__len__() > 0:
-            #    raw_cmd += chunk.decode(TCP_MSG_ENCODING)
-            #    chunk = client_socket.recv(TCP_MAX_MSG_SIZE)
-            client_socket.close()
-            logging.info('Command received, raw command: {raw_cmd}'.format(raw_cmd=raw_cmd))
+            network_manager.accept()
+            logger.info('Ready to receive commands from client')
 
-            # TODO Return error codes
-            try:
-                json_cmd = json.loads(raw_cmd)
-                if 'action' in json_cmd:
-                    action = json_cmd['action']
-                    if action.__eq__('color'):
-                        color = Color(json_cmd['red'], json_cmd['green'], json_cmd['blue'])
-                        #controller.play_effect('static_color', color)
-                    elif action.__eq__('effect'):
-                        if 'name' in json_cmd:
-                            effect_name = json_cmd['name']
-                            #try:
-                                #if effect_name.__eq__('blink_color'):
-                                    #color = Color(json_cmd['red'], json_cmd['green'], json_cmd['blue'])
-                                    #controller.play_effect('blink_color', color)
-                                #else:
-                                   #controller.play_effect(effect_name)
-                            #except ModuleNotFoundError:
-                                #logging.warning('Wrong effect name: {effect_name}'.format(effect_name=effect_name))
-                        else:
-                            logging.warning('Effect name undefined')
+            while True:
 
-                    #elif action.__eq__('turn_off'):
-                        #controller.turn_off_strip()
+                try:
+                    msg = network_manager.receive()
+                    cmd = parser.parse(msg.get_body())
+                    if not isinstance(cmd, Disconnect):
+                        res = ctrl.run_command(cmd)
+                        res = Response(HTTPStatus.OK, res)
+                        network_manager.send(res.to_json())
                     else:
-                        logging.warning('Unrecognized action {action}'.format(action=action))
-                else:
-                    logging.warning('Action undefined')
-            except ValueError:
-                logging.warning('Error parsing {command} as JSON'.format(command=raw_cmd))
+                        network_manager.close()
+                        break
+                except SCPError as e:
+                    res = Response(HTTPStatus.BAD_REQUEST, {'error': e.get_msg()})
+                    network_manager.send(res.to_json())
+                except ParseError as e:
+                    res = Response(HTTPStatus.BAD_REQUEST, e.errors)
+                    network_manager.send(res.to_json())
+                except ExecutionError as e:
+                    res = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': e.get_msg()})
+                    network_manager.send(res.to_json())
+                except Exception as e:
+                    res = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': 'Internal server error'})
+                    logger.exception(e)
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         pass
     except Exception as e:
-        logging.exception('ERROR')
+        logger.exception(e)
     finally:
-        print('Closing socket...')
-        server_socket.close()
-        print('Turning strip off...')
-        #controller.turn_off_strip()
+        network_manager.close()
