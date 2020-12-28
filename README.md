@@ -1,6 +1,6 @@
 # Strip Controller Driver
 
-This software component is part of the sc project. It's designed to run with Python 3 on any Raspberry Pi 3. It main purpose is to receive commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. 
+This software component is part of the sc project. It's designed to run with Python 3 on any Raspberry Pi 3. It main purpose is to receive commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/SCP_Protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. 
 
 ## Starting the server
 
