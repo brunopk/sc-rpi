@@ -4,7 +4,7 @@ It works over TCP and it's a simplification of HTTP. Its main purpose is to mana
 
 ## Connection
 
-The only thing to do to establish a connection with [sc-driver](https://github.com/brunopk/sc-driver) using SCP protocol, is to open a TCP connection on port 8080 (defined in [`config.ini](../config.ini))
+The only thing to do to establish a connection with [sc-driver](https://github.com/brunopk/sc-driver) using SCP protocol, is to open a TCP connection on port 8080 (defined in [`config.ini`](../config.ini))
 
 ## Messages
 
@@ -23,7 +23,7 @@ Headers section MUST follow this pattern for each header line:
 respecting this simple rules :
 
 - It's all case-sensitive
-- Between `<HEADER_NAME>: and `<VALUE>` there's a space (`\s` character)
+- Between `<HEADER_NAME>:` and `<VALUE>` there's a space (`\s` character)
 
 Currently there's one possible header:
 
