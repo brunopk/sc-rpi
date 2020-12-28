@@ -18,7 +18,7 @@ Similar to HTTP, it has two types of messages: requests and responses. Both, req
 
 Headers section MUST follow this pattern for each header line:
 
-`<HEADER_NAME>: <VALUE><INTEGER><CARRIAGE_RETURN><END_OF_LINE>`
+`<HEADER_NAME>: <VALUE><CARRIAGE_RETURN><END_OF_LINE>`
 
 respecting this simple rules :
 
