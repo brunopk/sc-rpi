@@ -33,15 +33,15 @@ class TestController(unittest.TestCase):
         self.controller.new_section(2, 20)
 
     def test_updating_deleted_section(self):
-        array = [Color(0, 0, 0)]
+        color_list = [Color(0, 0, 0)]
         s_id = self.controller.new_section(1, 1)
         self.controller.remove_all_sections()
-        self.assertRaises(KeyError, self.controller.update_section, s_id, array)
+        self.assertRaises(KeyError, self.controller.set_color_list, s_id, color_list)
 
     def test_updating_section_with_a_long_array(self):
-        array = [Color(0, 0, 0)] * 2
+        color_list = [Color(0, 0, 0)] * 2
         s_id = self.controller.new_section(1, 1)
-        self.assertRaises(ValueError, self.controller.update_section, s_id, array)
+        self.assertRaises(ValueError, self.controller.set_color_list, s_id, color_list)
 
     def test_length_after_concatenating_sections(self):
         self.controller.new_section(0, 100)
@@ -60,9 +60,9 @@ class TestController(unittest.TestCase):
         color_s1 = [Color(1, 1, 1)] * (s1[1] - s1[0] + 1)
         color_s2 = [Color(2, 2, 2)] * (s2[1] - s2[0] + 1)
         color_s3 = [Color(3, 3, 3)] * (s3[1] - s3[0] + 1)
-        self.controller.update_section(s1_id, color_s1)
-        self.controller.update_section(s2_id, color_s2)
-        self.controller.update_section(s3_id, color_s3)
+        self.controller.set_color_list(s1_id, color_s1)
+        self.controller.set_color_list(s2_id, color_s2)
+        self.controller.set_color_list(s3_id, color_s3)
         colors = self.controller.concatenate_sections()
 
         s1_color_1 = colors[randint(*s1)]

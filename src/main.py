@@ -47,7 +47,7 @@ if __name__ == '__main__':
                     msg = network_manager.receive()
                     cmd = parser.parse(msg.get_body())
                     if not isinstance(cmd, Disconnect):
-                        res = ctrl.run_command(cmd)
+                        res = ctrl.exec_cmd(cmd)
                         res = Response(HTTPStatus.OK, res)
                         network_manager.send(res.to_json())
                     else:

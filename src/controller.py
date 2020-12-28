@@ -14,7 +14,7 @@ class Section:
     def get_indexes(self) -> tuple:
         return self.indexes
 
-    def get_array(self) -> List[Color]:
+    def get_color_list(self) -> List[Color]:
         return self.array
 
 
@@ -22,24 +22,24 @@ class SectionManager:
 
     def __init__(self, config: ConfigParser):
         self.config = config
-        self.indexes = []
         self.ids = []
-        self.arrays = []
+        self.sections = []
+        self.sections_by_id = {}
         self.indexes_by_id = {}
-        self.arrays_by_id = {}
+        self.indexes = []
         self.strip_length = int(config['PIXEL_STRIP'].get('n'))
 
     def reset(self):
         """
         Removes all sections and resets the current section (see set_current_section) to None
         """
-        self.indexes = []
         self.ids = []
-        self.arrays = []
+        self.sections = []
+        self.sections_by_id = {}
         self.indexes_by_id = {}
-        self.arrays_by_id = {}
+        self.indexes = []
 
-    def new_section(self, start: int, end: int) -> str:
+    def edit_section(self, s_id: str, start: int, end: int, color_list: List[Color]):
         position = len(self.indexes)
         if end < start or start < 0 or end > self.strip_length:
             raise ValueError('section is not defined correctly')
@@ -50,46 +50,50 @@ class SectionManager:
                 if self.indexes[i][0] < start and end < self.indexes[i + 1][0]:
                     position = i + 1
                     break
-        s_id = str(uuid1())
-        array = [Color(0, 0, 0)] * (end - start + 1)
         self.indexes.insert(position, (start, end))
         self.ids.insert(position, s_id)
-        self.arrays.insert(position, array)
+        self.sections.insert(position, [])
         self.indexes_by_id[s_id] = (start, end)
-        self.arrays_by_id[s_id] = array
+        self.sections_by_id[s_id] = []
+        self.set_color(s_id, color_list)
+
+    def new_section(self, start: int, end: int) -> str:
+        s_id = str(uuid1())
+        color_list = [Color(0, 0, 0)] * (end - start + 1)
+        self.edit_section(s_id, start, end, color_list)
         return s_id
 
-    def update_section(self, s_id: str, array: List[Color]):
+    def set_color(self, s_id: str, color_list: List[Color]):
         """
         Sets the color for each led in the specified section
 
         :param s_id: identifier of the section that will be updated
-        :param array: colors for each led in the section
+        :param color_list: colors for each led in the section
         :raises KeyError: if section is not defined
         :raises ValueError: if len(array) is more than previously specified length of the section
         """
         indexes = self.indexes_by_id.get(s_id)
         if indexes is None:
             raise KeyError(f'section {s_id} is not defined')
-        if len(array) != (indexes[1] - indexes[0] + 1):
+        if len(color_list) != (indexes[1] - indexes[0] + 1):
             raise ValueError(f'color array length does not match section {s_id} length')
-        self.arrays[self.ids.index(s_id)] = array
-        self.arrays_by_id[s_id] = array
+        self.sections[self.ids.index(s_id)] = color_list
+        self.sections_by_id[s_id] = color_list
 
-    def get_section_by_id(self, s_id: str) -> List[Color]:
+    def get_section(self, s_id: str) -> Section:
         """
-        Returns the color for each led in the specified section
+        Finds and returns a section
 
-        :param s_id: identifier of the section
+        :param s_id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return self.arrays_by_id[s_id]
+        return Section(self.indexes_by_id[s_id], self.sections_by_id[s_id])
 
     def get_all_sections(self) -> List[Section]:
         """
         Returns all sections ordered by (start, end) indexes of the sections
         """
-        return [Section(self.indexes[i], self.arrays[i]) for i in range(len(self.ids))]
+        return [Section(self.indexes[i], self.sections[i]) for i in range(len(self.ids))]
 
 
 class Controller:
@@ -143,14 +147,27 @@ class Controller:
         """
         return self.section_manager.new_section(start, end)
 
-    def get_section_by_id(self, s_id: str) -> List[Color]:
+    def edit_section(self, s_id: str, start: int, end: int, color_list: List[Color]):
         """
-        Returns the color for each led in the specified section
+        Changes the start position and/or end position and/or each color of each led of the specified section
 
-        :param s_id: identifier of the section
+        :param s_id: id of the section that will be edited
+        :param start: new start position for the section
+        :param end: new end position for the section
+        :param color_list: color for each led in the section
+        :raises KeyError: if section with s_id is not defined
+        :raises ValueError: if start and end position for the section are not defined correctly
+        """
+        return self.section_manager.edit_section(s_id, start, end, color_list)
+
+    def get_section(self, s_id: str) -> Section:
+        """
+        Finds and returns a section
+
+        :param s_id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return self.section_manager.get_section_by_id(s_id)
+        return self.section_manager.get_section(s_id)
 
     def get_strip_length(self) -> int:
         return self.strip_length
@@ -160,17 +177,6 @@ class Controller:
         Removes all sections and resets the current section (see set_current_section) to None
         """
         self.section_manager.reset()
-
-    def update_section(self, s_id: str, array: List[Color]):
-        """
-        Sets the color for each led in the specified section
-
-        :param s_id: identifier of the section that will be updated
-        :param array: colors for each led in the section
-        :raises KeyError: if section is not defined
-        :raises ValueError: if len(array) is more than previously specified len of the section
-        """
-        self.section_manager.update_section(s_id, array)
 
     def concatenate_sections(self) -> List[Color]:
         """
@@ -185,11 +191,11 @@ class Controller:
         if cant_sections > 0:
             colors += [Color(0, 0, 0)] * sections[0].get_indexes()[0]
             for i, section in enumerate(sections[0:-1]):
-                colors += section.get_array()
+                colors += section.get_color_list()
                 colors += [self.current_color] * (sections[i + 1].get_indexes()[0] - section.get_indexes()[1] - 1)
             if cant_sections > 1:
                 colors += [self.current_color] * (sections[-1].get_indexes()[0] - sections[-2].get_indexes()[1] - 1)
-                colors += sections[-1].get_array()
+                colors += sections[-1].get_color_list()
                 colors += [self.current_color] * (self.strip_length - sections[-1].get_indexes()[1] - 1)
         return colors
 
@@ -208,11 +214,22 @@ class Controller:
 
     def set_color(self, color: Color):
         """
-        Sets the same color for each led in the strip
+        Sets the same color for each led along the strip.
         """
         self.current_color = color
 
-    def run_command(self, cmd) -> dict:
+    def set_color_list(self, s_id: str, color_list: List[Color]):
+        """
+        Sets the color for each led in the specified section.
+
+        :param s_id: identifier of the section that will be updated
+        :param color_list: list of colors or one Color instance
+        :raises KeyError: if section with s_id is not defined
+        :raises ValueError: if number of colors in color_list is greater than previously specified length of the section
+        """
+        self.section_manager.set_color(s_id, color_list)
+
+    def exec_cmd(self, cmd) -> dict:
         """
         Executes the current command (see set_command) on the current section (see set_section).
         If no section was set, executes the command on the entire strip.
