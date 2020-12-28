@@ -1,6 +1,6 @@
 # Strip Controller Driver
 
-Receives commands from the [sc-master](https://github.com/brunopk/sc-master), process them and convert it to signals for the W2812B strips using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. It's part of the sc project and it runs on Raspberry Pi 3. 
+This software component is part of the sc project. It's designed to run with Python 3 on any Raspberry Pi 3. It main purpose is to receive commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. 
 
 ## Starting the server
 
@@ -44,6 +44,6 @@ More information: https://core-electronics.com.au/tutorials/ws2812-addressable-l
 ## Links
 
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
-- https://github.com/rpi-ws281x/rpi-ws281x-python 
-- http://github.com/richardghirst/rpi_ws281x
+- [Official Python distribution of the ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
+- [Userspace Raspberry Pi PWM library for WS281X LEDs](http://github.com/richardghirst/rpi_ws281x)
 
