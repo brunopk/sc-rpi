@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from command import CommandParser, ParseError, ExecutionError
-from network import NetworkManager, SCPError
+from network import NetworkManager, ClientDisconnected
 from response import Response
 from http import HTTPStatus
 from commands.disconnect import Disconnect
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # noinspection PyArgumentList
     basicConfig(level=level, handlers=[handler])
     logger = getLogger()
-    logger.info('Starting sc-driver')
+    logger.info('Starting')
 
     try:
 
@@ -38,32 +38,33 @@ if __name__ == '__main__':
 
         while True:
 
-            network_manager.accept()
+            network_manager.accept_client()
             logger.info('Ready to receive commands from client')
 
             while True:
 
                 try:
-                    msg = network_manager.receive()
-                    cmd = parser.parse(msg.get_body())
+                    req = network_manager.receive()
+                    cmd = parser.parse(req)
                     if not isinstance(cmd, Disconnect):
-                        res = ctrl.exec_cmd(cmd)
-                        res = Response(HTTPStatus.OK, res)
-                        network_manager.send(res.to_json())
+                        result = ctrl.exec_cmd(cmd)
+                        response = Response(HTTPStatus.OK, result)
+                        network_manager.send(response)
                     else:
-                        network_manager.close()
+                        network_manager.stop()
                         break
-                except SCPError as e:
-                    res = Response(HTTPStatus.BAD_REQUEST, {'error': e.get_msg()})
-                    network_manager.send(res.to_json())
                 except ParseError as e:
-                    res = Response(HTTPStatus.BAD_REQUEST, e.errors)
-                    network_manager.send(res.to_json())
+                    response = Response(HTTPStatus.BAD_REQUEST, e.errors)
+                    network_manager.send(response)
                 except ExecutionError as e:
-                    res = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': e.get_msg()})
-                    network_manager.send(res.to_json())
+                    response = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': e.get_msg()})
+                    network_manager.send(response)
+                except ClientDisconnected as e:
+                    network_manager.disconnect_client()
+                    break
                 except Exception as e:
-                    res = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': 'Internal server error'})
+                    response = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': 'Internal server error'})
+                    network_manager.send(response)
                     logger.exception(e)
 
     except KeyboardInterrupt as e:
@@ -71,4 +72,4 @@ if __name__ == '__main__':
     except Exception as e:
         logger.exception(e)
     finally:
-        network_manager.close()
+        network_manager.stop()

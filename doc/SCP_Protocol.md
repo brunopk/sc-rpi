@@ -8,31 +8,4 @@ The only thing to do to establish a connection with [sc-driver](https://github.c
 
 ## Messages
 
-Similar to HTTP, it has two types of messages: requests and responses. Both, requests and responses are defined as UTF-8 encoded strings with two sections :
-
-- Headers
-- Body
-
-
-### Headers:
-
-Headers section MUST follow this pattern for each header line:
-
-`<HEADER_NAME>: <VALUE><CARRIAGE_RETURN><END_OF_LINE>`
-
-respecting this simple rules :
-
-- It's all case-sensitive
-- Between `<HEADER_NAME>:` and `<VALUE>` there's a space (`\s` character)
-
-Currently there's one possible header:
-
-`Content-Length: <VALUE>` 
-
-where `<VALUE>` represents the command length in bytes with NO MORE than 7 digits.
-           
-
-### Body:
-
-
-Contains the JSON representation of the [command](/doc/commands.md).
+Similar to HTTP, it has two types of messages: requests and responses. Both, requests and responses are defined as UTF-8 encoded strings containing the JSON stringified representation of a [command](/doc/commands.md).

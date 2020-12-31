@@ -12,8 +12,8 @@ All commands MUST follow this schema:
 
 ```json
 {
-  "name": <COMMAND_NAME>,
-  "args": <COMMAND_ARGUMENTS>
+  "name": "COMMAND_NAME",
+  "args": "COMMAND_ARGUMENTS"
 }
 ```
 

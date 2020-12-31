@@ -41,6 +41,12 @@ More information: https://tutorials-raspberrypi.com/connect-control-raspberry-pi
 ![GitHub Logo](/doc/raspberry-pi-updated-schematic.png)
 More information: https://core-electronics.com.au/tutorials/ws2812-addressable-leds-raspberry-pi-quickstart-guide.html
 
+## Future improvements
+
+- Timout functionality in case of no receiving commands.
+- Automatic stress testing to send multiple commands in a short period of time.
+
+
 ## Links
 
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
