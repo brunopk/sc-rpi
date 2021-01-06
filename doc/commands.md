@@ -63,7 +63,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
   
 ## `new_section`
 
-- What it does: changes attributes of a section (see `new_section`).
+- What it does: defines a new section (portion of the strip).
 - Example:
     ```json
     {
