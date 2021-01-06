@@ -1,6 +1,6 @@
 # SCP Protocol
 
-It works over TCP and it's a simplification of HTTP. Its main purpose is to manage the communication between [sc-driver](https://github.com/brunopk/sc-driver) and [sc-master](https://github.com/brunopk/sc-master). It's mainly implemented on [`src/network.py`](../src/network.py).
+It works over TCP and it's a simplification of HTTP. Its main purpose is to manage the communication between [sc-rpi](https://github.com/brunopk/sc-rpi) and [sc-master](https://github.com/brunopk/sc-master). It's mainly implemented on [`src/network.py`](../src/network.py).
 
 ## Connection
 
