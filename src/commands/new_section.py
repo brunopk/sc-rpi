@@ -17,7 +17,7 @@ class NewSection(Command):
                     "type": "integer"
                 }
             },
-            "required": ["from", "to"]
+            "required": ["start", "end"]
         }
         self.validator = Draft7Validator(arguments_schema)
 
@@ -27,6 +27,6 @@ class NewSection(Command):
             raise ParseError(errors)
 
     def exec(self) -> dict:
-        s_id = self.controller.new_section(self.args['from'], self.args['end'])
+        s_id = self.controller.new_section(self.args['start'], self.args['end'])
         return {'id': s_id}
 
