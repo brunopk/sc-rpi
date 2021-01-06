@@ -69,8 +69,8 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     {
       "name": "new_section",
       "args": {
-        "from": 1,
-        "to": 50
+        "start": 1,
+        "end": 50
       }
     }
     ```
