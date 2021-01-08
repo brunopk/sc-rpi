@@ -22,6 +22,7 @@ where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an objecy.
 They are defined and implemented on the [`src/commands/`](../src/commands) directory. Currently the available commands (command names) are: 
 
 - disconnect
+- reset
 - edit_section
 - new_section
 - set_color
@@ -37,6 +38,24 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
 - Returns: nothing
+
+## `reset`
+
+- What it does: removes all sections.
+- Example:
+    ```json
+    {
+      "name": "reset"
+    }
+    ```
+- Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {}
+    }
+    ```
 
 
 ## `edit_section`
