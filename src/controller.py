@@ -125,14 +125,14 @@ class SectionManager:
         self.color_list[self.ids.index(section_id)] = color_list
         self.color_list_by_id[section_id] = color_list
 
-    def get_section(self, s_id: str) -> Section:
+    def get_section(self, section_id: str) -> Section:
         """
         Finds and returns a section
 
-        :param s_id: identifier of the section to look for
+        :param section_id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return Section(self.indexes_by_id[s_id], self.sections_by_id[s_id])
+        return Section(self.limits_by_id[section_id], self.color_list_by_id[section_id])
 
     def get_all_sections(self) -> List[Section]:
         """
@@ -215,14 +215,14 @@ class Controller:
         """
         return self.section_manager.edit_section(section_id, start, end, color_list)
 
-    def get_section(self, s_id: str) -> Section:
+    def get_section(self, section_id: str) -> Section:
         """
         Finds and returns a section
 
-        :param s_id: identifier of the section to look for
+        :param section_id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return self.section_manager.get_section(s_id)
+        return self.section_manager.get_section(section_id)
 
     def get_strip_length(self) -> int:
         return self.strip_length
