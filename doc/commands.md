@@ -61,13 +61,52 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 ## `edit_section`
 
 - What it does: changes attributes of a section (see `new_section`).
-- Example:
+- Required arguments:
+    - `id` : id of the section to edit
+- Example 1:
     ```json
     {
       "name": "edit_section",
       "args": {
         "id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40
+      }
+    }
+    ```
+ - Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {}
+    }
+    ```
+ - Example 2:
+    ```json
+    {
+      "name": "edit_section",
+      "args": {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "end": 40,
+        "start": 10
+      }
+    }
+    ```
+ - Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {}
+    }
+    ```
+- Example 3:
+    ```json
+    {
+      "name": "edit_section",
+      "args": {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "color": "#abc123"
       }
     }
     ```
