@@ -56,8 +56,9 @@ if __name__ == '__main__':
                 except ParseError as e:
                     response = Response(HTTPStatus.BAD_REQUEST, e.errors)
                     network_manager.send(response)
+                # TODO: document errors
                 except ExecutionError as e:
-                    response = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': e.get_msg()})
+                    response = Response(HTTPStatus.CONFLICT, {'error': e.get_msg()})
                     network_manager.send(response)
                 except ClientDisconnected as e:
                     network_manager.disconnect_client()
