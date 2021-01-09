@@ -11,7 +11,7 @@ class EditSection(Command):
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
             "properties": {
-                "id": {
+                "section_id": {
                     "type": "string"
                 },
                 "start": {
@@ -24,7 +24,7 @@ class EditSection(Command):
                     "type": "string"
                 }
             },
-            "required": ["id"]
+            "required": ["section_id"]
         }
         self.color = None
         self.validator = Draft7Validator(arguments_schema)
@@ -41,15 +41,17 @@ class EditSection(Command):
                 raise ParseError(errors)
 
     def exec(self):
-        s_id = self.args['s_id']
+        section_id = self.args['section_id']
         start = self.args['start'] if 'start' in self.args.keys() else None
         end = self.args['end'] if 'end' in self.args.keys() else None
         try:
-            section = self.controller.get_section(self.args['s_id'])
+            section = self.controller.get_section(section_id)
             start = start if start is not None else section.get_indexes()[0]
             end = end if end is not None else section.get_indexes()[1]
             color_list = [self.color] * (end - start + 1) if self.color is not None else section.get_color_list()
-            self.controller.edit_section(s_id, start, end, color_list)
+            self.controller.edit_section(section_id, start, end, color_list)
         except KeyError:
-            raise ExecutionError(f'section {self.args["section"]} is not defined')
+            raise ExecutionError(f'section {self.args["section_id"]} is not defined')
+        except ValueError as ex:
+            raise ExecutionError(str(ex))
 

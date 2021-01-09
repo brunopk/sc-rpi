@@ -6,7 +6,7 @@ import logging
 import unittest
 
 
-class TestController(unittest.TestCase):
+class TestCreatingSections(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -18,37 +18,14 @@ class TestController(unittest.TestCase):
     def setUp(self) -> None:
         self.controller.remove_all_sections()
 
-    def test_wrong_section_indexes(self):
+    def test_wrong_indexes(self):
         self.assertRaises(ValueError, self.controller.new_section, -1, 10)
         self.assertRaises(ValueError, self.controller.new_section, 0, 400)
         self.assertRaises(ValueError, self.controller.new_section, 2, 1)
 
-    def test_sections_overlapping(self):
+    def test_overlapping(self):
         self.controller.new_section(1, 100)
         self.assertRaises(ValueError, self.controller.new_section, 50, 300)
-
-    def test_removing_sections(self):
-        self.controller.new_section(0, 10)
-        self.controller.remove_all_sections()
-        self.controller.new_section(2, 20)
-
-    def test_updating_deleted_section(self):
-        color_list = [Color(0, 0, 0)]
-        s_id = self.controller.new_section(1, 1)
-        self.controller.remove_all_sections()
-        self.assertRaises(KeyError, self.controller.set_color_list, s_id, color_list)
-
-    def test_updating_section_with_a_long_array(self):
-        color_list = [Color(0, 0, 0)] * 2
-        s_id = self.controller.new_section(1, 1)
-        self.assertRaises(ValueError, self.controller.set_color_list, s_id, color_list)
-
-    def test_length_after_concatenating_sections(self):
-        self.controller.new_section(0, 100)
-        self.controller.new_section(110, 150)
-        self.controller.new_section(151, 299)
-        colors = self.controller.concatenate_sections()
-        self.assertEqual(len(colors), self.controller.strip_length, 'It must be the length of the strip')
 
     def test_colors_in_each_section(self):
         s1 = (0, 99)
@@ -87,10 +64,90 @@ class TestController(unittest.TestCase):
         self.assertEqual(s3_color_1.b, s3_color_2.b)
 
 
+class TestRemovingSections(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        config = ConfigParser()
+        config.read('../config.ini')
+        logging.basicConfig(level=None)
+        cls.controller = Controller(config=config)
+
+    def setUp(self) -> None:
+        self.controller.remove_all_sections()
+
+    def test_removing_section(self):
+        self.controller.new_section(0, 10)
+        self.controller.remove_all_sections()
+        self.controller.new_section(2, 20)
+
+    def test_setting_color_for_deleted_section(self):
+        color_list = [Color(0, 0, 0)]
+        section_id = self.controller.new_section(1, 1)
+        self.controller.remove_all_sections()
+        self.assertRaises(KeyError, self.controller.set_color_list, section_id, color_list)
 
 
+class TestSettingColors(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        config = ConfigParser()
+        config.read('../config.ini')
+        logging.basicConfig(level=None)
+        cls.controller = Controller(config=config)
+
+    def setUp(self) -> None:
+        self.controller.remove_all_sections()
+
+    def test_setting_color_with_long_array(self):
+        color_list = [Color(0, 0, 0)] * 2
+        section_id = self.controller.new_section(1, 1)
+        self.assertRaises(ValueError, self.controller.set_color_list, section_id, color_list)
 
 
+class TestConcatenatingSections(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        config = ConfigParser()
+        config.read('../config.ini')
+        logging.basicConfig(level=None)
+        cls.controller = Controller(config=config)
+
+    def setUp(self) -> None:
+        self.controller.remove_all_sections()
+
+    def test_length_after_concatenating_sections_1(self):
+        self.controller.new_section(0, 100)
+        self.controller.new_section(110, 150)
+        self.controller.new_section(151, 299)
+        color_list = self.controller.concatenate_sections()
+        self.assertEqual(len(color_list), self.controller.strip_length, 'It must be the length of the strip')
+
+    def test_length_after_concatenating_sections_2(self):
+        self.controller.new_section(110, 150)
+        self.controller.new_section(0, 100)
+        self.controller.new_section(151, 299)
+        color_list = self.controller.concatenate_sections()
+        self.assertEqual(len(color_list), self.controller.strip_length, 'It must be the length of the strip')
+
+
+class TestEditingSections(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        config = ConfigParser()
+        config.read('../config.ini')
+        logging.basicConfig(level=None)
+        cls.controller = Controller(config=config)
+
+    def setUp(self) -> None:
+        self.controller.remove_all_sections()
+
+    def test_editing_section(self):
+        section_id = self.controller.new_section(0, 100)
+        self.controller.edit_section(section_id, 20, 100)
 
 
 if __name__ == '__main__':

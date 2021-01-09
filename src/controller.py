@@ -7,78 +7,123 @@ from uuid import uuid1
 
 class Section:
 
-    def __init__(self, indexes: tuple, array: List[Color], ):
+    def __init__(self, indexes: tuple, color_list: List[Color], ):
         self.indexes = indexes
-        self.array = array
+        self.color_list = color_list
 
     def get_indexes(self) -> tuple:
         return self.indexes
 
     def get_color_list(self) -> List[Color]:
-        return self.array
+        return self.color_list
 
 
 class SectionManager:
 
+    def _insert_section(self, section_id: str, index: int, start: int, end: int, color_list):
+        self.ids.insert(index, section_id)
+        self.color_list.insert(index, color_list)
+        self.color_list_by_id[section_id] = color_list
+        self.limits_by_id[section_id] = (start, end)
+        self.limits.insert(index, (start, end))
+
+    def _get_index(self, start: int, end: int):
+        """
+        Get index
+
+        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        """
+
+        index = None
+
+        if end < start or start < 0 or end > self.strip_length:
+            raise ValueError('section not defined correctly')
+        for i, v in enumerate(self.limits):
+            if v[0] < start < v[1] or v[0] < end < v[1]:
+                raise ValueError('overlapping error')
+            if i < len(self.limits) - 1:
+                if self.limits[i][0] < start and end < self.limits[i + 1][0]:
+                    index = i + 1
+                    break
+            elif index is None:
+                if start > self.limits[i][1]:
+                    index = i + 1
+                else:
+                    index = i
+
+        return 0 if index is None else index
+
     def __init__(self, config: ConfigParser):
+        self.strip_length = int(config['PIXEL_STRIP'].get('n'))
         self.config = config
         self.ids = []
-        self.sections = []
-        self.sections_by_id = {}
-        self.indexes_by_id = {}
-        self.indexes = []
-        self.strip_length = int(config['PIXEL_STRIP'].get('n'))
+        self.color_list = []
+        self.color_list_by_id = {}
+        self.limits_by_id = {}
+        self.limits = []
 
-    def reset(self):
+    def edit_section(self,
+                     section_id: str,
+                     new_start: int = None,
+                     new_end: int = None,
+                     new_color_list: List[Color] = None):
         """
-        Removes all sections and resets the current section (see set_current_section) to None
-        """
-        self.ids = []
-        self.sections = []
-        self.sections_by_id = {}
-        self.indexes_by_id = {}
-        self.indexes = []
+        Edit section
 
-    def edit_section(self, s_id: str, start: int, end: int, color_list: List[Color]):
-        position = len(self.indexes)
-        if end < start or start < 0 or end > self.strip_length:
-            raise ValueError('section is not defined correctly')
-        for i, v in enumerate(self.indexes):
-            if v[0] < start < v[1] or v[0] < end < v[1]:
-                raise ValueError('the new section overlaps another section')
-            if i < len(self.indexes) - 1:
-                if self.indexes[i][0] < start and end < self.indexes[i + 1][0]:
-                    position = i + 1
-                    break
-        self.indexes.insert(position, (start, end))
-        self.ids.insert(position, s_id)
-        self.sections.insert(position, [])
-        self.indexes_by_id[s_id] = (start, end)
-        self.sections_by_id[s_id] = []
-        self.set_color(s_id, color_list)
+        :raises KeyError: if section not exist
+        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        """
+
+        try:
+            index = self.ids.index(section_id)
+        except ValueError:
+            raise KeyError()
+
+        start, end = self.limits_by_id[section_id]
+        new_start = new_start if new_start is not None else self.limits_by_id[section_id][0]
+        new_end = new_end if new_end is not None else self.limits_by_id[section_id][1]
+        if new_color_list is not None:
+            if len(new_color_list) != new_end - new_start + 1:
+                raise ValueError('length of the color list does not match the new size of the section')
+        else:
+            color_list = self.color_list_by_id[section_id]
+            new_color_list = [color_list[0]] * (new_end - new_start + 1)
+
+        self.limits.remove((start, end))
+        self.ids.remove(section_id)
+        del self.color_list[index]
+
+        index = self._get_index(new_start, new_end)
+        self._insert_section(section_id, index, new_start, new_end, new_color_list)
 
     def new_section(self, start: int, end: int) -> str:
-        s_id = str(uuid1())
-        color_list = [Color(0, 0, 0)] * (end - start + 1)
-        self.edit_section(s_id, start, end, color_list)
-        return s_id
+        """
+        Creates new section
 
-    def set_color(self, s_id: str, color_list: List[Color]):
+        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        """
+        section_id = str(uuid1())
+        color_list = [Color(0, 0, 0)] * (end - start + 1)
+        index = self._get_index(start, end)
+        self._insert_section(section_id, index, start, end, color_list)
+        return section_id
+
+    def set_color(self, section_id: str, color_list: List[Color]):
         """
         Sets the color for each led in the specified section
 
-        :param s_id: identifier of the section that will be updated
+        :param section_id: identifier of the section that will be updated
         :param color_list: colors for each led in the section
         :raises KeyError: if section is not defined
-        :raises ValueError: if len(array) is more than previously specified length of the section
+        :raises ValueError: if color_list is longer than the size of the section
         """
-        indexes = self.indexes_by_id.get(s_id)
-        if indexes is None:
-            raise KeyError(f'section {s_id} is not defined')
-        if len(color_list) != (indexes[1] - indexes[0] + 1):
-            raise ValueError(f'color array length does not match section {s_id} length')
-        self.sections[self.ids.index(s_id)] = color_list
-        self.sections_by_id[s_id] = color_list
+        limits = self.limits_by_id.get(section_id)
+        if limits is None:
+            raise KeyError(f'section {section_id} is not defined')
+        if len(color_list) != (limits[1] - limits[0] + 1):
+            raise ValueError(f'color array length does not match section {section_id} length')
+        self.color_list[self.ids.index(section_id)] = color_list
+        self.color_list_by_id[section_id] = color_list
 
     def get_section(self, s_id: str) -> Section:
         """
@@ -93,7 +138,17 @@ class SectionManager:
         """
         Returns all sections ordered by (start, end) indexes of the sections
         """
-        return [Section(self.indexes[i], self.sections[i]) for i in range(len(self.ids))]
+        return [Section(self.limits[i], self.color_list[i]) for i in range(len(self.limits))]
+
+    def remove_all_sections(self):
+        """
+        Removes all sections and resets the current section (see set_current_section) to None
+        """
+        self.ids = []
+        self.color_list = []
+        self.color_list_by_id = {}
+        self.limits_by_id = {}
+        self.limits = []
 
 
 class Controller:
@@ -143,22 +198,22 @@ class Controller:
         :param start: start position of the section
         :param end: end position of the section
         :return: uuid of the section
-        :raise ValueError: if section is not defined correctly
+        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
         return self.section_manager.new_section(start, end)
 
-    def edit_section(self, s_id: str, start: int, end: int, color_list: List[Color]):
+    def edit_section(self, section_id: str, start: int = None, end: int = None, color_list: List[Color] = None):
         """
         Changes the start position and/or end position and/or each color of each led of the specified section
 
-        :param s_id: id of the section that will be edited
+        :param section_id: id of the section that will be edited
         :param start: new start position for the section
         :param end: new end position for the section
         :param color_list: color for each led in the section
-        :raises KeyError: if section with s_id is not defined
-        :raises ValueError: if start and end position for the section are not defined correctly
+        :raises KeyError: if section with section_id is not defined
+        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
-        return self.section_manager.edit_section(s_id, start, end, color_list)
+        return self.section_manager.edit_section(section_id, start, end, color_list)
 
     def get_section(self, s_id: str) -> Section:
         """
@@ -176,7 +231,7 @@ class Controller:
         """
         Removes all sections and resets the current section (see set_current_section) to None
         """
-        self.section_manager.reset()
+        self.section_manager.remove_all_sections()
 
     def concatenate_sections(self) -> List[Color]:
         """
@@ -218,16 +273,16 @@ class Controller:
         """
         self.current_color = color
 
-    def set_color_list(self, s_id: str, color_list: List[Color]):
+    def set_color_list(self, section_id: str, color_list: List[Color]):
         """
         Sets the color for each led in the specified section.
 
-        :param s_id: identifier of the section that will be updated
+        :param section_id: identifier of the section that will be updated
         :param color_list: list of colors or one Color instance
         :raises KeyError: if section with s_id is not defined
         :raises ValueError: if number of colors in color_list is greater than previously specified length of the section
         """
-        self.section_manager.set_color(s_id, color_list)
+        self.section_manager.set_color(section_id, color_list)
 
     def exec_cmd(self, cmd) -> dict:
         """
