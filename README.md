@@ -45,6 +45,8 @@ More information: https://core-electronics.com.au/tutorials/ws2812-addressable-l
 
 - Timout functionality in case of no receiving commands.
 - Automatic stress testing to send multiple commands in a short period of time.
+- Document errors 
+- Differentiate errors (return bad request, conflict, etc)
 
 
 ## Links
