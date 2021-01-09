@@ -101,7 +101,7 @@ class CommandParser:
                     "type": "object"
                 }
             },
-            "required": ["name", "args"]
+            "required": ["name"]
         }
         classes = dict()
         for module_name in modules:
@@ -122,11 +122,16 @@ class CommandParser:
             raise ParseError(['Invalid JSON'])
         if not isinstance(json, dict):
             raise ParseError(['Invalid JSON'])
+
         errors = [e.message for e in self.validator.iter_errors(json)]
         if len(errors) > 0:
             raise ParseError(errors)
+
         cmd_name = json['name']
         cmd: Command = self.classes.get(cmd_name)()
-        cmd.set_arguments(json['args'])
-        cmd.validate_arguments()
+
+        if 'args' in json.keys():
+            cmd.set_arguments(json['args'])
+            cmd.validate_arguments()
+
         return cmd
