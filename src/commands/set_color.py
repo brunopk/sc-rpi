@@ -37,9 +37,7 @@ class SetColor(Command):
     def exec(self):
         try:
             if 'section' in self.args.keys():
-                # Validates if section exists
-                color_list = self.controller.get_section(self.args['section']).get_color_list()
-                self.controller.set_color_list(self.args['section'], [self.color] * len(color_list))
+                self.controller.set_color(self.args['section'], self.color)
             else:
                 self.controller.set_color(self.color)
             self.controller.render_strip()

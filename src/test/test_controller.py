@@ -34,12 +34,12 @@ class TestCreatingSections(unittest.TestCase):
         s1_id = self.controller.new_section(*s1)
         s2_id = self.controller.new_section(*s2)
         s3_id = self.controller.new_section(*s3)
-        color_s1 = [Color(1, 1, 1)] * (s1[1] - s1[0] + 1)
-        color_s2 = [Color(2, 2, 2)] * (s2[1] - s2[0] + 1)
-        color_s3 = [Color(3, 3, 3)] * (s3[1] - s3[0] + 1)
-        self.controller.set_color_list(s1_id, color_s1)
-        self.controller.set_color_list(s2_id, color_s2)
-        self.controller.set_color_list(s3_id, color_s3)
+        color_s1 = Color(1, 1, 1)
+        color_s2 = Color(2, 2, 2)
+        color_s3 = Color(3, 3, 3)
+        self.controller.set_color(color_s1, s1_id)
+        self.controller.set_color(color_s2, s2_id)
+        self.controller.set_color(color_s3, s3_id)
         colors = self.controller.concatenate_sections()
 
         s1_color_1 = colors[randint(*s1)]
@@ -82,28 +82,9 @@ class TestRemovingSections(unittest.TestCase):
         self.controller.new_section(2, 20)
 
     def test_setting_color_for_deleted_section(self):
-        color_list = [Color(0, 0, 0)]
         section_id = self.controller.new_section(1, 1)
         self.controller.remove_all_sections()
-        self.assertRaises(KeyError, self.controller.set_color_list, section_id, color_list)
-
-
-class TestSettingColors(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        config = ConfigParser()
-        config.read('../config.ini')
-        logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
-
-    def setUp(self) -> None:
-        self.controller.remove_all_sections()
-
-    def test_setting_color_with_long_array(self):
-        color_list = [Color(0, 0, 0)] * 2
-        section_id = self.controller.new_section(1, 1)
-        self.assertRaises(ValueError, self.controller.set_color_list, section_id, color_list)
+        self.assertRaises(KeyError, self.controller.set_color, Color(0, 0, 0), section_id)
 
 
 class TestConcatenatingSections(unittest.TestCase):

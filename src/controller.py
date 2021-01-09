@@ -227,6 +227,21 @@ class Controller:
     def get_strip_length(self) -> int:
         return self.strip_length
 
+    def set_color(self, color: Color, section_id: str = None):
+        """
+        Sets the same color for all LEDs in the strip or for LEDs in a specific section
+
+        :param color: the new color
+        :param section_id: if it is defined, sets the color ONLY for LEDs in that section
+        :raises KeyError: if section with section_id is not defined
+        """
+        if section_id is None:
+            self.current_color = color
+        else:
+            section = self.section_manager.get_section(section_id)
+            new_color_list = [color] * (section.get_indexes()[1] - section.get_indexes()[0] + 1)
+            self.section_manager.set_color(section_id, new_color_list)
+
     def remove_all_sections(self):
         """
         Removes all sections and resets the current section (see set_current_section) to None
@@ -266,23 +281,6 @@ class Controller:
             for i in range(self.strip_length):
                 self.strip.setPixelColor(i, self.current_color)
         self.strip.show()
-
-    def set_color(self, color: Color):
-        """
-        Sets the same color for each led along the strip.
-        """
-        self.current_color = color
-
-    def set_color_list(self, section_id: str, color_list: List[Color]):
-        """
-        Sets the color for each led in the specified section.
-
-        :param section_id: identifier of the section that will be updated
-        :param color_list: list of colors or one Color instance
-        :raises KeyError: if section with s_id is not defined
-        :raises ValueError: if number of colors in color_list is greater than previously specified length of the section
-        """
-        self.section_manager.set_color(section_id, color_list)
 
     def exec_cmd(self, cmd) -> dict:
         """
