@@ -56,7 +56,6 @@ if __name__ == '__main__':
                 except ParseError as e:
                     response = Response(HTTPStatus.BAD_REQUEST, e.errors)
                     network_manager.send(response)
-                # TODO: document errors
                 except ExecutionError as e:
                     response = Response(HTTPStatus.CONFLICT, {'error': e.get_msg()})
                     network_manager.send(response)
