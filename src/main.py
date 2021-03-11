@@ -10,6 +10,8 @@ from configparser import ConfigParser
 from logging.handlers import RotatingFileHandler
 from logging import Formatter, basicConfig, getLogger
 
+# TODO: new command to delete section
+
 if __name__ == '__main__':
 
     config = ConfigParser()
@@ -54,6 +56,7 @@ if __name__ == '__main__':
                         network_manager.stop()
                         break
                 except ParseError as e:
+                    logger.warning('Invalid command received')
                     response = Response(HTTPStatus.BAD_REQUEST, e.errors)
                     network_manager.send(response)
                 except ExecutionError as e:
@@ -61,6 +64,9 @@ if __name__ == '__main__':
                     network_manager.send(response)
                 except ClientDisconnected as e:
                     network_manager.disconnect_client()
+                    break
+                except ConnectionResetError:
+                    logger.warning('Client disconnected abruptly')
                     break
                 except Exception as e:
                     response = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': 'Internal server error'})
