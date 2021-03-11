@@ -29,7 +29,8 @@ class SectionManager:
 
     def _get_index(self, start: int, end: int):
         """
-        Get index
+        Get index position in the self.ids (same for self.color_list and self.limits)
+        array of the section defined by [start, end]
 
         :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
@@ -71,7 +72,7 @@ class SectionManager:
         Edit section
 
         :raises KeyError: if section not exist
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :raises ValueError: if limits are defined correctly (section overlapping, etc)
         """
 
         try:
