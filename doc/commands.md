@@ -143,6 +143,30 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
   
+## `remove_sections`
+
+- What it does: removes sections specified by id.
+- Example:
+    ```json
+    {
+      "name": "remove_sections",
+      "args": {
+        "sections": [
+          "123e4567-e89b-12d3-a456-42661417400",
+          "123e4567-e89b-12d3-a456-42661417500"
+        ]
+      }
+    }
+    ```
+- Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {}
+    }
+    ```
+
 ## `set_color`
 
 - What it does: changes color for all the LEDs or for LEDs in a specific section (see `new_section`).

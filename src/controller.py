@@ -27,12 +27,23 @@ class SectionManager:
         self.limits_by_id[section_id] = (start, end)
         self.limits.insert(index, (start, end))
 
+    def _remove_section(self, section_id: str):
+        """
+        :raise KeyError: if section don't exist
+        """
+        t = self.limits_by_id[section_id]
+        i = self.limits.index(t)
+        del self.ids[i]
+        del self.color_list[i]
+        del self.limits_by_id[section_id]
+        del self.limits[i]
+
     def _get_index(self, start: int, end: int):
         """
         Get index position in the self.ids (same for self.color_list and self.limits)
         array of the section defined by [start, end]
 
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :raises ValueError: if limits are not defined correctly (section overlapping, etc)
         """
 
         index = None
@@ -151,6 +162,25 @@ class SectionManager:
         self.limits_by_id = {}
         self.limits = []
 
+    def remove_sections(self, sections: List[str]):
+        """
+        Removes sections by id
+        :param sections: list of section ids to be removed
+        :raise KeyError: if some section don't exist
+        """
+        # test if all sections are defined
+        invalid_section_id = None
+        for section_id in sections:
+            if section_id not in self.limits_by_id:
+                invalid_section_id = section_id
+                break
+        # remove sections (if all sections are defined)
+        if invalid_section_id is None:
+            for section_id in sections:
+                self._remove_section(section_id)
+        else:
+            raise KeyError(f'section {section_id} is not defined')
+
 
 class Controller:
     """
@@ -242,6 +272,14 @@ class Controller:
             section = self.section_manager.get_section(section_id)
             new_color_list = [color] * (section.get_indexes()[1] - section.get_indexes()[0] + 1)
             self.section_manager.set_color(section_id, new_color_list)
+
+    def remove_sections(self, sections: List[str]):
+        """
+        Removes sections by id
+        :param sections: list of section ids to be removed
+        :raise KeyError: if some section don't exist
+        """
+        self.section_manager.remove_sections(sections)
 
     def remove_all_sections(self):
         """

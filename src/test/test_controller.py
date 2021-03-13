@@ -76,10 +76,21 @@ class TestRemovingSections(unittest.TestCase):
     def setUp(self) -> None:
         self.controller.remove_all_sections()
 
-    def test_removing_section(self):
+    def test_removing_all_sections(self):
         self.controller.new_section(0, 10)
         self.controller.remove_all_sections()
         self.controller.new_section(2, 20)
+
+    def test_removing_specific_sections(self):
+        self.controller.new_section(0, 9)
+        s2_id = self.controller.new_section(10, 19)
+        s3_id = self.controller.new_section(20, 29)
+        s4_id = self.controller.new_section(30, 39)
+        self.controller.remove_sections([])
+        self.assertRaises(KeyError, self.controller.remove_sections, [''])
+        self.controller.remove_sections([s2_id, s3_id])
+        self.assertRaises(KeyError, self.controller.remove_sections, [s2_id, s4_id])
+        self.controller.remove_sections([s4_id])
 
     def test_setting_color_for_deleted_section(self):
         section_id = self.controller.new_section(1, 1)
