@@ -2,7 +2,7 @@
 
 Commands are represented as stringified JSONs and sent in the body section of the [SCP protocol](/doc/SCP_Protocol.md), so this is an example of a wrong command representation:
 
-`{"name": "set_color"` 
+`{"name": "set_color"}` 
 
 And this is an example of a good command representation:
 
