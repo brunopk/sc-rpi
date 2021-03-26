@@ -68,7 +68,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     {
       "name": "edit_section",
       "args": {
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40
       }
     }
@@ -86,7 +86,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     {
       "name": "edit_section",
       "args": {
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40,
         "start": 10
       }
@@ -105,7 +105,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     {
       "name": "edit_section",
       "args": {
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "color": "#abc123"
       }
     }
