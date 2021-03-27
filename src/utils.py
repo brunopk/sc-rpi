@@ -1,9 +1,9 @@
 from re import match
 from webcolors import hex_to_rgb
-from rpi_ws281x import Color
+#from rpi_ws281x import Color
 
 
-def parse_color(c: str) -> Color:
+def parse_color(c: str):
     """
     Parse and returns the corresponding color
 
@@ -25,7 +25,7 @@ def parse_color(c: str) -> Color:
                 raise ValueError()
         else:
             raise ValueError()
-    return Color(red, green, blue)
+    return red, green, blue
 
 
 # noinspection PyShadowingBuiltins

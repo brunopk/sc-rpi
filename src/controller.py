@@ -8,14 +8,14 @@ from utils import bool
 
 class Section:
 
-    def __init__(self, indexes: tuple, color_list: List[Color], ):
+    def __init__(self, indexes: tuple, color_list: List[tuple]):
         self.indexes = indexes
         self.color_list = color_list
 
     def get_indexes(self) -> tuple:
         return self.indexes
 
-    def get_color_list(self) -> List[Color]:
+    def get_color_list(self) -> List[tuple]:
         return self.color_list
 
 
@@ -79,7 +79,7 @@ class SectionManager:
                      section_id: str,
                      new_start: int = None,
                      new_end: int = None,
-                     new_color_list: List[Color] = None):
+                     new_color_list: List[tuple] = None):
         """
         Edit section
 
@@ -116,12 +116,12 @@ class SectionManager:
         :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
         section_id = str(uuid1())
-        color_list = [Color(0, 0, 0)] * (end - start + 1)
+        color_list = [(0, 0, 0)] * (end - start + 1)
         index = self._get_index(start, end)
         self._insert_section(section_id, index, start, end, color_list)
         return section_id
 
-    def set_color(self, section_id: str, color_list: List[Color]):
+    def set_color(self, section_id: str, color_list: List[tuple]):
         """
         Sets the color for each led in the specified section
 
@@ -216,13 +216,11 @@ class Controller:
 
         self.strip_length = n
         # Create NeoPixel object with appropriate configuration.
-        # TODO No esta casteando bien el invert (bool)
         self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
-        # Initialize the library (must be called once before other functions).
-        self.strip.begin()
-        self.current_color = Color(0, 0, 0)
         self.logger = logging.getLogger(str(self.__class__))
         self.section_manager = SectionManager(config)
+        # Initialize the library (must be called once before other functions).
+        self.strip.begin()
 
     def new_section(self, start: int, end: int) -> str:
         """
@@ -235,7 +233,7 @@ class Controller:
         """
         return self.section_manager.new_section(start, end)
 
-    def edit_section(self, section_id: str, start: int = None, end: int = None, color_list: List[Color] = None):
+    def edit_section(self, section_id: str, start: int = None, end: int = None, color_list: List[tuple] = None):
         """
         Changes the start position and/or end position and/or each color of each led of the specified section
 
@@ -260,7 +258,7 @@ class Controller:
     def get_strip_length(self) -> int:
         return self.strip_length
 
-    def set_color(self, color: Color, section_id: str = None):
+    def set_color(self, color: tuple, section_id: str = None):
         """
         Sets the same color for all LEDs in the strip or for LEDs in a specific section
 
@@ -289,7 +287,7 @@ class Controller:
         """
         self.section_manager.remove_all_sections()
 
-    def concatenate_sections(self) -> List[Color]:
+    def concatenate_sections(self) -> List[tuple]:
         """
         Concatenates all sections in one list.
         Spaces between section will be filled with Color(0, 0, 0)
@@ -300,14 +298,14 @@ class Controller:
         sections = self.section_manager.get_all_sections()
         cant_sections = len(sections)
         if cant_sections > 0:
-            colors += [Color(0, 0, 0)] * sections[0].get_indexes()[0]
+            colors += [(0, 0, 0)] * sections[0].get_indexes()[0]
             for i, section in enumerate(sections[0:-1]):
                 colors += section.get_color_list()
-                colors += [self.current_color] * (sections[i + 1].get_indexes()[0] - section.get_indexes()[1] - 1)
+                colors += [(0, 0, 0)] * (sections[i + 1].get_indexes()[0] - section.get_indexes()[1] - 1)
             if cant_sections > 1:
-                colors += [self.current_color] * (sections[-1].get_indexes()[0] - sections[-2].get_indexes()[1] - 1)
+                colors += [(0, 0, 0)] * (sections[-1].get_indexes()[0] - sections[-2].get_indexes()[1] - 1)
                 colors += sections[-1].get_color_list()
-                colors += [self.current_color] * (self.strip_length - sections[-1].get_indexes()[1] - 1)
+                colors += [(0, 0, 0)] * (self.strip_length - sections[-1].get_indexes()[1] - 1)
         return colors
 
     def render_strip(self):
@@ -318,7 +316,7 @@ class Controller:
         # TODO cuando uso edit section no me entra aca
         if len(colors) > 0:
             for i, c in enumerate(colors):
-                self.strip.setPixelColor(i, c)
+                self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
         else:
             for i in range(self.strip_length):
                 self.strip.setPixelColor(i, self.current_color)

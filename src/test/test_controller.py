@@ -1,6 +1,6 @@
 from controller import Controller
 from configparser import ConfigParser
-from rpi_ws218x import Color
+#from rpi_ws218x import Color
 from random import randint
 import logging
 import unittest
@@ -34,9 +34,9 @@ class TestCreatingSections(unittest.TestCase):
         s1_id = self.controller.new_section(*s1)
         s2_id = self.controller.new_section(*s2)
         s3_id = self.controller.new_section(*s3)
-        color_s1 = Color(1, 1, 1)
-        color_s2 = Color(2, 2, 2)
-        color_s3 = Color(3, 3, 3)
+        color_s1 = (1, 1, 1)
+        color_s2 = (2, 2, 2)
+        color_s3 = (3, 3, 3)
         self.controller.set_color(color_s1, s1_id)
         self.controller.set_color(color_s2, s2_id)
         self.controller.set_color(color_s3, s3_id)
@@ -51,17 +51,17 @@ class TestCreatingSections(unittest.TestCase):
         s3_color_1 = colors[randint(*s3)]
         s3_color_2 = colors[randint(*s3)]
 
-        self.assertEqual(s1_color_1.r, s1_color_2.r)
-        self.assertEqual(s1_color_1.g, s1_color_2.g)
-        self.assertEqual(s1_color_1.b, s1_color_2.b)
+        self.assertEqual(s1_color_1[0], s1_color_2[0])
+        self.assertEqual(s1_color_1[1], s1_color_2[1])
+        self.assertEqual(s1_color_1[2], s1_color_2[2])
 
-        self.assertEqual(s2_color_1.r, s2_color_2.r)
-        self.assertEqual(s2_color_1.g, s2_color_2.g)
-        self.assertEqual(s2_color_1.b, s2_color_2.b)
+        self.assertEqual(s2_color_1[0], s2_color_2[0])
+        self.assertEqual(s2_color_1[1], s2_color_2[1])
+        self.assertEqual(s2_color_1[2], s2_color_2[2])
 
-        self.assertEqual(s3_color_1.r, s3_color_2.r)
-        self.assertEqual(s3_color_1.g, s3_color_2.g)
-        self.assertEqual(s3_color_1.b, s3_color_2.b)
+        self.assertEqual(s3_color_1[0], s3_color_2[0])
+        self.assertEqual(s3_color_1[1], s3_color_2[1])
+        self.assertEqual(s3_color_1[2], s3_color_2[2])
 
 
 class TestRemovingSections(unittest.TestCase):
@@ -95,7 +95,7 @@ class TestRemovingSections(unittest.TestCase):
     def test_setting_color_for_deleted_section(self):
         section_id = self.controller.new_section(1, 1)
         self.controller.remove_all_sections()
-        self.assertRaises(KeyError, self.controller.set_color, Color(0, 0, 0), section_id)
+        self.assertRaises(KeyError, self.controller.set_color, (0, 0, 0), section_id)
 
 
 class TestConcatenatingSections(unittest.TestCase):
