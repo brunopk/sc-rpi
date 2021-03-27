@@ -11,8 +11,8 @@ class SetColor(Command):
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
             "properties": {
-                "section": {
-                    "type": "integer",
+                "section_id": {
+                    "type": "string",
                 },
                 "color": {
                     "typeof": "string"
@@ -37,7 +37,7 @@ class SetColor(Command):
     def exec(self):
         try:
             if 'section' in self.args.keys():
-                self.controller.set_color(self.args['section'], self.color)
+                self.controller.set_color(self.color, self.args['section'])
             else:
                 self.controller.set_color(self.color)
             self.controller.render_strip()
