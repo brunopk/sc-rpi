@@ -1,6 +1,6 @@
 from re import match
 from webcolors import hex_to_rgb
-from rpi_ws218x import Color
+from rpi_ws281x import Color
 
 
 def parse_color(c: str) -> Color:
@@ -26,3 +26,21 @@ def parse_color(c: str) -> Color:
         else:
             raise ValueError()
     return Color(red, green, blue)
+
+
+# noinspection PyShadowingBuiltins
+def bool(b: str):
+    """
+    Parse a string as bool:
+
+        - 'True', 'true', 'y' , '1' -> True
+        - 'False', 'false', 'n', '0' -> False
+
+    :raise ValueError: if string cannot be parsed as detailed above
+    """
+    if b in ['True', 'true', 'y' , '1']:
+        return True
+    elif b in ['False', 'false', 'n', '0']:
+        return False
+    else:
+        raise ValueError()

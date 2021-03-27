@@ -3,6 +3,7 @@ from typing import List
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
 from uuid import uuid1
+from utils import bool
 
 
 class Section:
