@@ -9,3 +9,4 @@ rfc3987==1.3.8
 six==1.15.0
 strict-rfc3339==0.7
 webcolors==1.11.1
+rpi-ws281x==4.2.3
