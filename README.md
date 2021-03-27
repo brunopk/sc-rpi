@@ -1,6 +1,6 @@
 # Strip Controller Raspberry
 
-Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/SCP_Protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. Built with Python 3 and tested Raspberry Pi 3. 
+Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/SCP_Protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. Runs on the Raspberry Pi 3 with Python 3.7 or 3.8 . 
 
 ## Starting the server
 
