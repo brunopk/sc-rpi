@@ -51,6 +51,7 @@ class EditSection(Command):
             self.controller.edit_section(self.section_id, self.start, self.end)
             if self.color is not None:
                 self.controller.set_color(self.color, self.section_id)
+            self.controller.render_strip()
         except KeyError:
             raise ExecutionError(f'section {self.args["section_id"]} is not defined')
         except ValueError as ex:
