@@ -3,6 +3,8 @@ from command import Command, ParseError, ExecutionError
 from jsonschema import Draft7Validator
 
 
+# TODO: allow setting colors only for specific sections
+
 class SetColor(Command):
 
     def __init__(self):
