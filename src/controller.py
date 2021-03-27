@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from rpi_ws218x import PixelStrip, Color
+from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
 from uuid import uuid1
 
@@ -215,6 +215,7 @@ class Controller:
 
         self.strip_length = n
         # Create NeoPixel object with appropriate configuration.
+        # TODO No esta casteando bien el invert (bool)
         self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
         # Initialize the library (must be called once before other functions).
         self.strip.begin()
@@ -313,6 +314,7 @@ class Controller:
         Renders the actual configuration on the strip (hardware)
         """
         colors = self. concatenate_sections()
+        # TODO cuando uso edit section no me entra aca
         if len(colors) > 0:
             for i, c in enumerate(colors):
                 self.strip.setPixelColor(i, c)
