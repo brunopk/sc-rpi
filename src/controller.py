@@ -149,7 +149,7 @@ class SectionManager:
 
     def get_all_sections(self) -> List[Section]:
         """
-        Returns all sections ordered by (start, end) indexes of the sections
+        Returns all sections ordered by (start, end)
         """
         return [Section(self.limits[i], self.color_list[i]) for i in range(len(self.limits))]
 
@@ -255,9 +255,6 @@ class Controller:
         """
         return self.section_manager.get_section(section_id)
 
-    def get_strip_length(self) -> int:
-        return self.strip_length
-
     def set_color(self, color: tuple, section_id: str = None):
         """
         Sets the same color for all LEDs in the strip or for LEDs in a specific section
@@ -294,32 +291,31 @@ class Controller:
 
         :return: a list with the length of the strip or void list if no sections are defined
         """
-        colors = []
+        result = []
         sections = self.section_manager.get_all_sections()
-        cant_sections = len(sections)
-        if cant_sections > 0:
-            colors += [(0, 0, 0)] * sections[0].get_indexes()[0]
-            for i, section in enumerate(sections[0:-1]):
-                colors += section.get_color_list()
-                colors += [(0, 0, 0)] * (sections[i + 1].get_indexes()[0] - section.get_indexes()[1] - 1)
-            if cant_sections > 1:
-                colors += [(0, 0, 0)] * (sections[-1].get_indexes()[0] - sections[-2].get_indexes()[1] - 1)
-                colors += sections[-1].get_color_list()
-                colors += [(0, 0, 0)] * (self.strip_length - sections[-1].get_indexes()[1] - 1)
-        return colors
+        N = self.strip_length
+        S = len(sections)
+
+        if S > 0:
+            result = [(0, 0, 0)] * sections[0].get_indexes()[0]
+            if S > 1:
+                for i in range(S - 1):
+                    result += sections[i].get_color_list()
+                    result += [(0, 0, 0)] * (sections[i + 1].get_indexes()[0] - sections[i].get_indexes()[1] - 1)
+                result += sections[-1].get_color_list()
+            else:
+                result += sections[0].get_color_list()
+            result = result + [(0, 0, 0)] * (N - sections[-1].get_indexes()[1] - 1)
+
+        return result
 
     def render_strip(self):
         """
         Renders the actual configuration on the strip (hardware)
         """
         colors = self. concatenate_sections()
-        # TODO cuando uso edit section no me entra aca
-        if len(colors) > 0:
-            for i, c in enumerate(colors):
-                self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
-        else:
-            for i in range(self.strip_length):
-                self.strip.setPixelColor(i, self.current_color)
+        for i, c in enumerate(colors):
+            self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
         self.strip.show()
 
     def exec_cmd(self, cmd) -> dict:
