@@ -309,9 +309,9 @@ class Controller:
 
         return result
 
-    def render_strip(self):
+    def render(self):
         """
-        Renders the actual configuration on the strip (hardware)
+        Renders the actual configuration on the strip
         """
         colors = self. concatenate_sections()
         for i, c in enumerate(colors):

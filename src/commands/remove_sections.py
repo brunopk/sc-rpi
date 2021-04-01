@@ -30,7 +30,7 @@ class RemoveSections(Command):
     def exec(self):
         try:
             self.controller.remove_sections(self.sections)
-            self.controller.render_strip()
+            self.controller.render()
         except KeyError:
             raise ExecutionError(f'section {self.args["section_id"]} is not defined')
         except Exception as ex:
