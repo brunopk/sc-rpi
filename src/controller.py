@@ -1,5 +1,6 @@
 import logging
 from typing import List
+from webcolors import rgb_to_hex
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
 from uuid import uuid1
@@ -8,11 +9,16 @@ from utils import bool
 
 class Section:
 
-    def __init__(self, indexes: tuple, color_list: List[tuple]):
+    # noinspection PyShadowingBuiltins
+    def __init__(self, id: str, indexes: tuple, color_list: List[tuple]):
+        self.id = id
         self.indexes = indexes
         self.color_list = color_list
 
-    def get_indexes(self) -> tuple:
+    def get_id(self) -> str:
+        return self.id
+
+    def get_limits(self) -> tuple:
         return self.indexes
 
     def get_color_list(self) -> List[tuple]:
@@ -138,20 +144,21 @@ class SectionManager:
         self.color_list[self.ids.index(section_id)] = color_list
         self.color_list_by_id[section_id] = color_list
 
-    def get_section(self, section_id: str) -> Section:
+    # noinspection PyShadowingBuiltins
+    def get_section(self, id: str) -> Section:
         """
         Finds and returns a section
 
-        :param section_id: identifier of the section to look for
+        :param id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return Section(self.limits_by_id[section_id], self.color_list_by_id[section_id])
+        return Section(id, self.limits_by_id[id], self.color_list_by_id[id])
 
-    def get_all_sections(self) -> List[Section]:
+    def list_sections(self) -> List[Section]:
         """
-        Returns all sections ordered by (start, end)
+        Returns all sections ordered by their respective (start, end) limits
         """
-        return [Section(self.limits[i], self.color_list[i]) for i in range(len(self.limits))]
+        return [Section(self.ids[i], self.limits[i], self.color_list[i]) for i in range(len(self.limits))]
 
     def remove_all_sections(self):
         """
@@ -267,7 +274,7 @@ class Controller:
             self.current_color = color
         else:
             section = self.section_manager.get_section(section_id)
-            new_color_list = [color] * (section.get_indexes()[1] - section.get_indexes()[0] + 1)
+            new_color_list = [color] * (section.get_limits()[1] - section.get_limits()[0] + 1)
             self.section_manager.set_color(section_id, new_color_list)
 
     def remove_sections(self, sections: List[str]):
@@ -292,22 +299,35 @@ class Controller:
         :return: a list with the length of the strip or void list if no sections are defined
         """
         result = []
-        sections = self.section_manager.get_all_sections()
+        sections = self.section_manager.list_sections()
         N = self.strip_length
         S = len(sections)
 
         if S > 0:
-            result = [(0, 0, 0)] * sections[0].get_indexes()[0]
+            result = [(0, 0, 0)] * sections[0].get_limits()[0]
             if S > 1:
                 for i in range(S - 1):
                     result += sections[i].get_color_list()
-                    result += [(0, 0, 0)] * (sections[i + 1].get_indexes()[0] - sections[i].get_indexes()[1] - 1)
+                    result += [(0, 0, 0)] * (sections[i + 1].get_limits()[0] - sections[i].get_limits()[1] - 1)
                 result += sections[-1].get_color_list()
             else:
                 result += sections[0].get_color_list()
-            result = result + [(0, 0, 0)] * (N - sections[-1].get_indexes()[1] - 1)
+            result = result + [(0, 0, 0)] * (N - sections[-1].get_limits()[1] - 1)
 
         return result
+
+    def status(self) -> dict:
+        return {
+            'strip_length': self.strip_length,
+            'current_sections': [{
+                'id': s.get_id(),
+                'color': rgb_to_hex(s.get_color_list()[0]),
+                'limits': {
+                    'start': s.get_limits()[0],
+                    'end': s.get_limits()[1]
+                }
+            } for s in self.section_manager.list_sections()]
+        }
 
     def render(self):
         """

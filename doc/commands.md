@@ -167,6 +167,34 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
 
+## `status`
+
+- What it does: returns information of the current status of the system.
+- Example:
+    ```json
+    {
+      "name": "status"
+    }
+    ```
+- Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {
+        "number_of_led": 300,
+        "sections": [{
+          "id":  "123e4567-e89b-12d3-a456-42661417400",
+          "color": "#AABBCC",
+          "limits": {
+            "start": 0,
+            "end": 100
+          }
+        }]   
+      }
+    }
+    ```
+  
 ## `set_color`
 
 - What it does: changes color for all the LEDs or for LEDs in a specific section (see `new_section`).
