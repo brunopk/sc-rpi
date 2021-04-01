@@ -10,7 +10,10 @@ from configparser import ConfigParser
 from logging.handlers import RotatingFileHandler
 from logging import Formatter, basicConfig, getLogger
 
-# TODO: new command to delete section
+# TODO: allow new_section command to add multiple sections and set color
+# TODO: remove set_color command
+# TODO: new command to turn on/off sections or the entire strip
+# TODO: new command to get strip status
 
 if __name__ == '__main__':
 
