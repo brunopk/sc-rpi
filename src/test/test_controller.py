@@ -1,4 +1,5 @@
 from controller import Controller
+from error import Overlapping
 from configparser import ConfigParser
 from random import randint
 import logging
@@ -18,22 +19,22 @@ class TestCreatingSections(unittest.TestCase):
         self.controller.remove_all_sections()
 
     def test_wrong_indexes(self):
-        self.assertRaises(ValueError, self.controller.new_section, -1, 10)
-        self.assertRaises(ValueError, self.controller.new_section, 0, 400)
-        self.assertRaises(ValueError, self.controller.new_section, 2, 1)
+        self.assertRaises(ValueError, self.controller.new_section, -1, 10, (0, 0, 0))
+        self.assertRaises(ValueError, self.controller.new_section, 0, 400, (0, 0, 0))
+        self.assertRaises(ValueError, self.controller.new_section, 2, 1, (0, 0, 0))
 
     def test_overlapping(self):
-        self.controller.new_section(1, 100)
-        self.assertRaises(ValueError, self.controller.new_section, 50, 300)
+        self.controller.new_section(1, 100, (0, 0, 0))
+        self.assertRaises(Overlapping, self.controller.new_section, 50, 300, (0, 0, 0))
 
     def test_colors_1(self):
         color = (1, 2, 3)
-        section_id = self.controller.new_section(0, 100)
+        section_id = self.controller.new_section(0, 100, (0, 0, 0))
         self.controller.set_color(color, section_id)
         self.assertEqual(color, self.controller.concatenate_sections()[0])
 
     def test_total_length_1(self):
-        self.controller.new_section(0, 100)
+        self.controller.new_section(0, 100, (0, 0, 0))
         self.assertEqual(
             self.controller.strip_length,
             len(self.controller.concatenate_sections()),
@@ -44,15 +45,13 @@ class TestCreatingSections(unittest.TestCase):
         s1 = (0, 99)
         s2 = (100, 149)
         s3 = (150, 299)
-        s1_id = self.controller.new_section(*s1)
-        s2_id = self.controller.new_section(*s2)
-        s3_id = self.controller.new_section(*s3)
         color_s1 = (1, 1, 1)
         color_s2 = (2, 2, 2)
         color_s3 = (3, 3, 3)
-        self.controller.set_color(color_s1, s1_id)
-        self.controller.set_color(color_s2, s2_id)
-        self.controller.set_color(color_s3, s3_id)
+        self.controller.new_section(s1[0], s1[1], color_s1)
+        self.controller.new_section(s2[0], s2[1], color_s2)
+        self.controller.new_section(s3[0], s3[1], color_s3)
+
         colors = self.controller.concatenate_sections()
 
         s1_color_1 = colors[randint(*s1)]
@@ -77,9 +76,9 @@ class TestCreatingSections(unittest.TestCase):
         self.assertEqual(s3_color_1[2], s3_color_2[2])
 
     def test_total_length_2(self):
-        self.controller.new_section(0, 100)
-        self.controller.new_section(110, 150)
-        self.controller.new_section(151, 299)
+        self.controller.new_section(0, 100, (0, 0, 0))
+        self.controller.new_section(110, 150, (0, 0, 0))
+        self.controller.new_section(151, 299, (0, 0, 0))
         self.assertEqual(
             self.controller.strip_length,
             len(self.controller.concatenate_sections()),
@@ -100,15 +99,15 @@ class TestRemovingSections(unittest.TestCase):
         self.controller.remove_all_sections()
 
     def test_removing_all_sections(self):
-        self.controller.new_section(0, 10)
+        self.controller.new_section(0, 10, (0, 0, 0))
         self.controller.remove_all_sections()
-        self.controller.new_section(2, 20)
+        self.controller.new_section(2, 20, (0, 0, 0))
 
     def test_removing_specific_sections(self):
-        self.controller.new_section(0, 9)
-        s2_id = self.controller.new_section(10, 19)
-        s3_id = self.controller.new_section(20, 29)
-        s4_id = self.controller.new_section(30, 39)
+        self.controller.new_section(0, 9, (0, 0, 0))
+        s2_id = self.controller.new_section(10, 19, (0, 0, 0))
+        s3_id = self.controller.new_section(20, 29, (0, 0, 0))
+        s4_id = self.controller.new_section(30, 39, (0, 0, 0))
         self.controller.remove_sections([])
         self.assertRaises(KeyError, self.controller.remove_sections, [''])
         self.controller.remove_sections([s2_id, s3_id])
@@ -116,7 +115,7 @@ class TestRemovingSections(unittest.TestCase):
         self.controller.remove_sections([s4_id])
 
     def test_setting_color_for_deleted_section(self):
-        section_id = self.controller.new_section(1, 1)
+        section_id = self.controller.new_section(1, 1, (0, 0, 0))
         self.controller.remove_all_sections()
         self.assertRaises(KeyError, self.controller.set_color, (0, 0, 0), section_id)
 
@@ -134,7 +133,7 @@ class TestEditingSections(unittest.TestCase):
         self.controller.remove_all_sections()
 
     def test_length(self):
-        section_id = self.controller.new_section(0, 100)
+        section_id = self.controller.new_section(0, 100, (0, 0, 0))
         self.controller.edit_section(section_id, 20, 100)
         self.assertEqual(
             self.controller.strip_length,
@@ -144,7 +143,7 @@ class TestEditingSections(unittest.TestCase):
 
     def test_colors(self):
         color = (1, 2, 3)
-        section_id = self.controller.new_section(0, 100)
+        section_id = self.controller.new_section(0, 100, (0, 0, 0))
         self.controller.edit_section(section_id, 20, 100)
         self.controller.set_color(color, section_id)
         self.controller.render()

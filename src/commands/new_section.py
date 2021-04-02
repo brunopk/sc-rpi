@@ -1,5 +1,6 @@
 from command import Command
 from jsonschema import Draft7Validator
+from webcolors import hex_to_rgb
 from error import Overlapping, ParseError, ValidationError, ExecutionError
 
 
@@ -83,7 +84,9 @@ class NewSection(Command):
 
         for s in self.args['sections']:
             try:
-                ids.append(self.controller.new_section(s['start'], s['end'], s['color']))
+                color = hex_to_rgb(s['color'])
+                color = (int(color[0]), int(color[1]), int(color[2]))
+                ids.append(self.controller.new_section(s['start'], s['end'], color))
             except Overlapping:
                 error = ExecutionError('section overlapping')
                 break

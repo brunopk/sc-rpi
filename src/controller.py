@@ -1,9 +1,9 @@
 import logging
-from typing import List
-from webcolors import rgb_to_hex, hex_to_rgb
+from typing import List, Tuple
+from webcolors import rgb_to_hex
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
-from error import Overlapping
+from error import Overlapping, AlreadyOn
 from uuid import uuid1
 from utils import bool
 
@@ -11,10 +11,11 @@ from utils import bool
 class Section:
 
     # noinspection PyShadowingBuiltins
-    def __init__(self, id: str, indexes: tuple, color_list: List[tuple]):
+    def __init__(self, id: str, is_on: bool, limits: tuple, color_list: List[tuple]):
         self.id = id
-        self.indexes = indexes
+        self.indexes = limits
         self.color_list = color_list
+        self.is_on = is_on
 
     def get_id(self) -> str:
         return self.id
@@ -25,10 +26,14 @@ class Section:
     def get_color_list(self) -> List[tuple]:
         return self.color_list
 
+    def is_on(self) -> bool:
+        return self.is_on
+
 
 class SectionManager:
 
-    def _insert_section(self, section_id: str, start: int, end: int, color_list):
+    # noinspection PyShadowingBuiltins
+    def _insert_section(self, id: str, start: int, end: int, color_list):
         """
         :raise ValueError: if start > end
         :raise Overlapping: if the new section overlaps another section
@@ -50,32 +55,40 @@ class SectionManager:
                     index = i
         index = 0 if index is None else index
 
-        self.ids.insert(index, section_id)
+        self.is_on.insert(index, True)
+        self.ids.insert(index, id)
         self.color_list.insert(index, color_list)
-        self.color_list_by_id[section_id] = color_list
-        self.limits_by_id[section_id] = (start, end)
         self.limits.insert(index, (start, end))
+        self.color_list_by_id[id] = color_list
+        self.limits_by_id[id] = (start, end)
+        self.is_on_by_id[id] = True
 
-    def _remove_section(self, section_id: str):
+    def _remove_section(self, id: str):
         """
         :raise KeyError: if section don't exist
         """
-        t = self.limits_by_id[section_id]
+        t = self.limits_by_id[id]
         i = self.limits.index(t)
         del self.ids[i]
         del self.color_list[i]
-        del self.limits_by_id[section_id]
         del self.limits[i]
+        del self.is_on[i]
+        del self.color_list_by_id[id]
+        del self.limits_by_id[id]
+        del self.is_on_by_id[id]
 
     def __init__(self, config: ConfigParser):
         self.strip_length = int(config['PIXEL_STRIP'].get('n'))
         self.config = config
         self.ids = []
         self.color_list = []
+        self.limits = []
+        self.is_on = []
         self.color_list_by_id = {}
         self.limits_by_id = {}
-        self.limits = []
+        self.is_on_by_id = {}
 
+    # noinspection PyShadowingBuiltins
     def edit_section(self, id: str, new_start: int = None, new_end: int = None, new_color_list: List[tuple] = None):
         """
         Edits a section
@@ -84,31 +97,31 @@ class SectionManager:
         :raise ValueError: if start > end
         :raise Overlapping: if the new section overlaps another section
         """
-
-        section_id = id
-
         try:
-            index = self.ids.index(section_id)
+            index = self.ids.index(id)
         except ValueError:
             raise KeyError()
 
-        start, end = self.limits_by_id[section_id]
-        new_start = new_start if new_start is not None else self.limits_by_id[section_id][0]
-        new_end = new_end if new_end is not None else self.limits_by_id[section_id][1]
+        new_start = new_start if new_start is not None else self.limits_by_id[id][0]
+        new_end = new_end if new_end is not None else self.limits_by_id[id][1]
         if new_color_list is not None:
             if len(new_color_list) != new_end - new_start + 1:
                 raise ValueError('length of the color list does not match the new size of the section')
         else:
-            color_list = self.color_list_by_id[section_id]
+            color_list = self.color_list_by_id[id]
             new_color_list = [color_list[0]] * (new_end - new_start + 1)
 
-        self.limits.remove((start, end))
-        self.ids.remove(section_id)
+        del self.ids[index]
         del self.color_list[index]
+        del self.limits[index]
+        del self.is_on [index]
+        del self.color_list_by_id[id]
+        del self.limits_by_id[id]
+        del self.is_on_by_id[id]
 
-        self._insert_section(section_id, new_start, new_end, new_color_list)
+        self._insert_section(id, new_start, new_end, new_color_list)
 
-    def new_section(self, start: int, end: int, color: str) -> str:
+    def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
         """
         Define a new section
 
@@ -116,10 +129,21 @@ class SectionManager:
         :raise Overlapping: if the new section overlaps another section
         """
         section_id = str(uuid1())
-        color = hex_to_rgb(color)
-        color_list = [(color[0], color[1], color[2])] * (end - start + 1)
+        color_list = [color] * (end - start + 1)
         self._insert_section(section_id, start, end, color_list)
         return section_id
+
+    # noinspection PyShadowingBuiltins
+    def set_section_on(self, id: str):
+        """
+        :raise AlreadyOn: if section is already on
+        :raise KeyError: if section do not exist
+        """
+        if id not in self.ids:
+            raise KeyError()
+        index = self.ids.index(id)
+        self.is_on_by_id[id] = True
+        self.is_on.insert(index, True)
 
     def set_color(self, section_id: str, color_list: List[tuple]):
         """
@@ -146,13 +170,16 @@ class SectionManager:
         :param id: identifier of the section to look for
         :raises KeyError: if the section is not defined
         """
-        return Section(id, self.limits_by_id[id], self.color_list_by_id[id])
+        return Section(id, self.is_on_by_id[id], self.limits_by_id[id], self.color_list_by_id[id])
 
     def list_sections(self) -> List[Section]:
         """
         Returns all sections ordered by their respective (start, end) limits
         """
-        return [Section(self.ids[i], self.limits[i], self.color_list[i]) for i in range(len(self.limits))]
+        return [
+            Section(self.ids[i], self.is_on[i], self.limits[i], self.color_list[i])
+            for i in range(len(self.limits))
+        ]
 
     def remove_all_sections(self):
         """
@@ -160,9 +187,11 @@ class SectionManager:
         """
         self.ids = []
         self.color_list = []
+        self.limits = []
+        self.is_on = []
         self.color_list_by_id = {}
         self.limits_by_id = {}
-        self.limits = []
+        self.is_on_by_id = {}
 
     def remove_sections(self, sections: List[str]):
         """
@@ -216,14 +245,13 @@ class Controller:
             raise Exception('Cannot initialize controller, channel was not set in config.ini')
 
         self.strip_length = n
-        # Create NeoPixel object with appropriate configuration.
         self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
         self.logger = logging.getLogger(str(self.__class__))
         self.section_manager = SectionManager(config)
-        # Initialize the library (must be called once before other functions).
+        self.is_on = True
         self.strip.begin()
 
-    def new_section(self, start: int, end: int, color: str) -> str:
+    def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
         """
         Defines a new section on the strip
 
@@ -236,18 +264,19 @@ class Controller:
         """
         return self.section_manager.new_section(start, end, color)
 
-    def edit_section(self, section_id: str, start: int = None, end: int = None, color_list: List[tuple] = None):
+    # noinspection PyShadowingBuiltins
+    def edit_section(self, id: str, start: int = None, end: int = None, color_list: List[tuple] = None):
         """
         Changes the start position and/or end position and/or each color of each led of the specified section
 
-        :param section_id: id of the section that will be edited
+        :param id: id of the section that will be edited
         :param start: new start position for the section
         :param end: new end position for the section
         :param color_list: color for each led in the section
         :raises KeyError: if section with section_id is not defined
         :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
-        return self.section_manager.edit_section(section_id, start, end, color_list)
+        return self.section_manager.edit_section(id, start, end, color_list)
 
     def get_section(self, section_id: str) -> Section:
         """
@@ -303,20 +332,37 @@ class Controller:
             result = [(0, 0, 0)] * sections[0].get_limits()[0]
             if S > 1:
                 for i in range(S - 1):
-                    result += sections[i].get_color_list()
+                    color_list = sections[i].get_color_list()
+                    result += color_list if sections[i].is_on() else [(0, 0, 0)] * len(color_list)
                     result += [(0, 0, 0)] * (sections[i + 1].get_limits()[0] - sections[i].get_limits()[1] - 1)
                 result += sections[-1].get_color_list()
             else:
-                result += sections[0].get_color_list()
+                color_list = sections[0].get_color_list()
+                result += color_list if sections[0].is_on() else [(0, 0, 0)] * len(color_list)
             result = result + [(0, 0, 0)] * (N - sections[-1].get_limits()[1] - 1)
 
         return result
+
+    def turn_on(self, section_id: str = None):
+        """
+        Turns on the entire strip or an specific section
+
+        :raise AlreadyOn: if the strip (or the section) is already on
+        :raise KeyError: if section do not exist
+        """
+        if section_id is None:
+            if self.is_on:
+                raise AlreadyOn()
+            self.is_on = True
+        else:
+            self.section_manager.set_section_on(section_id)
 
     def status(self) -> dict:
         return {
             'strip_length': self.strip_length,
             'current_sections': [{
                 'id': s.get_id(),
+                'is_on': s.is_on(),
                 'color': rgb_to_hex(s.get_color_list()[0]),
                 'limits': {
                     'start': s.get_limits()[0],
