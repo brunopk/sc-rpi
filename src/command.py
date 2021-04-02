@@ -1,32 +1,12 @@
 from importlib import import_module
 from json import loads
-from typing import List, Union, Optional
-from jsonschema import Draft7Validator, ValidationError
+from typing import Optional
+from jsonschema import Draft7Validator
 from os.path import abspath, isfile, join, dirname
 from os import listdir
 from inflector import Inflector
 from controller import Controller
-
-
-def get_path(e: ValidationError) -> str:
-    return f'arguments.{".".join([e for e in e.absolute_path])}'
-
-
-class ParseError(Exception):
-
-    def __init__(self, errors: List[Union[ValidationError, str]]):
-        aux1 = [f'error in {get_path(e)} : {e.message}' for e in errors if isinstance(e, ValidationError)]
-        aux2 = [e for e in errors if isinstance(e, str)]
-        self.errors = aux1 if len(aux1) > 0 else aux2
-
-
-class ExecutionError(Exception):
-
-    def __init__(self, msg: str):
-        self.msg = msg
-
-    def get_msg(self):
-        return self.msg
+from error import ParseError
 
 
 class Command:
@@ -60,7 +40,7 @@ class Command:
 
     def validate_arguments(self):
         """
-        Raises ParseError exception if command don't pass validations
+        :raise ValidationError:
         """
         raise NotImplemented()
 
@@ -111,7 +91,7 @@ class CommandParser:
 
     def parse(self, json: str) -> Command:
         """
-        Parse and validates a JSON stringified representation of a command
+        Parse JSON stringified representation of a command
         :param json: JSON stringified representation of the command
         :return: the corresponding command instance represented in the stringified JSON
         :raises ParseError: in case of parsing an invalid command
@@ -132,6 +112,5 @@ class CommandParser:
 
         if 'args' in json.keys():
             cmd.set_arguments(json['args'])
-            cmd.validate_arguments()
 
         return cmd

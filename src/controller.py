@@ -1,8 +1,9 @@
 import logging
 from typing import List
-from webcolors import rgb_to_hex
+from webcolors import rgb_to_hex, hex_to_rgb
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
+from error import Overlapping
 from uuid import uuid1
 from utils import bool
 
@@ -27,7 +28,28 @@ class Section:
 
 class SectionManager:
 
-    def _insert_section(self, section_id: str, index: int, start: int, end: int, color_list):
+    def _insert_section(self, section_id: str, start: int, end: int, color_list):
+        """
+        :raise ValueError: if start > end
+        :raise Overlapping: if the new section overlaps another section
+        """
+        index = None
+        if end < start or start < 0 or end > self.strip_length:
+            raise ValueError('section not defined correctly')
+        for i, v in enumerate(self.limits):
+            if v[0] < start < v[1] or v[0] < end < v[1]:
+                raise Overlapping()
+            if i < len(self.limits) - 1:
+                if self.limits[i][0] < start and end < self.limits[i + 1][0]:
+                    index = i + 1
+                    break
+            elif index is None:
+                if start > self.limits[i][1]:
+                    index = i + 1
+                else:
+                    index = i
+        index = 0 if index is None else index
+
         self.ids.insert(index, section_id)
         self.color_list.insert(index, color_list)
         self.color_list_by_id[section_id] = color_list
@@ -45,33 +67,6 @@ class SectionManager:
         del self.limits_by_id[section_id]
         del self.limits[i]
 
-    def _get_index(self, start: int, end: int):
-        """
-        Get index position in the self.ids (same for self.color_list and self.limits)
-        array of the section defined by [start, end]
-
-        :raises ValueError: if limits are not defined correctly (section overlapping, etc)
-        """
-
-        index = None
-
-        if end < start or start < 0 or end > self.strip_length:
-            raise ValueError('section not defined correctly')
-        for i, v in enumerate(self.limits):
-            if v[0] < start < v[1] or v[0] < end < v[1]:
-                raise ValueError('overlapping error')
-            if i < len(self.limits) - 1:
-                if self.limits[i][0] < start and end < self.limits[i + 1][0]:
-                    index = i + 1
-                    break
-            elif index is None:
-                if start > self.limits[i][1]:
-                    index = i + 1
-                else:
-                    index = i
-
-        return 0 if index is None else index
-
     def __init__(self, config: ConfigParser):
         self.strip_length = int(config['PIXEL_STRIP'].get('n'))
         self.config = config
@@ -81,17 +76,16 @@ class SectionManager:
         self.limits_by_id = {}
         self.limits = []
 
-    def edit_section(self,
-                     section_id: str,
-                     new_start: int = None,
-                     new_end: int = None,
-                     new_color_list: List[tuple] = None):
+    def edit_section(self, id: str, new_start: int = None, new_end: int = None, new_color_list: List[tuple] = None):
         """
-        Edit section
+        Edits a section
 
-        :raises KeyError: if section not exist
-        :raises ValueError: if limits are defined correctly (section overlapping, etc)
+        :raise KeyError: if section not exist
+        :raise ValueError: if start > end
+        :raise Overlapping: if the new section overlaps another section
         """
+
+        section_id = id
 
         try:
             index = self.ids.index(section_id)
@@ -112,19 +106,19 @@ class SectionManager:
         self.ids.remove(section_id)
         del self.color_list[index]
 
-        index = self._get_index(new_start, new_end)
-        self._insert_section(section_id, index, new_start, new_end, new_color_list)
+        self._insert_section(section_id, new_start, new_end, new_color_list)
 
-    def new_section(self, start: int, end: int) -> str:
+    def new_section(self, start: int, end: int, color: str) -> str:
         """
-        Creates new section
+        Define a new section
 
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :raise ValueError: if start > end
+        :raise Overlapping: if the new section overlaps another section
         """
         section_id = str(uuid1())
-        color_list = [(0, 0, 0)] * (end - start + 1)
-        index = self._get_index(start, end)
-        self._insert_section(section_id, index, start, end, color_list)
+        color = hex_to_rgb(color)
+        color_list = [(color[0], color[1], color[2])] * (end - start + 1)
+        self._insert_section(section_id, start, end, color_list)
         return section_id
 
     def set_color(self, section_id: str, color_list: List[tuple]):
@@ -174,7 +168,7 @@ class SectionManager:
         """
         Removes sections by id
         :param sections: list of section ids to be removed
-        :raise KeyError: if some section don't exist
+        :raise KeyError: if any of the sections in the 'sections' is not defined
         """
         # test if all sections are defined
         invalid_section_id = None
@@ -187,7 +181,7 @@ class SectionManager:
             for section_id in sections:
                 self._remove_section(section_id)
         else:
-            raise KeyError(f'section {section_id} is not defined')
+            raise KeyError(f'section {invalid_section_id} is not defined')
 
 
 class Controller:
@@ -229,16 +223,18 @@ class Controller:
         # Initialize the library (must be called once before other functions).
         self.strip.begin()
 
-    def new_section(self, start: int, end: int) -> str:
+    def new_section(self, start: int, end: int, color: str) -> str:
         """
         Defines a new section on the strip
 
         :param start: start position of the section
         :param end: end position of the section
-        :return: uuid of the section
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :param color: color for each led in the section
+        :raise ValueError: if start > end
+        :raise Overlapping: if the new section overlaps another section
+        :return: id of the new section
         """
-        return self.section_manager.new_section(start, end)
+        return self.section_manager.new_section(start, end, color)
 
     def edit_section(self, section_id: str, start: int = None, end: int = None, color_list: List[tuple] = None):
         """

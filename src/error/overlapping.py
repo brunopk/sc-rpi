@@ -1,0 +1,2 @@
+class Overlapping(Exception):
+    pass

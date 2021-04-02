@@ -1,5 +1,6 @@
 from utils import parse_color
-from command import Command, ParseError, ExecutionError
+from command import Command
+from error import ParseError, ExecutionError
 from jsonschema import Draft7Validator
 
 

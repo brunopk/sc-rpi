@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from command import CommandParser, ParseError, ExecutionError
+from command import CommandParser
 from network import NetworkManager, ClientDisconnected
 from response import Response
+from error import ParseError, ExecutionError, ValidationError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller
@@ -10,7 +11,7 @@ from configparser import ConfigParser
 from logging.handlers import RotatingFileHandler
 from logging import Formatter, basicConfig, getLogger
 
-# TODO: allow new_section command to add multiple sections and set color
+# TODO: rename new_section -> section_add, edit_section -> section_edit, remove_section -> section_del
 # TODO: remove set_color command
 # TODO: new command to turn on/off sections or the entire strip
 
@@ -51,6 +52,7 @@ if __name__ == '__main__':
                     req = network_manager.receive()
                     cmd = parser.parse(req)
                     if not isinstance(cmd, Disconnect):
+                        cmd.validate_arguments()
                         result = ctrl.exec_cmd(cmd)
                         response = Response(HTTPStatus.OK, result)
                         network_manager.send(response)
@@ -60,6 +62,10 @@ if __name__ == '__main__':
                 except ParseError as e:
                     logger.warning('Invalid command received')
                     response = Response(HTTPStatus.BAD_REQUEST, e.errors)
+                    network_manager.send(response)
+                except ValidationError as e:
+                    logger.warning('Invalid command received')
+                    response = Response(HTTPStatus.BAD_REQUEST, e.get_msg())
                     network_manager.send(response)
                 except ExecutionError as e:
                     response = Response(HTTPStatus.CONFLICT, {'error': e.get_msg()})
