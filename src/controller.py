@@ -3,7 +3,7 @@ from typing import List, Tuple
 from webcolors import rgb_to_hex
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
-from error import Overlapping, AlreadyOn
+from error import Overlapping, AlreadyOn, AlreadyOff
 from uuid import uuid1
 from utils import bool
 
@@ -144,6 +144,18 @@ class SectionManager:
         index = self.ids.index(id)
         self.is_on_by_id[id] = True
         self.is_on.insert(index, True)
+
+    # noinspection PyShadowingBuiltins
+    def set_section_off(self, id: str):
+        """
+        :raise AlreadyOff: if section is already off
+        :raise KeyError: if section do not exist
+        """
+        if id not in self.ids:
+            raise KeyError()
+        index = self.ids.index(id)
+        self.is_on_by_id[id] = False
+        self.is_on.insert(index, False)
 
     def set_color(self, section_id: str, color_list: List[tuple]):
         """
@@ -356,6 +368,20 @@ class Controller:
             self.is_on = True
         else:
             self.section_manager.set_section_on(section_id)
+
+    def turn_off(self, section_id: str = None):
+        """
+        Turns off the entire strip or an specific section
+
+        :raise AlreadyOff: if the strip (or the section) is already off
+        :raise KeyError: if section do not exist
+        """
+        if section_id is None:
+            if not self.is_on:
+                raise AlreadyOff()
+            self.is_on = False
+        else:
+            self.section_manager.set_section_off(section_id)
 
     def status(self) -> dict:
         return {
