@@ -4,7 +4,7 @@ from error import ParseError, ExecutionError
 from jsonschema import Draft7Validator
 
 
-class RemoveSections(Command):
+class SectionRemove(Command):
 
     def __init__(self):
         super().__init__()

@@ -35,7 +35,7 @@ def test_overlapping(list):
         return list
 
 
-class NewSection(Command):
+class SectionAdd(Command):
 
     def __init__(self):
         super().__init__()
