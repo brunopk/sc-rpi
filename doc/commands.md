@@ -119,26 +119,36 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
   
-## `new_section`
+## `section_add`
 
 - What it does: defines a new section (portion of the strip).
 - Example:
     ```json
     {
-      "name": "new_section",
+      "name": "section_add",
       "args": {
-        "start": 1,
-        "end": 50
+        "sections": [{
+            "start": 0,
+            "end": 149,
+            "color": "#ff0000"
+         }, {
+            "start": 150,
+            "end": 299,
+            "color": "#00ff00"
+        }]
       }
     }
     ```
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
+      "status": 200, 
+      "message": "OK", 
       "result": {
-        "id": "123e4567-e89b-12d3-a456-426614174000"        
+          "sections": [
+            "0a4e9568-940f-11eb-8de4-b827eb95e032", 
+            "0a4ea54e-940f-11eb-8de4-b827eb95e032"
+          ]
       }
     }
     ```
