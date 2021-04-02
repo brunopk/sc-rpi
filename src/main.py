@@ -11,10 +11,6 @@ from configparser import ConfigParser
 from logging.handlers import RotatingFileHandler
 from logging import Formatter, basicConfig, getLogger
 
-# TODO: rename new_section -> section_add, edit_section -> section_edit, remove_section -> section_del
-# TODO: remove set_color command
-# TODO: new command to turn on/off sections or the entire strip
-
 if __name__ == '__main__':
 
     config = ConfigParser()
