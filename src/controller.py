@@ -89,7 +89,7 @@ class SectionManager:
         self.is_on_by_id = {}
 
     # noinspection PyShadowingBuiltins
-    def edit_section(self, id: str, new_start: int = None, new_end: int = None, new_color_list: List[tuple] = None):
+    def edit_section(self, id: str, new_start: int = None, new_end: int = None, color: Tuple[int, int, int] = None):
         """
         Edits a section
 
@@ -104,9 +104,8 @@ class SectionManager:
 
         new_start = new_start if new_start is not None else self.limits_by_id[id][0]
         new_end = new_end if new_end is not None else self.limits_by_id[id][1]
-        if new_color_list is not None:
-            if len(new_color_list) != new_end - new_start + 1:
-                raise ValueError('length of the color list does not match the new size of the section')
+        if color is not None:
+            new_color_list = [color] * (new_end - new_start + 1)
         else:
             color_list = self.color_list_by_id[id]
             new_color_list = [color_list[0]] * (new_end - new_start + 1)
@@ -277,18 +276,18 @@ class Controller:
         return self.section_manager.new_section(start, end, color)
 
     # noinspection PyShadowingBuiltins
-    def edit_section(self, id: str, start: int = None, end: int = None, color_list: List[tuple] = None):
+    def edit_section(self, id: str, start: int = None, end: int = None, color: Tuple[int, int, int] = None):
         """
         Changes the start position and/or end position and/or each color of each led of the specified section
 
         :param id: id of the section that will be edited
         :param start: new start position for the section
         :param end: new end position for the section
-        :param color_list: color for each led in the section
+        :param color: color for each led in the section
         :raises KeyError: if section with section_id is not defined
         :raises ValueError: if limits are defined correctly (also in case of section overlapping)
         """
-        return self.section_manager.edit_section(id, start, end, color_list)
+        return self.section_manager.edit_section(id, start, end, color)
 
     def get_section(self, section_id: str) -> Section:
         """
@@ -298,21 +297,6 @@ class Controller:
         :raises KeyError: if the section is not defined
         """
         return self.section_manager.get_section(section_id)
-
-    def set_color(self, color: tuple, section_id: str = None):
-        """
-        Sets the same color for all LEDs in the strip or for LEDs in a specific section
-
-        :param color: the new color
-        :param section_id: if it is defined, sets the color ONLY for LEDs in that section
-        :raises KeyError: if section with section_id is not defined
-        """
-        if section_id is None:
-            self.current_color = color
-        else:
-            section = self.section_manager.get_section(section_id)
-            new_color_list = [color] * (section.get_limits()[1] - section.get_limits()[0] + 1)
-            self.section_manager.set_color(section_id, new_color_list)
 
     def remove_sections(self, sections: List[str]):
         """

@@ -1,9 +1,9 @@
 from re import match
 from webcolors import hex_to_rgb
-#from rpi_ws281x import Color
+from typing import Tuple
 
 
-def parse_color(c: str):
+def parse_color(c: str) -> Tuple[int, int, int]:
     """
     Parse and returns the corresponding color
 
