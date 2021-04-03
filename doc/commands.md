@@ -58,9 +58,9 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     ```
 
 
-## `edit_section`
+## `section_edit`
 
-- What it does: changes attributes of a section (see `new_section`).
+- What it does: changes attributes of a section (see `section_new`).
 - Required arguments:
     - `id` : id of the section to edit
 - Example 1:
@@ -153,13 +153,13 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
   
-## `remove_sections`
+## `section_remove`
 
-- What it does: removes sections specified by id.
+- What it does: removes specific sections by id (or all sections).
 - Example:
     ```json
     {
-      "name": "remove_sections",
+      "name": "section_remove",
       "args": {
         "sections": [
           "123e4567-e89b-12d3-a456-42661417400",
