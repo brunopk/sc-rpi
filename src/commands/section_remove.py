@@ -14,10 +14,12 @@ class SectionRemove(Command):
             "properties": {
                 "sections": {
                     "type": "array",
-                    "items": "strings"
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
-            "required": ["section_id"]
+            "required": ["sections"]
         }
         self.sections = None
         self.validator = Draft7Validator(arguments_schema)
@@ -32,8 +34,8 @@ class SectionRemove(Command):
         try:
             self.controller.remove_sections(self.sections)
             self.controller.render()
-        except KeyError:
-            raise ExecutionError(f'section {self.args["section_id"]} is not defined')
+        except KeyError as ex:
+            raise ExecutionError(str(ex))
         except Exception as ex:
             raise ExecutionError(str(ex))
 
