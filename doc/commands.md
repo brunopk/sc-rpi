@@ -121,7 +121,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
   
 ## `section_add`
 
-- What it does: defines a new section (portion of the strip).
+- What it does: defines a new section.
 - Example:
     ```json
     {
@@ -155,7 +155,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
   
 ## `section_remove`
 
-- What it does: removes specific sections by id (or all sections).
+- What it does: removes sections by id.
 - Example:
     ```json
     {
