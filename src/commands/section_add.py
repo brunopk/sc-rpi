@@ -99,4 +99,5 @@ class SectionAdd(Command):
             self.controller.remove_sections(ids)
             raise error
 
+        self.controller.render()
         return {'sections': ids}
