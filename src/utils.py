@@ -13,7 +13,7 @@ def parse_color(c: str) -> Tuple[int, int, int]:
     """
     try:
         c = hex_to_rgb(c)
-        (red, blue, green) = c.red, c.green, c.blue
+        (red, green, blue) = c.red, c.green, c.blue
     except ValueError as e:
         regex_rgb = r"^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$"
         _match = match(regex_rgb, c)
