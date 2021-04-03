@@ -13,21 +13,9 @@ class Section:
     # noinspection PyShadowingBuiltins
     def __init__(self, id: str, is_on: bool, limits: tuple, color_list: List[tuple]):
         self.id = id
-        self.indexes = limits
+        self.limits = limits
         self.color_list = color_list
         self.is_on = is_on
-
-    def get_id(self) -> str:
-        return self.id
-
-    def get_limits(self) -> tuple:
-        return self.indexes
-
-    def get_color_list(self) -> List[tuple]:
-        return self.color_list
-
-    def is_on(self) -> bool:
-        return self.is_on
 
 
 class SectionManager:
@@ -325,17 +313,17 @@ class Controller:
         S = len(sections)
 
         if S > 0:
-            result = [(0, 0, 0)] * sections[0].get_limits()[0]
+            result = [(0, 0, 0)] * sections[0].limits[0]
             if S > 1:
                 for i in range(S - 1):
-                    color_list = sections[i].get_color_list()
-                    result += color_list if sections[i].is_on() else [(0, 0, 0)] * len(color_list)
-                    result += [(0, 0, 0)] * (sections[i + 1].get_limits()[0] - sections[i].get_limits()[1] - 1)
-                result += sections[-1].get_color_list()
+                    color_list = sections[i].color_list
+                    result += color_list if sections[i].is_on else [(0, 0, 0)] * len(color_list)
+                    result += [(0, 0, 0)] * (sections[i + 1].limits[0] - sections[i].limits[1] - 1)
+                result += sections[-1].color_list
             else:
-                color_list = sections[0].get_color_list()
-                result += color_list if sections[0].is_on() else [(0, 0, 0)] * len(color_list)
-            result = result + [(0, 0, 0)] * (N - sections[-1].get_limits()[1] - 1)
+                color_list = sections[0].color_list
+                result += color_list if sections[0].is_on else [(0, 0, 0)] * len(color_list)
+            result = result + [(0, 0, 0)] * (N - sections[-1].limits[1] - 1)
 
         return result
 
@@ -371,12 +359,12 @@ class Controller:
         return {
             'strip_length': self.strip_length,
             'current_sections': [{
-                'id': s.get_id(),
-                'is_on': s.is_on(),
-                'color': rgb_to_hex(s.get_color_list()[0]),
+                'id': s.id,
+                'is_on': s.is_on,
+                'color': rgb_to_hex(s.color_list[0]),
                 'limits': {
-                    'start': s.get_limits()[0],
-                    'end': s.get_limits()[1]
+                    'start': s.limits[0],
+                    'end': s.limits[1]
                 }
             } for s in self.section_manager.list_sections()]
         }
