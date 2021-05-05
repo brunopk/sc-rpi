@@ -2,7 +2,7 @@
 
 Commands are represented as stringified JSONs and sent in the body section of the [SCP protocol](/doc/SCP_Protocol.md), so this is an example of a wrong command representation:
 
-`{"name": "set_color"}` 
+`{name: "set_color"}` 
 
 And this is an example of a good command representation:
 
@@ -17,7 +17,7 @@ All commands MUST follow this schema:
 }
 ```
 
-where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an objecy.
+where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an object.
 
 They are defined and implemented on the [`src/commands/`](../src/commands) directory. Currently the available commands (command names) are: 
 
@@ -56,7 +56,79 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
       "result": {}
     }
     ```
+  
+  
+## `status`
 
+- What it does: returns information of the current status of the system.
+- Example:
+    ```json
+    {
+      "name": "status"
+    }
+    ```
+- Returns: 
+    ```json
+    {
+      "status": 200,
+      "message": "OK",
+      "result": {
+        "number_of_led": 300,
+        "sections": [{
+          "id":  "123e4567-e89b-12d3-a456-42661417400",
+          "color": "#AABBCC",
+          "limits": {
+            "start": 0,
+            "end": 100
+          }
+        }]   
+      }
+    }
+    ```
+
+## turn_on
+
+- What it does: turns on specific sections or the whole strip
+
+- Example 1:
+    ```json
+    {
+      "name": "turn_on"
+    }
+    ```
+
+- Example 2:
+
+    ```json
+    {
+      "name": "turn_on",
+      "args": {
+        "section_id": "123e4567-e89b-12d3-a456-426614174000"
+      }
+    }
+    ```
+
+## turn_off
+
+- What it does: turns off specific sections or the whole strip
+
+- Example 1:
+    ```json
+    {
+      "name": "turn_off"
+    }
+    ```
+
+- Example 2:
+
+    ```json
+    {
+      "name": "turn_off",
+      "args": {
+        "section_id": "123e4567-e89b-12d3-a456-426614174000"
+      }
+    }
+    ```
 
 ## `section_edit`
 
@@ -119,6 +191,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
   
+
 ## `section_add`
 
 - What it does: defines a new section.
@@ -153,6 +226,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
   
+
 ## `section_remove`
 
 - What it does: removes sections by id.
@@ -176,53 +250,5 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
       "result": {}
     }
     ```
-
-## `status`
-
-- What it does: returns information of the current status of the system.
-- Example:
-    ```json
-    {
-      "name": "status"
-    }
-    ```
-- Returns: 
-    ```json
-    {
-      "status": 200,
-      "message": "OK",
-      "result": {
-        "number_of_led": 300,
-        "sections": [{
-          "id":  "123e4567-e89b-12d3-a456-42661417400",
-          "color": "#AABBCC",
-          "limits": {
-            "start": 0,
-            "end": 100
-          }
-        }]   
-      }
-    }
-    ```
   
-## `set_color`
-
-- What it does: changes color for all the LEDs or for LEDs in a specific section (see `new_section`).
-- Example:
-    ```json
-    {
-      "name": "set_color",
-      "args": {
-        "section": "123e4567-e89b-12d3-a456-42661417400",
-        "color": "#AABBCC"
-      }
-    }
-    ```
-- Returns: 
-    ```json
-    {
-      "status": 200,
-      "message": "OK",
-      "result": {}
-    }
-    ```
+ 
