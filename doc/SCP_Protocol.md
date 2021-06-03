@@ -4,7 +4,7 @@ It works over TCP and it's a simplification of HTTP. Its main purpose is to mana
 
 ## Connection
 
-The only thing to do to establish connection with [sc-rpi](https://github.com/brunopk/sc-rpi), is to open a TCP connection on port 8080 (defined in [`config.ini`](../config.ini))
+To communicate with [sc-rpi](https://github.com/brunopk/sc-rpi), connect to port 8080 (defined in [`config.ini`](../config.ini)) on the host where [sc-rpi](https://github.com/brunopk/sc-rpi) is running. 
 
 ## Messages
 
