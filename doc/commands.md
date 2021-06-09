@@ -2,11 +2,11 @@
 
 Commands are represented as stringified JSONs and sent in the body section of the [SCP protocol](/doc/SCP_Protocol.md), so this is an example of a wrong command representation:
 
-`{name: "set_color"}` 
+`{name: "cmd"}` 
 
 And this is an example of a good command representation:
 
-`{"name": "set_color"}`
+`{"name": "cmd"}`
 
 All commands MUST follow this schema:
 
@@ -18,6 +18,8 @@ All commands MUST follow this schema:
 ```
 
 where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an object.
+
+> Colors in requests and responses are represented with their hex values
 
 They are defined and implemented on the [`src/commands/`](../src/commands) directory. Available commands are: 
 
