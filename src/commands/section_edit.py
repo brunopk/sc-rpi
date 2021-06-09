@@ -22,7 +22,8 @@ class SectionEdit(Command):
                     "type": "integer"
                 },
                 "color": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
                 }
             },
             "required": ["section_id"]
