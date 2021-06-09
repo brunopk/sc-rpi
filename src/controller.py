@@ -27,7 +27,7 @@ class SectionManager:
         :raise Overlapping: if the new section overlaps another section
         """
         index = None
-        if end < start or start < 0 or end > self.strip_length:
+        if end < start or start < 0 or end >= self.strip_length:
             raise ValueError('section not defined correctly')
         for i, v in enumerate(self.limits):
             if v[0] < start < v[1] or v[0] < end < v[1]:
@@ -101,7 +101,7 @@ class SectionManager:
         del self.ids[index]
         del self.color_list[index]
         del self.limits[index]
-        del self.is_on [index]
+        del self.is_on[index]
         del self.color_list_by_id[id]
         del self.limits_by_id[id]
         del self.is_on_by_id[id]
