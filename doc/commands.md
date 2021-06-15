@@ -24,7 +24,9 @@ where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an object.
 They are defined and implemented on the [`src/commands/`](../src/commands) directory. Available commands are: 
 
 - [disconnect](#disconnect)
-- [reset](#commands)
+- [reset](#reset)
+- [turn_on](#turn_on)
+- [turn_off](#turn_off)
 - [section_edit](#section_edit)
 - [section_add](#section_add)
 - [section_remove](#section_remove)
