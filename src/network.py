@@ -31,7 +31,7 @@ class NetworkManager:
         self.tcp_max_queue = int(config['DEFAULT'].get('tcp_max_queue', str(10)))
         self.tcp_max_msg_size = int(config['DEFAULT'].get('tcp_max_msg_size', str(1024)))
         self.tcp_msg_encoding = config['DEFAULT'].get('tcp_msg_encoding', 'UTF-8')
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger('NetworkManager')
         self.skt_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.skt_client = None
         self.end_char = '\n'
