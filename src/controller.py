@@ -245,7 +245,7 @@ class Controller:
 
         self.strip_length = n
         self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
-        self.logger = logging.getLogger(str(self.__class__))
+        self.logger = logging.getLogger('Controller')
         self.section_manager = SectionManager(config)
         self.is_on = True
         self.strip.begin()
