@@ -35,7 +35,7 @@ if __name__ == '__main__':
     handlers = [fileHandler, consoleHandler] if log_on_console else [fileHandler]
     # noinspection PyArgumentList
     basicConfig(level=level, handlers=handlers)
-    logger = getLogger()
+    logger = getLogger('Main')
     logger.info('Starting')
 
     try:
