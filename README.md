@@ -22,6 +22,10 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
+## Logging 
+
+By default, the server logs on the `sc-rpi.log` file (on the root folder) and also in console. To disable console logging, remove the `console` property on the configuration file `config.ini`.
+
 ## Running automatic tests
 
 1. Create a virtual environment (venv) if it's not created yet.

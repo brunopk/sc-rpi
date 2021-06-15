@@ -9,7 +9,7 @@ from commands.disconnect import Disconnect
 from controller import Controller
 from configparser import ConfigParser
 from logging.handlers import RotatingFileHandler
-from logging import Formatter, basicConfig, getLogger
+from logging import Formatter, basicConfig, getLogger, StreamHandler
 
 if __name__ == '__main__':
 
@@ -21,15 +21,20 @@ if __name__ == '__main__':
 
     # Logging configuration
     level = config['LOGGING'].get('level', 'ERROR')
+    log_on_console = config['LOGGING'].get('console', False)
+    log_on_console = log_on_console == '1' or log_on_console == 'True' or log_on_console == 'true'
     filename = config['LOGGING'].get('filename', '/var/log/sc_driver.log')
     max_bytes = int(config['LOGGING'].get('max_bytes', str(1024 * 1024)))
     backup_count = int(config['LOGGING'].get('backup_count', str(5)))
     log_format = '%(asctime)s - %(name)s - %(levelname)s -- %(message)s'
     formatter = Formatter(log_format)
-    handler = RotatingFileHandler(filename, maxBytes=max_bytes, backupCount=backup_count)
-    handler.setFormatter(formatter)
+    fileHandler = RotatingFileHandler(filename, maxBytes=max_bytes, backupCount=backup_count)
+    consoleHandler = StreamHandler()
+    consoleHandler.setFormatter(formatter)
+    fileHandler.setFormatter(formatter)
+    handlers = [fileHandler, consoleHandler] if log_on_console else [fileHandler]
     # noinspection PyArgumentList
-    basicConfig(level=level, handlers=[handler])
+    basicConfig(level=level, handlers=handlers)
     logger = getLogger()
     logger.info('Starting')
 
