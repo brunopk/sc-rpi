@@ -15,7 +15,6 @@ if __name__ == '__main__':
 
     config = ConfigParser()
     config.read('../config.ini')
-    ctrl = Controller(config)
     network_manager = NetworkManager(config)
     parser = CommandParser()
 
@@ -45,6 +44,7 @@ if __name__ == '__main__':
         while True:
 
             network_manager.accept_client()
+            ctrl = Controller(config)
             logger.info('Ready to receive commands from client')
 
             while True:
