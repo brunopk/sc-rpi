@@ -47,6 +47,7 @@ if __name__ == '__main__':
                 try:
                     req = network_manager.receive()
                     cmd = parser.parse(req)
+                    logger.info(f'Command received: {req}')
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
                         result = ctrl.exec_cmd(cmd)
