@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import logging
+import logging.handlers
+
 from command import CommandParser
 from network import NetworkManager, ClientDisconnected
 from response import Response
@@ -8,8 +11,30 @@ from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller
 from configparser import ConfigParser
-from logging.handlers import RotatingFileHandler
-from logging import Formatter, basicConfig, getLogger, StreamHandler
+
+
+def decorate_console_handler_emit(fn):
+    """
+    Based on Stack Overflow post: 
+    https://stackoverflow.com/questions/20706338/color-logging-using-logging-module-in-python
+    """
+    def new(*args):
+        levelno = args[0].levelno
+        if levelno >= logging.CRITICAL:
+            color = '\x1b[31;1m'
+        elif levelno >= logging.ERROR:
+            color = '\x1b[31;1m'
+        elif levelno >= logging.WARNING:
+            color = '\x1b[33;1m'
+        else:
+            color = '\x1b[0m'
+
+        args[0].msg = "{0}{1}\x1b[0m".format(color, args[0].msg)
+        args[0].levelname = "{0}{1}\x1b[0m".format(color, args[0].levelname)
+
+        return fn(*args)
+    return new
+
 
 if __name__ == '__main__':
 
@@ -19,6 +44,7 @@ if __name__ == '__main__':
     parser = CommandParser()
 
     # Logging configuration
+
     level = config['LOGGING'].get('level', 'ERROR')
     log_on_console = config['LOGGING'].get('console', False)
     log_on_console = log_on_console == '1' or log_on_console == 'True' or log_on_console == 'true'
@@ -26,15 +52,19 @@ if __name__ == '__main__':
     max_bytes = int(config['LOGGING'].get('max_bytes', str(1024 * 1024)))
     backup_count = int(config['LOGGING'].get('backup_count', str(5)))
     log_format = '%(asctime)s - %(name)s - %(levelname)s -- %(message)s'
-    formatter = Formatter(log_format)
-    fileHandler = RotatingFileHandler(filename, maxBytes=max_bytes, backupCount=backup_count)
-    consoleHandler = StreamHandler()
-    consoleHandler.setFormatter(formatter)
-    fileHandler.setFormatter(formatter)
-    handlers = [fileHandler, consoleHandler] if log_on_console else [fileHandler]
+    formatter = logging.Formatter(log_format)
+    file_handler = logging.handlers.RotatingFileHandler(
+        filename,
+        maxBytes=max_bytes,
+        backupCount=backup_count)
+    console_handler = logging.StreamHandler()
+    console_handler.emit = decorate_console_handler_emit(console_handler.emit)
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+    handlers = [file_handler, console_handler] if log_on_console else [file_handler]
     # noinspection PyArgumentList
-    basicConfig(level=level, handlers=handlers)
-    logger = getLogger('Main')
+    logging.basicConfig(level=level, handlers=handlers)
+    logger = logging.getLogger('Main')
     logger.info('Starting')
 
     try:
