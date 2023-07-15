@@ -90,7 +90,7 @@ class NetworkManager:
             raise ClientDisconnected()
         else:
             msg += chunk.decode(self.tcp_msg_encoding)
-            logger.info(f'Message received: {msg}')
+            logger.info(f'Message received: {msg[0:-1]}')
             return msg
 
     def send(self, response: Response):
