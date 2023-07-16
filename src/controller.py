@@ -1,9 +1,10 @@
 import logging
 from typing import List, Tuple
 from webcolors import rgb_to_hex
-from rpi_ws281x import PixelStrip, Color
+# from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
-from error import Overlapping, AlreadyOn, AlreadyOff
+from errors import ApiError
+from enums import ErrorCode
 from uuid import uuid1
 from utils import bool
 
@@ -28,10 +29,10 @@ class SectionManager:
         """
         index = None
         if end < start or start < 0 or end >= self.strip_length:
-            raise ValueError('section not defined correctly')
+            raise ApiError(ErrorCode.CONFLICT, 'Section not defined correctly')
         for i, v in enumerate(self.limits):
             if v[0] < start < v[1] or v[0] < end < v[1]:
-                raise Overlapping()
+                raise ApiError(ErrorCode.OVERLAPPING)
             if i < len(self.limits) - 1:
                 if self.limits[i][0] < start and end < self.limits[i + 1][0]:
                     index = i + 1
@@ -244,11 +245,11 @@ class Controller:
             raise Exception('Cannot initialize controller, channel was not set in config.ini')
 
         self.strip_length = n
-        self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
+        # self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
         self.logger = logging.getLogger('Controller')
         self.section_manager = SectionManager(config)
-        self.is_on = True
-        self.strip.begin()
+        self.is_on = False
+        # self.strip.begin()
 
     def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
         """
@@ -380,12 +381,14 @@ class Controller:
             if not self.is_on:
                 self.logger.warning('Strip is turned off (rendering Color(0, 0, 0))')
             for i in range(self.strip_length):
-                self.strip.setPixelColor(i, Color(0, 0, 0))
+                pass
+                # self.strip.setPixelColor(i, Color(0, 0, 0))
         else:
             for i, c in enumerate(colors):
                 self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
 
-        self.strip.show()
+        pass
+        # self.strip.show()
 
     def exec_cmd(self, cmd) -> dict:
         """

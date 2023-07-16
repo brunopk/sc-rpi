@@ -1,7 +1,10 @@
 from utils import parse_color
 from command import Command
-from error import ParseError, ExecutionError
+from errors import ParseError, ApiError
 from jsonschema import Draft7Validator
+
+
+# TODO: SEGUIR REVISANDO SI ESTA TODO BIEN DESPUES DE LOS CAMBIOS DE MANEJO DE ERRORES
 
 
 class SectionEdit(Command):

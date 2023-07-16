@@ -1,0 +1,12 @@
+from enum import Enum
+
+
+class ErrorCode(Enum):
+    ALREADY_OFF = 409
+    ALREADY_ON = 409
+    EXECUTION_ERROR = 500
+    OVERLAPPING = 409
+    VALIDATION_ERROR = 400
+    PARSE_ERROR = 400
+    BAD_REQUEST = 400
+    CONFLICT = 409

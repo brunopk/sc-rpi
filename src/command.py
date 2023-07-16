@@ -6,7 +6,7 @@ from os.path import abspath, isfile, join, dirname
 from os import listdir
 from inflector import Inflector
 from controller import Controller
-from error import ParseError
+from errors import ParseError
 
 
 class Command:

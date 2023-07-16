@@ -6,7 +6,7 @@ import logging.handlers
 from command import CommandParser
 from network import NetworkManager, ClientDisconnected
 from response import Response
-from error import ParseError, ExecutionError, ValidationError
+from errors import ApiError, ParseError, ValidationError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller

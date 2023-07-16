@@ -1,7 +1,8 @@
 from command import Command
 from jsonschema import Draft7Validator
 from webcolors import hex_to_rgb
-from error import Overlapping, ParseError, ValidationError, ExecutionError
+from errors import ParseError, ApiError
+from enums import ErrorCode
 
 
 # noinspection PyShadowingBuiltins
@@ -23,7 +24,7 @@ def test_overlapping(list):
         while i < len(l1) and j < len(l2):
             if l2[j][0] <= l1[i][0] <= l2[j][1] or l2[j][0] <= l1[i][1] <= l2[j][1] or \
                     (l1[i][0] <= l2[j][0] and l1[i][1] >= l2[j][1]):
-                raise Overlapping()
+                raise ApiError(ErrorCode.VALIDATION_ERROR, "Section overlapping")
             elif l1[i][1] < l2[j][0]:
                 result.append(l1[i])
                 i += 1
@@ -74,31 +75,24 @@ class SectionAdd(Command):
         errors = [e for e in self.validator.iter_errors(self.args)]
         if len(errors) > 0:
             raise ParseError(errors)
-        try:
-            test_overlapping([(s['start'], s['end']) for s in self.args['sections']])
-        except Overlapping:
-            raise ValidationError('section overlapping')
+        test_overlapping([(s['start'], s['end']) for s in self.args['sections']])
 
     def exec(self) -> dict:
         ids = []
-        error = None
+        captured_error = None
 
         for s in self.args['sections']:
             try:
                 color = hex_to_rgb(s['color'])
                 color = (int(color[0]), int(color[1]), int(color[2]))
                 ids.append(self.controller.new_section(s['start'], s['end'], color))
-            except Overlapping:
-                error = ExecutionError('section overlapping')
-                break
-            except ValueError:
-                error = ExecutionError('start > end for some section')
-                break
+            except ApiError as e:
+                captured_error = e
 
         # rollback in case of error
-        if error is not None:
+        if captured_error is not None:
             self.controller.remove_sections(ids)
-            raise error
+            raise captured_error
 
         self.controller.render()
         return {'sections': ids}
