@@ -6,12 +6,14 @@ import logging.handlers
 from command import CommandParser
 from network import NetworkManager, ClientDisconnected
 from response import Response
-from errors import ApiError, ParseError, ValidationError
+from errors import ParseError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller
 from configparser import ConfigParser
 
+# TODO: test all commands
+# TODO: try to run all application without `cd src/`
 
 def decorate_console_handler_emit(fn):
     """
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     handlers = [file_handler, console_handler] if log_on_console else [file_handler]
     # noinspection PyArgumentList
     logging.basicConfig(level=level, handlers=handlers)
-    logger = logging.getLogger('Main')
+    logger = logging.getLogger(__name__)
     logger.info('Starting')
 
     try:
@@ -92,7 +94,7 @@ if __name__ == '__main__':
                         break
                 except ParseError as e:
                     logger.warning('Invalid command received')
-                    response = Response(HTTPStatus.BAD_REQUEST, e.errors)
+                    response = Response(400, e.errors)
                     network_manager.send(response)
                 except ValidationError as e:
                     logger.warning('Invalid command received')

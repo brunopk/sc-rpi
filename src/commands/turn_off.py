@@ -1,7 +1,8 @@
 from utils import parse_color
+from jsonschema import Draft7Validator
 from command import Command
 from errors import ParseError, ApiError
-from jsonschema import Draft7Validator
+from enums import ErrorCode
 
 
 class TurnOff(Command):
@@ -26,4 +27,7 @@ class TurnOff(Command):
 
     def exec(self):
         section_id = self.args['section_id'] if 'section_id' in self.args else None
-        self.controller.turn_off(section_id)
+        try:
+            self.controller.turn_off(section_id)
+        except KeyError as e:
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)

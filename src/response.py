@@ -1,9 +1,10 @@
 from json import dumps
+from http import HTTPStatus
 
 
 class Response:
 
-    def __init__(self, status, result: dict):
+    def __init__(self, status: HTTPStatus, result: dict):
         self.status = status
         self.result = result
 

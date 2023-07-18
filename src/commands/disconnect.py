@@ -11,4 +11,3 @@ class Disconnect(Command):
 
     def exec(self) -> dict:
         pass
-

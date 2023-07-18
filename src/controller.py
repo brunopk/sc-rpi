@@ -24,12 +24,11 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def _insert_section(self, id: str, start: int, end: int, color_list):
         """
-        :raise ValueError: if start > end
-        :raise Overlapping: if the new section overlaps another section
+        :raise ApiError: if start > end, start < 0, end >= strip_length or new section overlaps another section
         """
         index = None
         if end < start or start < 0 or end >= self.strip_length:
-            raise ApiError(ErrorCode.CONFLICT, 'Section not defined correctly')
+            raise ApiError(ErrorCode.BAD_REQUEST, 'end < start or start < 0 or end >= strip_length')
         for i, v in enumerate(self.limits):
             if v[0] < start < v[1] or v[0] < end < v[1]:
                 raise ApiError(ErrorCode.OVERLAPPING)
@@ -124,8 +123,7 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def set_section_on(self, id: str):
         """
-        :raise AlreadyOn: if section is already on
-        :raise KeyError: if section do not exist
+        :raise KeyError: if section not exist
         """
         if id not in self.ids:
             raise KeyError()
@@ -136,7 +134,6 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def set_section_off(self, id: str):
         """
-        :raise AlreadyOff: if section is already off
         :raise KeyError: if section do not exist
         """
         if id not in self.ids:
@@ -196,6 +193,7 @@ class SectionManager:
     def remove_sections(self, sections: List[str]):
         """
         Removes sections by id
+
         :param sections: list of section ids to be removed
         :raise KeyError: if any of the sections in the 'sections' is not defined
         """
@@ -273,8 +271,8 @@ class Controller:
         :param start: new start position for the section
         :param end: new end position for the section
         :param color: color for each led in the section
-        :raises KeyError: if section with section_id is not defined
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :raises KeyError: if section is not defined
+        :raises ApiError: if limits are defined correctly (also in case of section overlapping)
         """
         return self.section_manager.edit_section(id, start, end, color)
 
@@ -290,8 +288,9 @@ class Controller:
     def remove_sections(self, sections: List[str]):
         """
         Removes sections by id
+
         :param sections: list of section ids to be removed
-        :raise KeyError: if some section don't exist
+        :raise KeyError: if a section not exist
         """
         self.section_manager.remove_sections(sections)
 
@@ -332,12 +331,12 @@ class Controller:
         """
         Turns on the entire strip or an specific section
 
-        :raise AlreadyOn: if the strip (or the section) is already on
+        :raise ApiError: if the strip is already on (only validated for the whole strip)
         :raise KeyError: if section do not exist
         """
         if section_id is None:
             if self.is_on:
-                raise AlreadyOn()
+                raise ApiError(ErrorCode.ALREADY_ON)
             self.is_on = True
         else:
             self.section_manager.set_section_on(section_id)
@@ -346,12 +345,12 @@ class Controller:
         """
         Turns off the entire strip or an specific section
 
-        :raise AlreadyOff: if the strip (or the section) is already off
+        :raise ApiError: if the strip is already off (only validated for the whole strip)
         :raise KeyError: if section do not exist
         """
         if section_id is None:
             if not self.is_on:
-                raise AlreadyOff()
+                raise ApiError(ErrorCode.ALREADY_OFF)
             self.is_on = False
         else:
             self.section_manager.set_section_off(section_id)

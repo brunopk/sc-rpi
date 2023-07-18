@@ -1,7 +1,8 @@
 from utils import parse_color
+from jsonschema import Draft7Validator
 from command import Command
 from errors import ParseError, ApiError
-from jsonschema import Draft7Validator
+from enums import ErrorCode
 
 
 class TurnOn(Command):
@@ -28,5 +29,8 @@ class TurnOn(Command):
             raise ParseError(errors)
 
     def exec(self):
-        section_id = self.args['section_id'] if self.args is not None and 'section_id' in self.args else None
-        self.controller.turn_on(section_id)
+        try:
+            section_id = self.args['section_id'] if self.args is not None and 'section_id' in self.args else None
+            self.controller.turn_on(section_id)
+        except KeyError as e:
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)

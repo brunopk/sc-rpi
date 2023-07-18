@@ -11,5 +11,3 @@ class Status(Command):
 
     def exec(self) -> dict:
         return self.controller.status()
-
-

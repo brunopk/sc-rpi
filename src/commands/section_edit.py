@@ -4,9 +4,6 @@ from errors import ParseError, ApiError
 from jsonschema import Draft7Validator
 
 
-# TODO: SEGUIR REVISANDO SI ESTA TODO BIEN DESPUES DE LOS CAMBIOS DE MANEJO DE ERRORES
-
-
 class SectionEdit(Command):
 
     def __init__(self):
@@ -56,7 +53,4 @@ class SectionEdit(Command):
             self.controller.edit_section(self.section_id, self.start, self.end, self.color)
             self.controller.render()
         except KeyError:
-            raise ExecutionError(f'section {self.args["section_id"]} is not defined')
-        except ValueError as ex:
-            raise ExecutionError(str(ex))
-
+            raise ApiError(f'section {self.args["section_id"]} is not defined')

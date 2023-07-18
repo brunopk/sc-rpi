@@ -12,4 +12,3 @@ class Reset(Command):
     def exec(self):
         self.controller.remove_all_sections()
         self.controller.render()
-
