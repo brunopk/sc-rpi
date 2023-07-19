@@ -6,9 +6,7 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
-3. Go to `src` folder: `cd src`
-3. Give execution permissions to the main script: `chmod +x main.py`
-4. Start the main script: './main.py'
+3. Invoke *run_server.py*: `python -m run_server`
 
 ## Creating a virtual environment (venv)
 
@@ -30,8 +28,7 @@ By default, the server logs on the `sc-rpi.log` file (on the root folder) and al
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
-3. Go to `src` folder: `cd src`
-3. Invoke unittest: `python -m unittest discover`
+3. Invoke unittest: `python -m unittest discover` (from the root folder)
 
 ## Building the circuit
 

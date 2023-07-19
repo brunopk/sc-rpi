@@ -66,7 +66,7 @@ class CommandParser:
         excluded_files = ['__init__.py']
         modules = [
             file_name[:-3]
-            for file_name in listdir(commands)
+            for file_name in listdir(join(current_path, commands))
             if isfile(join(join(current_path, commands), file_name)) and file_name not in excluded_files
         ]
         schema = {

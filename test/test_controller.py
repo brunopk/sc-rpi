@@ -1,9 +1,8 @@
-from controller import Controller
-from error import Overlapping
-from configparser import ConfigParser
-from random import randint
 import logging
 import unittest
+from controller import Controller
+from configparser import ConfigParser
+from random import randint
 
 
 class TestCreatingSections(unittest.TestCase):

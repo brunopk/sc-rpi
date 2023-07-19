@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import logging
 import logging.handlers
 
@@ -12,8 +10,8 @@ from commands.disconnect import Disconnect
 from controller import Controller
 from configparser import ConfigParser
 
-# TODO: test all commands
-# TODO: try to run all application without `cd src/`
+# TODO: TEST all commands
+# TODO: FIX LINES 97 101 AND CATCH ApiError to return the corresponding response
 
 def decorate_console_handler_emit(fn):
     """
@@ -38,10 +36,10 @@ def decorate_console_handler_emit(fn):
     return new
 
 
-if __name__ == '__main__':
+def run():
 
     config = ConfigParser()
-    config.read('../config.ini')
+    config.read('./config.ini')
     network_manager = NetworkManager(config)
     parser = CommandParser()
 
