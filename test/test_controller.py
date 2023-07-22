@@ -10,7 +10,7 @@ class TestCreatingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
         cls.controller = Controller(config=config)
 
@@ -29,7 +29,7 @@ class TestCreatingSections(unittest.TestCase):
     def test_colors_1(self):
         color = (1, 2, 3)
         section_id = self.controller.new_section(0, 100, (0, 0, 0))
-        self.controller.set_color(color, section_id)
+        self.controller.edit_section(section_id, color=color)
         self.assertEqual(color, self.controller.concatenate_sections()[0])
 
     def test_total_length_1(self):
@@ -90,7 +90,7 @@ class TestRemovingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
         cls.controller = Controller(config=config)
 
@@ -124,7 +124,7 @@ class TestEditingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
         cls.controller = Controller(config=config)
 
