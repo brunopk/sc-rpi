@@ -8,7 +8,6 @@ class ApiError(Exception):
 
     def __init__(self, error_code: ErrorCode, message: Optional[str] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.code = error_code.value
         self.status = self._status(error_code)
         self.message = message if message is not None else self._message(error_code)
 

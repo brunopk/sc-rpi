@@ -3,8 +3,8 @@ import logging.handlers
 
 from command import CommandParser
 from network import NetworkManager, ClientDisconnected
-from response import Response
-from errors import ParseError
+from response import Response, Error
+from errors import ParseError, ApiError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller
@@ -12,6 +12,7 @@ from configparser import ConfigParser
 
 # TODO: TEST all commands
 # TODO: FIX LINES 97 101 AND CATCH ApiError to return the corresponding response
+# TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, message: 'adasd'}
 
 def decorate_console_handler_emit(fn):
     """
@@ -85,21 +86,18 @@ def run():
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
                         result = ctrl.exec_cmd(cmd)
-                        response = Response(HTTPStatus.OK, result)
+                        response = Response(result)
                         network_manager.send(response)
                     else:
                         network_manager.stop()
                         break
-                except ParseError as e:
-                    logger.warning('Invalid command received')
-                    response = Response(400, e.errors)
-                    network_manager.send(response)
-                except ValidationError as e:
-                    logger.warning('Invalid command received')
-                    response = Response(HTTPStatus.BAD_REQUEST, e.get_msg())
-                    network_manager.send(response)
-                except ExecutionError as e:
-                    response = Response(HTTPStatus.CONFLICT, {'error': e.get_msg()})
+                except ApiError as e:
+                    logger.warning(f'API error: {e.message}')
+                    response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
+                    try:
+                        response = Error(status=HTTPStatus(e.status), description=e.message)
+                    except Exception as ex:
+                        logger.exception(ex)
                     network_manager.send(response)
                 except ClientDisconnected as e:
                     network_manager.disconnect_client()
@@ -108,12 +106,12 @@ def run():
                     logger.warning('Client disconnected abruptly')
                     break
                 except Exception as e:
-                    response = Response(HTTPStatus.INTERNAL_SERVER_ERROR, {'error': 'Internal server error'})
+                    response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
                     network_manager.send(response)
                     logger.exception(e)
 
     except KeyboardInterrupt as e:
-        pass
+        logger.info('Finalizing server...')
     except Exception as e:
         logger.exception(e)
     finally:
