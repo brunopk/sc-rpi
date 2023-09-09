@@ -378,15 +378,18 @@ class Controller:
             if len(colors) == 0:
                 self.logger.warning('No sections defined (rendering Color(0, 0, 0))')
             if not self.is_on:
-                self.logger.warning('Strip is turned off (rendering Color(0, 0, 0))')
+                self.logger.warning('Strip is turned off (Color(0, 0, 0))')
             for i in range(self.strip_length):
                 pass
                 # self.strip.setPixelColor(i, Color(0, 0, 0))
         else:
             for i, c in enumerate(colors):
-                self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
+                pass
+                # UNCOMMENT THIS BEFORE MERGE
+                #self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
 
         pass
+        # UNCOMMENT THIS BEFORE MERGE
         # self.strip.show()
 
     def exec_cmd(self, cmd) -> dict:
