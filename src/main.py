@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import traceback
 
 from command import CommandParser
 from network import NetworkManager, ClientDisconnected
@@ -16,7 +17,7 @@ from configparser import ConfigParser
 
 def decorate_console_handler_emit(fn):
     """
-    Based on Stack Overflow post: 
+    Based on Stack Overflow post:
     https://stackoverflow.com/questions/20706338/color-logging-using-logging-module-in-python
     """
     def new(*args):
@@ -92,7 +93,7 @@ def run():
                         network_manager.stop()
                         break
                 except ApiError as e:
-                    logger.warning(f'API error: {e.message}')
+                    logger.warning(f'API Error \n{traceback.format_exc()}')
                     response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
                     try:
                         response = Error(status=HTTPStatus(e.status), description=e.message)
