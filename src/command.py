@@ -24,7 +24,7 @@ class Command:
     """
 
     def __init__(self):
-        self.args: dict = None
+        self.args: dict = {}
         self.controller: Optional[Controller] = None
 
     def set_controller(self, controller: Controller):
