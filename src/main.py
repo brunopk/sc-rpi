@@ -93,7 +93,7 @@ def run():
                         network_manager.stop()
                         break
                 except ApiError as e:
-                    logger.warning(f'API Error \n{traceback.format_exc()}')
+                    logger.warning(f'API Error', exc_info=e)
                     response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
                     try:
                         response = Error(status=HTTPStatus(e.status), description=e.message)

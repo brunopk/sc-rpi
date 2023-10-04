@@ -75,7 +75,6 @@ class NetworkManager:
         :return: stringified JSON representation of the command
         :raises ClientDisconnected: if client disconnect from sc-driver
         """
-        logger = logging.getLogger()
 
         # Receiving headers
         msg = ''
@@ -85,11 +84,11 @@ class NetworkManager:
             msg += chunk.decode(self.tcp_msg_encoding)
             chunk = self.skt_client.recv(1)
         if len(chunk) == 0:
-            logger.warning('Client disconnected abruptly')
+            _logger.warning('Client disconnected abruptly')
             raise ClientDisconnected()
         else:
             msg += chunk.decode(self.tcp_msg_encoding)
-            logger.info(f'Message received: {msg[0:-1]}')
+            _logger.info(f'Message received: {msg[0:-1]}')
             return msg
 
     def send(self, response: Response):
