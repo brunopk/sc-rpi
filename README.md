@@ -24,7 +24,7 @@ So required steps to install and run sc-rpi are the following :
 2. [Create the virtual environment](/doc/virtual_environments.md)
 3. [Configure the service](/doc/service_configuration.md).
 
-Server configuration can be found in config.ini 
+Server configuration can be found in config.ini
 
 ## Development
 
