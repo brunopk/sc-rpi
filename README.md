@@ -21,8 +21,16 @@ Currently sc-rpi is intended to be manually installed as a [linux service](https
 So required steps to install and run sc-rpi are the following :
 
 1. [Configure network](/doc/network_configuration.md).
-2. [Create the virtual environment](/doc/virtual_environments.md)
-3. [Configure the service](/doc/service_configuration.md).
+2. In order for Python systemd-python library to work, first install libsystemd-dev :
+
+    ```bash
+    sudo apt install libsystemd-dev
+    ```
+
+    as described here [here](https://stackoverflow.com/questions/58753748/systemd-journal-access-with-python-api).
+
+3. [Create the virtual environment](/doc/virtual_environments.md)
+4. [Configure the service](/doc/service_configuration.md).
 
 Server configuration can be found in config.ini
 

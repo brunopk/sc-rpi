@@ -7,7 +7,6 @@ As mentioned on the [README.md](/README.md), currently sc-rpi is intended to be 
     ```conf
     [Unit]
     Description=sc-rpi server
-    After=network.target
 
     [Service]
     Type=simple
