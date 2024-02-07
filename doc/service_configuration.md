@@ -25,6 +25,8 @@ As mentioned on the [README.md](/README.md), currently sc-rpi is intended to be 
    systemctl enable sc-rpi.service
    ```
 
+</br>
+</br>
 
 To check the server is correctly started :
 

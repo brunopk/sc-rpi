@@ -14,6 +14,9 @@ network={
 }
 ```
 
+</br>
+</br>
+
 To check to which device is the Raspberry connected:
 
 ```bash
