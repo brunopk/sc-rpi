@@ -24,6 +24,8 @@ So required steps to install and run sc-rpi are the following :
 2. [Create the virtual environment](/doc/virtual_environments.md)
 3. [Configure the service](/doc/service_configuration.md).
 
+Server configuration can be found in config.ini 
+
 ## Development
 
 1. Create the [virtual environment](/doc/virtual_environments.md).
@@ -33,8 +35,6 @@ So required steps to install and run sc-rpi are the following :
     ```bash
     python -m run_server
     ```
-
-### Logging
 
 By default, the server logs on the `sc-rpi.log` file (on the root folder) and also in console. To disable console logging, remove the `console` property on the configuration file `config.ini`.
 
