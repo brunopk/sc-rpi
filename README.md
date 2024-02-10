@@ -1,18 +1,14 @@
 # Strip Controller Raspberry
 
-Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/SCP_Protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. Runs on the Raspberry Pi 3 with Python 3.7 or 3.8 .
+Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/SCP_Protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
+
+## Requirements
+
+- Python: 3.8.18 (follow steps [here](https://forums.raspberrypi.com/viewtopic.php?t=291158) to install it from sources).
 
 ## Building the circuit
 
-1. With level shifter conversor:
-
-![GitHub Logo](/doc/Raspberry-Pi-WS2812-Steckplatine-600x361.png)
-
-More information: https://tutorials-raspberrypi.com/connect-control-raspberry-pi-ws2812-rgb-led-strips/
-
-2. Without level shifter conversor:
-![GitHub Logo](/doc/raspberry-pi-updated-schematic.png)
-More information: https://core-electronics.com.au/tutorials/ws2812-addressable-leds-raspberry-pi-quickstart-guide.html
+Refer to [Building the circuit](/doc/circuit.md).
 
 ## Installation
 
