@@ -12,6 +12,12 @@ or :
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
+</br>
+</br>
+
+> In order to be automatically detected by Visual Code IDE, create the virtual environment in a folder called .direnv
+
+
 ## Activating the environment
 
 ```bash
