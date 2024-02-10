@@ -6,11 +6,11 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 
 - Python: 3.8.18 (follow steps [here](https://forums.raspberrypi.com/viewtopic.php?t=291158) to install it from sources).
 
-## Building the circuit
-
-Refer to [Building the circuit](/doc/circuit.md).
-
 ## Installation
+
+### Installation on Raspberry Pi
+
+Before installing the server on the Raspberry Pi, take a look at [Building the circuit](/doc/circuit.md) to know how to build the circuit with W2812B LED strips.
 
 Currently sc-rpi is intended to be manually installed as a [linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) or in other words it run as a daemon. This also allow the server to be automatically started after system boot.
 
@@ -30,7 +30,7 @@ So required steps to install and run sc-rpi are the following :
 
 Server configuration can be found in config.ini
 
-## Development
+### Development environment
 
 1. Create the [virtual environment](/doc/virtual_environments.md).
 2. Activate the environment.
@@ -42,7 +42,7 @@ Server configuration can be found in config.ini
 
 By default, the server logs on the `sc-rpi.log` file (on the root folder) and also in console. To disable console logging, remove the `console` property on the configuration file `config.ini`.
 
-### Running automatic tests
+#### Unit testing
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
