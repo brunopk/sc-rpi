@@ -5,6 +5,7 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 ## Requirements
 
 - Python: 3.8.18 (follow steps [here](https://forums.raspberrypi.com/viewtopic.php?t=291158) to install it from sources).
+- [Poetry](doc/poetry.md).
 
 ## Installation
 
@@ -17,16 +18,10 @@ Currently sc-rpi is intended to be manually installed as a [linux service](https
 So required steps to install and run sc-rpi are the following :
 
 1. [Configure network](/doc/network_configuration.md).
-2. In order for Python systemd-python library to work, first install libsystemd-dev :
-
-    ```bash
-    sudo apt install libsystemd-dev
-    ```
-
-    as described here [here](https://stackoverflow.com/questions/58753748/systemd-journal-access-with-python-api).
-
-3. [Create the virtual environment](/doc/virtual_environments.md)
-4. [Configure the service](/doc/service_configuration.md).
+2. [Install required linux dependencies](/doc/required_linux_dependencies.md)
+3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments) and [activate it](/doc/virtual_environments.md#activating-the-environment).
+4. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
+5. [Configure the service](/doc/service_configuration.md).
 
 Server configuration can be found in config.ini
 
@@ -34,7 +29,8 @@ Server configuration can be found in config.ini
 
 1. Create the [virtual environment](/doc/virtual_environments.md).
 2. Activate the environment.
-3. Run the server:
+3. [Install development dependencies with poetry](/doc/poetry.md)
+4. Run the server:
 
     ```bash
     python -m run_server
@@ -54,7 +50,6 @@ By default, the server logs on the `sc-rpi.log` file (on the root folder) and al
 - Automatic stress testing to send multiple commands in a short period of time.
 - Document errors.
 - Differentiate errors (return bad request, conflict, etc)
-
 
 ## Links
 

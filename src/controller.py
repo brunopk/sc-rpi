@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
 from webcolors import rgb_to_hex
-# from rpi_ws281x import PixelStrip, Color
+from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
 from errors import ApiError
 from enums import ErrorCode
