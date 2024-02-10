@@ -4,7 +4,7 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 
 ## Requirements
 
-- Python: 3.8.18 (follow steps [here](https://forums.raspberrypi.com/viewtopic.php?t=291158) to install it from sources).
+- Python: 3.8.18 (see [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources).
 - [Poetry](doc/poetry.md).
 
 ## Installation
