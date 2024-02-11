@@ -10,9 +10,11 @@ As mentioned on the [README.md](/README.md), currently sc-rpi is intended to be 
 
     [Service]
     Type=simple
-    ExecStart=<path to the virtual env>/bin/python <path to sc-rpi>/run_server.py
-    WorkingDirectory=<path to sc-rpi>
+    ExecStart=/home/pi/sc-rpi/.direnv/bin/python /home/pi/sc-rpi/scripts/network_checker.py
+    WorkingDirectory=/home/pi/sc-rpi/scripts
     User=root
+    Restart=on-failure
+    RestartSec=2
 
     [Install]
     WantedBy=multi-user.target
