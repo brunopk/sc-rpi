@@ -1,6 +1,6 @@
 # Systemd configuration
 
-As mentioned on the [README.md](/README.md), currently sc-rpi is intended to be manually installed as a [linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) following these steps:
+As mentioned on the [README.md](/README.md), currently sc-rpi is intended to be manually installed as a [linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). To do this follow these steps:
 
 1. Create the configuration in /etc/systemd/system/ with something like this:
 
