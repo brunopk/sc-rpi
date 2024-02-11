@@ -5,6 +5,8 @@
 __pycache__/
 venv/
 static/css
+scripts/dist
+scripts/dist.tar.gz
 */*.pyc
 *.whl
 *.lock
