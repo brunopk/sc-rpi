@@ -12,9 +12,13 @@ pip install poetry
 
 To install dependencies in the Raspberry Pi :
 
-```bash
- poetry install --only main --with rpi_ws281x
-```
+1. Comment out all dependencies which are listed in "fakes" group.
+2. Uncomment all dependencies which are listed in "rpi-deps" group.
+3. Install dependencies :
+
+   ```bash
+   poetry install --with fakes
+   ```
 
 ## Installing development dependencies
 
@@ -26,12 +30,15 @@ The dependencies required for running on Raspberry Pi are almost the same as tho
 
 So to install development dependencies :
 
-```bash
-poetry install 
-```
+1. Comment out all dependencies which are listed in "rpi-deps" group.
+2. Uncomment all dependencies which are listed in "fakes" group.
+3. Install dependencies :
 
-Notice `--only main` and `--with rpi_ws281x` arguments are not used here. These arguments are for [Poetry groups](https://python-poetry.org/docs/managing-dependencies#dependency-groups).
+   ```bash
+   poetry install --with rpi-deps
+   ```
 
 ## Links
 
 - [Poetry](https://python-poetry.org/)
+- [Poetry groups](https://python-poetry.org/docs/managing-dependencies#dependency-groups)
