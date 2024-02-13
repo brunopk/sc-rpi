@@ -17,7 +17,7 @@ To install dependencies in the Raspberry Pi :
 3. Install dependencies :
 
    ```bash
-   poetry install --with fakes
+   poetry install
    ```
 
 ## Installing development dependencies
@@ -31,12 +31,8 @@ The dependencies required for running on Raspberry Pi are almost the same as tho
 So to install development dependencies :
 
 1. Comment out all dependencies which are listed in "rpi-deps" group.
-2. Uncomment all dependencies which are listed in "fakes" group.
-3. Install dependencies :
-
-   ```bash
-   poetry install --with rpi-deps
-   ```
+2. Uncomment all dependencies which are listed in "dev" group.
+3. Install dependencies with the **same** command mentioned in [Installing development dependencies](/doc/poetry.md#installing-development-dependencies)
 
 ## Links
 

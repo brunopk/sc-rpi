@@ -7,6 +7,10 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 - Python: 3.8.18 (see [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources).
 - [Poetry](doc/poetry.md).
 
+## Configurations
+
+Configurations are set on config.ini file on the root folder. Refer to [/doc/configurations](/doc/configurations.md) for more information.
+
 ## Installation
 
 ### Installation on Raspberry Pi

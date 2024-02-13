@@ -13,7 +13,9 @@ inflector = "3.1.1"
 webcolors = "1.13"
 scapy = "2.5.0"
 
-[tool.poetry.group.fakes.dependencies]
+[tool.poetry.group.dev.dependencies]
+"RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}
+systemd-python = {path = "lib/systemd-python", develop = true}
 rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
 
 [tool.poetry.group.rpi-only-deps.dependencies]
