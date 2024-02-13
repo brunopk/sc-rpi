@@ -35,13 +35,13 @@ To check the server is correctly started :
 systemctl status sc-rpi.service
 ```
 
-Also logs can be obtained with [journal command](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs). So the output of this command :
+Also logs can be obtained with the [journal command line interface](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs). For example, with this command :
 
 ```bash
 journalctl -u sc-rpi.service
 ```
 
-should be something like this :
+something like this can be obtained :
 
 ```txt
 Feb 06 23:42:03 raspberrypi systemd[1]: Started sc-rpi server.
