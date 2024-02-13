@@ -23,22 +23,18 @@ So required steps to install and run sc-rpi are the following :
 2. [Install required linux dependencies](/doc/required_linux_dependencies.md)
 3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments) and [activate it](/doc/virtual_environments.md#activating-the-environment).
 4. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
-5. Configure sc-rpi as service (see [systemd configuration](/doc/systemd_configuration.md).
+5. Configure sc-rpi as service (see [systemd configuration](/doc/systemd_configuration.md)).
 
-Server configuration can be found in config.ini
 
 ## Development
 
-1. Create the [virtual environment](/doc/virtual_environments.md).
-2. Activate the environment.
+1. Create the [virtual environment](/doc/virtual_environments.md)
+2. Activate the environment
 3. [Install development dependencies with poetry](/doc/poetry.md)
 4. Run the server:
-
     ```bash
     python -m run_server
     ```
-
-By default, the server logs on the `sc-rpi.log` file (on the root folder) and also in console. To disable console logging, remove the `console` property on the configuration file `config.ini`.
 
 ## Unit testing
 
