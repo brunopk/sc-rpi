@@ -7,13 +7,11 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 - Python: 3.8.18 (see [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources).
 - [Poetry](doc/poetry.md).
 
-## Configurations
+## Configuration
 
 Configurations are set on config.ini file on the root folder. Refer to [/doc/configurations](/doc/configurations.md) for more information.
 
 ## Installation
-
-### Installation on Raspberry Pi
 
 Before installing the server on the Raspberry Pi, take a look at [Building the circuit](/doc/circuit.md) to know how to build the circuit with W2812B LED strips.
 
@@ -29,7 +27,7 @@ So required steps to install and run sc-rpi are the following :
 
 Server configuration can be found in config.ini
 
-### Development environment
+## Development
 
 1. Create the [virtual environment](/doc/virtual_environments.md).
 2. Activate the environment.
@@ -42,7 +40,7 @@ Server configuration can be found in config.ini
 
 By default, the server logs on the `sc-rpi.log` file (on the root folder) and also in console. To disable console logging, remove the `console` property on the configuration file `config.ini`.
 
-#### Unit testing
+## Unit testing
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
@@ -53,7 +51,6 @@ By default, the server logs on the `sc-rpi.log` file (on the root folder) and al
 - Timout functionality in case of no receiving commands.
 - Automatic stress testing to send multiple commands in a short period of time.
 - Document errors.
-- Differentiate errors (return bad request, conflict, etc)
 
 ## Links
 
