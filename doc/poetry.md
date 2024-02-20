@@ -16,9 +16,9 @@ To install dependencies in the Raspberry Pi :
 2. Uncomment all dependencies which are listed in "rpi-deps" group.
 3. Install dependencies :
 
-   ```bash
-   poetry install
-   ```
+```bash
+poetry install
+```
 
 ## Installing development dependencies
 
