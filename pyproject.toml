@@ -21,6 +21,7 @@ rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
 [tool.poetry.group.rpi-only-deps.dependencies]
 # systemd-python = "235"
 # "RPi.GPIO" = "0.7.1"
+# rpi-ws281x = "5.0.0"
 
 
 [build-system]

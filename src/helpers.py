@@ -30,14 +30,15 @@ def load_config() -> ConfigParser :
 def configure_logging(config: ConfigParser):
   level = config['LOGGING'].get('level', 'ERROR')
  
-  log_format = '%(asctime)s - %(name)s - %(levelname)s -- %(message)s'
-  formatter = logging.Formatter(log_format)
- 
   handlers = []
   if config['DEFAULT'].get('env') == ENV_DEV:
     console_handler = logging.StreamHandler()
     console_handler.emit = __decorate_console_handler_emit(console_handler.emit)
+    
+    log_format = '%(asctime)s - %(name)s - %(levelname)s -- %(message)s'
+    formatter = logging.Formatter(log_format)
     console_handler.setFormatter(formatter)
+    
     handlers.append(console_handler)
   else:
     handlers.append(JournalHandler())

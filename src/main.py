@@ -11,7 +11,6 @@ from controller import Controller
 from helpers import configure_logging, configure_status_led, load_config, turn_led_indicator_on, turn_led_indicator_off, cleanup_gpio
 
 # TODO: TEST all commands
-# TODO: FIX LINES 97 101 AND CATCH ApiError to return the corresponding response
 # TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, message: 'adasd'}
 
 
@@ -30,6 +29,8 @@ def run():
     network_manager = NetworkManager(config)
 
     configure_status_led(config)
+
+    exit_code = 0
 
     try:
        
@@ -82,8 +83,11 @@ def run():
 
     except KeyboardInterrupt as e:
         logger.info('Finalizing server...')
+        exit_code = 0
     except Exception as e:
         logger.exception(e)
+        exit_code = 1
     finally:
         network_manager.stop()
         cleanup_gpio()
+        exit(exit_code)
