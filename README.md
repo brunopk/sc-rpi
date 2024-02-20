@@ -24,7 +24,7 @@ So required steps to install and run sc-rpi are the following :
 3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
 4. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
 5. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
-6. Configure as a service (see [systemd configuration](/doc/systemd_configuration.md)).
+6. [Configure systemd service](/doc/systemd_configuration.md)).
 
 
 ## Development
