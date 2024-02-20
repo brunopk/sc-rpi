@@ -21,9 +21,10 @@ So required steps to install and run sc-rpi are the following :
 
 1. [Configure network](/doc/network_configuration.md).
 2. [Install required linux dependencies](/doc/required_linux_dependencies.md)
-3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments) and [activate it](/doc/virtual_environments.md#activating-the-environment).
-4. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
-5. Configure as a service (see [systemd configuration](/doc/systemd_configuration.md)).
+3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
+4. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
+5. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
+6. Configure as a service (see [systemd configuration](/doc/systemd_configuration.md)).
 
 
 ## Development
