@@ -54,12 +54,6 @@ rsync --recursive \
 2. Activate the venv: `source <path of the venv>/bin/activate`.
 3. Invoke unittest: `python -m unittest discover` (from the root folder)
 
-## Future improvements
-
-- Timout functionality in case of no receiving commands.
-- Automatic stress testing to send multiple commands in a short period of time.
-- Document errors.
-
 ## Links
 
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
