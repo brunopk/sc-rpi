@@ -1,6 +1,6 @@
 # Strip Controller Raspberry
 
-Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using the [SCP protocol](/doc/protocol.md), process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
+Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using a custom [protocol](/doc/protocol.md) over TCP, process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
 
 ## Requirements
 
@@ -24,8 +24,7 @@ So required steps to install and run sc-rpi are the following :
 3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
 4. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
 5. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
-6. [Configure systemd service](/doc/systemd_configuration.md)).
-
+6. [Configure systemd service](/doc/systemd_configuration.md).
 
 ## Development
 
@@ -36,6 +35,18 @@ So required steps to install and run sc-rpi are the following :
     ```bash
     python -m run_server
     ```
+
+To facilitate development and testing on a Raspberry Pi, files can be efficiently transferred using this command:
+
+```bash
+rsync --recursive \
+  --progress \
+  --archive \
+  --exclude-from=.gitignore \
+  --exclude=.git \
+  --exclude=.gitignore \
+   folder user@ipaddress:~/dest/ 
+```
 
 ## Unit testing
 
