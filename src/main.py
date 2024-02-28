@@ -1,93 +1,63 @@
 import logging
+import aiohttp
 
-from scapy.all import IP, ICMP, sr1
+from aiohttp import web as _web
+from dataclasses import asdict
 from command import CommandParser
-from network import NetworkManager, ClientDisconnected
 from response import Response, Error
 from errors import ApiError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
 from controller import Controller
-from helpers import configure_logging, configure_status_led, load_config, turn_led_indicator_on, turn_led_indicator_off, cleanup_gpio
 
 # TODO: TEST all commands
-# TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, message: 'adasd'}
+# TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, description: 'adasd'} y {status: XXX, description: 'adasd', data: ...} para el resto de comandos
+# TODO: documentar la nueva forma de los comandos : {command: '...', ... } y que retornan ACCEPTED (201) en lugar de OK (200)
+# TODO: documentar la nuevar forma de arrancar el server definida en el launch.json
+# TODO: combine module command and package commands into one
+# TODO: uncomment all classes from rpi_ws281x used in src/controller.py
+# TODO: update doc to explain that SCP custom protocol is replaced by Websocket
+# FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
 
+def build_websocket_handler(controller: Controller):
 
-def run():
-    config = load_config()
-    default_gateway = config['CONNECTION_CHECK'].get('default_gateway')
-    iface = config['CONNECTION_CHECK'].get('iface')
-    timeout = float(config['CONNECTION_CHECK'].get('timeout'))
-    status_led = int(config['CONNECTION_CHECK'].get('status_led'))
-    
-    configure_logging(config)
     logger = logging.getLogger(__name__)
-    logger.info('Starting server')
 
-    parser = CommandParser()
-    network_manager = NetworkManager(config)
+    async def handler(request: _web.Request):
 
-    configure_status_led(config)
+        ws = _web.WebSocketResponse()
+        await ws.prepare(request)
+        logger.info(f'New client connected from {request.get_extra_info("peername", request.remote)}')
+        logger.info('Ready to receive commands from client')
 
-    exit_code = 0
+        parser = CommandParser()
 
-    try:
-       
-        turn_led_indicator_off(status_led)
-        reply = sr1(IP(dst=default_gateway)/ICMP(), iface=iface, timeout=timeout, verbose=0)
-        if reply is None: 
-            logging.error(f"No answer from {default_gateway}")
-            exit(1)
-        turn_led_indicator_on(status_led)
-        
-        network_manager.start()
+        async for msg in ws:
 
-        while True:
-
-            network_manager.accept_client()
-            ctrl = Controller(config)
-            logger.info('Ready to receive commands from client')
-
-            while True:
+            if msg.type != aiohttp.WSMsgType.TEXT: 
+                logger.error(f'Message received with an invalid WebSocket message type: {msg.type.name}')
+                response = Error(status=HTTPStatus.BAD_REQUEST, description=f'Message type {msg.type.name} not valid for commands, use TEXT')
+                await ws.send_json(asdict(response))
+            else:
+                response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
 
                 try:
-                    req = network_manager.receive()
-                    cmd = parser.parse(req)
+                    cmd = parser.parse(msg.data)
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
-                        result = ctrl.exec_cmd(cmd)
-                        response = Response(result)
-                        network_manager.send(response)
+                        result = controller.exec_cmd(cmd)
+                        response = Response(status=HTTPStatus.ACCEPTED, data=result)
                     else:
-                        network_manager.stop()
-                        break
+                        # TODO: check if this close the socket correctly
+                        await ws.close() 
+                    
                 except ApiError as e:
                     logger.warning(f'API Error', exc_info=e)
-                    response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
-                    try:
-                        response = Error(status=HTTPStatus(e.status), description=e.message)
-                    except Exception as ex:
-                        logger.exception(ex)
-                    network_manager.send(response)
-                except ClientDisconnected as e:
-                    network_manager.disconnect_client()
-                    break
-                except ConnectionResetError:
-                    logger.warning('Client disconnected abruptly')
-                    break
+                    response = Error(status=e.status, description=e.message)
                 except Exception as e:
-                    response = Error(HTTPStatus.INTERNAL_SERVER_ERROR)
-                    network_manager.send(response)
                     logger.exception(e)
+                finally:
+                    await ws.send_json(asdict(response))
 
-    except KeyboardInterrupt as e:
-        logger.info('Finalizing server...')
-        exit_code = 0
-    except Exception as e:
-        logger.exception(e)
-        exit_code = 1
-    finally:
-        network_manager.stop()
-        cleanup_gpio()
-        exit(exit_code)
+    return handler
+

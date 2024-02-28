@@ -7,6 +7,7 @@ from os import listdir
 from inflector import Inflector
 from controller import Controller
 from errors import ParseError
+from response import Response
 
 
 class Command:
@@ -18,8 +19,7 @@ class Command:
         - Must inherit from this class
         - Class name must be the camelized version of the module name
 
-    The command name (the value for the *name* attribute on the JSON) will be the same
-    as the module name (snake-case version).
+    Module name will be used as command name.
 
     """
 
@@ -44,7 +44,7 @@ class Command:
         """
         raise NotImplemented()
 
-    def exec(self) -> dict:
+    def exec(self) -> Response:
         """
         Executes the command
 
@@ -73,7 +73,7 @@ class CommandParser:
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
             "properties": {
-                "name": {
+                "command": {
                     "type": "string",
                     "enum": modules
                 },
@@ -81,7 +81,7 @@ class CommandParser:
                     "type": "object"
                 }
             },
-            "required": ["name"]
+            "required": ["command"]
         }
         classes = dict()
         for module_name in modules:
@@ -107,7 +107,7 @@ class CommandParser:
         if len(errors) > 0:
             raise ParseError(errors)
 
-        cmd_name = json['name']
+        cmd_name = json['command']
         cmd: Command = self.classes.get(cmd_name)()
 
         if 'args' in json.keys():
