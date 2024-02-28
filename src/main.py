@@ -18,6 +18,7 @@ from controller import Controller
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
 # TODO: update doc to explain that SCP custom protocol is replaced by Websocket
 # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
+# TODO: documentar el truco de web.run_app(app, print=logger.info, port=port, host=host) sin host y port
 
 def build_websocket_handler(controller: Controller):
 
