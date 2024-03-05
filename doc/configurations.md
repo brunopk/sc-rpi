@@ -3,7 +3,7 @@
 Configurations are set on config.ini file on the root folder. Here is the list of available properties :
 
 - Section: `DEFAULT`
-  - `env`: environment
+  - `env`: environment `dev` or `rpi`
   - `port`: server port
   - `host`: server address to listen for connections
   - `tcp_max_queue`: socket configuration for messages received through TCP protocol

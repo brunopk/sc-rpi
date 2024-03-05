@@ -7,10 +7,6 @@ Receives commands from the [sc-master](https://github.com/brunopk/sc-master) usi
 - Python: 3.8.18 (see [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources).
 - [Poetry](doc/poetry.md).
 
-## Configuration
-
-Configurations are set on config.ini file on the root folder. Refer to [/doc/configurations](/doc/configurations.md) for more information.
-
 ## Installation
 
 Before installing the server on the Raspberry Pi, take a look at [Building the circuit](/doc/circuit.md) to know how to build the circuit with W2812B LED strips.
@@ -19,12 +15,13 @@ Currently sc-rpi is intended to be manually installed as a [linux service](https
 
 So required steps to install and run sc-rpi are the following :
 
-1. [Configure network](/doc/network_configuration.md).
-2. [Install required linux dependencies](/doc/required_linux_dependencies.md)
-3. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
-4. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
-5. [Install dependencies with poetry](/doc/poetry.md#installing-dependencies)
-6. [Configure systemd service](/doc/systemd_configuration.md).
+1. [Install required linux dependencies](/doc/required_linux_dependencies.md)
+2. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
+3. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
+4. [Install required Python dependencies with poetry](/doc/poetry.md#installing-dependencies).
+5. [Configure network](/doc/network_configuration.md).
+6. [Configure sc-rpi](/doc/configurations.md).
+7. [Configure service](/doc/systemd_configuration.md).
 
 ## Development
 
@@ -36,17 +33,7 @@ So required steps to install and run sc-rpi are the following :
     python -m run_server
     ```
 
-To facilitate development and testing on a Raspberry Pi, files can be efficiently transferred using this command:
-
-```bash
-rsync --recursive \
-  --progress \
-  --archive \
-  --exclude-from=.gitignore \
-  --exclude=.git \
-  --exclude=.gitignore \
-   folder user@ipaddress:~/dest/ 
-```
+Refer to [doc/development](doc/development.md) for development tips and advices.
 
 ## Unit testing
 

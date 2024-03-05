@@ -13,12 +13,10 @@ from controller import Controller
 # TODO: TEST all commands
 # TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, description: 'adasd'} y {status: XXX, description: 'adasd', data: ...} para el resto de comandos
 # TODO: documentar la nueva forma de los comandos : {command: '...', ... } y que retornan ACCEPTED (201) en lugar de OK (200)
-# TODO: documentar la nuevar forma de arrancar el server definida en el launch.json
 # TODO: combine module command and package commands into one
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
 # TODO: update doc to explain that SCP custom protocol is replaced by Websocket
 # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
-# TODO: documentar el truco de web.run_app(app, print=logger.info, port=port, host=host) sin host y port
 
 def build_websocket_handler(controller: Controller):
 
