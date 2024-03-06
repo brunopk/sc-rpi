@@ -32,16 +32,14 @@ In general for requests and responses :
 
 Available commands are :
 
-- [Commands](#commands)
-    - [disconnect](#disconnect)
-    - [reset](#reset)
-    - [status](#status)
-    - [turn\_on](#turn_on)
-    - [turn\_off](#turn_off)
-    - [section\_edit](#section_edit)
-    - [section\_add](#section_add)
-    - [section\_remove](#section_remove)
-  - [Links](#links)
+- [disconnect](#disconnect)
+- [reset](#reset)
+- [status](#status)
+- [turn\_on](#turn_on)
+- [turn\_off](#turn_off)
+- [section\_edit](#section_edit)
+- [section\_add](#section_add)
+- [section\_remove](#section_remove)
 
 ### disconnect
 
