@@ -42,6 +42,7 @@ def build_websocket_handler(controller: Controller):
 
                 try:
                     cmd = parser.parse(msg.data)
+                    logger.debug(f'Command received : {msg.data}')
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
                         result = controller.exec_cmd(cmd)
@@ -51,7 +52,7 @@ def build_websocket_handler(controller: Controller):
                         await ws.close() 
                     
                 except ApiError as e:
-                    logger.warning(f'API Error', exc_info=e)
+                    logger.warning(f'Error:', exc_info=e)
                     response = Error(status=e.status, description=e.message)
                 except Exception as e:
                     logger.exception(e)
