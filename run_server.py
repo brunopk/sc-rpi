@@ -14,7 +14,7 @@ if __name__ == '__main__':
     
     config = load_config()
     host = config['DEFAULT'].get('host', '0.0.0.0')
-    port = int(config['DEFAULT'].get('port', str(8000)))
+    port = int(config['DEFAULT'].get('port', str(8080)))
     default_gateway = config['CONNECTION_CHECK'].get('default_gateway')
     iface = config['CONNECTION_CHECK'].get('iface')
     timeout = float(config['CONNECTION_CHECK'].get('timeout'))
