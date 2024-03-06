@@ -58,17 +58,17 @@ class SectionAdd(Command):
             try:
                 color = hex_to_rgb(s['color'])
                 color = (int(color[0]), int(color[1]), int(color[2]))
-                ids.append(self.controller.new_section(s['start'], s['end'], color))
+                ids.append(self.hw_controller.new_section(s['start'], s['end'], color))
             except ApiError as e:
                 captured_error = e
 
         # rollback in case of error
         if captured_error is not None:
             _logger.warn('Rollbacking sections.')
-            self.controller.remove_sections(ids)
+            self.hw_controller.remove_sections(ids)
             raise captured_error
 
-        self.controller.render()
+        self.hw_controller.render()
         return {'sections': ids}
 
     def _test_overlapping(self, list):

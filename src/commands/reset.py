@@ -10,5 +10,5 @@ class Reset(Command):
         pass
 
     def exec(self):
-        self.controller.remove_all_sections()
-        self.controller.render()
+        self.hw_controller.remove_all_sections()
+        self.hw_controller.render()

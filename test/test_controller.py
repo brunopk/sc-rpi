@@ -1,6 +1,6 @@
 import logging
 import unittest
-from controller import Controller
+from hardware_controller import HardwareController
 from configparser import ConfigParser
 from random import randint
 
@@ -12,7 +12,7 @@ class TestCreatingSections(unittest.TestCase):
         config = ConfigParser()
         config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()
@@ -92,7 +92,7 @@ class TestRemovingSections(unittest.TestCase):
         config = ConfigParser()
         config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()
@@ -126,7 +126,7 @@ class TestEditingSections(unittest.TestCase):
         config = ConfigParser()
         config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()

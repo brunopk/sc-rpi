@@ -5,7 +5,7 @@ from jsonschema import Draft7Validator
 from os.path import abspath, isfile, join, dirname
 from os import listdir
 from inflector import Inflector
-from controller import Controller
+from hardware_controller import HardwareController
 from errors import ParseError
 from response import Response
 
@@ -25,10 +25,10 @@ class Command:
 
     def __init__(self):
         self.args: dict = {}
-        self.controller: Optional[Controller] = None
+        self.hw_controller: Optional[HardwareController] = None
 
-    def set_controller(self, controller: Controller):
-        self.controller = controller
+    def set_hardware_controller(self, controller: HardwareController):
+        self.hw_controller = controller
 
     def set_arguments(self, args: dict):
         """

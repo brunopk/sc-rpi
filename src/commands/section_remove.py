@@ -33,7 +33,7 @@ class SectionRemove(Command):
 
     def exec(self):
         try:
-            self.controller.remove_sections(self.sections)
-            self.controller.render()
+            self.hw_controller.remove_sections(self.sections)
+            self.hw_controller.render()
         except KeyError as ex:
             raise ApiError(ErrorCode.SECTION_NOT_FOUND)

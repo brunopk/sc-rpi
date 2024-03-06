@@ -50,7 +50,7 @@ class SectionEdit(Command):
 
     def exec(self):
         try:
-            self.controller.edit_section(self.section_id, self.start, self.end, self.color)
-            self.controller.render()
+            self.hw_controller.edit_section(self.section_id, self.start, self.end, self.color)
+            self.hw_controller.render()
         except KeyError:
             raise ApiError(f'section {self.args["section_id"]} is not defined')

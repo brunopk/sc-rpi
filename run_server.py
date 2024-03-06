@@ -10,7 +10,7 @@ if __name__ == '__main__':
     from helpers import configure_logging, configure_status_led, load_config, turn_led_indicator_on, turn_led_indicator_off, cleanup_gpio
     from scapy.all import IP, ICMP, sr1
     from aiohttp import web
-    from controller import Controller
+    from hardware_controller import HardwareController
     
     config = load_config()
     host = config['DEFAULT'].get('host', '0.0.0.0')
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     configure_status_led(config)
 
     # Using the controller to handle the strip is thread-safe under the assumption that there's only one thread managing the event loop.
-    controller = Controller(config)
+    hw_controller = HardwareController(config)
 
     exit_code = 0
     logger = logging.getLogger("main")
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
         
         app = web.Application()
-        app.add_routes([web.get('/', build_websocket_handler(controller))])
+        app.add_routes([web.get('/', build_websocket_handler(hw_controller))])
         web.run_app(app, print=logger.info, port=port, host=host)
 
     except KeyboardInterrupt as e:

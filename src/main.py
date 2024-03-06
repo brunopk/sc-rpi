@@ -8,7 +8,7 @@ from response import Response, Error
 from errors import ApiError
 from http import HTTPStatus
 from commands.disconnect import Disconnect
-from controller import Controller
+from hardware_controller import HardwareController
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE)
 # TODO: combine module command and package commands into one
@@ -16,7 +16,7 @@ from controller import Controller
 # TODO: update doc to explain that SCP custom protocol is replaced by Websocket
 # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
 
-def build_websocket_handler(controller: Controller):
+def build_websocket_handler(hw_controller: HardwareController):
 
     logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def build_websocket_handler(controller: Controller):
                     logger.debug(f'Command received : {msg.data}')
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
-                        result = controller.exec_cmd(cmd)
+                        result = hw_controller.exec_cmd(cmd)
                         response = Response(status=HTTPStatus.ACCEPTED, data=result)
                     else:
                         # TODO: check if this close the socket correctly

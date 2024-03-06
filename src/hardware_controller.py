@@ -211,7 +211,7 @@ class SectionManager:
             raise KeyError(f'section {invalid_section_id} is not defined')
 
 
-class Controller:
+class HardwareController:
     """
     Provides an interface to control the strip executing commands on specific sections
     (portions of the strip defined by the starting and ending position).
