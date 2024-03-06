@@ -9,7 +9,7 @@ Commands are represented as JSON objects with a specific format:
 ```json
 {
   "command": "command_name",
-  "args": { ... }
+  "args": {}
 }
 ```
 
@@ -17,9 +17,9 @@ where the value for `args` it's another JSON object. **All commands** return res
 
 ```json
 {
-    "status": ...,
-    "description": ...,
-    "data": ...
+    "status": 201,
+    "description": "accepted",
+    "data": null
 }
 ```
 
