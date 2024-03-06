@@ -28,9 +28,9 @@ where :
 In general for requests and responses :
 
 - Colors are represented in hexadecimal.
-- Although the WebSocket protocol itself doesn't natively incorporate status codes like HTTP, sc-rpi is designed to implement and utilize them for responses.
+- Although the WebSocket protocol itself doesn't natively incorporate status codes like HTTP, sc-rpi utilize them for responses.
 
-Available commands are : 
+Available commands are :
 
 - [Commands](#commands)
     - [disconnect](#disconnect)
