@@ -11,8 +11,6 @@ from commands.disconnect import Disconnect
 from controller import Controller
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE)
-# TODO: actualizar documentacion para indicar que todos los comandos devuelven el mismo formato para errores {status: XXX, description: 'adasd'} y {status: XXX, description: 'adasd', data: ...} para el resto de comandos
-# TODO: documentar la nueva forma de los comandos : {command: '...', ... } y que retornan ACCEPTED (201) en lugar de OK (200)
 # TODO: combine module command and package commands into one
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
 # TODO: update doc to explain that SCP custom protocol is replaced by Websocket

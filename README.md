@@ -1,6 +1,6 @@
 # Strip Controller Raspberry
 
-Receives commands from the [sc-master](https://github.com/brunopk/sc-master) using a custom [protocol](/doc/protocol.md) over TCP, process them and convert it to signals for any W2812B LED strip, using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
+Receives [commands](/doc/commands.md) through WebSocket, process them and convert it to PWM signals for any W2812B LED strip using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library.
 
 ## Requirements
 

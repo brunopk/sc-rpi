@@ -1,55 +1,60 @@
-# SCP Protocol
+# Commands
 
-It works over TCP and it's a simplification of HTTP. Its main purpose is to manage the communication between [sc-rpi](https://github.com/brunopk/sc-rpi) and [sc-master](https://github.com/brunopk/sc-master). It's mainly implemented on [`src/network.py`](../src/network.py).
-
-## Connection
-
-To communicate with [sc-rpi](https://github.com/brunopk/sc-rpi), connect to port 8080 (defined in [`config.ini`](../config.ini)) on the host where [sc-rpi](https://github.com/brunopk/sc-rpi) is running.
-
-## Messages
-
-Similar to HTTP and many protocols, SCP use the concept of requests and responses. Both, requests and responses are defined as UTF-8 encoded strings containing the JSON stringified representation of a [command](#commands).
+The API provided by sc-rpi is implemented with WebSocket through which commands are expressed as JSON objects. WebSockets provide several important features, including bi-directional communication which is particularly important for sc-rpi. For development purposes, sc-rpi can be tested with [Postman](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/).Commands are defined and implemented on [`src/commands/`](../src/commands).
 
 ## Commands
 
-Commands are represented as stringified JSONs and sent in the body section of the [SCP protocol](/doc/SCP_Protocol.md), so this is an example of a wrong command representation:
-
-`{name: "cmd"}`
-
-And this is an example of a good command representation:
-
-`{"name": "cmd"}`
-
-All commands MUST follow this schema:
+Commands are represented as JSON objects with a specific format:
 
 ```json
 {
-  "name": "COMMAND_NAME",
-  "args": "COMMAND_ARGUMENTS"
+  "command": "command_name",
+  "args": { ... }
 }
 ```
 
-where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an object.
+where the value for `args` it's another JSON object. **All commands** return responses with the following format :
 
-> Colors in requests and responses are represented with their hex values
+```json
+{
+    "status": ...,
+    "description": ...,
+    "data": ...
+}
+```
 
-They are defined and implemented on the [`src/commands/`](../src/commands) directory. Available commands are: 
+where :
 
-- [disconnect](#disconnect)
-- [reset](#reset)
-- [turn_on](#turn_on)
-- [turn_off](#turn_off)
-- [section_edit](#section_edit)
-- [section_add](#section_add)
-- [section_remove](#section_remove)
+- `status` : HTTP status codes, commonly 201 (accepted).
+- `description`: an string describing more information about response.
+- `data`: another object with more information if the command requires it, `null` for most commands
+
+In general for requests and responses :
+
+- Colors are represented in hexadecimal.
+- Although the WebSocket protocol itself doesn't natively incorporate status codes like HTTP, sc-rpi is designed to implement and utilize them for responses.
+
+Available commands are : 
+
+- [Commands](#commands)
+  - [Commands](#commands-1)
+    - [disconnect](#disconnect)
+    - [reset](#reset)
+    - [status](#status)
+    - [turn\_on](#turn_on)
+    - [turn\_off](#turn_off)
+    - [section\_edit](#section_edit)
+    - [section\_add](#section_add)
+    - [section\_remove](#section_remove)
+  - [Links](#links)
 
 ### disconnect
 
 - What it does: closes the TCP connection.
 - Example:
-    ```json
+  ```json
     {
-      "name": "disconnect"
+      "command": "disconnect"
     }
     ```
 - Returns: nothing
@@ -60,15 +65,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example:
     ```json
     {
-      "name": "reset"
+      "command": "reset"
     }
     ```
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
   
@@ -78,15 +83,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example:
     ```json
     {
-      "name": "status"
+      "command": "status"
     }
     ```
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {
+      "status": 201,
+      "description": "accepted",
+      "data": {
         "number_of_led": 300,
         "sections": [{
           "id":  "123e4567-e89b-12d3-a456-42661417400",
@@ -107,7 +112,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example 1:
     ```json
     {
-      "name": "turn_on"
+      "command": "turn_on"
     }
     ```
 
@@ -115,7 +120,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 
     ```json
     {
-      "name": "turn_on",
+      "command": "turn_on",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
@@ -129,7 +134,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example 1:
     ```json
     {
-      "name": "turn_off"
+      "command": "turn_off"
     }
     ```
 
@@ -137,7 +142,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 
     ```json
     {
-      "name": "turn_off",
+      "command": "turn_off",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
@@ -152,7 +157,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example 1:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40
@@ -162,15 +167,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
  - Example 2:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40,
@@ -181,15 +186,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
 - Example 3:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "color": "#abc123"
@@ -199,9 +204,9 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
 
@@ -211,7 +216,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example:
     ```json
     {
-      "name": "section_add",
+      "command": "section_add",
       "args": {
         "sections": [{
             "start": 0,
@@ -228,9 +233,9 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Returns: 
     ```json
     {
-      "status": 200, 
-      "message": "OK", 
-      "result": {
+      "status": 201, 
+      "description": "accepted", 
+      "data": {
           "sections": [
             "0a4e9568-940f-11eb-8de4-b827eb95e032", 
             "0a4ea54e-940f-11eb-8de4-b827eb95e032"
@@ -245,7 +250,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example:
     ```json
     {
-      "name": "section_remove",
+      "command": "section_remove",
       "args": {
         "sections": [
           "123e4567-e89b-12d3-a456-42661417400",
@@ -257,8 +262,12 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
+
+## Links
+
+- [Send WebSocket requests with Postman](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/)
