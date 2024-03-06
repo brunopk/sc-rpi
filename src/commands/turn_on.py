@@ -32,5 +32,6 @@ class TurnOn(Command):
         try:
             section_id = self.args['section_id'] if self.args is not None and 'section_id' in self.args else None
             self.controller.turn_on(section_id)
+            self.controller.render()
         except KeyError as e:
             raise ApiError(ErrorCode.SECTION_NOT_FOUND)

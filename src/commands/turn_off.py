@@ -29,5 +29,6 @@ class TurnOff(Command):
         section_id = self.args['section_id'] if 'section_id' in self.args else None
         try:
             self.controller.turn_off(section_id)
+            self.controller.render()
         except KeyError as e:
             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
