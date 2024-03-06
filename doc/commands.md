@@ -1,6 +1,6 @@
 # Commands
 
-The API works with [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) which are defined and implemented on [`src/commands/`](../src/commands) and sent as JSON objects. WebSockets provide several important features, including bi-directional communication which is particularly important for sc-rpi. For development purposes.
+The API for sc-rpi consist of commands sent through [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) which provides several important features, including bi-directional communication which is particularly important for sc-rpi. Commands are defined and implemented on [`src/commands/`](../src/commands), and represented as JSON objects.
 
 ## Commands
 
