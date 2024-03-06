@@ -243,11 +243,11 @@ class Controller:
             raise Exception('Cannot initialize controller, channel was not set in config.ini')
 
         self.strip_length = n
-        # self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
+        self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
         self.logger = logging.getLogger('Controller')
         self.section_manager = SectionManager(config)
         self.is_on = False
-        # self.strip.begin()
+        self.strip.begin()
 
     def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
         """
@@ -380,17 +380,12 @@ class Controller:
             if not self.is_on:
                 self.logger.warning('Strip is turned off (Color(0, 0, 0))')
             for i in range(self.strip_length):
-                pass
-                # self.strip.setPixelColor(i, Color(0, 0, 0))
+                self.strip.setPixelColor(i, Color(0, 0, 0))
         else:
             for i, c in enumerate(colors):
-                pass
-                # UNCOMMENT THIS BEFORE MERGE
-                #self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
+                self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
 
-        pass
-        # UNCOMMENT THIS BEFORE MERGE
-        # self.strip.show()
+        self.strip.show()
 
     def exec_cmd(self, cmd) -> dict:
         """
