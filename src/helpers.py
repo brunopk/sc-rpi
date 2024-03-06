@@ -5,7 +5,7 @@ from systemd.journal import JournalHandler
 from configparser import ConfigParser as ConfigParser
 
 ENV_DEV = "dev"
-ENV_PROD = "prod"
+ENV_PROD = "rpi"
 AVAILABLE_ENVIRONMENTS = [ENV_DEV, ENV_PROD]
 
 def load_config() -> ConfigParser :
