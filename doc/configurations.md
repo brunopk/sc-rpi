@@ -6,9 +6,6 @@ Configurations are set on config.ini file on the root folder. Here is the list o
   - `env`: environment `dev` or `rpi`
   - `port`: server port
   - `host`: server address to listen for connections
-  - `tcp_max_queue`: socket configuration for messages received through TCP protocol
-  - `tcp_max_msg_size`: max size in bytes
-  - `tcp_msg_encoding`: message encoding (usually UTF-8)
 - Section `CONNECTION_CHECK`:
   - `default_gateway`: default gateway to test connection before listening for client connections
   - `status_led`: GPIO port (BCM mode)
