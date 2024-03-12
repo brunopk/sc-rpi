@@ -7,7 +7,7 @@ if __name__ == '__main__':
     import logging
 
     from main import build_websocket_handler
-    from helpers import configure_logging, configure_status_led, load_config, turn_led_indicator_on, turn_led_indicator_off, cleanup_gpio
+    from helpers import configure_logging, configure_status_led, configure_zeroconf, load_config, turn_led_indicator_on, turn_led_indicator_off, cleanup_gpio
     from scapy.all import IP, ICMP, sr1
     from aiohttp import web
     from hardware_controller import HardwareController
@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
     configure_logging(config)
     configure_status_led(config)
+    configure_zeroconf()
 
     # Using the controller to handle the strip is thread-safe under the assumption that there's only one thread managing the event loop.
     hw_controller = HardwareController(config)
