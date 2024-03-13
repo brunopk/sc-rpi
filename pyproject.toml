@@ -14,6 +14,8 @@ webcolors = "1.13"
 scapy = "2.5.0"
 aiohttp = "3.9.3"
 zeroconf = "0.131.0"
+netifaces = "0.11.0"
+asyncio = "3.4.3"
 
 [tool.poetry.group.dev.dependencies]
 "RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}

@@ -1,7 +1,16 @@
+import netifaces as ni
 from re import match
 from webcolors import hex_to_rgb
 from typing import Tuple
 
+
+def get_current_ip(iface: str) -> str :
+    addrs = ni.ifaddresses(iface)[ni.AF_INET]
+    return addrs['addr']
+
+def get_default_gateway(iface: str) -> str :
+    gateways = ni.gateways()[ni.AF_INET]
+    return gateways[0][0]
 
 def parse_color(c: str) -> Tuple[int, int, int]:
     """
@@ -26,7 +35,6 @@ def parse_color(c: str) -> Tuple[int, int, int]:
         else:
             raise ValueError()
     return red, green, blue
-
 
 # noinspection PyShadowingBuiltins
 def bool(b: str):

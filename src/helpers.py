@@ -1,14 +1,17 @@
 import logging
 import socket
+import asyncio
 import logging.handlers
 import RPi.GPIO as GPIO
+import threading
 from systemd.journal import JournalHandler
-from zeroconf import Zeroconf, ServiceInfo
+from zeroconf_publisher import Zeroconf, ServiceInfo
 from configparser import ConfigParser as ConfigParser
 
 ENV_DEV = "dev"
 ENV_PROD = "rpi"
 AVAILABLE_ENVIRONMENTS = [ENV_DEV, ENV_PROD]
+
 
 def load_config() -> ConfigParser :
   config = ConfigParser()
@@ -52,24 +55,7 @@ def configure_status_led(config: ConfigParser):
   GPIO.setmode(GPIO.BCM)
   GPIO.setwarnings(False)
   GPIO.setup(pin_number, GPIO.OUT)
-
-# TODO: load parameters from config
-# TODO: replace hardcoded "192.168.0.102" with real (obtained) IP address
-# TODO: implement an scheduled task to resend hostname using app.loop.create_task() coroutines and then passing the same event loop to web.Application()
-  
-def configure_zeroconf():
-  zeroconf = Zeroconf()
-  # Defines a custom service name '_websocket._http._tcp.local.' and a server (hostname) 'rpi.local' (.local suffix  is mandatory)
-  service = ServiceInfo(
-     '_http._tcp.local.', 
-     '_websocket._http._tcp.local.', 
-     8080, 
-     addresses=[socket.inet_aton("192.168.0.102")], 
-     server="rpi.local",
-     host_ttl=3600
-  )
-  zeroconf.register_service(service)
-
+ 
 def turn_led_indicator_on(pin_number: int):
   GPIO.output(pin_number, GPIO.HIGH)
 
