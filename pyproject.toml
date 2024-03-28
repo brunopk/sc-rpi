@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "sc-rpi"
+version = "0.1.0"
+description = "A project to controle W2812B led strips with Raspberry Pi"
+authors = ["Bruno Piaggio <brunopiaggiok@gmail.com>"]
+readme = "README.md"
+packages = [{include = "./src"}]
+
+[tool.poetry.dependencies]
+python = "3.8.18"
+jsonschema = "4.21.1"
+inflector = "3.1.1"
+webcolors = "1.13"
+scapy = "2.5.0"
+aiohttp = "3.9.3"
+zeroconf = "0.131.0"
+netifaces = "0.11.0"
+asyncio = "3.4.3"
+
+[tool.poetry.group.dev.dependencies]
+"RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}
+systemd-python = {path = "lib/systemd-python", develop = true}
+rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
+
+[tool.poetry.group.rpi-only-deps.dependencies]
+# systemd-python = "235"
+# "RPi.GPIO" = "0.7.1"
+# rpi-ws281x = "5.0.0"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

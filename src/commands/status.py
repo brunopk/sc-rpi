@@ -10,6 +10,4 @@ class Status(Command):
         pass
 
     def exec(self) -> dict:
-        return self.controller.status()
-
-
+        return self.hw_controller.status()

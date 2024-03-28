@@ -1,6 +1,6 @@
 from utils import parse_color
 from command import Command
-from error import ParseError, ExecutionError
+from errors import ParseError, ApiError
 from jsonschema import Draft7Validator
 
 
@@ -50,10 +50,7 @@ class SectionEdit(Command):
 
     def exec(self):
         try:
-            self.controller.edit_section(self.section_id, self.start, self.end, self.color)
-            self.controller.render()
+            self.hw_controller.edit_section(self.section_id, self.start, self.end, self.color)
+            self.hw_controller.render()
         except KeyError:
-            raise ExecutionError(f'section {self.args["section_id"]} is not defined')
-        except ValueError as ex:
-            raise ExecutionError(str(ex))
-
+            raise ApiError(f'section {self.args["section_id"]} is not defined')

@@ -5,8 +5,9 @@ from jsonschema import Draft7Validator
 from os.path import abspath, isfile, join, dirname
 from os import listdir
 from inflector import Inflector
-from controller import Controller
-from error import ParseError
+from hardware_controller import HardwareController
+from errors import ParseError
+from response import Response
 
 
 class Command:
@@ -18,17 +19,16 @@ class Command:
         - Must inherit from this class
         - Class name must be the camelized version of the module name
 
-    The command name (the value for the *name* attribute on the JSON) will be the same
-    as the module name (snake-case version).
+    Module name will be used as command name.
 
     """
 
     def __init__(self):
-        self.args: dict = None
-        self.controller: Optional[Controller] = None
+        self.args: dict = {}
+        self.hw_controller: Optional[HardwareController] = None
 
-    def set_controller(self, controller: Controller):
-        self.controller = controller
+    def set_hardware_controller(self, controller: HardwareController):
+        self.hw_controller = controller
 
     def set_arguments(self, args: dict):
         """
@@ -44,7 +44,7 @@ class Command:
         """
         raise NotImplemented()
 
-    def exec(self) -> dict:
+    def exec(self) -> Response:
         """
         Executes the command
 
@@ -66,14 +66,14 @@ class CommandParser:
         excluded_files = ['__init__.py']
         modules = [
             file_name[:-3]
-            for file_name in listdir(commands)
+            for file_name in listdir(join(current_path, commands))
             if isfile(join(join(current_path, commands), file_name)) and file_name not in excluded_files
         ]
         schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
             "properties": {
-                "name": {
+                "command": {
                     "type": "string",
                     "enum": modules
                 },
@@ -81,7 +81,7 @@ class CommandParser:
                     "type": "object"
                 }
             },
-            "required": ["name"]
+            "required": ["command"]
         }
         classes = dict()
         for module_name in modules:
@@ -107,7 +107,7 @@ class CommandParser:
         if len(errors) > 0:
             raise ParseError(errors)
 
-        cmd_name = json['name']
+        cmd_name = json['command']
         cmd: Command = self.classes.get(cmd_name)()
 
         if 'args' in json.keys():

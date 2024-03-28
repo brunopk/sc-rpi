@@ -3,7 +3,8 @@ from typing import List, Tuple
 from webcolors import rgb_to_hex
 from rpi_ws281x import PixelStrip, Color
 from configparser import ConfigParser
-from error import Overlapping, AlreadyOn, AlreadyOff
+from errors import ApiError
+from enums import ErrorCode
 from uuid import uuid1
 from utils import bool
 
@@ -23,15 +24,14 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def _insert_section(self, id: str, start: int, end: int, color_list):
         """
-        :raise ValueError: if start > end
-        :raise Overlapping: if the new section overlaps another section
+        :raise ApiError: if start > end, start < 0, end >= strip_length or new section overlaps another section
         """
         index = None
         if end < start or start < 0 or end >= self.strip_length:
-            raise ValueError('section not defined correctly')
+            raise ApiError(ErrorCode.BAD_REQUEST, 'end < start or start < 0 or end >= strip_length')
         for i, v in enumerate(self.limits):
             if v[0] < start < v[1] or v[0] < end < v[1]:
-                raise Overlapping()
+                raise ApiError(ErrorCode.OVERLAPPING)
             if i < len(self.limits) - 1:
                 if self.limits[i][0] < start and end < self.limits[i + 1][0]:
                     index = i + 1
@@ -123,8 +123,7 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def set_section_on(self, id: str):
         """
-        :raise AlreadyOn: if section is already on
-        :raise KeyError: if section do not exist
+        :raise KeyError: if section not exist
         """
         if id not in self.ids:
             raise KeyError()
@@ -135,7 +134,6 @@ class SectionManager:
     # noinspection PyShadowingBuiltins
     def set_section_off(self, id: str):
         """
-        :raise AlreadyOff: if section is already off
         :raise KeyError: if section do not exist
         """
         if id not in self.ids:
@@ -195,6 +193,7 @@ class SectionManager:
     def remove_sections(self, sections: List[str]):
         """
         Removes sections by id
+
         :param sections: list of section ids to be removed
         :raise KeyError: if any of the sections in the 'sections' is not defined
         """
@@ -212,7 +211,7 @@ class SectionManager:
             raise KeyError(f'section {invalid_section_id} is not defined')
 
 
-class Controller:
+class HardwareController:
     """
     Provides an interface to control the strip executing commands on specific sections
     (portions of the strip defined by the starting and ending position).
@@ -247,7 +246,7 @@ class Controller:
         self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
         self.logger = logging.getLogger('Controller')
         self.section_manager = SectionManager(config)
-        self.is_on = True
+        self.is_on = False
         self.strip.begin()
 
     def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
@@ -272,8 +271,8 @@ class Controller:
         :param start: new start position for the section
         :param end: new end position for the section
         :param color: color for each led in the section
-        :raises KeyError: if section with section_id is not defined
-        :raises ValueError: if limits are defined correctly (also in case of section overlapping)
+        :raises KeyError: if section is not defined
+        :raises ApiError: if limits are defined correctly (also in case of section overlapping)
         """
         return self.section_manager.edit_section(id, start, end, color)
 
@@ -289,8 +288,9 @@ class Controller:
     def remove_sections(self, sections: List[str]):
         """
         Removes sections by id
+
         :param sections: list of section ids to be removed
-        :raise KeyError: if some section don't exist
+        :raise KeyError: if a section not exist
         """
         self.section_manager.remove_sections(sections)
 
@@ -331,12 +331,12 @@ class Controller:
         """
         Turns on the entire strip or an specific section
 
-        :raise AlreadyOn: if the strip (or the section) is already on
+        :raise ApiError: if the strip is already on (only validated for the whole strip)
         :raise KeyError: if section do not exist
         """
         if section_id is None:
             if self.is_on:
-                raise AlreadyOn()
+                raise ApiError(ErrorCode.ALREADY_ON)
             self.is_on = True
         else:
             self.section_manager.set_section_on(section_id)
@@ -345,12 +345,12 @@ class Controller:
         """
         Turns off the entire strip or an specific section
 
-        :raise AlreadyOff: if the strip (or the section) is already off
+        :raise ApiError: if the strip is already off (only validated for the whole strip)
         :raise KeyError: if section do not exist
         """
         if section_id is None:
             if not self.is_on:
-                raise AlreadyOff()
+                raise ApiError(ErrorCode.ALREADY_OFF)
             self.is_on = False
         else:
             self.section_manager.set_section_off(section_id)
@@ -378,7 +378,7 @@ class Controller:
             if len(colors) == 0:
                 self.logger.warning('No sections defined (rendering Color(0, 0, 0))')
             if not self.is_on:
-                self.logger.warning('Strip is turned off (rendering Color(0, 0, 0))')
+                self.logger.warning('Strip is turned off (Color(0, 0, 0))')
             for i in range(self.strip_length):
                 self.strip.setPixelColor(i, Color(0, 0, 0))
         else:

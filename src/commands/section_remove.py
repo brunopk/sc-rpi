@@ -1,7 +1,8 @@
 from utils import parse_color
-from command import Command
-from error import ParseError, ExecutionError
 from jsonschema import Draft7Validator
+from command import Command
+from errors import ParseError, ApiError
+from enums import ErrorCode
 
 
 class SectionRemove(Command):
@@ -32,10 +33,7 @@ class SectionRemove(Command):
 
     def exec(self):
         try:
-            self.controller.remove_sections(self.sections)
-            self.controller.render()
+            self.hw_controller.remove_sections(self.sections)
+            self.hw_controller.render()
         except KeyError as ex:
-            raise ExecutionError(str(ex))
-        except Exception as ex:
-            raise ExecutionError(str(ex))
-
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)

@@ -1,9 +1,8 @@
-from controller import Controller
-from error import Overlapping
-from configparser import ConfigParser
-from random import randint
 import logging
 import unittest
+from hardware_controller import HardwareController
+from configparser import ConfigParser
+from random import randint
 
 
 class TestCreatingSections(unittest.TestCase):
@@ -11,9 +10,9 @@ class TestCreatingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()
@@ -30,7 +29,7 @@ class TestCreatingSections(unittest.TestCase):
     def test_colors_1(self):
         color = (1, 2, 3)
         section_id = self.controller.new_section(0, 100, (0, 0, 0))
-        self.controller.set_color(color, section_id)
+        self.controller.edit_section(section_id, color=color)
         self.assertEqual(color, self.controller.concatenate_sections()[0])
 
     def test_total_length_1(self):
@@ -91,9 +90,9 @@ class TestRemovingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()
@@ -125,9 +124,9 @@ class TestEditingSections(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         config = ConfigParser()
-        config.read('../config.ini')
+        config.read('./config.ini')
         logging.basicConfig(level=None)
-        cls.controller = Controller(config=config)
+        cls.controller = HardwareController(config=config)
 
     def setUp(self) -> None:
         self.controller.remove_all_sections()

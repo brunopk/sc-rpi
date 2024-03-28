@@ -1,83 +1,90 @@
 # Commands
 
-Commands are represented as stringified JSONs and sent in the body section of the [SCP protocol](/doc/SCP_Protocol.md), so this is an example of a wrong command representation:
-
-`{name: "cmd"}` 
-
-And this is an example of a good command representation:
-
-`{"name": "cmd"}`
-
-All commands MUST follow this schema:
+The API for sc-rpi consist of commands sent through [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) which provides several important features, including bi-directional communication which is particularly important for sc-rpi. Commands are defined and implemented on [`src/commands/`](../src/commands), and represented as JSON objects with a specific format:
 
 ```json
 {
-  "name": "COMMAND_NAME",
-  "args": "COMMAND_ARGUMENTS"
+  "command": "command_name",
+  "args": {}
 }
 ```
 
-where `<COMMAND_NAME>` is a string and `<COMMAND_ARGUMENTS>` it's an object.
+where the value for `args` it's another JSON object. **All commands** return responses with the following format :
 
-> Colors in requests and responses are represented with their hex values
+```json
+{
+    "status": 201,
+    "description": "accepted",
+    "data": null
+}
+```
 
-They are defined and implemented on the [`src/commands/`](../src/commands) directory. Available commands are: 
+where :
+
+- `status` : HTTP status codes, commonly 201 (accepted).
+- `description`: an string describing more information about response.
+- `data`: another object with more information if the command requires it, `null` for most commands
+
+In general for requests and responses :
+
+- Colors are represented in hexadecimal.
+- Although the WebSocket protocol itself doesn't natively incorporate status codes like HTTP, sc-rpi utilize them for responses.
+
+Available commands are :
 
 - [disconnect](#disconnect)
 - [reset](#reset)
-- [turn_on](#turn_on)
-- [turn_off](#turn_off)
-- [section_edit](#section_edit)
-- [section_add](#section_add)
-- [section_remove](#section_remove)
+- [status](#status)
+- [turn\_on](#turn_on)
+- [turn\_off](#turn_off)
+- [section\_edit](#section_edit)
+- [section\_add](#section_add)
+- [section\_remove](#section_remove)
 
-
-## `disconnect`
+### disconnect
 
 - What it does: closes the TCP connection.
 - Example:
-    ```json
+  ```json
     {
-      "name": "disconnect"
+      "command": "disconnect"
     }
     ```
 - Returns: nothing
 
-## `reset`
+### reset
 
 - What it does: removes all sections.
 - Example:
     ```json
     {
-      "name": "reset"
+      "command": "reset"
     }
     ```
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
   
-  
-
-## `status`
+### status
 
 - What it does: returns information of the current status of the system.
 - Example:
     ```json
     {
-      "name": "status"
+      "command": "status"
     }
     ```
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {
+      "status": 201,
+      "description": "accepted",
+      "data": {
         "number_of_led": 300,
         "sections": [{
           "id":  "123e4567-e89b-12d3-a456-42661417400",
@@ -91,14 +98,14 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
     }
     ```
 
-## turn_on
+### turn_on
 
 - What it does: turns on specific sections or the whole strip
 
 - Example 1:
     ```json
     {
-      "name": "turn_on"
+      "command": "turn_on"
     }
     ```
 
@@ -106,21 +113,21 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 
     ```json
     {
-      "name": "turn_on",
+      "command": "turn_on",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
     }
     ```
 
-## turn_off
+### turn_off
 
 - What it does: turns off specific sections or the whole strip
 
 - Example 1:
     ```json
     {
-      "name": "turn_off"
+      "command": "turn_off"
     }
     ```
 
@@ -128,14 +135,14 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 
     ```json
     {
-      "name": "turn_off",
+      "command": "turn_off",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
     }
     ```
 
-## `section_edit`
+### section_edit
 
 - What it does: changes attributes of a section (see `section_new`).
 - Required arguments:
@@ -143,7 +150,7 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Example 1:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40
@@ -153,15 +160,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
  - Example 2:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40,
@@ -172,15 +179,15 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
 - Example 3:
     ```json
     {
-      "name": "edit_section",
+      "command": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "color": "#abc123"
@@ -190,20 +197,19 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
  - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
-  
 
-## `section_add`
+### section_add
 
 - What it does: defines a new section.
 - Example:
     ```json
     {
-      "name": "section_add",
+      "command": "section_add",
       "args": {
         "sections": [{
             "start": 0,
@@ -220,9 +226,9 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Returns: 
     ```json
     {
-      "status": 200, 
-      "message": "OK", 
-      "result": {
+      "status": 201, 
+      "description": "accepted", 
+      "data": {
           "sections": [
             "0a4e9568-940f-11eb-8de4-b827eb95e032", 
             "0a4ea54e-940f-11eb-8de4-b827eb95e032"
@@ -230,15 +236,14 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
       }
     }
     ```
-  
 
-## `section_remove`
+### section_remove
 
 - What it does: removes sections by id.
 - Example:
     ```json
     {
-      "name": "section_remove",
+      "command": "section_remove",
       "args": {
         "sections": [
           "123e4567-e89b-12d3-a456-42661417400",
@@ -250,10 +255,12 @@ They are defined and implemented on the [`src/commands/`](../src/commands) direc
 - Returns: 
     ```json
     {
-      "status": 200,
-      "message": "OK",
-      "result": {}
+      "status": 201,
+      "description": "accepted",
+      "data": null
     }
     ```
-  
- 
+
+## Links
+
+- [Send WebSocket requests with Postman](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/)

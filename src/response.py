@@ -1,19 +1,23 @@
-from json import dumps
+from typing import Optional
+from dataclasses import dataclass
+from http import HTTPStatus
 
-
+@dataclass
 class Response:
 
-    def __init__(self, status, result: dict):
-        self.status = status
-        self.result = result
+    status: HTTPStatus = HTTPStatus.ACCEPTED
 
-    def to_json(self) -> str:
-        """
-        Returns JSON stringified representation of the response.
-        """
-        json = {
-            'status': self.status.value,
-            'message': self.status.phrase,
-            'result': self.result
-        }
-        return dumps(json)
+    description: Optional[str] = None
+
+    data: Optional[dict] = None
+
+    def __init__(self, status: HTTPStatus, description: Optional[str] = None, data: Optional[dict] = None):
+        self.status = status
+        self.description = description if description is not None else " ".join(status.name.lower().split("_"))
+        self.data = data
+
+
+class Error(Response):
+
+    def __init__(self, status: HTTPStatus, description: Optional[str] = None):
+        super().__init__(status=status, description=" ".join(status.name.lower().split("_")) if description is None else description)
