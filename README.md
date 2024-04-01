@@ -1,13 +1,11 @@
 # Strip Controller Raspberry
 
-Receives [commands](/doc/commands.md) through WebSocket, process them and convert it to PWM signals for any W2812B LED strip using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. 
-
-The circuit to connect the strip to the Raspberry Pi is described [here](/doc/circuit.md) to know how to build the circuit with W2812B LED strips.
+Receives [commands](/doc/commands.md) through WebSocket, process them and convert it to PWM signals for any W2812B LED strip using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. The circuit to connect the strip to the Raspberry Pi is described [here](/doc/circuit.md).
 
 ## Requirements
 
-- Raspberry Pi 3 or newer versions with [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/) (refer to [/doc/network_configuration.md](/doc/network_configuration.md) to properly configure wired or wireless connection).
-- W2812B LED strip (refer to [/doc/circuit.md](/doc/circuit.md) to connect the strip to the Raspberry Pi).
+- Raspberry Pi 3 or newer versions with [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/).
+- W2812B LED strip.
 - Python: 3.8.18.
 - [Poetry](doc/poetry.md)
 
@@ -44,6 +42,7 @@ Refer to [doc/development](doc/development.md) for development tips and advices.
 
 ## Links
 
+- [Network configuration in Raspberry Pi OS](/doc/network_configuration.md).
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
 - [Official Python distribution of the ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
 - [Userspace Raspberry Pi PWM library for WS281X LEDs](http://github.com/richardghirst/rpi_ws281x)
