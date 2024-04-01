@@ -1,9 +1,6 @@
 # Network configuration
 
-To easily run the server and allow other hosts to connect, its recommended to connect it with a prefixed wireless access point or router, or through a wired connection. If it will be connected to through a wired connection there is nothing more to do. In other case, to connect the server to a WiFi network its recommended
-to [wpa_supplicant]((https://wiki.archlinux.org/title/Wpa_supplicant#Connecting_with_wpa_cli) which is normally provided with Raspbian.
-
-**The most important is to configure /etc/wpa_supplicant/wpa_supplicant.conf in order to allow Raspbian to automatically connect with your preferred access point or router. This file lists more than one devices each of them with a defined priority to connect :**
+To easily run the server and allow other hosts to connect, it's recommended to install [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/) with **Raspberry Pi Imager** (which may be found [here](https://www.raspberrypi.com/software/)) to set network configuration before writing the OS image to the SD (or USB storage) as shown in [this](https://youtu.be/om8gGB3gyT0?si=OUku24CZW5n7PkQ4&t=31) video. Also, for the first boot, and in order to check Raspberry Pi OS is able to start and connect to local network, it's recommended to start the system with an HDMI cable connected to a monitor. After that, all commands can be executed through SSH.  In case of preferring to connect the a WiFi network its recommended to configure [wpa_supplicant](https://wiki.archlinux.org/title/Wpa_supplicant#Connecting_with_wpa_cli) by editing */etc/wpa_supplicant/wpa_supplicant.conf* with something similar to this :
 
 ```conf
 network={
@@ -14,6 +11,8 @@ network={
 }
 ```
 
+> Take into account that it's possible to add multiple SSIDs with different priorities.
+
 </br>
 </br>
 
@@ -23,9 +22,13 @@ To check to which device is the Raspberry connected:
 iw wlan0 link
 ```
 
+or :
+
 ```bash
 iwconfig wlan0
 ```
+
+or :
 
 ```bash
 wpa_cli -i wlan0 STATUS   
