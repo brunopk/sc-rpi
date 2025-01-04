@@ -1,10 +1,10 @@
 # Commands
 
-The API for sc-rpi consist of commands sent through [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) which provides several important features, including bi-directional communication which is particularly important for sc-rpi. Commands are defined and implemented on [`src/commands/`](../src/commands), and represented as JSON objects with a specific format:
+The API for sc-rpi consists of commands sent through [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) as JSON objects with this format:
 
 ```json
 {
-  "command": "command_name",
+  "name": "command_name",
   "args": {}
 }
 ```
@@ -32,14 +32,16 @@ In general for requests and responses :
 
 Available commands are :
 
-- [disconnect](#disconnect)
-- [reset](#reset)
-- [status](#status)
-- [turn\_on](#turn_on)
-- [turn\_off](#turn_off)
-- [section\_edit](#section_edit)
-- [section\_add](#section_add)
-- [section\_remove](#section_remove)
+- [Commands](#commands)
+    - [disconnect](#disconnect)
+    - [reset](#reset)
+    - [status](#status)
+    - [turn\_on](#turn_on)
+    - [turn\_off](#turn_off)
+    - [section\_edit](#section_edit)
+    - [section\_add](#section_add)
+    - [section\_remove](#section_remove)
+  - [Links](#links)
 
 ### disconnect
 
@@ -47,7 +49,7 @@ Available commands are :
 - Example:
   ```json
     {
-      "command": "disconnect"
+      "name": "disconnect"
     }
     ```
 - Returns: nothing
@@ -58,7 +60,7 @@ Available commands are :
 - Example:
     ```json
     {
-      "command": "reset"
+      "name": "reset"
     }
     ```
 - Returns: 
@@ -76,7 +78,7 @@ Available commands are :
 - Example:
     ```json
     {
-      "command": "status"
+      "name": "status"
     }
     ```
 - Returns: 
@@ -105,7 +107,7 @@ Available commands are :
 - Example 1:
     ```json
     {
-      "command": "turn_on"
+      "name": "turn_on"
     }
     ```
 
@@ -113,7 +115,7 @@ Available commands are :
 
     ```json
     {
-      "command": "turn_on",
+      "name": "turn_on",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
@@ -127,7 +129,7 @@ Available commands are :
 - Example 1:
     ```json
     {
-      "command": "turn_off"
+      "name": "turn_off"
     }
     ```
 
@@ -135,7 +137,7 @@ Available commands are :
 
     ```json
     {
-      "command": "turn_off",
+      "name": "turn_off",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000"
       }
@@ -150,7 +152,7 @@ Available commands are :
 - Example 1:
     ```json
     {
-      "command": "edit_section",
+      "name": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40
@@ -168,7 +170,7 @@ Available commands are :
  - Example 2:
     ```json
     {
-      "command": "edit_section",
+      "name": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "end": 40,
@@ -187,7 +189,7 @@ Available commands are :
 - Example 3:
     ```json
     {
-      "command": "edit_section",
+      "name": "edit_section",
       "args": {
         "section_id": "123e4567-e89b-12d3-a456-426614174000",
         "color": "#abc123"
@@ -209,7 +211,7 @@ Available commands are :
 - Example:
     ```json
     {
-      "command": "section_add",
+      "name": "section_add",
       "args": {
         "sections": [{
             "start": 0,
@@ -243,7 +245,7 @@ Available commands are :
 - Example:
     ```json
     {
-      "command": "section_remove",
+      "name": "section_remove",
       "args": {
         "sections": [
           "123e4567-e89b-12d3-a456-42661417400",

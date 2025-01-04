@@ -31,17 +31,17 @@ class ZeroconfPublisher:
       try:
         zeroconf = Zeroconf()
         # Defines a custom service name '_websocket._http._tcp.local.' and a server (hostname) 'rpi.local' (.local suffix  is mandatory)
+        # TODO: set correct ip address (addresses array)
         service = ServiceInfo(
           '_http._tcp.local.', 
           '_websocket._http._tcp.local.', 
           8080, 
-          addresses=[socket.inet_aton("192.168.0.102")], 
+          addresses=[socket.inet_aton("192.168.0.109")], 
           server="rpi.local",
-          host_ttl=10
+          host_ttl=30
         )
         await zeroconf.async_register_service(service)
-        logger.info('asdasd')
-        await asyncio.sleep(10)
+        await asyncio.sleep(1000)
       except Exception as ex:
         logger.exception(ex)
         # Prevent infinite loop when: 1: fails to register service 2: fails re-trying it again too soon 3: repeat same scenario

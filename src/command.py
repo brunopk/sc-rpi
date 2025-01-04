@@ -12,15 +12,13 @@ from response import Response
 
 class Command:
     """
+    To implement a command:
 
-    Commands must be implemented on the *commands* packages following this simple rules:
-
-        - Must me implemented on his own module (inside commands package)
-        - Must inherit from this class
-        - Class name must be the camelized version of the module name
-
-    Module name will be used as command name.
-
+        - It must be implemented in its own module within the commands package.
+        - The command class must inherit from this class and be named using the camelized version of the module name. For example, if the module is section_add.py, the class name should be SectionAdd.
+    
+    The command name for JSON representation will be generated from the module name.
+    
     """
 
     def __init__(self):
@@ -73,7 +71,7 @@ class CommandParser:
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
             "properties": {
-                "command": {
+                "name": {
                     "type": "string",
                     "enum": modules
                 },
@@ -81,7 +79,7 @@ class CommandParser:
                     "type": "object"
                 }
             },
-            "required": ["command"]
+            "required": ["name"]
         }
         classes = dict()
         for module_name in modules:
@@ -107,7 +105,7 @@ class CommandParser:
         if len(errors) > 0:
             raise ParseError(errors)
 
-        cmd_name = json['command']
+        cmd_name = json['name']
         cmd: Command = self.classes.get(cmd_name)()
 
         if 'args' in json.keys():

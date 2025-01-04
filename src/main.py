@@ -10,10 +10,11 @@ from http import HTTPStatus
 from commands.disconnect import Disconnect
 from hardware_controller import HardwareController
 
-# TODO: TEST all commands (turn_off DONE, turn_on DONE)
-# TODO: combine module command and package commands into one
+# TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
+# TODO: move command.py to package commands and export each command in __init__.py
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
-# TODO: update doc to explain that SCP custom protocol is replaced by Websocket
+# TODO: avoid leaving inactive connections when Home assistant fails to send a command a need to establish a new connection
+# TODO: update doc to explain the new command format : { ""}
 # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
 
 def build_websocket_handler(hw_controller: HardwareController):
@@ -50,7 +51,7 @@ def build_websocket_handler(hw_controller: HardwareController):
                         await ws.close() 
                     
                 except ApiError as e:
-                    logger.warning(f'Error:', exc_info=e)
+                    logger.warning('', exc_info=e)
                     response = Error(status=e.status, description=e.message)
                 except Exception as e:
                     logger.exception(e)
