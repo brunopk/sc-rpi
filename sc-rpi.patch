@@ -1,0 +1,1018 @@
+diff --git a/doc/poetry.md b/doc/poetry.md
+index 6234c48..f74184d 100644
+--- a/doc/poetry.md
++++ b/doc/poetry.md
+@@ -24,7 +24,7 @@ poetry install
+ 
+ The dependencies required for running on Raspberry Pi are almost the same as those required for development, but there are some exceptions, for example :
+ 
+-- [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project its provided with a [fake implementation of](../lib/rpi-ws281x/) that library.
++- [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project its provided with a [fake implementation](../lib/rpi-ws281x/) of that library.
+ - Similar to rpi_ws281x, any other system dependant libraries should be replaced for a fake implementation.
+ - Dependencies for unit testing.
+ 
+diff --git a/doc/virtual_environments.md b/doc/virtual_environments.md
+index d8f0f62..777a6cb 100644
+--- a/doc/virtual_environments.md
++++ b/doc/virtual_environments.md
+@@ -3,13 +3,13 @@
+ ## Creating virtual environments
+ 
+ ```bash
+-python3 -m venv <path of the venv>
++python3 -m venv PATH_OF_THE_VENV
+ ```
+ 
+ or :
+ 
+ ```bash
+-virtualenv -m <path to the python interpreter> <path of the venv>
++virtualenv -p PATH_OF_THE_INTERPRETER PATH_OF_THE_VENV
+ ```
+ 
+ </br>
+@@ -17,13 +17,14 @@ virtualenv -m <path to the python interpreter> <path of the venv>
+ 
+ > In order to be automatically detected by Visual Code IDE, create the virtual environment in a folder called .direnv
+ 
+-
+ ## Activating the environment
+ 
+ ```bash
+-source <path of the venv>/bin/activate
++source .dirvenv/bin/activate
+ ```
+ 
++Asuming the virtual environment was created in .dirvenv
++
+ ## Installing dependencies
+ 
+ After activating the environment:
+diff --git a/pyproject.toml b/pyproject.toml
+index dcf78c2..d98e0c2 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -23,9 +23,9 @@ systemd-python = {path = "lib/systemd-python", develop = true}
+ rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
+ 
+ [tool.poetry.group.rpi-only-deps.dependencies]
+-# systemd-python = "235"
+-# "RPi.GPIO" = "0.7.1"
+-# rpi-ws281x = "5.0.0"
++#systemd-python = "235"
++#"RPi.GPIO" = "0.7.1"
++#rpi-ws281x = "5.0.0"
+ 
+ 
+ [build-system]
+diff --git a/run_server.py b/run_server.py
+index 3daa2a2..ae6178e 100644
+--- a/run_server.py
++++ b/run_server.py
+@@ -12,7 +12,7 @@ if __name__ == '__main__':
+     from zeroconf_publisher import ZeroconfPublisher
+     from scapy.all import IP, ICMP, sr1
+     from aiohttp import web
+-    from hardware_controller import HardwareController
++    from controller import Controller
+     
+     config = load_config()
+     host = config['DEFAULT'].get('host', '0.0.0.0')
+@@ -26,7 +26,7 @@ if __name__ == '__main__':
+     configure_status_led(config)
+ 
+     # Using the controller to handle the strip is thread-safe under the assumption that there's only one thread managing the event loop.
+-    hw_controller = HardwareController(config)
++    controller = Controller(config)
+     zeroconf_publisher = ZeroconfPublisher()
+     exit_code = 0
+     logger = logging.getLogger("main")
+@@ -41,7 +41,7 @@ if __name__ == '__main__':
+         zeroconf_publisher.start()
+ 
+         app = web.Application()
+-        app.add_routes([web.get('/', build_websocket_handler(hw_controller))])
++        app.add_routes([web.get('/', build_websocket_handler(controller))])
+         web.run_app(app, print=logger.info)
+         
+     except Exception as e:
+diff --git a/setup.cfg b/setup.cfg
+deleted file mode 100644
+index 6ed937e..0000000
+--- a/setup.cfg
++++ /dev/null
+@@ -1,2 +0,0 @@
+-[pycodestyle]
+-max-line-length=120
+\ No newline at end of file
+diff --git a/src/command.py b/src/command.py
+deleted file mode 100644
+index e3047f3..0000000
+--- a/src/command.py
++++ /dev/null
+@@ -1,114 +0,0 @@
+-from importlib import import_module
+-from json import loads
+-from typing import Optional
+-from jsonschema import Draft7Validator
+-from os.path import abspath, isfile, join, dirname
+-from os import listdir
+-from inflector import Inflector
+-from hardware_controller import HardwareController
+-from errors import ParseError
+-from response import Response
+-
+-
+-class Command:
+-    """
+-    To implement a command:
+-
+-        - It must be implemented in its own module within the commands package.
+-        - The command class must inherit from this class and be named using the camelized version of the module name. For example, if the module is section_add.py, the class name should be SectionAdd.
+-    
+-    The command name for JSON representation will be generated from the module name.
+-    
+-    """
+-
+-    def __init__(self):
+-        self.args: dict = {}
+-        self.hw_controller: Optional[HardwareController] = None
+-
+-    def set_hardware_controller(self, controller: HardwareController):
+-        self.hw_controller = controller
+-
+-    def set_arguments(self, args: dict):
+-        """
+-        Sets the arguments of the command
+-
+-        :param args: arguments decoded with json.loads
+-        """
+-        self.args = args
+-
+-    def validate_arguments(self):
+-        """
+-        :raise ValidationError:
+-        """
+-        raise NotImplemented()
+-
+-    def exec(self) -> Response:
+-        """
+-        Executes the command
+-
+-        :return: result of the execution
+-        :raises ExecutionError: if command execution fails
+-        """
+-        raise NotImplemented()
+-
+-
+-class CommandParser:
+-
+-    def __init__(self):
+-        # Dynamically constructs the JSON schema and the Draft7Validator used in the CommandParser
+-        # IMPORTANT: validate schema with Draft7Validator.check_schema(schema) before using it!
+-
+-        inflector = Inflector()
+-        commands = 'commands'
+-        current_path = dirname(abspath(__file__))
+-        excluded_files = ['__init__.py']
+-        modules = [
+-            file_name[:-3]
+-            for file_name in listdir(join(current_path, commands))
+-            if isfile(join(join(current_path, commands), file_name)) and file_name not in excluded_files
+-        ]
+-        schema = {
+-            "$schema": "https://json-schema.org/schema#",
+-            "type": "object",
+-            "properties": {
+-                "name": {
+-                    "type": "string",
+-                    "enum": modules
+-                },
+-                "args": {
+-                    "type": "object"
+-                }
+-            },
+-            "required": ["name"]
+-        }
+-        classes = dict()
+-        for module_name in modules:
+-            classes[module_name] = getattr(import_module(f'{commands}.{module_name}'), inflector.camelize(module_name))
+-        self.validator = Draft7Validator(schema)
+-        self.classes = classes
+-
+-    def parse(self, json: str) -> Command:
+-        """
+-        Parse JSON stringified representation of a command
+-        :param json: JSON stringified representation of the command
+-        :return: the corresponding command instance represented in the stringified JSON
+-        :raises ParseError: in case of parsing an invalid command
+-        """
+-        try:
+-            json = loads(json)
+-        except Exception:
+-            raise ParseError(['Invalid JSON'])
+-        if not isinstance(json, dict):
+-            raise ParseError(['Invalid JSON'])
+-
+-        errors = [e.message for e in self.validator.iter_errors(json)]
+-        if len(errors) > 0:
+-            raise ParseError(errors)
+-
+-        cmd_name = json['name']
+-        cmd: Command = self.classes.get(cmd_name)()
+-
+-        if 'args' in json.keys():
+-            cmd.set_arguments(json['args'])
+-
+-        return cmd
+diff --git a/src/commands/__init__.py b/src/commands/__init__.py
+index 8b13789..6476696 100644
+--- a/src/commands/__init__.py
++++ b/src/commands/__init__.py
+@@ -1 +1,114 @@
++from importlib import import_module
++from json import loads
++from typing import Optional
++from jsonschema import Draft7Validator
++from os.path import abspath, isfile, join, dirname
++from os import listdir
++from inflector import Inflector
++from controller import Controller
++from errors import ParseError
++from response import Response
+ 
++
++class BaseCommand:
++    """
++    To implement a command:
++
++    - It must be implemented in its own module within the commands package.
++    - The command class must inherit from this class and be named using the camelized version of the module name. 
++    For example, if the module is section_add.py, the class name should be SectionAdd.
++    
++    The command name for JSON representation will be generated from the module name.
++    
++    """
++
++    def __init__(self):
++        self.args: dict = {}
++        self.controller: Optional[Controller] = None
++
++    def set_controller(self, controller: Controller):
++        self.controller = controller
++
++    def set_arguments(self, args: dict):
++        """
++        Sets the arguments of the command
++
++        :param args: arguments decoded with json.loads
++        """
++        self.args = args
++
++    def validate_arguments(self):
++        """
++        :raise ValidationError:
++        """
++        raise NotImplementedError()
++
++    def exec(self) -> Response:
++        """
++        Executes the command
++
++        :return: result of the execution
++        :raises ExecutionError: if command execution fails
++        """
++        raise NotImplementedError()
++
++class CommandParser:
++    """Provide methods to parse commands from JSON into its corresponding class."""
++    def __init__(self):
++        # Dynamically constructs the JSON schema and the Draft7Validator used in the CommandParser
++        # IMPORTANT: validate schema with Draft7Validator.check_schema(schema) before using it!
++
++        inflector = Inflector()
++        commands = 'commands'
++        current_path = dirname(abspath(__file__))
++        excluded_files = ['__init__.py']
++        modules = [
++            file_name[:-3]
++            for file_name in listdir(current_path)
++            if isfile(join(current_path, file_name)) and file_name not in excluded_files
++        ]
++        schema = {
++            "$schema": "https://json-schema.org/schema#",
++            "type": "object",
++            "properties": {
++                "name": {
++                    "type": "string",
++                    "enum": modules
++                },
++                "args": {
++                    "type": "object"
++                }
++            },
++            "required": ["name"]
++        }
++        classes = dict()
++        for module_name in modules:
++            classes[module_name] = getattr(import_module(f'{commands}.{module_name}'), inflector.camelize(module_name))
++        self.validator = Draft7Validator(schema)
++        self.classes = classes
++
++    def parse(self, json: str) ->  BaseCommand:
++        """
++        Parse JSON stringified representation of a command
++        :param json: JSON stringified representation of the command
++        :return: the corresponding command instance represented in the stringified JSON
++        :raises ParseError: in case of parsing an invalid command
++        """
++        try:
++            json = loads(json)
++        except Exception:
++            raise ParseError(['Invalid JSON'])
++        if not isinstance(json, dict):
++            raise ParseError(['Invalid JSON'])
++
++        errors = [e.message for e in self.validator.iter_errors(json)]
++        if len(errors) > 0:
++            raise ParseError(errors)
++
++        cmd_name = json['name']
++        cmd: BaseCommand = self.classes.get(cmd_name)()
++
++        if 'args' in json.keys():
++            cmd.set_arguments(json['args'])
++            
++        return cmd
+diff --git a/src/commands/disconnect.py b/src/commands/disconnect.py
+index e40c3b3..4e633af 100644
+--- a/src/commands/disconnect.py
++++ b/src/commands/disconnect.py
+@@ -1,7 +1,6 @@
+-from command import Command
++from commands import BaseCommand
+ 
+-
+-class Disconnect(Command):
++class Disconnect(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+diff --git a/src/commands/reset.py b/src/commands/reset.py
+index c7b04b2..65f66ea 100644
+--- a/src/commands/reset.py
++++ b/src/commands/reset.py
+@@ -1,7 +1,7 @@
+-from command import Command
++from commands import BaseCommand
+ 
+ 
+-class Reset(Command):
++class Reset(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -10,5 +10,5 @@ class Reset(Command):
+         pass
+ 
+     def exec(self):
+-        self.hw_controller.remove_all_sections()
+-        self.hw_controller.render()
++        self.controller.remove_all_sections()
++        self.controller.render()
+diff --git a/src/commands/section_add.py b/src/commands/section_add.py
+index 61b9096..2ee5394 100644
+--- a/src/commands/section_add.py
++++ b/src/commands/section_add.py
+@@ -1,5 +1,5 @@
+ import logging
+-from command import Command
++from commands import BaseCommand
+ from jsonschema import Draft7Validator
+ from webcolors import hex_to_rgb
+ from errors import ParseError, ApiError
+@@ -8,8 +8,7 @@ from enums import ErrorCode
+ 
+ _logger = logging.getLogger(__name__)
+ 
+-
+-class SectionAdd(Command):
++class SectionAdd(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -58,17 +57,17 @@ class SectionAdd(Command):
+             try:
+                 color = hex_to_rgb(s['color'])
+                 color = (int(color[0]), int(color[1]), int(color[2]))
+-                ids.append(self.hw_controller.new_section(s['start'], s['end'], color))
++                ids.append(self.controller.new_section(s['start'], s['end'], color))
+             except ApiError as e:
+                 captured_error = e
+ 
+         # rollback in case of error
+         if captured_error is not None:
+             _logger.warn('Rollbacking sections.')
+-            self.hw_controller.remove_sections(ids)
++            self.controller.remove_sections(ids)
+             raise captured_error
+ 
+-        self.hw_controller.render()
++        self.controller.render()
+         return {'sections': ids}
+ 
+     def _test_overlapping(self, list):
+diff --git a/src/commands/section_edit.py b/src/commands/section_edit.py
+index 747c73f..adac24a 100644
+--- a/src/commands/section_edit.py
++++ b/src/commands/section_edit.py
+@@ -1,10 +1,10 @@
+ from utils import parse_color
+-from command import Command
++from commands import BaseCommand
+ from errors import ParseError, ApiError
+ from jsonschema import Draft7Validator
+ 
+ 
+-class SectionEdit(Command):
++class SectionEdit(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -50,7 +50,7 @@ class SectionEdit(Command):
+ 
+     def exec(self):
+         try:
+-            self.hw_controller.edit_section(self.section_id, self.start, self.end, self.color)
+-            self.hw_controller.render()
++            self.controller.edit_section(self.section_id, self.start, self.end, self.color)
++            self.controller.render()
+         except KeyError:
+             raise ApiError(f'section {self.args["section_id"]} is not defined')
+diff --git a/src/commands/section_remove.py b/src/commands/section_remove.py
+index 665d867..0f70349 100644
+--- a/src/commands/section_remove.py
++++ b/src/commands/section_remove.py
+@@ -1,11 +1,11 @@
+ from utils import parse_color
+ from jsonschema import Draft7Validator
+-from command import Command
++from commands import BaseCommand
+ from errors import ParseError, ApiError
+ from enums import ErrorCode
+ 
+ 
+-class SectionRemove(Command):
++class SectionRemove(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -33,7 +33,7 @@ class SectionRemove(Command):
+ 
+     def exec(self):
+         try:
+-            self.hw_controller.remove_sections(self.sections)
+-            self.hw_controller.render()
+-        except KeyError as ex:
++            self.controller.remove_sections(self.sections)
++            self.controller.render()
++        except KeyError:
+             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
+diff --git a/src/commands/status.py b/src/commands/status.py
+index 0bcf0c5..db15a9b 100644
+--- a/src/commands/status.py
++++ b/src/commands/status.py
+@@ -1,7 +1,7 @@
+-from command import Command
++from commands import BaseCommand
+ 
+ 
+-class Status(Command):
++class Status(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -10,4 +10,4 @@ class Status(Command):
+         pass
+ 
+     def exec(self) -> dict:
+-        return self.hw_controller.status()
++        return self.controller.status()
+diff --git a/src/commands/turn_off.py b/src/commands/turn_off.py
+index 417eba5..bc4c127 100644
+--- a/src/commands/turn_off.py
++++ b/src/commands/turn_off.py
+@@ -1,11 +1,11 @@
+ from utils import parse_color
+ from jsonschema import Draft7Validator
+-from command import Command
++from commands import BaseCommand
+ from errors import ParseError, ApiError
+ from enums import ErrorCode
+ 
+ 
+-class TurnOff(Command):
++class TurnOff(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -28,7 +28,7 @@ class TurnOff(Command):
+     def exec(self):
+         section_id = self.args['section_id'] if 'section_id' in self.args else None
+         try:
+-            self.hw_controller.turn_off(section_id)
+-            self.hw_controller.render()
+-        except KeyError as e:
++            self.controller.turn_off(section_id)
++            self.controller.render()
++        except KeyError:
+             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
+diff --git a/src/commands/turn_on.py b/src/commands/turn_on.py
+index 59fd0ce..00d951e 100644
+--- a/src/commands/turn_on.py
++++ b/src/commands/turn_on.py
+@@ -1,11 +1,11 @@
+ from utils import parse_color
+ from jsonschema import Draft7Validator
+-from command import Command
++from commands import BaseCommand
+ from errors import ParseError, ApiError
+ from enums import ErrorCode
+ 
+ 
+-class TurnOn(Command):
++class TurnOn(BaseCommand):
+ 
+     def __init__(self):
+         super().__init__()
+@@ -31,7 +31,7 @@ class TurnOn(Command):
+     def exec(self):
+         try:
+             section_id = self.args['section_id'] if self.args is not None and 'section_id' in self.args else None
+-            self.hw_controller.turn_on(section_id)
+-            self.hw_controller.render()
+-        except KeyError as e:
++            self.controller.turn_on(section_id)
++            self.controller.render()
++        except KeyError:
+             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
+diff --git a/src/hardware_controller.py b/src/hardware_controller.py
+deleted file mode 100644
+index d0ef39c..0000000
+--- a/src/hardware_controller.py
++++ /dev/null
+@@ -1,398 +0,0 @@
+-import logging
+-from typing import List, Tuple
+-from webcolors import rgb_to_hex
+-from rpi_ws281x import PixelStrip, Color
+-from configparser import ConfigParser
+-from errors import ApiError
+-from enums import ErrorCode
+-from uuid import uuid1
+-from utils import bool
+-
+-
+-class Section:
+-
+-    # noinspection PyShadowingBuiltins
+-    def __init__(self, id: str, is_on: bool, limits: tuple, color_list: List[tuple]):
+-        self.id = id
+-        self.limits = limits
+-        self.color_list = color_list
+-        self.is_on = is_on
+-
+-
+-class SectionManager:
+-
+-    # noinspection PyShadowingBuiltins
+-    def _insert_section(self, id: str, start: int, end: int, color_list):
+-        """
+-        :raise ApiError: if start > end, start < 0, end >= strip_length or new section overlaps another section
+-        """
+-        index = None
+-        if end < start or start < 0 or end >= self.strip_length:
+-            raise ApiError(ErrorCode.BAD_REQUEST, 'end < start or start < 0 or end >= strip_length')
+-        for i, v in enumerate(self.limits):
+-            if v[0] < start < v[1] or v[0] < end < v[1]:
+-                raise ApiError(ErrorCode.OVERLAPPING)
+-            if i < len(self.limits) - 1:
+-                if self.limits[i][0] < start and end < self.limits[i + 1][0]:
+-                    index = i + 1
+-                    break
+-            elif index is None:
+-                if start > self.limits[i][1]:
+-                    index = i + 1
+-                else:
+-                    index = i
+-        index = 0 if index is None else index
+-
+-        self.is_on.insert(index, True)
+-        self.ids.insert(index, id)
+-        self.color_list.insert(index, color_list)
+-        self.limits.insert(index, (start, end))
+-        self.color_list_by_id[id] = color_list
+-        self.limits_by_id[id] = (start, end)
+-        self.is_on_by_id[id] = True
+-
+-    def _remove_section(self, id: str):
+-        """
+-        :raise KeyError: if section don't exist
+-        """
+-        t = self.limits_by_id[id]
+-        i = self.limits.index(t)
+-        del self.ids[i]
+-        del self.color_list[i]
+-        del self.limits[i]
+-        del self.is_on[i]
+-        del self.color_list_by_id[id]
+-        del self.limits_by_id[id]
+-        del self.is_on_by_id[id]
+-
+-    def __init__(self, config: ConfigParser):
+-        self.strip_length = int(config['PIXEL_STRIP'].get('n'))
+-        self.config = config
+-        self.ids = []
+-        self.color_list = []
+-        self.limits = []
+-        self.is_on = []
+-        self.color_list_by_id = {}
+-        self.limits_by_id = {}
+-        self.is_on_by_id = {}
+-
+-    # noinspection PyShadowingBuiltins
+-    def edit_section(self, id: str, new_start: int = None, new_end: int = None, color: Tuple[int, int, int] = None):
+-        """
+-        Edits a section
+-
+-        :raise KeyError: if section not exist
+-        :raise ValueError: if start > end
+-        :raise Overlapping: if the new section overlaps another section
+-        """
+-        try:
+-            index = self.ids.index(id)
+-        except ValueError:
+-            raise KeyError()
+-
+-        new_start = new_start if new_start is not None else self.limits_by_id[id][0]
+-        new_end = new_end if new_end is not None else self.limits_by_id[id][1]
+-        if color is not None:
+-            new_color_list = [color] * (new_end - new_start + 1)
+-        else:
+-            color_list = self.color_list_by_id[id]
+-            new_color_list = [color_list[0]] * (new_end - new_start + 1)
+-
+-        del self.ids[index]
+-        del self.color_list[index]
+-        del self.limits[index]
+-        del self.is_on[index]
+-        del self.color_list_by_id[id]
+-        del self.limits_by_id[id]
+-        del self.is_on_by_id[id]
+-
+-        self._insert_section(id, new_start, new_end, new_color_list)
+-
+-    def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
+-        """
+-        Define a new section
+-
+-        :raise ValueError: if start > end
+-        :raise Overlapping: if the new section overlaps another section
+-        """
+-        section_id = str(uuid1())
+-        color_list = [color] * (end - start + 1)
+-        self._insert_section(section_id, start, end, color_list)
+-        return section_id
+-
+-    # noinspection PyShadowingBuiltins
+-    def set_section_on(self, id: str):
+-        """
+-        :raise KeyError: if section not exist
+-        """
+-        if id not in self.ids:
+-            raise KeyError()
+-        index = self.ids.index(id)
+-        self.is_on_by_id[id] = True
+-        self.is_on.insert(index, True)
+-
+-    # noinspection PyShadowingBuiltins
+-    def set_section_off(self, id: str):
+-        """
+-        :raise KeyError: if section do not exist
+-        """
+-        if id not in self.ids:
+-            raise KeyError()
+-        index = self.ids.index(id)
+-        self.is_on_by_id[id] = False
+-        self.is_on.insert(index, False)
+-
+-    def set_color(self, section_id: str, color_list: List[tuple]):
+-        """
+-        Sets the color for each led in the specified section
+-
+-        :param section_id: identifier of the section that will be updated
+-        :param color_list: colors for each led in the section
+-        :raises KeyError: if section is not defined
+-        :raises ValueError: if color_list is longer than the size of the section
+-        """
+-        limits = self.limits_by_id.get(section_id)
+-        if limits is None:
+-            raise KeyError(f'section {section_id} is not defined')
+-        if len(color_list) != (limits[1] - limits[0] + 1):
+-            raise ValueError(f'color array length does not match section {section_id} length')
+-        self.color_list[self.ids.index(section_id)] = color_list
+-        self.color_list_by_id[section_id] = color_list
+-
+-    # noinspection PyShadowingBuiltins
+-    def get_section(self, id: str) -> Section:
+-        """
+-        Finds and returns a section
+-
+-        :param id: identifier of the section to look for
+-        :raises KeyError: if the section is not defined
+-        """
+-        return Section(id, self.is_on_by_id[id], self.limits_by_id[id], self.color_list_by_id[id])
+-
+-    def list_sections(self) -> List[Section]:
+-        """
+-        Returns all sections ordered by their respective (start, end) limits
+-        """
+-        return [
+-            Section(self.ids[i], self.is_on[i], self.limits[i], self.color_list[i])
+-            for i in range(len(self.limits))
+-        ]
+-
+-    def remove_all_sections(self):
+-        """
+-        Removes all sections and resets the current section (see set_current_section) to None
+-        """
+-        self.ids = []
+-        self.color_list = []
+-        self.limits = []
+-        self.is_on = []
+-        self.color_list_by_id = {}
+-        self.limits_by_id = {}
+-        self.is_on_by_id = {}
+-
+-    def remove_sections(self, sections: List[str]):
+-        """
+-        Removes sections by id
+-
+-        :param sections: list of section ids to be removed
+-        :raise KeyError: if any of the sections in the 'sections' is not defined
+-        """
+-        # test if all sections are defined
+-        invalid_section_id = None
+-        for section_id in sections:
+-            if section_id not in self.limits_by_id:
+-                invalid_section_id = section_id
+-                break
+-        # remove sections (if all sections are defined)
+-        if invalid_section_id is None:
+-            for section_id in sections:
+-                self._remove_section(section_id)
+-        else:
+-            raise KeyError(f'section {invalid_section_id} is not defined')
+-
+-
+-class HardwareController:
+-    """
+-    Provides an interface to control the strip executing commands on specific sections
+-    (portions of the strip defined by the starting and ending position).
+-    """
+-
+-    def __init__(self, config: ConfigParser):
+-
+-        n = int(config['PIXEL_STRIP'].get('n'))
+-        pin = int(config['PIXEL_STRIP'].get('pin'))
+-        freq_hz = int(config['PIXEL_STRIP'].get('freq_hz'))
+-        dma = int(config['PIXEL_STRIP'].get('dma'))
+-        invert = bool(config['PIXEL_STRIP'].get('invert'))
+-        brightness = int(config['PIXEL_STRIP'].get('brightness'))
+-        channel = int(config['PIXEL_STRIP'].get('channel'))
+-
+-        if n is None:
+-            raise Exception('Cannot initialize controller, n was not set in config.ini')
+-        if pin is None:
+-            raise Exception('Cannot initialize controller, pin was not set in config.ini')
+-        if freq_hz is None:
+-            raise Exception('Cannot initialize controller, freq_hz was not set in config.ini')
+-        if dma is None:
+-            raise Exception('Cannot initialize controller, dma was not set in config.ini')
+-        if invert is None:
+-            raise Exception('Cannot initialize controller, invert was not set in config.ini')
+-        if brightness is None:
+-            raise Exception('Cannot initialize controller, brightness was not set in config.ini')
+-        if channel is None:
+-            raise Exception('Cannot initialize controller, channel was not set in config.ini')
+-
+-        self.strip_length = n
+-        self.strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
+-        self.logger = logging.getLogger('Controller')
+-        self.section_manager = SectionManager(config)
+-        self.is_on = False
+-        self.strip.begin()
+-
+-    def new_section(self, start: int, end: int, color: Tuple[int, int, int]) -> str:
+-        """
+-        Defines a new section on the strip
+-
+-        :param start: start position of the section
+-        :param end: end position of the section
+-        :param color: color for each led in the section
+-        :raise ValueError: if start > end
+-        :raise Overlapping: if the new section overlaps another section
+-        :return: id of the new section
+-        """
+-        return self.section_manager.new_section(start, end, color)
+-
+-    # noinspection PyShadowingBuiltins
+-    def edit_section(self, id: str, start: int = None, end: int = None, color: Tuple[int, int, int] = None):
+-        """
+-        Changes the start position and/or end position and/or each color of each led of the specified section
+-
+-        :param id: id of the section that will be edited
+-        :param start: new start position for the section
+-        :param end: new end position for the section
+-        :param color: color for each led in the section
+-        :raises KeyError: if section is not defined
+-        :raises ApiError: if limits are defined correctly (also in case of section overlapping)
+-        """
+-        return self.section_manager.edit_section(id, start, end, color)
+-
+-    def get_section(self, section_id: str) -> Section:
+-        """
+-        Finds and returns a section
+-
+-        :param section_id: identifier of the section to look for
+-        :raises KeyError: if the section is not defined
+-        """
+-        return self.section_manager.get_section(section_id)
+-
+-    def remove_sections(self, sections: List[str]):
+-        """
+-        Removes sections by id
+-
+-        :param sections: list of section ids to be removed
+-        :raise KeyError: if a section not exist
+-        """
+-        self.section_manager.remove_sections(sections)
+-
+-    def remove_all_sections(self):
+-        """
+-        Removes all sections and resets the current section (see set_current_section) to None
+-        """
+-        self.section_manager.remove_all_sections()
+-
+-    def concatenate_sections(self) -> List[tuple]:
+-        """
+-        Concatenates all sections in one list.
+-        Spaces between section will be filled with Color(0, 0, 0)
+-
+-        :return: a list with the length of the strip or void list if no sections are defined
+-        """
+-        result = []
+-        sections = self.section_manager.list_sections()
+-        N = self.strip_length
+-        S = len(sections)
+-
+-        if S > 0:
+-            result = [(0, 0, 0)] * sections[0].limits[0]
+-            if S > 1:
+-                for i in range(S - 1):
+-                    color_list = sections[i].color_list
+-                    result += color_list if sections[i].is_on else [(0, 0, 0)] * len(color_list)
+-                    result += [(0, 0, 0)] * (sections[i + 1].limits[0] - sections[i].limits[1] - 1)
+-                result += sections[-1].color_list
+-            else:
+-                color_list = sections[0].color_list
+-                result += color_list if sections[0].is_on else [(0, 0, 0)] * len(color_list)
+-            result = result + [(0, 0, 0)] * (N - sections[-1].limits[1] - 1)
+-
+-        return result
+-
+-    def turn_on(self, section_id: str = None):
+-        """
+-        Turns on the entire strip or an specific section
+-
+-        :raise ApiError: if the strip is already on (only validated for the whole strip)
+-        :raise KeyError: if section do not exist
+-        """
+-        if section_id is None:
+-            if self.is_on:
+-                raise ApiError(ErrorCode.ALREADY_ON)
+-            self.is_on = True
+-        else:
+-            self.section_manager.set_section_on(section_id)
+-
+-    def turn_off(self, section_id: str = None):
+-        """
+-        Turns off the entire strip or an specific section
+-
+-        :raise ApiError: if the strip is already off (only validated for the whole strip)
+-        :raise KeyError: if section do not exist
+-        """
+-        if section_id is None:
+-            if not self.is_on:
+-                raise ApiError(ErrorCode.ALREADY_OFF)
+-            self.is_on = False
+-        else:
+-            self.section_manager.set_section_off(section_id)
+-
+-    def status(self) -> dict:
+-        return {
+-            'strip_length': self.strip_length,
+-            'current_sections': [{
+-                'id': s.id,
+-                'is_on': s.is_on,
+-                'color': rgb_to_hex(s.color_list[0]),
+-                'limits': {
+-                    'start': s.limits[0],
+-                    'end': s.limits[1]
+-                }
+-            } for s in self.section_manager.list_sections()]
+-        }
+-
+-    def render(self):
+-        """
+-        Renders the actual configuration on the strip
+-        """
+-        colors = self. concatenate_sections()
+-        if len(colors) == 0 or not self.is_on:
+-            if len(colors) == 0:
+-                self.logger.warning('No sections defined (rendering Color(0, 0, 0))')
+-            if not self.is_on:
+-                self.logger.warning('Strip is turned off (Color(0, 0, 0))')
+-            for i in range(self.strip_length):
+-                self.strip.setPixelColor(i, Color(0, 0, 0))
+-        else:
+-            for i, c in enumerate(colors):
+-                self.strip.setPixelColor(i, Color(c[0], c[1], c[2]))
+-
+-        self.strip.show()
+-
+-    def exec_cmd(self, cmd) -> dict:
+-        """
+-        Executes the current command (see set_command) on the current section (see set_section).
+-        If no section was set, executes the command on the entire strip.
+-
+-        :return: result of the execution
+-        """
+-        cmd.set_controller(self)
+-        return cmd.exec()
+diff --git a/src/main.py b/src/main.py
+index 068b0bd..e8f4df0 100755
+--- a/src/main.py
++++ b/src/main.py
+@@ -3,12 +3,12 @@ import aiohttp
+ 
+ from aiohttp import web as _web
+ from dataclasses import asdict
+-from command import CommandParser
++from commands import CommandParser
+ from response import Response, Error
+ from errors import ApiError
+ from http import HTTPStatus
+ from commands.disconnect import Disconnect
+-from hardware_controller import HardwareController
++from controller import Controller
+ 
+ # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
+ # TODO: move command.py to package commands and export each command in __init__.py
+@@ -17,7 +17,7 @@ from hardware_controller import HardwareController
+ # TODO: update doc to explain the new command format : { ""}
+ # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
+ 
+-def build_websocket_handler(hw_controller: HardwareController):
++def build_websocket_handler(controller: Controller):
+ 
+     logger = logging.getLogger(__name__)
+ 
+@@ -44,12 +44,12 @@ def build_websocket_handler(hw_controller: HardwareController):
+                     logger.debug(f'Command received : {msg.data}')
+                     if not isinstance(cmd, Disconnect):
+                         cmd.validate_arguments()
+-                        result = hw_controller.exec_cmd(cmd)
++                        result = controller.exec_cmd(cmd)
+                         response = Response(status=HTTPStatus.ACCEPTED, data=result)
+                     else:
+                         # TODO: check if this close the socket correctly
+-                        await ws.close() 
+-                    
++                        await ws.close()
++
+                 except ApiError as e:
+                     logger.warning('', exc_info=e)
+                     response = Error(status=e.status, description=e.message)
+diff --git a/test/test_controller.py b/test/test_controller.py
+index 52bc408..f5247f8 100644
+--- a/test/test_controller.py
++++ b/test/test_controller.py
+@@ -1,6 +1,6 @@
+ import logging
+ import unittest
+-from hardware_controller import HardwareController
++from controller import Controller
+ from configparser import ConfigParser
+ from random import randint
+ 
