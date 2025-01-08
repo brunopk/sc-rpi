@@ -1,9 +1,10 @@
 import logging
-from command import Command
 from jsonschema import Draft7Validator
 from webcolors import hex_to_rgb
 from errors import ParseError, ApiError
 from enums import ErrorCode
+from commands import Command
+from controller import Controller
 
 
 _logger = logging.getLogger(__name__)

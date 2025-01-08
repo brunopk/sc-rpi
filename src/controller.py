@@ -1,13 +1,12 @@
 import logging
 from typing import List, Tuple
+from configparser import ConfigParser
+from uuid import uuid1
 from webcolors import rgb_to_hex
 from rpi_ws281x import PixelStrip, Color
-from configparser import ConfigParser
 from errors import ApiError
 from enums import ErrorCode
-from uuid import uuid1
-from utils import bool
-
+from helpers import parse_bool
 
 class Section:
 
@@ -222,7 +221,7 @@ class Controller:
         pin = int(config['PIXEL_STRIP'].get('pin'))
         freq_hz = int(config['PIXEL_STRIP'].get('freq_hz'))
         dma = int(config['PIXEL_STRIP'].get('dma'))
-        invert = bool(config['PIXEL_STRIP'].get('invert'))
+        invert = parse_bool(config['PIXEL_STRIP'].get('invert'))
         brightness = int(config['PIXEL_STRIP'].get('brightness'))
         channel = int(config['PIXEL_STRIP'].get('channel'))
 
@@ -393,5 +392,4 @@ class Controller:
 
         :return: result of the execution
         """
-        cmd.set_controller(self)
         return cmd.exec()

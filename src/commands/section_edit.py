@@ -1,7 +1,8 @@
-from utils import parse_color
-from command import Command
-from errors import ParseError, ApiError
 from jsonschema import Draft7Validator
+from errors import ParseError, ApiError
+from commands import Command
+from controller import Controller
+from helpers import parse_color
 
 
 class SectionEdit(Command):

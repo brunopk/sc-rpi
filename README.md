@@ -28,8 +28,9 @@ Currently sc-rpi is intended to be manually installed as a [linux service](https
 2. Activate the environment
 3. [Install development dependencies with poetry](/doc/poetry.md)
 4. Run the server:
+
     ```bash
-    python -m run_server
+    python -m main
     ```
 
 Refer to [doc/development](doc/development.md) for development tips and advices.

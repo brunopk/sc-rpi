@@ -1,4 +1,5 @@
-from command import Command
+from commands import Command
+from controller import Controller
 
 
 class Reset(Command):

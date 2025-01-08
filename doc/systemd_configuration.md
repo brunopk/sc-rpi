@@ -45,6 +45,6 @@ something like this can be obtained :
 
 ```txt
 Feb 06 23:42:03 raspberrypi systemd[1]: Started sc-rpi server.
-Feb 06 23:42:04 raspberrypi <path to sc-rpi>/run_server.py[559]: sc-rpi server ready to listen new connections.
+Feb 06 23:42:04 raspberrypi <path to sc-rpi>/main.py[559]: sc-rpi server ready to listen new connections.
 Feb 06 23:42:04 raspberrypi systemd[1]: sc-rpi.service: Succeeded.
 ```

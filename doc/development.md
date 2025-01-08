@@ -16,7 +16,7 @@ rsync --recursive \
 
 ---
 
-As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in run_server.py:
+As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in main.py:
 
 ```python
 web.run_app(app, print=logger.info, port=port, host=host)
