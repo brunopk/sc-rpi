@@ -26,7 +26,7 @@ from helpers import configure_logging, configure_status_led, load_config, turn_l
 # FUTURE IMPROVEMENT: controller.exec_cmd may return a Response object so each command can choose what status, description etc. to set
 
 
-def build_websocket_handler(controller: Controller):
+def build_app_handler(controller: Controller):
     logger = logging.getLogger(__name__)
 
     async def handler(request: Request):
@@ -49,7 +49,7 @@ def build_websocket_handler(controller: Controller):
 
                 try:
                     cmd = parser.parse(msg.data)
-                    logger.debug(f'Command received : {msg.data}')
+                    logger.debug(f'Command received : {msg.json()}')
                     if not isinstance(cmd, Disconnect):
                         cmd.validate_arguments()
                         result = controller.exec_cmd(cmd)
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         turn_led_indicator_on(status_led)
 
         app = Application()
-        app.add_routes([get('/', build_websocket_handler(controller))])
+        app.add_routes([get('/', build_app_handler(controller))])
         run_app(app, print=logger.info)
 
     except Exception as e:
