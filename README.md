@@ -4,9 +4,6 @@ Receives [commands](/doc/commands.md) through WebSocket, process them and conver
 
 ## Requirements
 
-
-
-
 - Raspberry Pi 3 or newer versions with [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/).
 - W2812B LED strip.
 - Python: 3.8.18.
