@@ -15,8 +15,10 @@ Receives [commands](/doc/commands.md) through WebSocket, process them and conver
 
 Currently sc-rpi is intended to be manually installed as a [linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). This also allow the server to be automatically started after system boot. So required steps to install and run sc-rpi are the following :
 
-1. [Install required linux dependencies](/doc/required_linux_dependencies.md)
-2. [Install sc-rpi](/doc/sc_rpi_installation.md)
+1. [Install required linux dependencies](/doc/required_linux_dependencies.md).
+2. [Install sc-rpi](/doc/sc_rpi_installation.md).
+3. [Set configurations](/doc/configurations.md).
+4. [Configure linux service](/doc/systemd_configuration.md).
 
 Logs will be managed with journal and can be obtained with this :
 
