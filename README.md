@@ -16,11 +16,15 @@ Receives [commands](/doc/commands.md) through WebSocket, process them and conver
 Currently sc-rpi is intended to be manually installed as a [linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). This also allow the server to be automatically started after system boot. So required steps to install and run sc-rpi are the following :
 
 1. [Install required linux dependencies](/doc/required_linux_dependencies.md)
-2. [Create the virtual environment](/doc/virtual_environments.md#creating-virtual-environments).
-3. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment).
-4. [Install required Python dependencies with poetry](/doc/poetry.md#installing-dependencies).
-5. [Configure sc-rpi](/doc/configurations.md).
-6. [Configure service](/doc/systemd_configuration.md).
+2. [Install sc-rpi](/doc/sc_rpi_installation.md)
+
+Logs will be managed with journal and can be obtained with this :
+
+```bash
+journalctl -u sc-rpi.service
+```
+
+For more information refer to [/doc/systemd_configuration](/doc/systemd_configuration.md).
 
 ## Development
 

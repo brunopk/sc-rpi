@@ -2,7 +2,7 @@
 
 In order for sc-rpi to work some system dependencies must be installed with `apt-get` or any other Linux package manager:
 
-1. libsystemd-dev
+1. libsystemd-dev: used to send logs though the journal systemd service
 
 ## Links
 

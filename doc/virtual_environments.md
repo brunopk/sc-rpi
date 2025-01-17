@@ -3,25 +3,26 @@
 ## Creating virtual environments
 
 ```bash
-python3 -m venv <path of the venv>
+python3 -m venv .direnv
 ```
 
-or :
+where *.direnv* is the virtual environment directory, or :
 
 ```bash
-virtualenv -m <path to the python interpreter> <path of the venv>
+virtualenv -m /usr/bin/python .direnv
 ```
 
+where */usr/bin/python points* to the Python interpreter.
+
 </br>
 </br>
 
-> In order to be automatically detected by Visual Code IDE, create the virtual environment in a folder called .direnv
-
+> In order to be automatically detected by Visual Code IDE, create the virtual environment in a folder called *.direnv*
 
 ## Activating the environment
 
 ```bash
-source <path of the venv>/bin/activate
+source .direnv/bin/activate
 ```
 
 ## Installing dependencies
