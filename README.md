@@ -61,3 +61,4 @@ python -m main
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
 - [Official Python distribution of the ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
 - [Userspace Raspberry Pi PWM library for WS281X LEDs](http://github.com/richardghirst/rpi_ws281x)
+- [Async HTTP client/server for asyncio and Python](https://docs.aiohttp.org/en/stable/)
