@@ -1,11 +1,11 @@
 # Strip Controller Raspberry
 
-Receives [commands](/doc/commands.md) through WebSocket, process them and convert it to PWM signals for any W2812B LED strip using the [rpi_ws281x](http://github.com/richardghirst/rpi_ws281x) library. The circuit to connect the strip to the Raspberry Pi is described [here](/doc/circuit.md).
+[Websocket API](/doc/commands.md) to control W2812B LED strips [connected](/doc/circuit.md) with the Raspberry through GPIO ports.
 
 ## Requirements
 
 - Raspberry Pi 3 or newer versions with [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/).
-- W2812B LED strip.
+- W2812B LED strip (see [/doc/circuit.md](/doc/circuit.md) ).
 - Python: 3.8.18.
 - [Poetry](doc/poetry.md)
 
