@@ -20,6 +20,8 @@ Currently sc-rpi is intended to be manually installed as a [linux service](https
 3. [Set configurations](/doc/configurations.md).
 4. [Configure linux service](/doc/systemd_configuration.md).
 
+</br>
+
 Logs will be managed with journal and can be obtained with this :
 
 ```bash
@@ -35,19 +37,23 @@ For more information refer to [/doc/systemd_configuration](/doc/systemd_configur
 3. [Install development dependencies with poetry](/doc/poetry.md)
 4. Run the server
 
+</br>
+
 To run the server :
 
 ```bash
 python -m main
 ```
 
-Refer to [doc/development](doc/development.md) for more information.
-
 ### Unit testing
 
-1. Create a virtual environment (venv) if it's not created yet.
-2. Activate the venv: `source <path of the venv>/bin/activate`.
+1. Create a virtual environment (venv) if it's not created yet
+2. Activate the venv: `source <path of the venv>/bin/activate`
 3. Invoke unittest: `python -m unittest discover` (from the root folder)
+
+</br>
+
+> Refer to [doc/development](doc/development.md) for more information.
 
 ## Links
 
