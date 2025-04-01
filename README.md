@@ -30,18 +30,20 @@ For more information refer to [/doc/systemd_configuration](/doc/systemd_configur
 
 ## Development
 
-1. Create the [virtual environment](/doc/virtual_environments.md)
+1. [Create the virtual environment](/doc/virtual_environments.md)
 2. Activate the environment
 3. [Install development dependencies with poetry](/doc/poetry.md)
-4. Run the server:
+4. Run the server
 
-    ```bash
-    python -m main
-    ```
+To run the server :
 
-Refer to [doc/development](doc/development.md) for development tips and advices.
+```bash
+python -m main
+```
 
-## Unit testing
+Refer to [doc/development](doc/development.md) for more information.
+
+### Unit testing
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
