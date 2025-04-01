@@ -371,7 +371,7 @@ class Controller:
         """
         Renders the actual configuration on the strip
         """
-        colors = self. concatenate_sections()
+        colors = self.concatenate_sections()
         if len(colors) == 0 or not self.is_on:
             if len(colors) == 0:
                 self.logger.warning('No sections defined (rendering Color(0, 0, 0))')

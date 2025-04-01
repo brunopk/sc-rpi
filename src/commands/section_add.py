@@ -12,8 +12,8 @@ _logger = logging.getLogger(__name__)
 
 class SectionAdd(Command):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, controller: Controller):
+        super().__init__(controller)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "$defs": {
@@ -59,17 +59,17 @@ class SectionAdd(Command):
             try:
                 color = hex_to_rgb(s['color'])
                 color = (int(color[0]), int(color[1]), int(color[2]))
-                ids.append(self.hw_controller.new_section(s['start'], s['end'], color))
+                ids.append(self.controller.new_section(s['start'], s['end'], color))
             except ApiError as e:
                 captured_error = e
 
         # rollback in case of error
         if captured_error is not None:
-            _logger.warn('Rollbacking sections.')
-            self.hw_controller.remove_sections(ids)
+            _logger.warning('Rollbacking sections.')
+            self.controller.remove_sections(ids)
             raise captured_error
 
-        self.hw_controller.render()
+        self.controller.render()
         return {'sections': ids}
 
     def _test_overlapping(self, list):
