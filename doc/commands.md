@@ -38,32 +38,6 @@ In general for requests and responses :
 - `args` it's another JSON object.
 - Colors are represented in hexadecimal.
 
-## Table of content
-
-- [Commands](#commands)
-  - [Table of content](#table-of-content)
-  - [disconnect](#disconnect)
-    - [Example](#example)
-  - [reset](#reset)
-    - [Example](#example-1)
-  - [status](#status)
-    - [Example](#example-2)
-  - [turn\_on](#turn_on)
-    - [Example 1](#example-1)
-    - [Example 2](#example-2)
-  - [turn\_off](#turn_off)
-    - [Example 1](#example-1-1)
-    - [Example 2](#example-2-1)
-  - [section\_edit](#section_edit)
-    - [Example 1](#example-1-2)
-    - [Example 2](#example-2-2)
-    - [Example 3](#example-3)
-  - [section\_add](#section_add)
-    - [Example:](#example-3)
-  - [section\_remove](#section_remove)
-    - [Example:](#example-4)
-  - [Links](#links)
-
 ## disconnect
 
 - What it does: closes the TCP connection.
