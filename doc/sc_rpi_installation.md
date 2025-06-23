@@ -1,6 +1,6 @@
-# SC Rpi installation
+# SC RPI installation
 
-SC Rpi installation can be summarized in the following steps:
+SC RPI installation can be summarized in the following steps:
 
 1. [Copy source code](#transferring-code-with-rsync).
 2. [Create virtual environment](/doc/virtual_environments.md).

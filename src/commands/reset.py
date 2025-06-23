@@ -1,15 +1,36 @@
-from commands import Command
-from controller import Controller
+"""`reset` command."""
+
+from http import HTTPStatus
+
+from command import Command
+from hardware_controller import HardwareController
+from responses import Response, ResponseOk
 
 
 class Reset(Command):
+    """`reset` command."""
 
-    def __init__(self):
-        super().__init__()
+    CMD_NAME = "reset"
 
-    def validate_arguments(self):
-        pass
+    def __init__(self, hw_controller: HardwareController) -> None:
+        """Initialize the command.
 
-    def exec(self):
-        self.hw_controller.remove_all_sections()
-        self.hw_controller.render()
+        Args:
+            hw_controller (HardwareController): Used to control the strip.
+
+        """
+        super().__init__(hw_controller)
+
+    def validate_arguments(self) -> None:
+        """Validate command arguments."""
+
+    def run(self) -> Response:
+        """Execute the command.
+
+        :return Response:   Returns this object with result of the execution
+        :raises ApiError:   Raises this exception when command execution fails
+                            for a well-known reason.
+        """
+        self._hw_controller.remove_all_sections()
+        self._hw_controller.render()
+        return ResponseOk(HTTPStatus.ACCEPTED, Reset.CMD_NAME)

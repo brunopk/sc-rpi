@@ -34,6 +34,14 @@ So to install development dependencies :
 2. Uncomment all dependencies which are listed in "dev" group.
 3. Install dependencies with the **same** command mentioned in [Installing development dependencies](/doc/poetry.md#installing-development-dependencies)
 
+## Adding new development dependencies
+
+To add new development dependencies :
+
+```bash
+poetry add --group=dev <DEPENDENCY_NAME>
+```
+
 ## Links
 
 - [Poetry](https://python-poetry.org/)

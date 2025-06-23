@@ -29,3 +29,13 @@ web.run_app(app, print=logger.info)
 ```
 
 This modification retains the essential functionality without passing the port or host arguments, which don't allow setting custom port and host. Consequently, the server will start on default ones: port=8080 and host=0.0.0.0.".
+
+## Adding new development dependencies
+
+To add new development dependencies :
+
+```bash
+poetry add --group=dev <DEPENDENCY_NAME>
+```
+
+See `doc/poetry.md` for more information.

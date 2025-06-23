@@ -4,6 +4,7 @@ from hardware_controller import HardwareController
 from configparser import ConfigParser
 from random import randint
 
+# TODO: test that all commands returns an instance of Response
 
 class TestCreatingSections(unittest.TestCase):
 
