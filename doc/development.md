@@ -38,9 +38,7 @@ poetry add --group=dev <DEPENDENCY_NAME>
 2. Activate the venv: `source <path of the venv>/bin/activate`
 3. Invoke unittest: `python -m unittest discover` (from the root folder)
 
-## Tips
-
-### Tips for Visual Code
+## Tips for Visual Code
 
 As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in main.py:
 
@@ -56,7 +54,7 @@ web.run_app(app, print=logger.info)
 
 This modification retains the essential functionality without passing the port or host arguments, which don't allow setting custom port and host. Consequently, the server will start on default ones: port=8080 and host=0.0.0.0.".
 
-### Transferring code to the Raspberry Pi
+## Transferring code to the Raspberry Pi
 
 To facilitate development and testing on a Raspberry Pi, files can be efficiently transferred using `rsync` command, refer to [this](/doc/sc_rpi_installation.md#transferring-code-with-rsync) for more information.
 
