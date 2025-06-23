@@ -169,7 +169,7 @@ class HardwareController:
                 raise ApiError(HTTPStatus.CONFLICT, ErrorCode.ALREADY_ON)
             self.is_on = True
         else:
-            self._section_controller.set_section_on(section_id)
+            self._section_controller.turn_section_on(section_id)
 
     def turn_off(self, section_id: str | None = None) -> None:
         """Turn off the entire strip or an specific section.
@@ -185,7 +185,7 @@ class HardwareController:
                 raise ApiError(HTTPStatus.CONFLICT, ErrorCode.ALREADY_OFF)
             self.is_on = False
         else:
-            self._section_controller.set_section_off(section_id)
+            self._section_controller.turn_section_off(section_id)
 
     def status(self) -> dict:
         return {
