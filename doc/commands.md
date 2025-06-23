@@ -40,7 +40,7 @@ In general for requests and responses :
 
 ## disconnect
 
-- What it does: closes the TCP connection.
+Close the connection.
 
 ### Example
 
@@ -61,7 +61,7 @@ Returns:
 
 ## reset
 
-What it does: removes all sections.
+Remove all sections.
 
 ### Example
 
@@ -82,7 +82,7 @@ Returns:
   
 ## status
 
-What it does: returns information of the current status of the system.
+Return information of the current status of the system.
 
 ### Example
   
@@ -114,7 +114,7 @@ Returns:
 
 ## turn_on
 
-What it does: turns on specific sections or the whole strip
+Turn on specific sections or the whole strip
 
 ### Example 1
   
@@ -146,7 +146,7 @@ Returns:
 
 ## turn_off
 
-What it does: turns off specific sections or the whole strip
+Turn off specific sections or the whole strip
 
 ### Example 1
   
@@ -178,7 +178,8 @@ Returns:
 
 ## section_edit
 
-What it does: changes attributes of a section (see `section_new`).
+Change attributes of a section (see `section_new`).
+
 Required arguments:
 
 - `id` : id of the section to edit
@@ -249,9 +250,9 @@ Returns:
 
 ## section_add
 
-What it does: defines a new section.
+Define a new section.
 
-### Example:
+### Example
   
 ```json
 {
@@ -287,9 +288,9 @@ Returns:
 
 ## section_remove
 
-What it does: removes sections by id.
+Remove sections by id.
 
-### Example:
+### Example
   
 ```json
 {
