@@ -8,14 +8,13 @@ SC RPI installation can be summarized in the following steps:
 
 ## Transferring code with `rsync`
 
-A good way to copy the code while developing changes is using `rsync` like this:
+An efficient way to transfer code to the Raspberry Pi is using `rsync`:
 
 ```bash
 rsync --recursive \
   --progress \
   --archive \
   --exclude-from=.gitignore \
-  --exclude-from=.pylintrc \
   --exclude=doc \
   --exclude=.git \
   --exclude=.gitignore \
@@ -23,6 +22,18 @@ rsync --recursive \
 ```
 
 For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
+
+## Installing dependencies with Poetry
+
+To install dependencies in the Raspberry Pi :
+
+1. Comment out all dependencies which are listed in `dev` group.
+2. Uncomment all dependencies which are listed in `rpi-only-deps` group.
+3. Install dependencies :
+
+```bash
+poetry install
+```
 
 ## Links
 

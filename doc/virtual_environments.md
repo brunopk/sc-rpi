@@ -24,11 +24,3 @@ where */usr/bin/python points* to the Python interpreter.
 ```bash
 source .direnv/bin/activate
 ```
-
-## Installing dependencies
-
-After activating the environment:
-
-```bash
-pip install -r requirements.txt
-```
