@@ -9,8 +9,6 @@ The API consists of commands transmitted via JSON-formatted messages over a [Web
 }
 ```
 
-where the value for `args` it's another JSON object.
-
 **All commands responses** have the same format :
 
 ```json
@@ -37,6 +35,7 @@ In general for requests and responses :
 
 - `status` adheres to the same semantics as HTTP status codes.
 - `payload` is another JSON object. In case of errors, It will have a `code` key with the error code (string). It may be `null` for some commands.
+- `args` it's another JSON object.
 - Colors are represented in hexadecimal.
 
 ## Table of content
