@@ -12,10 +12,10 @@ from webcolors import hex_to_rgb
 from command import Command
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from responses import Response, ResponseOk
+from models import Response, ResponseOk
 
 if TYPE_CHECKING:
-    from hardware_controller import HardwareController
+    from controllers import HardwareController
 
 LOGGER = logging.getLogger(__name__)
 

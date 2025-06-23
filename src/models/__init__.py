@@ -1,5 +1,8 @@
-"""Provides different object to represent entities such as sections."""
+"""Contains all @dataclass decorated classes."""
 
+from .response import Response
+from .response_error import ResponseError
+from .response_ok import ResponseOk
 from .section import Section
 
-__all__ = ["Section"]
+__all__ = ["Response", "ResponseError", "ResponseOk", "Section"]

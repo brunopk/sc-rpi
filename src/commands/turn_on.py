@@ -5,10 +5,10 @@ from http import HTTPStatus
 from jsonschema import Draft7Validator
 
 from command import Command
+from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from hardware_controller import HardwareController
-from responses import Response, ResponseOk
+from models import Response, ResponseOk
 
 
 class TurnOn(Command):

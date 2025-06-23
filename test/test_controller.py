@@ -1,8 +1,9 @@
 import logging
 import unittest
-from hardware_controller import HardwareController
 from configparser import ConfigParser
 from random import randint
+
+from controllers import HardwareController
 
 # TODO: test that all commands returns an instance of Response
 

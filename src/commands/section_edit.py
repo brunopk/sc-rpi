@@ -10,10 +10,10 @@ from command import Command
 from enums import ErrorCode
 from errors import ApiError, ParseError
 from helpers import parse_color
-from responses import Response, ResponseOk
+from models import Response, ResponseOk
 
 if TYPE_CHECKING:
-    from hardware_controller import HardwareController
+    from controllers import HardwareController
 
 class SectionEdit(Command):
     """`section_edit` command."""

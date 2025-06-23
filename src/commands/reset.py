@@ -3,8 +3,8 @@
 from http import HTTPStatus
 
 from command import Command
-from hardware_controller import HardwareController
-from responses import Response, ResponseOk
+from controllers import HardwareController
+from models import Response, ResponseOk
 
 
 class Reset(Command):

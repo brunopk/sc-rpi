@@ -7,8 +7,8 @@ from inflector import Inflector
 from jsonschema import Draft7Validator
 
 from command import Command
+from controllers import HardwareController
 from errors import ParseError
-from hardware_controller import HardwareController
 
 
 class CommandParser:

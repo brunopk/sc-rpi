@@ -10,8 +10,8 @@ To implement a command:
 The command name for JSON representation will be generated from the module name.
 """
 
-from hardware_controller import HardwareController
-from responses import Response
+from controllers import HardwareController
+from models import Response
 
 
 class Command:

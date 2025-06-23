@@ -13,9 +13,9 @@ sys.path.append("./src")
 
 from command_parser import CommandParser
 from commands.disconnect import Disconnect
+from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError
-from hardware_controller import HardwareController
 from helpers import (
     cleanup_gpio,
     configure_logging,
@@ -25,7 +25,7 @@ from helpers import (
     turn_led_indicator_off,
     turn_led_indicator_on,
 )
-from responses import ResponseError
+from models import ResponseError
 
 # TODO: update all command documentation (new "command" field for all responses)
 # TODO: update all command documentation (all commands should have "payload" and inside is the content, also errors)
