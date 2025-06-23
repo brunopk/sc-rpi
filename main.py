@@ -27,11 +27,8 @@ from helpers import (
 )
 from models import ResponseError
 
-# TODO: update all command documentation (new "command" field for all responses)
-# TODO: update all command documentation (all commands should have "payload" and inside is the content, also errors)
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
-# TODO: avoid leaving inactive connections when Home assistant fails to send a command a need to establish a new connection
 
 LOGGER = logging.getLogger(__name__)
 

@@ -13,8 +13,6 @@ from models import Section
 if TYPE_CHECKING:
     from configparser import ConfigParser
 
-# TODO: CONTINUE CHECK ALL METHODS
-
 class SectionController:
     """Used to control sections in the strip.
 
