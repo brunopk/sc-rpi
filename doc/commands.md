@@ -9,7 +9,9 @@ The API consists of commands transmitted via JSON-formatted messages over a [Web
 }
 ```
 
-where the value for `args` it's another JSON object. And **all commands responses** have the same format :
+where the value for `args` it's another JSON object.
+
+**All commands responses** have the same format :
 
 ```json
 {
