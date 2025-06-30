@@ -39,15 +39,15 @@ class SectionAdd(Command):
                     "type": "object",
                     "properties": {
                         "start": {
-                            "type": "integer"
+                            "type": "integer",
                         },
                         "end": {
-                            "type": "integer"
+                            "type": "integer",
                         },
                         "color": {
                             "type": "string",
-                            "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
-                        }
+                            "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
+                        },
                     },
                     "required": ["start", "end", "color"],
                 },
@@ -89,10 +89,14 @@ class SectionAdd(Command):
             return ResponseOk(
                 HTTPStatus.OK, self._command_name, payload={"sections": ids},
             )
-        except ApiError:
+        except KeyError as ex:
             LOGGER.warning("Rollback sections.")
             self._hw_controller.remove_sections(ids)
-            raise
+            raise ApiError from ex
+        except Exception as ex:
+            LOGGER.warning("Rollback sections.")
+            self._hw_controller.remove_sections(ids)
+            raise ApiError from ex
 
     def _test_overlapping(
         self, sections: list[tuple[int, int]],
