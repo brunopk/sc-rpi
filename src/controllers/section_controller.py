@@ -100,7 +100,7 @@ class SectionController:
             section_id (str): Section to be turned on.
 
         Raises:
-            KeyError:
+            ApiError:
 
         """
         if section_id not in self._section_ids:
@@ -116,11 +116,13 @@ class SectionController:
             section_id (str): Section to be turned on.
 
         Raises:
-            KeyError:
+            ApiError:
 
         """
         if section_id not in self._section_ids:
-            raise KeyError
+            raise ApiError(
+                status=HTTPStatus.NOT_FOUND, code=ErrorCode.SECTION_NOT_FOUND,
+            )
         index = self._section_ids.index(section_id)
         self._is_on_by_id[section_id] = False
         self._is_on.insert(index, False)

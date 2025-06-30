@@ -159,14 +159,10 @@ class HardwareController:
         """Turn on the entire strip or an specific section.
 
         Raises:
-            ApiError:   Raises this exception if the strip is already
-                        on (only validated for the whole strip)
-            KeyError:   If section do not exist
+            ApiError:
 
         """
         if section_id is None:
-            if self.is_on:
-                raise ApiError(HTTPStatus.CONFLICT, ErrorCode.ALREADY_ON)
             self.is_on = True
         else:
             self._section_controller.turn_section_on(section_id)
@@ -175,14 +171,10 @@ class HardwareController:
         """Turn off the entire strip or an specific section.
 
         Raises:
-            ApiError:   Raises this exception if the strip is already
-                        off (only validated for the whole strip)
-            KeyError:   If section do not exist
+            ApiError:
 
         """
         if section_id is None:
-            if not self.is_on:
-                raise ApiError(HTTPStatus.CONFLICT, ErrorCode.ALREADY_OFF)
             self.is_on = False
         else:
             self._section_controller.turn_section_off(section_id)
