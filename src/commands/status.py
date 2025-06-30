@@ -10,16 +10,16 @@ from models import Response, ResponseOk
 class Status(Command):
     """`status` command."""
 
-    CMD_NAME = "status"
-
-    def __init__(self, hw_controller: HardwareController) -> None:
+    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
         """Initialize the command.
 
         Args:
+            command_name (str):Extracted from the file name by another module and passed
+                in. This is the name shown to users or used to invoke the command.
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        super().__init__(hw_controller)
+        super().__init__(command_name, hw_controller)
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
@@ -32,4 +32,4 @@ class Status(Command):
                           a well-known reason.
         """
         status = self._hw_controller.status()
-        return ResponseOk(HTTPStatus.OK, Status.CMD_NAME, payload=status)
+        return ResponseOk(HTTPStatus.OK, self._name, payload=status)

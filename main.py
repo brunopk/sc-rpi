@@ -44,6 +44,7 @@ def build_app_handler(
         CoroutineType[Any, Any, None]: Returns the coroutine
 
     """
+    parser = CommandParser(hw_controller)
 
     async def handler(request: Request) -> None:
 
@@ -55,15 +56,17 @@ def build_app_handler(
         )
         LOGGER.info("Ready to receive commands from client")
 
-        parser = CommandParser(hw_controller)
-
         async for msg in ws:
+
+            is_error = False
 
             if msg.type != aiohttp.WSMsgType.TEXT:
                 LOGGER.error(
                     "Message received with an invalid WebSocket message type: %s",
                     msg.type.name,
                 )
+
+                is_error = True
                 response = ResponseError(
                     HTTPStatus.BAD_REQUEST,
                     {
@@ -78,15 +81,16 @@ def build_app_handler(
 
                     LOGGER.debug("Command received : %s", msg.json())
 
-                    # TODO: validation should be done internally in parser.parse
                     cmd.validate_arguments()
                     response = cmd.run()
 
                 except ApiError as e:
+                    is_error = True
                     response = ResponseError(e.status, {"code": e.code })
 
                     LOGGER.debug("", exc_info=e)
                 except Exception:
+                    is_error = True
                     response = ResponseError(
                         HTTPStatus.INTERNAL_SERVER_ERROR,
                         {"code": ErrorCode.INTERNAL_ERROR},
@@ -97,7 +101,7 @@ def build_app_handler(
             response_as_string = json_dumps(response)
             await ws.send_json(response_as_string)
 
-            if isinstance(cmd, Disconnect):
+            if not is_error and isinstance(cmd, Disconnect):
                 await ws.close()
 
     return handler

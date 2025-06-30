@@ -18,16 +18,17 @@ if TYPE_CHECKING:
 class SectionEdit(Command):
     """`section_edit` command."""
 
-    CMD_NAME = "section_edit"
-
-    def __init__(self, hw_controller: HardwareController) -> None:
+    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
         """Initialize the command.
 
         Args:
+            command_name (str):Extracted from the file name by another module and
+                passed in. This is the name shown to users or used to invoke the 
+                command.
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        super().__init__(hw_controller)
+        super().__init__(command_name, hw_controller)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
@@ -77,7 +78,7 @@ class SectionEdit(Command):
                 self._section_id, self._start, self._end, self._color
             )
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.OK, SectionEdit.CMD_NAME)
+            return ResponseOk(HTTPStatus.OK, self._name)
         except KeyError as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,

@@ -14,11 +14,16 @@ from models import Response, ResponseOk
 class TurnOn(Command):
     """`turn_on` command."""
 
-    CMD_NAME = "turn_on"
+    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
+        """Initialize the command.
 
-    def __init__(self, hw_controller: HardwareController) -> None:
-        """`turn_on` command."""
-        super().__init__(hw_controller)
+        Args:
+            command_name (str): Extracted from the file name by another module and passed
+                in. This is the name shown to users or used to invoke the command.
+            hw_controller (HardwareController): Used to control the strip.
+
+        """
+        super().__init__(command_name, hw_controller)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
@@ -54,6 +59,6 @@ class TurnOn(Command):
             )
             self._hw_controller.turn_on(section_id)
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.ACCEPTED, TurnOn.CMD_NAME)
+            return ResponseOk(HTTPStatus.ACCEPTED, self._name)
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

@@ -10,16 +10,17 @@ from models import Response, ResponseOk
 class Reset(Command):
     """`reset` command."""
 
-    CMD_NAME = "reset"
-
-    def __init__(self, hw_controller: HardwareController) -> None:
+    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
         """Initialize the command.
 
         Args:
+            command_name (str):Extracted from the file name by another module
+                and passed in. This is the name shown to users or used to invoke
+                the command.
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        super().__init__(hw_controller)
+        super().__init__(command_name, hw_controller)
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
@@ -33,4 +34,4 @@ class Reset(Command):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        return ResponseOk(HTTPStatus.ACCEPTED, Reset.CMD_NAME)
+        return ResponseOk(HTTPStatus.ACCEPTED, self._name)

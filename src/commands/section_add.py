@@ -22,14 +22,16 @@ LOGGER = logging.getLogger(__name__)
 class SectionAdd(Command):
     """`section_add` command."""
 
-    def __init__(self, hw_controller: HardwareController) -> None:
+    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
         """Initialize the command.
 
         Args:
+            command_name (str):Extracted from the file name by another module and
+                passed in.This is the name shown to users or used to invoke the command.
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        super().__init__(hw_controller)
+        super().__init__(command_name, hw_controller)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "$defs": {
@@ -84,7 +86,7 @@ class SectionAdd(Command):
                 ids.append(self._hw_controller.new_section(s["start"], s["end"], color))
 
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.OK, "section_add", payload={"sections": ids})
+            return ResponseOk(HTTPStatus.OK, self._name, payload={"sections": ids})
         except ApiError:
             LOGGER.warning("Rollback sections.")
             self._hw_controller.remove_sections(ids)

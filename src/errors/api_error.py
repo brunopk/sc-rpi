@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from http import HTTPStatus
 
-if TYPE_CHECKING:
-    from http import HTTPStatus
-
-    from enums import ErrorCode
+from enums import ErrorCode
 
 
 class ApiError(Exception):
@@ -15,18 +12,20 @@ class ApiError(Exception):
 
     def __init__(
         self,
-        status: HTTPStatus,
-        code: ErrorCode,
+        status: HTTPStatus = HTTPStatus.INTERNAL_SERVER_ERROR,
+        code: ErrorCode = ErrorCode.INTERNAL_ERROR,
         message: str | None = None,
         *args: object,
     ) -> None:
         """Initialize the object.
 
         Args:
-            status (HTTPStatus): HTTP status code for the user
-            code (ErrorCode): Error code for the user
+            status (HTTPStatus, optional): HTTP status code for the user.
+                Defaults to HTTPStatus.INTERNAL_SERVER_ERROR.
+            code (ErrorCode, optional): Error code for the user.
+                Defaults to ErrorCode.INTERNAL_ERROR.
             message (str | None, optional): Message for the user. Defaults to None.
-            *args (object): Extra arguments.
+            *args: Optional arguments.
 
         """
         super().__init__(*args)
