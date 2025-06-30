@@ -24,7 +24,7 @@ So to install development dependencies :
 2. Uncomment all dependencies which are listed in `dev` group.
 3. Install `dev` dependencies as described below.
 
-### Adding new development dependencies
+### Adding new dependencies
 
 To add new development dependencies :
 
@@ -32,7 +32,7 @@ To add new development dependencies :
 poetry add --group=dev <DEPENDENCY_NAME>
 ```
 
-## Unit testing
+## Testing
 
 1. Create a virtual environment (venv) if it's not created yet
 2. Activate the venv: `source <path of the venv>/bin/activate`
