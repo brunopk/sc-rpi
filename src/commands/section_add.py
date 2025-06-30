@@ -86,7 +86,9 @@ class SectionAdd(Command):
                 ids.append(self._hw_controller.new_section(s["start"], s["end"], color))
 
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.OK, self._name, payload={"sections": ids})
+            return ResponseOk(
+                HTTPStatus.OK, self._command_name, payload={"sections": ids},
+            )
         except ApiError:
             LOGGER.warning("Rollback sections.")
             self._hw_controller.remove_sections(ids)

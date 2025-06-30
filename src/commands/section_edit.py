@@ -78,7 +78,7 @@ class SectionEdit(Command):
                 self._section_id, self._start, self._end, self._color
             )
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.OK, self._name)
+            return ResponseOk(HTTPStatus.OK, self._command_name)
         except KeyError as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,

@@ -31,4 +31,4 @@ class Disconnect(Command):
         :raises ApiError: Raises this exception when command execution fails
             for a well-known reason.
         """
-        return ResponseOk(HTTPStatus.ACCEPTED, self._name)
+        return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)

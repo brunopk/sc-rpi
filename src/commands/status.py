@@ -32,4 +32,4 @@ class Status(Command):
                           a well-known reason.
         """
         status = self._hw_controller.status()
-        return ResponseOk(HTTPStatus.OK, self._name, payload=status)
+        return ResponseOk(HTTPStatus.OK, self._command_name, payload=status)

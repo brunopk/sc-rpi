@@ -52,6 +52,6 @@ class TurnOff(Command):
         try:
             self._hw_controller.turn_off(section_id)
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.ACCEPTED, self._name)
+            return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

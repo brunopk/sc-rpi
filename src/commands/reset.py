@@ -34,4 +34,4 @@ class Reset(Command):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        return ResponseOk(HTTPStatus.ACCEPTED, self._name)
+        return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
