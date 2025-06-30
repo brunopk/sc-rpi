@@ -73,24 +73,24 @@ class HardwareController:
         section_id: str,
         start: int | None = None,
         end: int | None = None,
-        color: Tuple[int, int, int] | None = None,
+        color: tuple[int, int, int] | None = None,
     ) -> None:
-        """Changes the start position and/or end position and/or
-        each color of each led of the specified section.
+        """Change the start position and/or end position and/or each color of each led \
+
+        of the specified section.
 
         Args:
-            section_id (str): Id of the section that will be edited
-            start (int, optional): New start position for the section. Defaults to None.
-            end (int, optional): New end position for the section. Defaults to None.
-            color (Tuple[int, int, int], optional): Color for each led in the section.
-                Defaults to None.
+            section_id (str): ID of the section that will be edited.
+            start (int | None, optional): New start position for the section.Defaults to
+                None.
+            end (int | None, optional): New end position for the section. Defaults to
+                None.
+            color (tuple[int, int, int] | None, optional): Color for each led in the
+                section. Defaults to None.
 
         Raises:
-            KeyError: _description_
-            ApiError: _description_
+            ApiError:
 
-        Returns:
-            _type_: _description_
         """
         return self._section_controller.edit_section(section_id, start, end, color)
 
