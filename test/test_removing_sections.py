@@ -35,7 +35,7 @@ class TestRemovingSections(TestCase):
         s3_id = self.controller.new_section(20, 29, (0, 0, 0))
         s4_id = self.controller.new_section(30, 39, (0, 0, 0))
         self.controller.remove_sections([])
-        self.assertRaises(KeyError, self.controller.remove_sections, [''])
+        self.assertRaises(KeyError, self.controller.remove_sections, [""])
         self.controller.remove_sections([s2_id, s3_id])
         self.assertRaises(KeyError, self.controller.remove_sections, [s2_id, s4_id])
         self.controller.remove_sections([s4_id])
