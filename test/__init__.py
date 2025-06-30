@@ -1,4 +1,4 @@
-"""Contain test classes (classes that inherits from TestCase)."""
+"""Main package for all tests."""
 
 import sys
 
