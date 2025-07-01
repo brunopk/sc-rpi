@@ -52,7 +52,6 @@ class SectionController:
             color (tuple[int, int, int] | None, optional): New color.
 
         Raises:
-            KeyError:
             ValueError:
             ApiError:
 
@@ -60,7 +59,9 @@ class SectionController:
         try:
             index = self._section_ids.index(section_id)
         except ValueError as ex:
-            raise KeyError from ex
+            raise ApiError(
+                status=HTTPStatus.NOT_FOUND, code=ErrorCode.SECTION_NOT_FOUND,
+            ) from ex
 
         new_start = start if start is not None else self._limits_by_id[section_id][0]
         new_end = end if end is not None else self._limits_by_id[section_id][1]
