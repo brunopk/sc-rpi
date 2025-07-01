@@ -62,6 +62,8 @@ class SectionEdit(Command):
             except ValueError as ex:
                 errors = ["color must be an hex or in rgb format"]
                 raise ParseError(errors) from ex
+        else:
+            self._color = None
         self._start = self._args.get("start", None)
         self._end = self._args.get("end", None)
         self._section_id: str = self._args["section_id"]
@@ -75,7 +77,7 @@ class SectionEdit(Command):
         """
         try:
             self._hw_controller.edit_section(
-                self._section_id, self._start, self._end, self._color
+                self._section_id, self._start, self._end, self._color,
             )
             self._hw_controller.render()
             return ResponseOk(HTTPStatus.OK, self._command_name)
