@@ -8,7 +8,6 @@ from unittest import TestCase
 from controllers import HardwareController
 from errors import ApiError
 
-# TODO: test that all commands returns an instance of Response
 
 class TestCreatingSections(TestCase):
     """Tests for src/controllers/hardware_controller.py."""
