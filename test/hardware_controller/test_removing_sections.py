@@ -5,6 +5,7 @@ from configparser import ConfigParser
 from unittest import TestCase
 
 from controllers import HardwareController
+from errors import ApiError
 
 
 class TestRemovingSections(TestCase):
@@ -44,5 +45,5 @@ class TestRemovingSections(TestCase):
         """Test case test_setting_color_for_deleted_section."""
         section_id = self.controller.new_section(1, 1, (0, 0, 0))
         self.controller.remove_all_sections()
-        self.assertRaises(KeyError, self.controller.edit_section, (0, 0, 0), section_id)
+        self.assertRaises(ApiError, self.controller.edit_section, (0, 0, 0), section_id)
 
