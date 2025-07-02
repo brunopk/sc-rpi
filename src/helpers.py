@@ -1,17 +1,13 @@
 """Contains helper functions."""
 
-import json
 import logging
 from configparser import ConfigParser
-from dataclasses import asdict
 from re import match
-from typing import Any, Tuple
+from typing import Tuple
 
 import RPi.GPIO as GPIO
 from systemd.journal import JournalHandler
 from webcolors import hex_to_rgb
-
-from enums import EnumEncoder
 
 ENV_DEV = "dev"
 ENV_PROD = "rpi"
@@ -109,19 +105,6 @@ def parse_bool(b: str):
         return False
     else:
         raise ValueError()
-
-def json_dumps(o: Any) -> str:
-    """Convert any `@dataclass` decorated object (instance of `object`) to string.
-
-    Args:
-        o (object): Object to be dumped.
-
-    Returns:
-        str: Returns the string representation of the object
-
-    """
-    o_as_dict = asdict(o)
-    return json.dumps(o_as_dict, cls=EnumEncoder)
 
 def __decorate_console_handler_emit(fn):
     """

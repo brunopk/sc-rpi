@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from dataclasses import asdict
 from http import HTTPStatus
 from typing import Callable, Coroutine
 
@@ -20,7 +21,6 @@ from helpers import (
     cleanup_gpio,
     configure_logging,
     configure_status_led,
-    json_dumps,
     load_config,
     turn_led_indicator_off,
     turn_led_indicator_on,
@@ -98,8 +98,8 @@ def build_app_handler(
 
                     LOGGER.exception("Exception")
 
-            response_as_string = json_dumps(response)
-            await ws.send_json(response_as_string)
+            response_as_dict = asdict(response)
+            await ws.send_json(response_as_dict)
 
             if not is_error and isinstance(cmd, Disconnect):
                 await ws.close()
