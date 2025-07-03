@@ -20,26 +20,15 @@ class Response:
     a successful response (instance of `ResponseOk`)
     """
 
-    status: HTTPStatus
+    status: int
 
     command: str | None
 
-    payload: dict | None
-
-    def __init__(
-        self,
-        status: HTTPStatus,
-        command: str | None = None,
-        payload: dict[str, Any] | None = None,
-    ) -> None:
+    def __init__(self, status: HTTPStatus) -> None:
         """Initialize the object.
 
         Args:
             status (HTTPStatus): Status code (same status codes used in HTTP)
-            command (str | None, optional): Indicates for which command is the response.
-            payload (dict | None, optional): The result payload specific to the command.
 
         """
-        self.status = status
-        self.command = command
-        self.payload = payload
+        self.status = status.value

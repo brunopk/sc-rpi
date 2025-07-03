@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from dataclasses import asdict
 from http import HTTPStatus
 from typing import Callable, Coroutine
 
@@ -22,10 +21,11 @@ from helpers import (
     configure_logging,
     configure_status_led,
     load_config,
+    to_dict,
     turn_led_indicator_off,
     turn_led_indicator_on,
 )
-from models import ResponseError
+from models.responses import ResponseError
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
@@ -50,6 +50,7 @@ def build_app_handler(
 
         ws = WebSocketResponse()
         await ws.prepare(request)
+
         LOGGER.info(
             "New client connected from %s",
             request.get_extra_info("peername", request.remote),
@@ -59,6 +60,7 @@ def build_app_handler(
         async for msg in ws:
 
             is_error = False
+            cmd_name = None
 
             if msg.type != aiohttp.WSMsgType.TEXT:
                 LOGGER.error(
@@ -78,6 +80,7 @@ def build_app_handler(
             else:
                 try:
                     cmd = parser.parse(msg.data)
+                    cmd_name = cmd.command_name
 
                     LOGGER.debug("Command received : %s", msg.json())
 
@@ -98,7 +101,8 @@ def build_app_handler(
 
                     LOGGER.exception("Exception")
 
-            response_as_dict = asdict(response)
+            response.command = cmd_name
+            response_as_dict = to_dict(response)
             await ws.send_json(response_as_dict)
 
             if not is_error and isinstance(cmd, Disconnect):

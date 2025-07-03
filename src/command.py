@@ -11,7 +11,7 @@ The command name for JSON representation will be generated from the module name.
 """
 
 from controllers import HardwareController
-from models import Response
+from models.responses import Response
 
 
 class Command:
@@ -27,18 +27,9 @@ class Command:
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        self._command_name = command_name
-        self._args: dict = {}
+        self.command_name = command_name
+        self.args: dict = {}
         self._hw_controller = hw_controller
-
-    def set_arguments(self, args: dict) -> None:
-        """Set the arguments of the command.
-
-        Args:
-            args (dict): Arguments for the command.
-
-        """
-        self._args = args
 
     def validate_arguments(self) -> None:
         """Validate the arguments.

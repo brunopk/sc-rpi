@@ -1,4 +1,4 @@
-"""Contains all @dataclass decorated classes."""
+"""Models for the users of the API."""
 
 from .response import Response
 from .response_error import ResponseError

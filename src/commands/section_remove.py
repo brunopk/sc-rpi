@@ -8,7 +8,7 @@ from command import Command
 from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 
 class SectionRemove(Command):
@@ -41,10 +41,10 @@ class SectionRemove(Command):
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
-        errors = list(self._validator.iter_errors(self._args))
+        errors = list(self._validator.iter_errors(self.args))
         if len(errors) > 0:
             raise ParseError(errors)
-        self._sections: list[str] = self._args["sections"]
+        self._sections: list[str] = self.args["sections"]
 
     def run(self) -> Response:
         """Execute the command.
@@ -56,6 +56,7 @@ class SectionRemove(Command):
         try:
             self._hw_controller.remove_sections(self._sections)
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
+            sections = self._hw_controller.list_sections()
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

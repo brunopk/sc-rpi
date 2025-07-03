@@ -45,10 +45,6 @@ class TestCreatingSections(TestCase):
         """Test case test_section_remove_basic_format."""
         self.parser.parse('{"name": "section_remove"}')
 
-    def test_status_basic_format(self) -> None:
-        """Test case test_status_basic_format."""
-        self.parser.parse('{"name": "status"}')
-
     def test_turn_on_basic_format(self) -> None:
         """Test case test_turn_on_basic_format."""
         self.parser.parse('{"name": "turn_on"}')

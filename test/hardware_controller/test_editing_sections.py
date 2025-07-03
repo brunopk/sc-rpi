@@ -24,10 +24,10 @@ class TestEditingSections(TestCase):
 
     def test_length(self) -> None:
         """Test case test_length."""
-        section_id = self.controller.new_section(0, 100, (0, 0, 0))
-        self.controller.edit_section(section_id, 20, 100)
+        section = self.controller.new_section(0, 100, (0, 0, 0))
+        self.controller.edit_section(section.id, 20, 100)
         self.assertEqual(
-            self.controller.strip_length,
+            self.controller._strip_length,
             len(self.controller.concatenate_sections()),
             "It must be the length of the strip",
         )
@@ -35,9 +35,9 @@ class TestEditingSections(TestCase):
     def test_colors(self) -> None:
         """Test case test_colors."""
         new_color = (1, 2, 3)
-        section_id = self.controller.new_section(0, 100, (0, 0, 0))
-        self.controller.edit_section(section_id, 20, 100)
-        self.controller.edit_section(section_id, color=new_color)
+        section = self.controller.new_section(0, 100, (0, 0, 0))
+        self.controller.edit_section(section.id, 20, 100)
+        self.controller.edit_section(section.id, color=new_color)
         self.controller.render()
         self.assertEqual((0, 0, 0), self.controller.concatenate_sections()[0])
         self.assertEqual(new_color, self.controller.concatenate_sections()[21])

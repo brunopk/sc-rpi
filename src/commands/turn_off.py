@@ -8,7 +8,7 @@ from command import Command
 from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 
 class TurnOff(Command):
@@ -37,7 +37,7 @@ class TurnOff(Command):
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
-        errors = list(self._validator.iter_errors(self._args))
+        errors = list(self._validator.iter_errors(self.args))
         if len(errors) > 0:
             raise ParseError(errors)
 
@@ -48,10 +48,11 @@ class TurnOff(Command):
         :raises ApiError: Raises this error when command execution fails for
                           a well-known reason.
         """
-        section_id = self._args.get("section_id", None)
+        section_id = self.args.get("section_id", None)
         try:
             self._hw_controller.turn_off(section_id)
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
+            sections = self._hw_controller.list_sections()
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

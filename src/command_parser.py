@@ -107,6 +107,6 @@ class CommandParser:
             raise ApiError
         cmd_instance = cmd_class(cmd_name, self._hw_controller)
         if "args" in json:
-            cmd_instance.set_arguments(cmd_as_dict["args"])
+            cmd_instance.args = cmd_as_dict["args"]
 
         return cmd_instance

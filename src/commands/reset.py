@@ -4,7 +4,7 @@ from http import HTTPStatus
 
 from command import Command
 from controllers import HardwareController
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 
 class Reset(Command):
@@ -34,4 +34,4 @@ class Reset(Command):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
+        return ResponseOk(HTTPStatus.ACCEPTED)

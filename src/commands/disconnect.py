@@ -4,7 +4,7 @@ from http import HTTPStatus
 
 from command import Command
 from controllers import HardwareController
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 
 class Disconnect(Command):
@@ -31,4 +31,4 @@ class Disconnect(Command):
         :raises ApiError: Raises this exception when command execution fails
             for a well-known reason.
         """
-        return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
+        return ResponseOk(HTTPStatus.ACCEPTED)

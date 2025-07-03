@@ -10,7 +10,7 @@ from command import Command
 from enums import ErrorCode
 from errors import ApiError, ParseError
 from helpers import parse_color
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 if TYPE_CHECKING:
     from controllers import HardwareController
@@ -53,20 +53,20 @@ class SectionEdit(Command):
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
-        errors = list(self._validator.iter_errors(self._args))
+        errors = list(self._validator.iter_errors(self.args))
         if len(errors) > 0:
             raise ParseError(errors)
-        if "color" in self._args:
+        if "color" in self.args:
             try:
-                self._color = parse_color(self._args["color"])
+                self._color = parse_color(self.args["color"])
             except ValueError as ex:
                 errors = ["color must be an hex or in rgb format"]
                 raise ParseError(errors) from ex
         else:
             self._color = None
-        self._start = self._args.get("start", None)
-        self._end = self._args.get("end", None)
-        self._section_id: str = self._args["section_id"]
+        self._start = self.args.get("start", None)
+        self._end = self.args.get("end", None)
+        self._section_id: str = self.args["section_id"]
 
     def run(self) -> Response:
         """Execute the command.
@@ -80,10 +80,11 @@ class SectionEdit(Command):
                 self._section_id, self._start, self._end, self._color,
             )
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.OK, self._command_name)
+            sections = self._hw_controller.list_sections()
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
         except KeyError as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,
                 ErrorCode.SECTION_NOT_FOUND,
-                f"section {self._args['section_id']} is not defined",
+                f"section {self.args['section_id']} is not defined",
             ) from ex

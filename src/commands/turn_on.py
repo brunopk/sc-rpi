@@ -8,7 +8,7 @@ from command import Command
 from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 
 class TurnOn(Command):
@@ -37,10 +37,10 @@ class TurnOn(Command):
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
-        if self._args is None:
+        if self.args is None:
             return
 
-        errors = list(self._validator.iter_errors(self._args))
+        errors = list(self._validator.iter_errors(self.args))
         if len(errors) > 0:
             raise ParseError(errors)
 
@@ -53,12 +53,13 @@ class TurnOn(Command):
         """
         try:
             section_id = (
-                self._args["section_id"]
-                if self._args is not None and "section_id" in self._args
+                self.args["section_id"]
+                if self.args is not None and "section_id" in self.args
                 else None
             )
             self._hw_controller.turn_on(section_id)
             self._hw_controller.render()
-            return ResponseOk(HTTPStatus.ACCEPTED, self._command_name)
+            sections = self._hw_controller.list_sections()
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

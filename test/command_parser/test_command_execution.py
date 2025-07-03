@@ -5,12 +5,14 @@ This tests also validates that each command validates its own arguments.
 
 import logging
 from configparser import ConfigParser
-from unittest import TestCase
 from json import dumps
+from unittest import TestCase
+from dataclasses import asdict
 
 from command_parser import CommandParser
 from controllers import HardwareController
-from models import Response
+from models.responses import Response, ResponseOk
+from models.responses import Section
 
 
 class TestCommandExecution(TestCase):
@@ -36,7 +38,6 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_reset(self) -> None:
         """Test case test_reset."""
@@ -47,7 +48,6 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_section_add(self) -> None:
         """Test case test_section_add."""
@@ -60,7 +60,6 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_section_edit(self) -> None:
         """Test case test_section_edit."""
@@ -68,32 +67,45 @@ class TestCommandExecution(TestCase):
 
         section_add_cmd_dict = {
             "name": "section_add",
-            "args": {"sections": [{"start": 0, "end": 10, "color": "#ffff00"}]},
+            "args": {
+                "sections": [{
+                    "start": 0,
+                    "end": 10,
+                    "color": "#ffff00",
+                }],
+            },
         }
         section_add_cmd_str = dumps(section_add_cmd_dict)
         section_add_cmd = self.parser.parse(section_add_cmd_str)
+
         resp = section_add_cmd.run()
 
-
-        if (resp.payload is None):
-            error_msg = '"payload" cannot be None'
+        if (not isinstance(resp, ResponseOk)):
+            raise Exception("resp must be a ResponseOk instance")
+        if (resp.data is None):
+            error_msg = '"data" cannot be None'
             raise KeyError(error_msg)
-        sections = resp.payload.get("sections")
+        sections = resp.data.get("sections")
         if (sections is None):
             error_msg = '"sections" cannot be None'
             raise KeyError(error_msg)
-        section_id = sections[0]
+        first_section = sections[0]
+        if (not isinstance(first_section, Section)):
+            raise Exception("section[0] must be a Section instance")
+
         section_edit_cmd_dict = {
-            "name": "section_edit",
-            "args": {"section_id": section_id},
+            "name": command_name,
+            "args": {
+                "section_id": first_section.id,
+            },
         }
         section_edit_cmd_str = dumps(section_edit_cmd_dict)
         cmd = self.parser.parse(section_edit_cmd_str)
         cmd.validate_arguments()
+
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_section_remove(self) -> None:
         """Test case test_section_remove."""
@@ -106,18 +118,6 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
-
-    def test_status(self) -> None:
-        """Test case test_status."""
-        command_name = "status"
-
-        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_turn_on(self) -> None:
         """Test case test_turn_on.
@@ -131,7 +131,6 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
     def test_turn_off(self) -> None:
         """Test case test_turn_on.
@@ -145,6 +144,5 @@ class TestCommandExecution(TestCase):
         resp = cmd.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertEqual(resp.command, command_name)
 
 

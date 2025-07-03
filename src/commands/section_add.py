@@ -12,7 +12,7 @@ from webcolors import hex_to_rgb
 from command import Command
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from models import Response, ResponseOk
+from models.responses import Response, ResponseOk
 
 if TYPE_CHECKING:
     from controllers import HardwareController
@@ -65,10 +65,10 @@ class SectionAdd(Command):
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""
-        errors = list(self._validator.iter_errors(self._args))
+        errors = list(self._validator.iter_errors(self.args))
         if len(errors) > 0:
             raise ParseError(errors)
-        self._test_overlapping([(s["start"], s["end"]) for s in self._args["sections"]])
+        self._test_overlapping([(s["start"], s["end"]) for s in self.args["sections"]])
 
     def run(self) -> Response:
         """Execute the command.
@@ -77,25 +77,26 @@ class SectionAdd(Command):
         :raises ApiError:   Raises this exception when command execution fails
                             for a well-known reason.
         """
-        ids = []
-
+        section_ids = []
         try:
-            for s in self._args["sections"]:
+            for s in self.args["sections"]:
                 color = hex_to_rgb(s["color"])
                 color = (int(color[0]), int(color[1]), int(color[2]))
-                ids.append(self._hw_controller.new_section(s["start"], s["end"], color))
+                new_section = self._hw_controller.new_section(
+                    s["start"], s["end"], color,
+                )
+                section_ids.append(new_section.id)
 
             self._hw_controller.render()
-            return ResponseOk(
-                HTTPStatus.OK, self._command_name, payload={"sections": ids},
-            )
+            sections = self._hw_controller.list_sections()
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
         except KeyError as ex:
             LOGGER.warning("Rollback sections.")
-            self._hw_controller.remove_sections(ids)
+            self._hw_controller.remove_sections(section_ids)
             raise ApiError from ex
         except Exception as ex:
             LOGGER.warning("Rollback sections.")
-            self._hw_controller.remove_sections(ids)
+            self._hw_controller.remove_sections(section_ids)
             raise ApiError from ex
 
     def _test_overlapping(
