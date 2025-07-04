@@ -13,7 +13,7 @@ from models.responses import Response, ResponseOk, Versions
 
 
 class Version(Command):
-    """`reset` command."""
+    """`version` command."""
 
     def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
         """Initialize the command.
