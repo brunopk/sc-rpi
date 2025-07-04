@@ -25,7 +25,7 @@ from helpers import (
     turn_led_indicator_off,
     turn_led_indicator_on,
 )
-from models.responses import ResponseError, Error
+from models.responses import Error, ResponseError
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
