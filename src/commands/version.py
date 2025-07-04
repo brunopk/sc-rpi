@@ -11,7 +11,6 @@ from controllers import HardwareController
 from errors import ApiError
 from models.responses import Response, ResponseOk, Versions
 
-# TODO: Implement (return sc-rpi version)
 
 class Version(Command):
     """`reset` command."""
