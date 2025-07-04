@@ -70,8 +70,7 @@ def build_app_handler(
 
                 error = Error(
                     code=ErrorCode.BAD_REQUEST,
-                    description=f"Message type {msg.type.name} not valid for commands, "
-                    "use TEXT",
+                    description=f"Message type {msg.type.name} not valid, use TEXT",
                 )
                 response = ResponseError(HTTPStatus.BAD_REQUEST, error)
             else:
