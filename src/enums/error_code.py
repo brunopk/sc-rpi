@@ -6,7 +6,7 @@ from enum import Enum
 class ErrorCode(Enum):
     """Error codes for the user."""
 
-    INTERNAL_ERROR = 1
+    INTERNAL_SERVER_ERROR = 1
     PARSE_ERROR = 2
     BAD_REQUEST = 3
     SECTION_OVERLAPPING = 4

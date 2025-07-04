@@ -25,7 +25,7 @@ from helpers import (
     turn_led_indicator_off,
     turn_led_indicator_on,
 )
-from models.responses import ResponseError
+from models.responses import ResponseError, Error
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
@@ -59,7 +59,7 @@ def build_app_handler(
 
         async for msg in ws:
 
-            is_error = False
+            error = None
             cmd_name = None
 
             if msg.type != aiohttp.WSMsgType.TEXT:
@@ -68,15 +68,12 @@ def build_app_handler(
                     msg.type.name,
                 )
 
-                is_error = True
-                response = ResponseError(
-                    HTTPStatus.BAD_REQUEST,
-                    {
-                        "code": ErrorCode.BAD_REQUEST,
-                        "description": f"Message type {msg.type.name}"
-                        "not valid for commands, use TEXT",
-                    },
+                error = Error(
+                    code=ErrorCode.BAD_REQUEST,
+                    description=f"Message type {msg.type.name} not valid for commands, "
+                    "use TEXT",
                 )
+                response = ResponseError(HTTPStatus.BAD_REQUEST, error)
             else:
                 try:
                     cmd = parser.parse(msg.data)
@@ -88,16 +85,18 @@ def build_app_handler(
                     response = cmd.run()
 
                 except ApiError as e:
-                    is_error = True
-                    response = ResponseError(e.status, {"code": e.code })
+                    error = Error(
+                        e.code,
+                        e.message if e.message is not None else "Internal server error",
+                    )
+                    response = ResponseError(e.status, error)
 
                     LOGGER.debug("", exc_info=e)
                 except Exception:
-                    is_error = True
-                    response = ResponseError(
-                        HTTPStatus.INTERNAL_SERVER_ERROR,
-                        {"code": ErrorCode.INTERNAL_ERROR},
+                    error = Error(
+                        ErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"
                     )
+                    response = ResponseError(HTTPStatus.INTERNAL_SERVER_ERROR, error)
 
                     LOGGER.exception("Exception")
 
@@ -105,7 +104,7 @@ def build_app_handler(
             response_as_dict = to_dict(response)
             await ws.send_json(response_as_dict)
 
-            if not is_error and isinstance(cmd, Disconnect):
+            if not error and isinstance(cmd, Disconnect):
                 await ws.close()
 
     return handler

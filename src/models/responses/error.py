@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypedDict
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from enums import ErrorCode
 
-class Error(TypedDict, total=False):
+@dataclass
+class Error:
     """Contains the error code which indicates what is the error \
 
     about and a description for more information (optional).

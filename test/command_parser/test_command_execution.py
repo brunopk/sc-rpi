@@ -7,13 +7,12 @@ import logging
 from configparser import ConfigParser
 from json import dumps
 from unittest import TestCase
-from dataclasses import asdict
 
 from command_parser import CommandParser
 from controllers import HardwareController
-from models.responses import Response, ResponseOk
-from models.responses import Section
+from models.responses import Response, ResponseOk, Section
 
+# TODO: test only commands (not parsing)
 
 class TestCommandExecution(TestCase):
     """Test that all commands executes correctly.
@@ -138,6 +137,16 @@ class TestCommandExecution(TestCase):
         Only validates turning on all the strip.
         """
         command_name = "turn_off"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_version(self) -> None:
+        """Test case test_version."""
+        command_name = "version"
 
         cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
         cmd.validate_arguments()

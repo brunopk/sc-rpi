@@ -53,4 +53,8 @@ class TestCreatingSections(TestCase):
         """Test case test_turn_off_basic_format."""
         self.parser.parse('{"name": "turn_off"}')
 
+    def test_version_basic_format(self) -> None:
+        """Test case test_version_basic_format."""
+        self.parser.parse('{"name": "version"}')
+
 

@@ -382,6 +382,29 @@ Returns:
 }
 ```
 
+## version
+
+### Example
+  
+```json
+{
+  "name": "version"
+}
+```
+
+Returns :
+
+```json
+{
+  "status": 202,
+  "data": {
+      "python_version": "3.8.18",
+      "sc_rpi_version": "0.1.0"
+  },
+  "command": "version"
+}
+```
+
 ## Links
 
 - [Send WebSocket requests with Postman](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/)

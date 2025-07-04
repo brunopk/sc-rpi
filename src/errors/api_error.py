@@ -13,7 +13,7 @@ class ApiError(Exception):
     def __init__(
         self,
         status: HTTPStatus = HTTPStatus.INTERNAL_SERVER_ERROR,
-        code: ErrorCode = ErrorCode.INTERNAL_ERROR,
+        code: ErrorCode = ErrorCode.INTERNAL_SERVER_ERROR,
         message: str | None = None,
         *args: object,
     ) -> None:

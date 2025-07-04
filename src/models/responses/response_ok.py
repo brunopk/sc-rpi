@@ -15,14 +15,14 @@ if TYPE_CHECKING:
 class ResponseOk(Response):
     """Successful response for all commands."""
 
-    data: dict[str, Any] | None
+    data: Any | None
 
-    def __init__(self, status: HTTPStatus, data: dict | None = None) -> None:
+    def __init__(self, status: HTTPStatus, data: Any | None = None) -> None:
         """Initialize the object.
 
         Args:
             status (HTTPStatus): Status code (same status codes used in HTTP)
-            data (dict | None, optional): The result of a command. Defaults to None.
+            data (Any | None, optional): The result of a command. Defaults to None.
 
         """
         super().__init__(status)
