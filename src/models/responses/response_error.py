@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from .error import Error
 
 
+# TODO: remove this class (use only response)
+
 @dataclass
 class ResponseError(Response):
     """Error response for all commands."""

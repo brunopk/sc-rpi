@@ -15,6 +15,8 @@ from models.responses import Response, ResponseOk
 if TYPE_CHECKING:
     from controllers import HardwareController
 
+# TODO: rename to edit_section
+
 class SectionEdit(Command):
     """`section_edit` command."""
 

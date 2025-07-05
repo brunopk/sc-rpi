@@ -10,6 +10,7 @@ from enums import ErrorCode
 from errors import ApiError, ParseError
 from models.responses import Response, ResponseOk
 
+# TODO: rename to remove_section
 
 class SectionRemove(Command):
     """`section_remove` command."""
