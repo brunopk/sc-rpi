@@ -1,1 +1,1 @@
-"""Tests for src/command_parser.py."""
+"""Tests for src/utils/commands/command_parser.py."""

@@ -5,11 +5,11 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from jsonschema import Draft7Validator
+from webcolors import hex_to_rgb
 
 from command import Command
 from enums import ErrorCode
 from errors import ApiError, ParseError
-from helpers import parse_color
 from models.responses import Response, ResponseOk
 
 if TYPE_CHECKING:
@@ -58,9 +58,9 @@ class SectionEdit(Command):
             raise ParseError(errors)
         if "color" in self.args:
             try:
-                self._color = parse_color(self.args["color"])
+                self._color = hex_to_rgb(self.args["color"])
             except ValueError as ex:
-                errors = ["color must be an hex or in rgb format"]
+                errors = ["color must be in hex format"]
                 raise ParseError(errors) from ex
         else:
             self._color = None

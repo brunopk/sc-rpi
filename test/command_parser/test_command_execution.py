@@ -4,13 +4,13 @@ This tests also validates that each command validates its own arguments.
 """
 
 import logging
-from configparser import ConfigParser
 from json import dumps
 from unittest import TestCase
 
-from command_parser import CommandParser
 from controllers import HardwareController
 from models.responses import Response, ResponseOk, Section
+from utils.commands import CommandParser
+from utils.config import load_configurations
 
 # TODO: test only commands (not parsing)
 
@@ -22,8 +22,7 @@ class TestCommandExecution(TestCase):
 
     def setUp(self) -> None:
         """Set required configurations before running each test case."""
-        config = ConfigParser()
-        config.read("./config.ini")
+        config = load_configurations()
         logging.basicConfig(level=None)
         hw_controller = HardwareController(config)
         self.parser = CommandParser(hw_controller)

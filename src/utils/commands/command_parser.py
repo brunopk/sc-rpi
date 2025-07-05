@@ -29,7 +29,8 @@ class CommandParser:
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        commands_package = Path(__file__).parent / "commands"
+        root_path = Path(__file__).parent.parent.parent
+        commands_package = root_path / "commands"
         excluded_files = [(commands_package / "__init__.py").name]
         commands_paths = [
             path

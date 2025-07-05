@@ -1,4 +1,4 @@
-"""Entry point for the whole application."""
+"""Starts the application."""
 
 import logging
 import sys
@@ -11,21 +11,16 @@ from scapy.all import ICMP, IP, sr1
 
 sys.path.append("./src")
 
-from command_parser import CommandParser
 from commands.disconnect import Disconnect
 from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError
-from helpers import (
-    cleanup_gpio,
-    configure_logging,
-    configure_status_led,
-    load_config,
-    to_dict,
-    turn_led_indicator_off,
-    turn_led_indicator_on,
-)
+from models.config import Config
 from models.responses import Error, ResponseError
+from utils import to_dict
+from utils.commands import CommandParser
+from utils.config import configure_logging, configure_status_led, load_configurations
+from utils.gpio import cleanup_gpio_ports, turn_led_off, turn_led_on
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
@@ -109,35 +104,33 @@ def build_app_handler(
     return handler
 
 
-if __name__ == "__main__":
-    config = load_config()
-    host = config["DEFAULT"].get("host", "0.0.0.0")
-    port = int(config["DEFAULT"].get("port", str(8080)))
-    default_gateway = config["CONNECTION_CHECK"].get("default_gateway")
-    iface = config["CONNECTION_CHECK"].get("iface")
-    timeout = float(config["CONNECTION_CHECK"].get("timeout"))
-    status_led = int(config["CONNECTION_CHECK"].get("status_led"))
+def validate_icmp_reply(config: Config, icmp_reply) -> None:
+     """Validate the result of `sr1` function from `scapy.all`."""
+     if icmp_reply is None:
+        raise ApiError(message=f"No answer from {config.default_gateway}")
 
+if __name__ == "__main__":
+    config = load_configurations()
     configure_logging(config)
     configure_status_led(config)
 
-    # Using the controller to handle the strip is thread-safe under the assumption that there's only 
-    # one thread managing the event loop.
+    """Using the controller to handle the strip is thread-safe under the assumption that
+    there's  only one thread managing the event loop.
+    """
     hw_controller = HardwareController(config)
     exit_code = 0
     logger = logging.getLogger("main")
 
     try:
-        turn_led_indicator_off(status_led)
+        turn_led_off(config.status_led)
         reply = sr1(
-            IP(dst=default_gateway) / ICMP(),
-            iface=iface,
-            timeout=timeout,
+            IP(dst=config.default_gateway) / ICMP(),
+            iface=config.default_network_interface,
+            timeout=config.connection_timeout,
             verbose=False,
         )
-        if reply is None:
-            raise Exception("No answer from %s", default_gateway)
-        turn_led_indicator_on(status_led)
+        validate_icmp_reply(config, reply)
+        turn_led_on(config.status_led)
 
         app = Application()
         app.add_routes([get("/", build_app_handler(hw_controller))])
@@ -148,5 +141,5 @@ if __name__ == "__main__":
         exit_code = 1
     finally:
         LOGGER.info("Finalizing server")
-        cleanup_gpio()
+        cleanup_gpio_ports()
         sys.exit(exit_code)

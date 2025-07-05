@@ -1,4 +1,4 @@
-"""Contains the SectionController class."""
+"""Contains the `SectionController` class."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from models.internal import SectionInternal
 from models.responses import Section
 
 if TYPE_CHECKING:
-    from configparser import ConfigParser
+    from models.config import Config
 
 class SectionController:
     """Used to control sections in the strip.
@@ -24,32 +24,22 @@ class SectionController:
 
     """
 
-    def __init__(self, config: ConfigParser) -> None:
-        """Initialize the object.
+    def __init__(self, config: Config) -> None:
+        """Initialize the object (constructor).
 
         Args:
-            config (ConfigParser): Configurations of the whole system.
+            config (Config): Configuration of SC RPI.
 
         """
-        strip_length = config["PIXEL_STRIP"].getint("n")
-
-        try:
-            strip_length = config["PIXEL_STRIP"].getint("n")
-
-            if (strip_length is None):
-                raise ApiError(message="strip length (n) not defined")
-
-            self._strip_length = strip_length
-            self._config = config
-            self._section_ids: list[str] = []
-            self._color_list: list[list[tuple[int, int, int]]] = []
-            self._limits: list[tuple[int, int]] = []
-            self._is_on: list[bool] = []
-            self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
-            self._limits_by_id: dict[str, tuple[int, int]] = {}
-            self._is_on_by_id: dict[str, bool] = {}
-        except KeyError as ex:
-            raise ApiError(message="Cannot initialize HardwareController") from ex
+        self._strip_length = config.strip_config.strip_length
+        self._config = config
+        self._section_ids: list[str] = []
+        self._color_list: list[list[tuple[int, int, int]]] = []
+        self._limits: list[tuple[int, int]] = []
+        self._is_on: list[bool] = []
+        self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
+        self._limits_by_id: dict[str, tuple[int, int]] = {}
+        self._is_on_by_id: dict[str, bool] = {}
 
     def edit_section(
         self,

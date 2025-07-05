@@ -4,11 +4,11 @@ This tests do not validate specific command arguments.
 """
 
 import logging
-from configparser import ConfigParser
 from unittest import TestCase
 
-from command_parser import CommandParser
 from controllers import HardwareController
+from utils.commands import CommandParser
+from utils.config import load_configurations
 
 
 class TestCreatingSections(TestCase):
@@ -19,8 +19,7 @@ class TestCreatingSections(TestCase):
 
     def setUp(self) -> None:
         """Set required configurations before running each test case."""
-        config = ConfigParser()
-        config.read("./config.ini")
+        config = load_configurations()
         logging.basicConfig(level=None)
         hw_controller = HardwareController(config)
         self.parser = CommandParser(hw_controller)

@@ -4,16 +4,16 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
-from webcolors import rgb_to_hex
 
 from rpi_ws281x import Color, PixelStrip
+from webcolors import rgb_to_hex
 
-from errors import ApiError
 from models.responses import Section
 
 from .section_controller import SectionController
 
 if TYPE_CHECKING:
+    from models.config import Config
     from configparser import ConfigParser
 
     from models import Section
@@ -23,32 +23,26 @@ LOGGER = logging.getLogger(__name__)
 class HardwareController:
     """Provides an interface to control the strip (hardware)."""
 
-    def __init__(self, config: ConfigParser) -> None:
-        """Initialize the object.
+    def __init__(self, config: Config) -> None:
+        """Initialize the object (constructor).
 
         Args:
-            config (ConfigParser): Configurations of the whole system.
+            config (Config): Configurations of SC RPI.
 
         """
-        try:
-            n = config["PIXEL_STRIP"].getint("n")
-            pin = config["PIXEL_STRIP"].getint("pin")
-            freq_hz = config["PIXEL_STRIP"].getint("freq_hz")
-            dma = config["PIXEL_STRIP"].getint("dma")
-            invert = config["PIXEL_STRIP"].getboolean("invert")
-            brightness = config["PIXEL_STRIP"].getint("brightness")
-            channel = config["PIXEL_STRIP"].getint("channel")
-
-            if (n is None):
-                raise ApiError(message="strip length (n) not defined")
-
-            self._section_controller = SectionController(config)
-            self._strip_length = n
-            self._strip = PixelStrip(n, pin, freq_hz, dma, invert, brightness, channel)
-            self._is_on = False
-            self._strip.begin()
-        except KeyError as ex:
-            raise ApiError(message="Cannot initialize HardwareController") from ex
+        self._section_controller = SectionController(config)
+        self._strip = PixelStrip(
+            config.strip_config.strip_length,
+            config.strip_config.pin,
+            config.strip_config.freq_hz,
+            config.strip_config.dma,
+            config.strip_config.invert,
+            config.strip_config.brightness,
+            config.strip_config.channel,
+        )
+        self._strip_length = config.strip_config.strip_length
+        self._is_on = False
+        self._strip.begin()
 
 
     def concatenate_sections(self) -> list[tuple]:

@@ -1,11 +1,11 @@
 """Tests for src/controllers/hardware_controller.py."""
 
 import logging
-from configparser import ConfigParser
 from unittest import TestCase
 
 from controllers import HardwareController
 from errors import ApiError
+from utils.config import load_configurations
 
 
 class TestRemovingSections(TestCase):
@@ -14,8 +14,7 @@ class TestRemovingSections(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         """Set required configurations before running any test."""
-        config = ConfigParser()
-        config.read("./config.ini")
+        config = load_configurations()
         logging.basicConfig(level=None)
         cls.controller = HardwareController(config=config)
 
