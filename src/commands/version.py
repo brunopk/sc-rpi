@@ -9,7 +9,8 @@ import toml
 from command import Command
 from controllers import HardwareController
 from errors import ApiError
-from models.responses import Response, ResponseOk, Versions
+from models import responses
+from models.responses import Response, ResponseOk
 
 
 class Version(Command):
@@ -47,7 +48,7 @@ class Version(Command):
                             for a well-known reason.
         """
         try:
-            data = Versions(python_version(), self._get_sc_rpi_version())
+            data = responses.Version(python_version(), self._get_sc_rpi_version())
             return ResponseOk(HTTPStatus.ACCEPTED, data)
         except FileNotFoundError as ex:
             raise ApiError from ex

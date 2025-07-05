@@ -6,7 +6,7 @@ from .response import Response
 from .response_error import ResponseError
 from .response_ok import ResponseOk
 from .section import Section
-from .versions import Versions
+from .version import Version
 
 __all__ = [
     "Error",
@@ -15,5 +15,5 @@ __all__ = [
     "ResponseError",
     "ResponseOk",
     "Section",
-    "Versions",
+    "Version",
 ]

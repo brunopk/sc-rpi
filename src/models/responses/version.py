@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Versions:
+class Version:
     """Includes different version numbers, such as the SC RPI version."""
 
     python_version: str
