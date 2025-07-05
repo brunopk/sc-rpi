@@ -37,6 +37,16 @@ class TestCommandExecution(TestCase):
 
         self.assertIsInstance(resp, Response)
 
+    def test_help(self) -> None:
+        """Test case test_help."""
+        command_name = "help"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
     def test_reset(self) -> None:
         """Test case test_reset."""
         command_name = "reset"

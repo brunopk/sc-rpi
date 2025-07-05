@@ -1,24 +1,17 @@
-"""Contains the `Command` class.
-
-To implement a command:
-
-- It must be implemented in its own module within the commands package.
-- The command class must inherit from this class and be named using the
-  camelized version of the module name. For example, if the module is
-  section_add.py, the class name should be SectionAdd.
-
-The command name for JSON representation will be generated from the module name.
-"""
+"""Contains the `Command` class."""
 
 from controllers import HardwareController
 from models.responses import Response
 
 
 class Command:
-    """Represents a command that can be executed in SC RPI."""
+    """Represents a command that can be executed in SC RPI.
+
+    See `src/commands/__init__.py`.
+    """
 
     def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
-        """Initialize the command.
+        """Initialize the command (constructor).
 
         Args:
             command_name (str): Extracted from the file name by another module and
@@ -47,7 +40,7 @@ class Command:
         """Execute the command.
 
         Returns:
-            Response: Returns this object with result of the execution
+            Response: Contains the result of the execution
 
         Raises:
             ApiError: Raises this exception when command execution fails

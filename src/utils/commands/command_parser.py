@@ -3,13 +3,14 @@ from __future__ import annotations
 
 from importlib.util import module_from_spec, spec_from_file_location
 from json import loads
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from inflector import Inflector
 from jsonschema import Draft7Validator
 
 from errors import ApiError, ParseError
+
+from .commands import load_command_names, load_command_paths
 
 if TYPE_CHECKING:
     from command import Command
@@ -29,15 +30,8 @@ class CommandParser:
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        root_path = Path(__file__).parent.parent.parent
-        commands_package = root_path / "commands"
-        excluded_files = [(commands_package / "__init__.py").name]
-        commands_paths = [
-            path
-            for path in commands_package.iterdir()
-            if (commands_package / path).is_file() and path.name not in excluded_files
-        ]
-        command_names = [path.stem for path in commands_paths]
+        command_paths = load_command_paths()
+        command_names = load_command_names()
         schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
@@ -58,7 +52,7 @@ class CommandParser:
         inflector = Inflector()
         for index, command_name in enumerate(command_names):
             module_spec = spec_from_file_location(
-                command_name, str(commands_paths[index]),
+                command_name, str(command_paths[index]),
             )
             if module_spec is None:
                 raise ApiError(

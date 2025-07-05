@@ -28,6 +28,10 @@ class TestCreatingSections(TestCase):
         """Test case test_disconnect_basic_format."""
         self.parser.parse('{"name": "disconnect"}')
 
+    def test_help_basic_format(self) -> None:
+        """Test case test_help_basic_format."""
+        self.parser.parse('{"name": "help"}')
+
     def test_reset_basic_format(self) -> None:
         """Test case test_reset_basic_format."""
         self.parser.parse('{"name": "reset"}')

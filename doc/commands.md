@@ -65,6 +65,33 @@ Returns:
 }
 ```
 
+## help
+
+Return available commands.
+
+### Example
+
+```json
+{
+  "name": "help"
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 201,
+  "command": "help",
+  "data": {
+    "commands": [
+      "command_1",
+      "command_2"
+    ]
+  }
+}
+```
+
 ## reset
 
 Remove all sections.
