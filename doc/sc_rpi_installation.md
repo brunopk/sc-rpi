@@ -2,7 +2,7 @@
 
 SC RPI installation can be summarized in the following steps:
 
-1. Copy source code (see ["Transferring code with `rsync`"](#transferring-code-with-rsync)).
+1. Copy source code (see [Transferring code with `rsync`](#transferring-code-with-rsync)).
 2. [Create virtual environment](/doc/virtual_environments.md).
 3. [Install the application with Poetry](#install-applications-with-poetry)
 
