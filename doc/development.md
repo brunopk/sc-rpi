@@ -49,6 +49,7 @@ In order to run the application as a Python module :
 1. Create the `launch.json` configuration file into `.vscode/`:
 
     ```json
+    {
      "version": "0.2.0",
       "configurations": [
         {
