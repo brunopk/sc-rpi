@@ -4,7 +4,7 @@ SC RPI installation can be summarized in the following steps:
 
 1. Copy source code (see [Transferring code with `rsync`](#transferring-code-with-rsync)).
 2. [Create virtual environment](/doc/virtual_environments.md).
-3. [Install the application with Poetry](#install-applications-with-poetry)
+3. Install the application with Poetry (see [Installing applications and dependencies with Poetry](#installing-applications-and-dependencies-with-poetry))
 
 ## Transferring code with `rsync`
 
@@ -23,7 +23,7 @@ rsync --recursive \
 
 For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
 
-## Install applications with Poetry
+## Installing applications and dependencies with Poetry
 
 To install dependencies in the Raspberry Pi :
 
