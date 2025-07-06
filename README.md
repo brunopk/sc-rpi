@@ -9,8 +9,6 @@ Provides a Websocket API to control W2812B LED strips connected with a Raspberry
 - Python: 3.8.18
 - [Poetry](https://python-poetry.org/)
 
-> In case of not being able to install Python with apt-get (`sudo apt-get install python3.8`), refer to [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources.
-
 ## Installation
 
 SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). The steps to install it can be summarized in the following steps :
