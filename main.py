@@ -15,7 +15,7 @@ from commands.disconnect import Disconnect
 from controllers import HardwareController
 from enums import ErrorCode
 from errors import ApiError
-from models.config import Config
+from models.internal.config import Config
 from models.responses import Error, ResponseError
 from utils import Collector, to_dict
 from utils.commands import CommandParser

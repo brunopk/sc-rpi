@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 from systemd.journal import JournalHandler
 
 from errors import ApiError
-from models.config import Config, StripConfig
+from models.internal.config import Config, StripConfig
 
 """Load all configurations from `config.ini` file."""
 
