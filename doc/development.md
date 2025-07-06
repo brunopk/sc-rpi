@@ -44,6 +44,8 @@ poetry add --group=dev <DEPENDENCY_NAME>
 
 ## Visual Code
 
+### Running Python applications with Visual Code
+
 In order to run the application as a Python module :
 
 1. Create the `launch.json` configuration file into `.vscode/`:
