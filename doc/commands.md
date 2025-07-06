@@ -45,6 +45,53 @@ where `code` is the error code (string).
 
 In general for requests and responses colors are represented in hexadecimal. **All responses (failure or success) will have a `status` key**, which is an integer that adheres to the same semantics as in HTTP.
 
+## add_section
+
+Define a new section.
+
+### Example
+  
+```json
+{
+  "name": "add_section",
+  "args": {
+    "sections": [{
+        "start": 0,
+        "end": 149,
+        "color": "#ff0000"
+      }, {
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00"
+    }]
+  }
+}
+```
+
+Returns:
+  
+```json
+{
+  "status": 201, 
+  "command": "add_section", 
+  "data": {
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "start": 0,
+        "end": 149,
+        "color": "#ff0000",
+        "is_on": true
+      }, {
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
+}
+```
+
 ## disconnect
 
 Close the connection.
@@ -63,6 +110,123 @@ Returns:
 {
   "status": 201,
   "command": "disconnect"
+}
+```
+
+## edit_section
+
+Change attributes of a section (see `section_new`).
+
+Required arguments:
+
+- `id` : id of the section to edit
+
+### Example 1
+  
+```json
+{
+  "name": "edit_section",
+  "args": {
+    "section_id": "123e4567-e89b-12d3-a456-426614174000",
+    "end": 40
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 201,
+  "command": "edit_section",
+  "data": {
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "start": 0,
+        "end": 149,
+        "color": "#ff0000",
+        "is_on": true
+      }, {
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
+}
+```
+
+### Example 2
+  
+```json
+{
+  "name": "edit_section",
+  "args": {
+    "section_id": "123e4567-e89b-12d3-a456-426614174000",
+    "end": 40,
+    "start": 10
+  }
+}
+```
+  
+Returns:
+
+```json
+{
+  "status": 201,
+  "command": "edit_section",
+  "data": {
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "start": 10,
+        "end": 40,
+        "color": "#ff0000",
+        "is_on": true
+      }, {
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
+}
+```
+
+### Example 3
+  
+```json
+{
+  "name": "edit_section",
+  "args": {
+    "section_id": "123e4567-e89b-12d3-a456-426614174000",
+    "color": "#abc123"
+  }
+}
+```
+
+Returns:
+  
+```json
+{
+  "status": 201,
+  "command": "edit_section",
+  "data": {
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "start": 10,
+        "end": 40,
+        "color": "#abc123",
+        "is_on": true
+      }, {
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
 }
 ```
 
@@ -126,6 +290,41 @@ Returns:
 }
 ```
 
+## remove_section
+
+Remove sections by id.
+
+### Example
+  
+```json
+{
+  "name": "remove_section",
+  "args": {
+    "sections": [
+      "123e4567-e89b-12d3-a456-42661417400"
+    ]
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 201,
+  "command": "remove_section",
+  "data": {
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
+}
+```
+
 ## reset
 
 Remove all sections.
@@ -146,205 +345,6 @@ Returns:
   "command": "reset",
   "data": {
     "sections": []
-  }
-}
-```
-
-## section_add
-
-Define a new section.
-
-### Example
-  
-```json
-{
-  "name": "section_add",
-  "args": {
-    "sections": [{
-        "start": 0,
-        "end": 149,
-        "color": "#ff0000"
-      }, {
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00"
-    }]
-  }
-}
-```
-
-Returns:
-  
-```json
-{
-  "status": 201, 
-  "command": "section_add", 
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
-        "start": 0,
-        "end": 149,
-        "color": "#ff0000",
-        "is_on": true
-      }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
-  }
-}
-```
-
-## section_edit
-
-Change attributes of a section (see `section_new`).
-
-Required arguments:
-
-- `id` : id of the section to edit
-
-### Example 1
-  
-```json
-{
-  "name": "section_edit",
-  "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
-    "end": 40
-  }
-}
-```
-
-Returns:
-
-```json
-{
-  "status": 201,
-  "command": "section_edit",
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
-        "start": 0,
-        "end": 149,
-        "color": "#ff0000",
-        "is_on": true
-      }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
-  }
-}
-```
-
-### Example 2
-  
-```json
-{
-  "name": "section_edit",
-  "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
-    "end": 40,
-    "start": 10
-  }
-}
-```
-  
-Returns:
-
-```json
-{
-  "status": 201,
-  "command": "section_edit",
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
-        "start": 10,
-        "end": 40,
-        "color": "#ff0000",
-        "is_on": true
-      }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
-  }
-}
-```
-
-### Example 3
-  
-```json
-{
-  "name": "section_edit",
-  "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
-    "color": "#abc123"
-  }
-}
-```
-
-Returns:
-  
-```json
-{
-  "status": 201,
-  "command": "section_edit",
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
-        "start": 10,
-        "end": 40,
-        "color": "#abc123",
-        "is_on": true
-      }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
-  }
-}
-```
-
-## section_remove
-
-Remove sections by id.
-
-### Example
-  
-```json
-{
-  "name": "section_remove",
-  "args": {
-    "sections": [
-      "123e4567-e89b-12d3-a456-42661417400"
-    ]
-  }
-}
-```
-
-Returns:
-
-```json
-{
-  "status": 201,
-  "command": "section_remove",
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
   }
 }
 ```

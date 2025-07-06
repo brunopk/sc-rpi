@@ -29,6 +29,18 @@ class TestCommandExecution(TestCase):
         hw_controller = HardwareController(config)
         self.parser = CommandParser(config, hw_controller, collector)
 
+    def test_add_section(self) -> None:
+        """Test case test_add_section."""
+        command_name = "add_section"
+
+        cmd = self.parser.parse(
+            f'{{"name": "{command_name}", "args": {{"sections": []}}}}',
+        )
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
     def test_disconnect(self) -> None:
         """Test case test_disconnect."""
         command_name = "disconnect"
@@ -39,54 +51,12 @@ class TestCommandExecution(TestCase):
 
         self.assertIsInstance(resp, Response)
 
-    def test_get_config(self) -> None:
-        """Test case test_get_config."""
-        command_name = "get_config"
-
-        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-
-    def test_help(self) -> None:
-        """Test case test_help."""
-        command_name = "help"
-
-        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-
-    def test_reset(self) -> None:
-        """Test case test_reset."""
-        command_name = "reset"
-
-        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-
-    def test_section_add(self) -> None:
-        """Test case test_section_add."""
-        command_name = "section_add"
-
-        cmd = self.parser.parse(
-            f'{{"name": "{command_name}", "args": {{"sections": []}}}}',
-        )
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-
-    def test_section_edit(self) -> None:
-        """Test case test_section_edit."""
-        command_name = "section_edit"
+    def test_edit_section(self) -> None:
+        """Test case test_edit_section."""
+        command_name = "edit_section"
 
         section_add_cmd_dict = {
-            "name": "section_add",
+            "name": "add_section",
             "args": {
                 "sections": [{
                     "start": 0,
@@ -127,13 +97,43 @@ class TestCommandExecution(TestCase):
 
         self.assertIsInstance(resp, Response)
 
-    def test_section_remove(self) -> None:
-        """Test case test_section_remove."""
-        command_name = "section_remove"
+    def test_get_config(self) -> None:
+        """Test case test_get_config."""
+        command_name = "get_config"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_help(self) -> None:
+        """Test case test_help."""
+        command_name = "help"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_remove_section(self) -> None:
+        """Test case test_remove_section."""
+        command_name = "remove_section"
 
         cmd = self.parser.parse(
             f'{{"name": "{command_name}", "args": {{"sections": []}}}}',
         )
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_reset(self) -> None:
+        """Test case test_reset."""
+        command_name = "reset"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
         cmd.validate_arguments()
         resp = cmd.run()
 

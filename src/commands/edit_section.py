@@ -17,10 +17,8 @@ if TYPE_CHECKING:
     from models.internal.config import Config
     from utils import Collector
 
-# TODO: rename to edit_section
-
-class SectionEdit(Command):
-    """`section_edit` command."""
+class EditSection(Command):
+    """`edit_section` command."""
 
     def __init__(
         self,

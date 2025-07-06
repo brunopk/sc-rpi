@@ -26,9 +26,17 @@ class TestCreatingSections(TestCase):
         hw_controller = HardwareController(config)
         self.parser = CommandParser(config, hw_controller, collector)
 
+    def test_add_section_basic_format(self) -> None:
+        """Test case test_add_section_basic_format."""
+        self.parser.parse('{"name": "add_section"}')
+
     def test_disconnect_basic_format(self) -> None:
         """Test case test_disconnect_basic_format."""
         self.parser.parse('{"name": "disconnect"}')
+
+    def test_edit_section_basic_format(self) -> None:
+        """Test case test_edit_section_basic_format."""
+        self.parser.parse('{"name": "edit_section"}')
 
     def test_get_config_basic_format(self) -> None:
         """Test case test_get_config_basic_format."""
@@ -38,21 +46,13 @@ class TestCreatingSections(TestCase):
         """Test case test_help_basic_format."""
         self.parser.parse('{"name": "help"}')
 
+    def test_remove_section_basic_format(self) -> None:
+        """Test case test_remove_section_basic_format."""
+        self.parser.parse('{"name": "remove_section"}')
+
     def test_reset_basic_format(self) -> None:
         """Test case test_reset_basic_format."""
         self.parser.parse('{"name": "reset"}')
-
-    def test_section_add_basic_format(self) -> None:
-        """Test case test_section_add_basic_format."""
-        self.parser.parse('{"name": "section_add"}')
-
-    def test_section_edit_basic_format(self) -> None:
-        """Test case test_section_edit_basic_format."""
-        self.parser.parse('{"name": "section_edit"}')
-
-    def test_section_remove_basic_format(self) -> None:
-        """Test case test_section_remove_basic_format."""
-        self.parser.parse('{"name": "section_remove"}')
 
     def test_status_basic_format(self) -> None:
         """Test case test_status_basic_format."""

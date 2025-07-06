@@ -12,10 +12,9 @@ from models.internal.config import Config
 from models.responses import Response, ResponseOk
 from utils import Collector
 
-# TODO: rename to remove_section
 
-class SectionRemove(Command):
-    """`section_remove` command."""
+class RemoveSection(Command):
+    """`remove_section` command."""
 
     def __init__(
         self,

@@ -21,10 +21,8 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger(__name__)
 
-# TODO: rename to add_section
-
-class SectionAdd(Command):
-    """`section_add` command."""
+class AddSection(Command):
+    """`add_section` command."""
 
     def __init__(
         self,
