@@ -22,7 +22,11 @@ So to install development dependencies :
 
 1. Comment out all dependencies which are listed in `rpi-only-deps` group.
 2. Uncomment all dependencies which are listed in `dev` group.
-3. Install `dev` dependencies as described below.
+3. Install `dev` dependencies :
+
+    ```bash
+    poetry install --with=dev 
+    ```
 
 ### Adding new dependencies
 
@@ -38,7 +42,32 @@ poetry add --group=dev <DEPENDENCY_NAME>
 2. Activate the venv: `source <path of the venv>/bin/activate`
 3. Invoke unittest: `python -m unittest discover` (from the root folder)
 
-## Tips for Visual Code
+## Visual Code
+
+In order to run the application as a Python module :
+
+1. Create the `launch.json` configuration file into `.vscode/`:
+
+    ```json
+     "version": "0.2.0",
+      "configurations": [
+        {
+          "name": "Run",
+          "type": "debugpy",
+          "request": "launch",
+          "module": "sc_rpi.main"
+        }
+      ]
+    }
+    ```
+
+2. Create the `settings.json` configuration file into `.vscode/`:
+
+    ```json
+    {
+      "python.analysis.extraPaths": ["src"]
+    }
+    ```
 
 As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in main.py:
 

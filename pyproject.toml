@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "sc-rpi"
 version = "0.1.0"
-description = "A project to controle W2812B led strips with Raspberry Pi"
+description = "A project to control W2812B led strips with Raspberry Pi"
 authors = ["Bruno Piaggio <brunopiaggiok@gmail.com>"]
 readme = "README.md"
-packages = [{include = "./src"}]
+packages=[{from= "src", include = "sc_rpi"}]
 
 [tool.poetry.dependencies]
 python = "3.8.18"

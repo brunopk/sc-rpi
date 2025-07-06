@@ -18,7 +18,7 @@ Currently SC RPI is intended to be manually installed as a [Linux service](https
 1. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
 2. [Install SC RPI](/doc/sc_rpi_installation.md)
 3. [Configure SC RPI](/doc/configurations.md)
-4. [Configure SC RPI as a Linux service (systemd configuration)](/doc/systemd_configuration.md)
+4. [Configure SC RPI as a Linux service](/doc/systemd_configuration.md)
 
 </br>
 
@@ -35,19 +35,13 @@ For more information refer to `/doc/systemd_configuration`.
 1. [Create the virtual environment](/doc/virtual_environments.md)
 2. [Activate the environment](/doc/virtual_environments.md#activating-the-environment)
 3. [Install development dependencies with poetry](/doc/development.md#installing-development-dependencies)
-4. Run the server
+4. Run the application :
 
-</br>
+    ```bash
+    python -m sc_rpi.main
+    ```
 
-To run the server :
-
-```bash
-python -m main
-```
-
-</br>
-
-> Refer to `doc/development` for more information.
+> This will run the `main.py` file as a Python module. Refer to `doc/development` for more information.
 
 ## Links
 
