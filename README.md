@@ -13,7 +13,7 @@ Provides a Websocket API to control W2812B LED strips connected with a Raspberry
 
 ## Installation
 
-Currently SC RPI is intended to be manually installed as a [Linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). This also allow the server to be automatically started after system boot. So required steps to install and run sc-rpi are the following :
+SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) following these steps :
 
 1. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
 2. [Install SC RPI](/doc/sc_rpi_installation.md)
