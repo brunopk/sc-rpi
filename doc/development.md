@@ -70,6 +70,8 @@ In order to run the application as a Python module :
     }
     ```
 
+### Useful tips about Visual Code
+
 As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in main.py:
 
 ```python
