@@ -20,8 +20,7 @@ SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.c
 3. [Configure SC RPI](/doc/configurations.md)
 4. [Configure SC RPI as a Linux service](/doc/systemd_configuration.md)
 
-    ```bash
-    ```
+    </br>
 
 For more information about Linux services refer to `/doc/systemd_configuration`.
 
