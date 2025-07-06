@@ -1,6 +1,6 @@
 # Strip Controller Raspberry
 
-Provides a Websocket API to control W2812B LED strips connected (see `/doc/circuit.md`) with the Raspberry through GPIO ports The API consists of [commands](doc/commands.md) transmitted via JSON-formatted messages over a WebSocket connection.
+Provides a Websocket API to control W2812B LED strips connected with a Raspberry Pi through GPIO ports. The API consists of [commands](doc/commands.md) transmitted via JSON-formatted messages over a WebSocket connection. See `/doc/circuit.md` for more information about the connection of the strip.
 
 ## Requirements
 
