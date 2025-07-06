@@ -6,6 +6,14 @@ SC RPI installation can be summarized in the following steps:
 2. Create virtual environment (see `/doc/virtual_environments.md` for more information)
 3. Install the application with Poetry (see [Installing applications and dependencies with Poetry](#installing-applications-and-dependencies-with-poetry) below)
 
+</br>
+
+Logs will be managed with journal and can be obtained with this :
+
+```bash
+journalctl -u sc-rpi.service
+```
+
 ## Transferring code with `rsync`
 
 An efficient way to transfer code to the Raspberry Pi is using `rsync`:

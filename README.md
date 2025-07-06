@@ -15,20 +15,12 @@ Provides a Websocket API to control W2812B LED strips connected with a Raspberry
 
 SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). The steps to install it can be summarized in the following steps :
 
-1. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-2. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
-3. [Configure SC RPI](/doc/configurations.md)
-4. [Configure SC RPI as a Linux service](/doc/systemd_configuration.md)
+1. [Install required Linux dependencies](/doc/required_linux_dependencies.md)</br>
+2. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)</br>
+3. [Configure SC RPI](/doc/configurations.md)</br>
+4. [Configure SC RPI as a Linux service](/doc/systemd_configuration.md)</br>
 
-</br>
-
-Logs will be managed with journal and can be obtained with this :
-
-```bash
-journalctl -u sc-rpi.service
-```
-
-For more information refer to `/doc/systemd_configuration`.
+For more information about Linux services refer to `/doc/systemd_configuration`.
 
 ## Development
 
@@ -41,7 +33,7 @@ For more information refer to `/doc/systemd_configuration`.
     python -m sc_rpi.main
     ```
 
-> This will run the `main.py` file as a Python module. Refer to `doc/development` for more information.
+For more information refer to `doc/development`.
 
 ## Links
 
