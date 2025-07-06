@@ -1,5 +1,6 @@
 """Models for the users of the API."""
 
+from .client import Client
 from .error import Error
 from .help import Help
 from .response import Response
@@ -9,6 +10,7 @@ from .section import Section
 from .version import Version
 
 __all__ = [
+    "Client",
     "Error",
     "Help",
     "Response",

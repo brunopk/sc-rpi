@@ -315,6 +315,40 @@ Returns:
 }
 ```
 
+## status
+
+Return information of the current status of SC RPI.
+
+### Example
+  
+```json
+{
+  "name": "status"
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 201,
+  "command": "section_remove",
+  "data": {
+    "clients": [{
+        "ip": "127.0.0.1",
+        "port": 49672
+    }],
+    "sections": [{
+        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "start": 150,
+        "end": 299,
+        "color": "#00ff00",
+        "is_on": true
+    }]
+  }
+}
+```
+
 ## turn_off
 
 Turn off specific sections or the whole strip

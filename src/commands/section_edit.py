@@ -1,4 +1,4 @@
-"""`section_edit` command."""
+"""Contains the `SectionEdit` class."""
 from __future__ import annotations
 
 from http import HTTPStatus
@@ -14,23 +14,28 @@ from models.responses import Response, ResponseOk
 
 if TYPE_CHECKING:
     from controllers import HardwareController
+    from utils import Collector
 
 # TODO: rename to edit_section
 
 class SectionEdit(Command):
     """`section_edit` command."""
 
-    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
-        """Initialize the command.
+    def __init__(
+        self,
+        command_name: str,
+        hw_controller: HardwareController,
+        collector: Collector,
+    ) -> None:
+        """Initialize the instance (constructor).
 
         Args:
-            command_name (str):Extracted from the file name by another module and
-                passed in. This is the name shown to users or used to invoke the 
-                command.
+            command_name (str): It should be the camelcase version of the class name.
             hw_controller (HardwareController): Used to control the strip.
+            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, hw_controller)
+        super().__init__(command_name, hw_controller, collector)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",

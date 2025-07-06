@@ -1,14 +1,14 @@
-"""Contains the `Reset` class."""
+"""Contains the `Status` class."""
 
 from http import HTTPStatus
 
 from command import Command
 from controllers import HardwareController
-from models.responses import Response, ResponseOk
+from models.responses import Response, ResponseOk, commands
 from utils import Collector
 
 
-class Reset(Command):
+class Status(Command):
     """`reset` command."""
 
     def __init__(
@@ -28,15 +28,30 @@ class Reset(Command):
         super().__init__(command_name, hw_controller, collector)
 
     def validate_arguments(self) -> None:
-        """Validate command arguments."""
+        """Validate the arguments.
+
+        This method should be invoked before executing the command
+
+        Raises:
+            NotImplementedError: Raises this exception if the validation
+                is not implemented in the child class.
+
+        """
 
     def run(self) -> Response:
         """Execute the command.
 
-        :return Response:   Returns this object with result of the execution
-        :raises ApiError:   Raises this exception when command execution fails
-                            for a well-known reason.
+        Returns:
+            Response: Contains the result of the execution
+
+        Raises:
+            ApiError:
+            NotImplementedError:
+
         """
-        self._hw_controller.remove_all_sections()
-        self._hw_controller.render()
-        return ResponseOk(HTTPStatus.ACCEPTED)
+        sections = self._hw_controller.list_sections()
+        clients = self._collector.get_clients()
+        status = commands.Status(sections, clients)
+        return ResponseOk(HTTPStatus.ACCEPTED, status)
+
+

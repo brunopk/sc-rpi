@@ -11,6 +11,7 @@ from controllers import HardwareController
 from models.responses import Response, ResponseOk, Section
 from utils.commands import CommandParser
 from utils.config import load_configurations
+from utils import Collector
 
 # TODO: test only commands (not parsing)
 
@@ -24,8 +25,9 @@ class TestCommandExecution(TestCase):
         """Set required configurations before running each test case."""
         config = load_configurations()
         logging.basicConfig(level=None)
+        collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(hw_controller)
+        self.parser = CommandParser(hw_controller, collector)
 
     def test_disconnect(self) -> None:
         """Test case test_disconnect."""
@@ -121,6 +123,18 @@ class TestCommandExecution(TestCase):
 
         cmd = self.parser.parse(
             f'{{"name": "{command_name}", "args": {{"sections": []}}}}',
+        )
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_status(self) -> None:
+        """Test case test_status."""
+        command_name = "status"
+
+        cmd = self.parser.parse(
+            f'{{"name": "{command_name}"}}',
         )
         cmd.validate_arguments()
         resp = cmd.run()

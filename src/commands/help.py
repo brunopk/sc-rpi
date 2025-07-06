@@ -6,23 +6,28 @@ from command import Command
 from controllers import HardwareController
 from models import responses
 from models.responses import Response, ResponseOk
+from utils import Collector
 from utils.commands import load_command_names
 
 
 class Help(Command):
     """`help` command."""
 
-    def __init__(self, command_name: str, hw_controller: HardwareController) -> None:
-        """Initialize the command (constructor).
+    def __init__(
+        self,
+        command_name: str,
+        hw_controller: HardwareController,
+        collector: Collector,
+    ) -> None:
+        """Initialize the instance (constructor).
 
         Args:
-            command_name (str):Extracted from the file name by another module
-                and passed in. This is the name shown to users or used to invoke
-                the command.
+            command_name (str): It should be the camelcase version of the class name.
             hw_controller (HardwareController): Used to control the strip.
+            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, hw_controller)
+        super().__init__(command_name, hw_controller, collector)
 
     def validate_arguments(self) -> None:
         """Validate the arguments."""

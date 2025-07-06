@@ -9,6 +9,7 @@ from unittest import TestCase
 from controllers import HardwareController
 from utils.commands import CommandParser
 from utils.config import load_configurations
+from utils import Collector
 
 
 class TestCreatingSections(TestCase):
@@ -21,8 +22,9 @@ class TestCreatingSections(TestCase):
         """Set required configurations before running each test case."""
         config = load_configurations()
         logging.basicConfig(level=None)
+        collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(hw_controller)
+        self.parser = CommandParser(hw_controller, collector)
 
     def test_disconnect_basic_format(self) -> None:
         """Test case test_disconnect_basic_format."""
@@ -47,6 +49,10 @@ class TestCreatingSections(TestCase):
     def test_section_remove_basic_format(self) -> None:
         """Test case test_section_remove_basic_format."""
         self.parser.parse('{"name": "section_remove"}')
+
+    def test_status_basic_format(self) -> None:
+        """Test case test_status_basic_format."""
+        self.parser.parse('{"name": "status"}')
 
     def test_turn_on_basic_format(self) -> None:
         """Test case test_turn_on_basic_format."""
