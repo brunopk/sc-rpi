@@ -4,16 +4,18 @@ from http import HTTPStatus
 
 from command import Command
 from controllers import HardwareController
+from models.internal.config import Config
 from models.responses import Response, ResponseOk, commands
 from utils import Collector
 
 
 class Status(Command):
-    """`reset` command."""
+    """`status` command."""
 
     def __init__(
         self,
         command_name: str,
+        config: Config,
         hw_controller: HardwareController,
         collector: Collector,
     ) -> None:
@@ -21,11 +23,12 @@ class Status(Command):
 
         Args:
             command_name (str): It should be the camelcase version of the class name.
+            config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
             collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, hw_controller, collector)
+        super().__init__(command_name, config, hw_controller, collector)
 
     def validate_arguments(self) -> None:
         """Validate the arguments.
@@ -43,10 +46,6 @@ class Status(Command):
 
         Returns:
             Response: Contains the result of the execution
-
-        Raises:
-            ApiError:
-            NotImplementedError:
 
         """
         sections = self._hw_controller.list_sections()

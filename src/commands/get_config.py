@@ -1,4 +1,5 @@
-"""Contains the `Help` class."""
+"""Contains the `GetConfig` class."""
+
 
 from http import HTTPStatus
 
@@ -8,11 +9,10 @@ from models import responses
 from models.internal.config import Config
 from models.responses import Response, ResponseOk
 from utils import Collector
-from utils.commands import load_command_names
 
 
-class Help(Command):
-    """`help` command."""
+class GetConfig(Command):
+    """`get_config` command."""
 
     def __init__(
         self,
@@ -42,8 +42,25 @@ class Help(Command):
             Response: Contains the result of the execution
 
         """
-        command_names = load_command_names()
-        data = responses.Help(sorted(command_names))
-        return ResponseOk(HTTPStatus.ACCEPTED, data)
+        strip_config = responses.config.StripConfig(
+            self._config.strip_config.brightness,
+            self._config.strip_config.channel,
+            self._config.strip_config.dma,
+            self._config.strip_config.freq_hz,
+            self._config.strip_config.invert,
+            self._config.strip_config.pin,
+            self._config.strip_config.strip_length,
+        )
+        config = responses.config.Config(
+            self._config.connection_timeout,
+            self._config.default_gateway,
+            self._config.default_network_interface,
+            self._config.env,
+            self._config.host,
+            self._config.log_level,
+            self._config.port,
+            self._config.status_led,
+            strip_config,
+        )
 
-
+        return ResponseOk(HTTPStatus.ACCEPTED, config)

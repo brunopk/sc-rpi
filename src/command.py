@@ -1,9 +1,11 @@
 """Contains the `Command` class."""
 
 from controllers import HardwareController
+from models.internal.config import Config
 from models.responses import Response
 from utils import Collector
 
+# TODO: move this class to utils package
 
 class Command:
     """Represents a command of SC RPI.
@@ -20,6 +22,7 @@ class Command:
     def __init__(
         self,
         command_name: str,
+        config: Config,
         hw_controller: HardwareController,
         collector: Collector,
     ) -> None:
@@ -27,12 +30,14 @@ class Command:
 
         Args:
             command_name (str): It should be the camelcase version of the class name.
+            config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
             collector (Collector): Used to collect information of clients of SC RPI.
 
         """
         self.command_name = command_name
         self.args: dict = {}
+        self._config = config
         self._hw_controller = hw_controller
         self._collector = collector
 
@@ -53,10 +58,6 @@ class Command:
 
         Returns:
             Response: Contains the result of the execution
-
-        Raises:
-            ApiError:
-            NotImplementedError:
 
         """
         raise NotImplementedError

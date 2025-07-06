@@ -9,9 +9,9 @@ from unittest import TestCase
 
 from controllers import HardwareController
 from models.responses import Response, ResponseOk, Section
+from utils import Collector
 from utils.commands import CommandParser
 from utils.config import load_configurations
-from utils import Collector
 
 # TODO: test only commands (not parsing)
 
@@ -27,11 +27,21 @@ class TestCommandExecution(TestCase):
         logging.basicConfig(level=None)
         collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(hw_controller, collector)
+        self.parser = CommandParser(config, hw_controller, collector)
 
     def test_disconnect(self) -> None:
         """Test case test_disconnect."""
         command_name = "disconnect"
+
+        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
+        cmd.validate_arguments()
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+
+    def test_get_config(self) -> None:
+        """Test case test_get_config."""
+        command_name = "get_config"
 
         cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
         cmd.validate_arguments()

@@ -35,7 +35,8 @@ and optionally a `data` field which is another (nested) JSON object :
     "status": 400,
     "command": "command_name",
     "error": {
-      "code": "ALREADY_ON"
+      "code": "ALREADY_ON",
+      "description": "Section already on"
     }
 }
 ```
@@ -62,6 +63,39 @@ Returns:
 {
   "status": 201,
   "command": "disconnect"
+}
+```
+
+## get_config
+
+Returns configuration parameters of SC RPI.
+
+### Example
+
+```json
+{
+  "name": "get_config"
+}
+```
+
+Returns:
+  
+```json
+{
+  "status": 201,
+  "command": "get_config",
+  "data": {
+    "connection_timeout": 0.25,
+    "default_gateway": "192.168.0.1",
+    "default_network_interface": "en0",
+    "env": "dev",
+    "host": "0.0.0.0",
+    "strip_config": {
+      "invert": false,
+      "pin": 18,
+      "strip_length": 300
+    }
+  }
 }
 ```
 

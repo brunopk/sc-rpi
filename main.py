@@ -118,7 +118,7 @@ if __name__ == "__main__":
     """
     hw_controller = HardwareController(config)
     collector = Collector()
-    command_parser = CommandParser(hw_controller, collector)
+    command_parser = CommandParser(config, hw_controller, collector)
     exit_code = 0
 
     try:

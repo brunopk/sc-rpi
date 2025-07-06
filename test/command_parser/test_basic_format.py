@@ -7,9 +7,9 @@ import logging
 from unittest import TestCase
 
 from controllers import HardwareController
+from utils import Collector
 from utils.commands import CommandParser
 from utils.config import load_configurations
-from utils import Collector
 
 
 class TestCreatingSections(TestCase):
@@ -24,11 +24,15 @@ class TestCreatingSections(TestCase):
         logging.basicConfig(level=None)
         collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(hw_controller, collector)
+        self.parser = CommandParser(config, hw_controller, collector)
 
     def test_disconnect_basic_format(self) -> None:
         """Test case test_disconnect_basic_format."""
         self.parser.parse('{"name": "disconnect"}')
+
+    def test_get_config_basic_format(self) -> None:
+        """Test case test_get_config_basic_format."""
+        self.parser.parse('{"name": "get_config"}')
 
     def test_help_basic_format(self) -> None:
         """Test case test_help_basic_format."""

@@ -10,6 +10,7 @@ from command import Command
 from controllers import HardwareController
 from errors import ApiError
 from models import responses
+from models.internal.config import Config
 from models.responses import Response, ResponseOk
 from utils import Collector
 
@@ -20,6 +21,7 @@ class Version(Command):
     def __init__(
         self,
         command_name: str,
+        config: Config,
         hw_controller: HardwareController,
         collector: Collector,
     ) -> None:
@@ -31,7 +33,7 @@ class Version(Command):
             collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, hw_controller, collector)
+        super().__init__(command_name, config, hw_controller, collector)
 
     def validate_arguments(self) -> None:
         """Validate the arguments.
@@ -49,8 +51,6 @@ class Version(Command):
         """Execute the command.
 
         :return Response:   Returns this object with result of the execution
-        :raises ApiError:   Raises this exception when command execution fails
-                            for a well-known reason.
         """
         try:
             data = responses.Version(python_version(), self._get_sc_rpi_version())

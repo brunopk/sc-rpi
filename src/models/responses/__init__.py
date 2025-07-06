@@ -1,5 +1,6 @@
 """Models for the users of the API."""
 
+from . import config
 from .client import Client
 from .error import Error
 from .help import Help
@@ -18,4 +19,5 @@ __all__ = [
     "ResponseOk",
     "Section",
     "Version",
+    "config",
 ]
