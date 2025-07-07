@@ -6,10 +6,10 @@ This tests do not validate specific command arguments.
 import logging
 from unittest import TestCase
 
-from controllers import HardwareController
-from utils import Collector
-from utils.commands import CommandParser
-from utils.config import load_configurations
+from sc_rpi.controllers import HardwareController
+from sc_rpi.utils import Collector
+from sc_rpi.utils.commands import CommandParser
+from sc_rpi.utils.config.main import load_configurations
 
 
 class TestCreatingSections(TestCase):

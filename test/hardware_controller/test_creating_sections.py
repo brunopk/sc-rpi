@@ -4,9 +4,9 @@ import logging
 from random import randint
 from unittest import TestCase
 
-from controllers import HardwareController
-from errors import ApiError
-from utils.config import load_configurations
+from sc_rpi.controllers import HardwareController
+from sc_rpi.errors import ApiError
+from sc_rpi.utils.config.main import load_configurations
 
 
 class TestCreatingSections(TestCase):

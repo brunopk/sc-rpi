@@ -3,8 +3,8 @@
 import logging
 from unittest import TestCase
 
-from controllers import HardwareController
-from utils.config import load_configurations
+from sc_rpi.controllers import HardwareController
+from sc_rpi.utils.config.main import load_configurations
 
 
 class TestEditingSections(TestCase):
