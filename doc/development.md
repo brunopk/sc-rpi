@@ -1,5 +1,9 @@
 # Development
 
+## MQTT
+
+MQTT communication is handled using the [Paho](https://pypi.org/project/paho-mqtt/) library.
+
 ## Poetry
 
 Among other features, Poetry provides a mechanism to have different dependencies for different environments. For instance testing libraries are only available for development environment.
@@ -96,6 +100,9 @@ To facilitate development and testing on a Raspberry Pi, files can be efficientl
 
 ## Links
 
+- [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
+- [Official Paho PyPI website](https://pypi.org/project/paho-mqtt/)
 - [Official Poetry website](https://python-poetry.org/)
 - [Official Poetry website - Groups](https://python-poetry.org/docs/managing-dependencies#dependency-groups)
+- [Paho documentation](https://eclipse.dev/paho/files/paho.mqtt.python/html/client.html)
 - [Python virtual environments](virtual_environments.md)

@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from sc_rpi.models.internal.config.mqtt_config import MQTTConfig
 from sc_rpi.models.internal.config.strip_config import StripConfig
 
 
@@ -20,11 +21,9 @@ class Config:
 
   env: str
 
-  host: str
-
   log_level: str
 
-  port: int
+  mqtt_config: MQTTConfig
 
   status_led: int
 

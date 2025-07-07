@@ -5,9 +5,13 @@ from http import HTTPStatus
 
 from sc_rpi.command import Command
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models import responses
 from sc_rpi.models.internal.config import Config
 from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses.commands.get_config_response import (
+    GetConfigResponse,
+    MQTTConfig,
+    StripConfig,
+)
 from sc_rpi.utils import Collector
 
 
@@ -42,7 +46,12 @@ class GetConfig(Command):
             Response: Contains the result of the execution
 
         """
-        strip_config = responses.config.StripConfig(
+        mqtt_config = MQTTConfig(
+            self._config.mqtt_config.homeassistant_topic,
+            self._config.mqtt_config.host,
+            self._config.mqtt_config.port,
+        )
+        strip_config = StripConfig(
             self._config.strip_config.brightness,
             self._config.strip_config.channel,
             self._config.strip_config.dma,
@@ -51,14 +60,13 @@ class GetConfig(Command):
             self._config.strip_config.pin,
             self._config.strip_config.strip_length,
         )
-        config = responses.config.Config(
+        config = GetConfigResponse(
             self._config.connection_timeout,
             self._config.default_gateway,
             self._config.default_network_interface,
             self._config.env,
-            self._config.host,
             self._config.log_level,
-            self._config.port,
+            mqtt_config,
             self._config.status_led,
             strip_config,
         )

@@ -1,4 +1,4 @@
-"""Contains `PixelStrip` class."""
+"""Contains `StripConfig` class."""
 
 from dataclasses import dataclass
 

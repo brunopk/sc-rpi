@@ -1,143 +1,76 @@
 """Starts the application."""
 
+from __future__ import annotations
+
 import logging
-import sys
-from http import HTTPStatus
-from typing import Callable, Coroutine
+from queue import Queue
+from threading import Thread
+from typing import Any
 
-import aiohttp
-from aiohttp.web import Application, Request, WebSocketResponse, get, run_app
-from scapy.all import ICMP, IP, sr1
+from paho.mqtt.client import Client, MQTTMessage
+from paho.mqtt.enums import CallbackAPIVersion
 
-from sc_rpi.commands.disconnect import Disconnect
-from sc_rpi.controllers import HardwareController
-from sc_rpi.enums import ErrorCode
-from sc_rpi.errors import ApiError
-from sc_rpi.models.internal.config import Config
-from sc_rpi.models.responses import Error, ResponseError
-from sc_rpi.utils import Collector, to_dict
-from sc_rpi.utils.commands import CommandParser
-from sc_rpi.utils.config import config_utils
-from sc_rpi.utils.gpio import cleanup_gpio_ports, turn_led_off, turn_led_on
+from sc_rpi.utils.config.main import configure_logging, load_configurations
 
 # TODO: TEST all commands (turn_off DONE, turn_on DONE, status PENDING)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
 # TODO: fix disconnect
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
-def build_app_handler(
-    command_parser: CommandParser,
-) -> Callable[[Request], Coroutine[None, None, None]]:
-    """Build the app handler (coroutine) to handle incoming messages.
+worker_queue: Queue[tuple[str, str]] = Queue()
 
-    Args:
-        command_parser (CommandParser): Command parser.
+config = load_configurations()
+configure_logging(config)
 
-    Returns:
-        CoroutineType[Any, Any, None]: Returns the coroutine
+def on_message(client: Client, userdata: Any, msg: MQTTMessage) -> None:
+    """Use this function as `on_message` callback."""
+    worker_queue.put((msg.topic, msg.payload.decode()))
 
+def on_connect(client: Client, userdata: Any, flags, reason_code, properties) -> None:
+    """Use this function as `on_connect` callback."""
+    if reason_code.is_failure:
+        error_msg = f"Failed to connect: {reason_code}. "
+        "loop_forever() will retry connection"
+        logger.error(error_msg)
+    else:
+        homeassistant_subscription = f"{config.mqtt_config.homeassistant_topic}/#"
+        logger.info("Subscribing to %s", homeassistant_subscription)
+        client.subscribe(homeassistant_subscription)
+
+def worker() -> None:
+    """Process all messages from subscribed MQTT topics. \
+
+    It should be run in a different thread.
     """
-    async def handler(request: Request) -> None:
+    while True:
+        item = worker_queue.get()
+        logger.info("Message topic : %s", item[0])
+        logger.info("Message payload : %s", item[1])
+        worker_queue.task_done()
 
-        ws = WebSocketResponse()
-        await ws.prepare(request)
-        client = request.get_extra_info("peername", request.remote)
-        collector.add_client(client)
+if config.env == "dev":
+    logger.info("Starting application (press CTRL+C to exit)")
+else:
+    logger.info("Starting application")
 
-        LOGGER.info("New client connected from %s", client)
+client = Client(CallbackAPIVersion.VERSION2)
+worker_thread = Thread(target=worker, daemon=True, name="WorkerThread")
 
-        async for msg in ws:
+worker_thread.start()
 
-            error = None
-            cmd = None
+client.on_message = on_message
+client.on_connect = on_connect
 
-            if msg.type != aiohttp.WSMsgType.TEXT:
-                LOGGER.error(
-                    "Message received with an invalid WebSocket message type: %s",
-                    msg.type.name,
-                )
+logger.info("Connecting to MQTT broker on %s", config.mqtt_config.host)
 
-                error = Error(
-                    code=ErrorCode.BAD_REQUEST,
-                    description=f"Message type {msg.type.name} not valid, use TEXT",
-                )
-                response = ResponseError(HTTPStatus.BAD_REQUEST, error)
-            else:
-                try:
-                    cmd = command_parser.parse(msg.data)
+client.username_pw_set(config.mqtt_config.username, config.mqtt_config.password)
+client.connect(config.mqtt_config.host, config.mqtt_config.port, 60)
 
-                    LOGGER.debug("Command received : %s", msg.json())
-
-                    cmd.validate_arguments()
-                    response = cmd.run()
-
-                except ApiError as e:
-                    error = Error(
-                        e.code,
-                        e.message if e.message is not None else "Internal server error",
-                    )
-                    response = ResponseError(e.status, error)
-
-                    LOGGER.debug("", exc_info=e)
-                except Exception:
-                    error = Error(
-                        ErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"
-                    )
-                    response = ResponseError(HTTPStatus.INTERNAL_SERVER_ERROR, error)
-
-                    LOGGER.exception("Exception")
-
-            response.command = cmd.command_name if cmd is not None else "unknown"
-            response_as_dict = to_dict(response)
-            await ws.send_json(response_as_dict)
-
-            if not error and isinstance(cmd, Disconnect):
-                await ws.close()
-                break
-
-        collector.remove_client(client)
-
-    return handler
-
-
-def validate_icmp_reply(config: Config, icmp_reply) -> None:
-     """Validate the result of `sr1` function from `scapy.all`."""
-     if icmp_reply is None:
-        raise ApiError(message=f"No answer from {config.default_gateway}")
-
-if __name__ == "__main__":
-    config = config_utils.load_configurations()
-    config_utils.configure_logging(config)
-    config_utils.configure_status_led(config)
-
-    """Using the controller to handle the strip is thread-safe under the assumption that
-    there's  only one thread managing the event loop.
-    """
-    hw_controller = HardwareController(config)
-    collector = Collector()
-    command_parser = CommandParser(config, hw_controller, collector)
-    exit_code = 0
-
-    try:
-        turn_led_off(config.status_led)
-        reply = sr1(
-            IP(dst=config.default_gateway) / ICMP(),
-            iface=config.default_network_interface,
-            timeout=config.connection_timeout,
-            verbose=False,
-        )
-        validate_icmp_reply(config, reply)
-        turn_led_on(config.status_led)
-
-        app = Application()
-        app.add_routes([get("/", build_app_handler(command_parser))])
-        run_app(app, print=LOGGER.info)
-
-    except Exception as ex:
-        LOGGER.exception("", exc_info=ex)
-        exit_code = 1
-    finally:
-        LOGGER.info("Finalizing server")
-        cleanup_gpio_ports()
-        sys.exit(exit_code)
+try:
+    client.loop_forever()
+except Exception as ex:
+    logger.exception("Error", exc_info=ex)
+finally:
+    logger.info("Disconnecting from the MQTT broker")
+    client.disconnect()

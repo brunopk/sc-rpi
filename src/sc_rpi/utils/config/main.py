@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 from systemd.journal import JournalHandler
 
 from sc_rpi.errors import ApiError
-from sc_rpi.models.internal.config import Config, StripConfig
+from sc_rpi.models.internal.config import Config, MQTTConfig, StripConfig
 
 """Load all configurations from `config.ini` file."""
 
@@ -31,10 +31,14 @@ def load_configurations() -> Config :
         default_gateway = config["MAIN"].get("default_gateway")
         default_network_interface = config["MAIN"].get("default_network_interface")
         env = config["MAIN"].get("env", "dev")
-        host = config["MAIN"].get("host")
         log_level = config["MAIN"].get("log_level", "INFO")
-        port = config["MAIN"].getint("port", 8080)
         status_led = config["MAIN"].getint("status_led", 17)
+
+        homeassistant_topic = config["MQTT_BROKER"].get("homeassistant_topic")
+        host = config["MQTT_BROKER"].get("host")
+        password = config["MQTT_BROKER"].get("password")
+        port = config["MQTT_BROKER"].getint("port")
+        username = config["MQTT_BROKER"].get("username")
 
         brightness = config["PIXEL_STRIP"].getint("brightness", 255)
         channel = config["PIXEL_STRIP"].getint("channel", 0)
@@ -44,19 +48,21 @@ def load_configurations() -> Config :
         pin = config["PIXEL_STRIP"].getint("pin", 18)
         strip_length = config["PIXEL_STRIP"].getint("strip_length")
 
-        strip = _validate_strip_configuration(
-            brightness, channel, dma, freq_hz, invert, pin, strip_length
+        mqtt_config = _validate_mqtt_configuration(
+            homeassistant_topic, host, password, port, username,
+        )
+        strip_config = _validate_strip_configuration(
+            brightness, channel, dma, freq_hz, invert, pin, strip_length,
         )
         return _validate_configurations(
             connection_timeout,
             default_gateway,
             default_network_interface,
             env,
-            host,
             log_level,
-            port,
+            mqtt_config,
             status_led,
-            strip,
+            strip_config,
         )
 
     except ApiError:
@@ -127,9 +133,8 @@ def _validate_configurations(
         default_gateway: str | None,
         default_network_interface: str | None,
         env: str,
-        host: str | None,
         log_level: str,
-        port: int,
+        mqtt_config: MQTTConfig,
         status_led: int,
         strip: StripConfig) -> Config:
 
@@ -147,8 +152,6 @@ def _validate_configurations(
         raise ApiError(message="default_gateway not defined")
     if default_network_interface is None:
         raise ApiError(message="default_network_interface not defined")
-    if host is None:
-        raise ApiError(message="host not defined")
     if status_led is None:
         raise ApiError(message="status_led not defined")
 
@@ -157,9 +160,8 @@ def _validate_configurations(
         default_gateway,
         default_network_interface,
         env,
-        host,
         log_level,
-        port,
+        mqtt_config,
         status_led,
         strip,
     )
@@ -189,3 +191,23 @@ def _validate_strip_configuration(
         raise ApiError(message="strip_length not defined")
 
     return StripConfig(brightness, channel, dma, freq_hz, invert, pin, strip_length)
+
+def _validate_mqtt_configuration(
+    homeassistant_topic: str | None,
+    host: str | None,
+    password: str | None,
+    port: int | None,
+    username: str | None,
+) -> MQTTConfig:
+    if homeassistant_topic is None:
+        raise ApiError(message="homeassistant_topic not defined")
+    if host is None:
+        raise ApiError(message="host not defined")
+    if password is None:
+        raise ApiError(message="password not defined")
+    if port is None:
+        raise ApiError(message="port not defined")
+    if username is None:
+        raise ApiError(message="username not defined")
+
+    return MQTTConfig(homeassistant_topic, host, password, port, username)

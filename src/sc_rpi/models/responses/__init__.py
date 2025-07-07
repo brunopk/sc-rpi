@@ -2,7 +2,6 @@
 
 from sc_rpi.models.responses import commands
 from sc_rpi.models.responses.client import Client
-from sc_rpi.models.responses.config import config
 from sc_rpi.models.responses.error import Error
 from sc_rpi.models.responses.help import Help
 from sc_rpi.models.responses.response import Response
@@ -21,5 +20,4 @@ __all__ = [
     "Section",
     "Version",
     "commands",
-    "config",
 ]

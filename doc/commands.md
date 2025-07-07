@@ -1,5 +1,7 @@
 # Commands
 
+# TODO: update with MQTT information
+
 The API consists of commands transmitted via JSON-formatted messages over a [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) connection. All commands have the same format :
 
 ```json

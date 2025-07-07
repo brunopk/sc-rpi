@@ -1,5 +1,7 @@
 # Configurations
 
+# TODO: update with MQTT configuration
+
 Configurations are set on **config.ini** file. Here is the list of available properties :
 
 - Section: `DEFAULT`
