@@ -4,9 +4,9 @@
 
 ## MQTT integration with HA
 
-Home Assistant provides an official integration for MQTT which can be installed by following [this](https://my.home-assistant.io/redirect/config_flow_start?domain=mqtt) link. But, as described in the [official documentation](https://www.home-assistant.io/integrations/mqtt/) of the MQTT integration, **the first step to get MQTT and Home Assistant working is to choose a broker** (see also [Mosquitto broker](#mosquitto-broker) below).
+Home Assistant provides an official integration for MQTT which can be installed by following [this](https://my.home-assistant.io/redirect/config_flow_start?domain=mqtt) link. But, as described in the [official documentation of the MQTT integration](https://www.home-assistant.io/integrations/mqtt/), **the first step to get MQTT and Home Assistant working is to choose a broker** (see also [Mosquitto broker](#mosquitto-broker) below).
 
-The MQTT integration provides a mechanism to discover devices and entities. **[This](https://www.home-assistant.io/integrations/light.mqtt/) part of the official documentation explains how to make Home Assistant discover `light` entities** (in Home Assistant jargon, there are different "platforms" for devices, such as `light` and `sensor`, among many others) and describes the format of the messages. **SC RPi sends MQTT messages in JSON format.**
+The MQTT integration provides a mechanism to discover devices and entities. [This](https://www.home-assistant.io/integrations/light.mqtt/) part of the official documentation explains how to make Home Assistant discover `light` entities (in Home Assistant jargon, there are different "platforms" for devices, such as `light` and `sensor`, among many others) and describes the format of the messages. **SC RPi sends MQTT messages in JSON format.**
 
 ## Mosquitto broker
 
