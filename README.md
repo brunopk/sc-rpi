@@ -1,8 +1,8 @@
 # Strip Controller Raspberry
 
-Provides an MQTT API to control WS2812B LED strips connected to a Raspberry Pi via GPIO, using the [rpi-ws281x](https://github.com/rpi-ws281x/rpi-ws281x-python). **It also integrates with Home Assistant (HA) by listening to specific MQTT topics defined by HA to discover entities and update their states.** For more information about how HA integrates with MQTT see [MQTT integration with HA](/doc/mqtt.md#mqtt-integration-with-ha) and [Mosquitto broker](/doc/mqtt.md#mosquitto-broker) in `/doc/mqtt.md`.
+Provides an MQTT API to control WS2812B LED strips connected to a Raspberry Pi via GPIO, using the [rpi-ws281x](https://github.com/rpi-ws281x/rpi-ws281x-python). **It also integrates with Home Assistant (HA) by listening to specific MQTT topics defined by HA to discover entities and update their states (see [MQTT integration with HA](/doc/mqtt.md#mqtt-integration-with-ha) and [Mosquitto broker](/doc/mqtt.md#mosquitto-broker) in `/doc/mqtt.md`)**.
 
-For more information about building the circuit and the API documentation, see `/doc/circuit.md` and `/doc/commands.md`, respectively
+For more information about building the circuit and the API documentation, see `/doc/circuit.md` and `/doc/commands.md`, respectively.
 
 ## Requirements
 
@@ -11,6 +11,8 @@ For more information about building the circuit and the API documentation, see `
 - Python: 3.8.18
 - Poetry
 - An MQTT broker (see [Mosquitto broker](/doc//mqtt.md#mosquitto-broker) `/doc/mqtt.md`)
+
+**It's strongly recommended to install [MQTT Explorer](https://mqtt-explorer.com/) for MQTT development and troubleshooting. It can be installed on macOS using Homebrew. This application is extremely helpful when working with MQTT topics and diagnosing issues.**
 
 ## Installation
 
