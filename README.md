@@ -1,8 +1,6 @@
 # Strip Controller Raspberry
 
-Provides an [MQTT](https://mqtt.org/) API to control WS2812B LED strips connected to a Raspberry Pi via GPIO ports. For more information about building the circuit and the API documentation, see `/doc/circuit.md` and `/doc/commands.md`, respectively.
-
-> It also integrates with Home Assistant (HA) by listening to specific MQTT topics defined by HA to discover entities and update their states.
+Provides an [MQTT](https://mqtt.org/) API to control WS2812B LED strips connected to a Raspberry Pi via GPIO ports. For more information about building the circuit and the API documentation, see `/doc/circuit.md` and `/doc/commands.md`, respectively. **It also integrates with Home Assistant (HA) by listening to specific MQTT topics defined by HA to discover entities and update their states.**
 
 ## Requirements
 
