@@ -15,15 +15,15 @@ toml = "^0.10.2"
 paho-mqtt = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
-#"RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}
-#systemd-python = {path = "lib/systemd-python", develop = true}
-#rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
+"RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}
+systemd-python = {path = "lib/systemd-python", develop = true}
+rpi-ws281x = {path = "lib/rpi-ws281x", develop = true}
 ruff = "^0.11.13"
 
 [tool.poetry.group.rpi-only-deps.dependencies]
-systemd-python = "235"
-"RPi.GPIO" = "0.7.1"
-rpi-ws281x = "5.0.0"
+#systemd-python = "235"
+#"RPi.GPIO" = "0.7.1"
+#rpi-ws281x = "5.0.0"
 
 
 [build-system]

@@ -7,7 +7,10 @@ from dataclasses import dataclass
 
 @dataclass
 class SectionInternal:
-    """Represents a set of leds in the strip."""
+    """Represents a set of leds in the strip.
+
+    This class is intended for internal use, not for API users.
+    """
 
     id: str
 

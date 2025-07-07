@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.models.internal.config.mqtt_config import MQTTConfig
-from sc_rpi.models.internal.config.strip_config import StripConfig
+from sc_rpi.config.mqtt_config import MQTTConfig
+from sc_rpi.config.strip_config import StripConfig
 
 
 @dataclass

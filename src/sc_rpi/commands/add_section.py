@@ -15,9 +15,9 @@ from sc_rpi.errors import ApiError, ParseError
 from sc_rpi.models.responses import Response, ResponseOk
 
 if TYPE_CHECKING:
-    from controllers import HardwareController
-    from models.internal.config import Config
-    from utils import Collector
+    from sc_rpi.config import Config
+    from sc_rpi.controllers import HardwareController
+    from sc_rpi.utils import Collector
 
 LOGGER = logging.getLogger(__name__)
 

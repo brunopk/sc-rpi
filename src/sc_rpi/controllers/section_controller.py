@@ -10,11 +10,11 @@ from webcolors import rgb_to_hex
 
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models.internal import SectionInternal
+from sc_rpi.models import SectionInternal
 from sc_rpi.models.responses import Section
 
 if TYPE_CHECKING:
-    from sc_rpi.models.internal.config import Config
+    from sc_rpi.config import Config
 
 class SectionController:
     """Used to control sections in the strip.

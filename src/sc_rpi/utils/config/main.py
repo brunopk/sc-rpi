@@ -8,8 +8,8 @@ from configparser import ConfigParser
 import RPi.GPIO as GPIO
 from systemd.journal import JournalHandler
 
+from sc_rpi.config import Config, MQTTConfig, StripConfig
 from sc_rpi.errors import ApiError
-from sc_rpi.models.internal.config import Config, MQTTConfig, StripConfig
 
 """Load all configurations from `config.ini` file."""
 

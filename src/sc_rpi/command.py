@@ -1,7 +1,7 @@
 """Contains the `Command` class."""
 
+from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.internal.config import Config
 from sc_rpi.models.responses import Response
 from sc_rpi.utils import Collector
 

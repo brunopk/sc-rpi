@@ -3,8 +3,8 @@
 from http import HTTPStatus
 
 from sc_rpi.command import Command
+from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.internal.config import Config
 from sc_rpi.models.responses import Response, ResponseOk
 from sc_rpi.models.responses.commands import StatusResponse
 from sc_rpi.utils import Collector
