@@ -39,7 +39,7 @@ For more information refer to `doc/development`.
 
 ## Links
 
-- [Building the circuit](doc/circuit.md)
+- [Building the circuit for SC RPI](doc/circuit.md)
 - [Linux network configuration](/doc/network_configuration.md)
 - [Official MQTT site](https://mqtt.org/)
 - [Official Python distribution of the ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)

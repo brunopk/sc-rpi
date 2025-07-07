@@ -1,4 +1,4 @@
-# Building the circuit
+# Building the circuit for SC RPI
 
 1. With level shifter convertor:
 
