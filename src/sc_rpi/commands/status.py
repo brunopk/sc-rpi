@@ -5,8 +5,8 @@ from http import HTTPStatus
 from sc_rpi.command import Command
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
+from sc_rpi.models import responses
 from sc_rpi.models.responses import Response, ResponseOk
-from sc_rpi.models.responses.commands import StatusResponse
 from sc_rpi.utils import Collector
 
 
@@ -51,7 +51,7 @@ class Status(Command):
         """
         sections = self._hw_controller.list_sections()
         clients = self._collector.get_clients()
-        status = StatusResponse(sections, clients)
+        status = responses.commands.Status(sections, clients)
         return ResponseOk(HTTPStatus.ACCEPTED, status)
 
 

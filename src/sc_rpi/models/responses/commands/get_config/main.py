@@ -2,14 +2,14 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.models.responses.commands.get_config_response.mqtt_config import MQTTConfig
-from sc_rpi.models.responses.commands.get_config_response.strip_config import (
-  StripConfig,
+from sc_rpi.models.responses.commands.get_config.mqtt_config import MQTTConfig
+from sc_rpi.models.responses.commands.get_config.strip_config import (
+    StripConfig,
 )
 
 
 @dataclass
-class GetConfigResponse:
+class GetConfig:
   """Main configuration class.
 
   This class may encapsulate other configuration classes.

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
   from sc_rpi.models.responses import Client, Section
 
 @dataclass
-class StatusResponse:
+class Status:
   """Response for the `status` command."""
 
   sections: list[Section]
