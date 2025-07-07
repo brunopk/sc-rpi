@@ -9,7 +9,7 @@ Provides an [MQTT](https://mqtt.org/) API to control WS2812B LED strips connecte
 - Raspberry Pi 3 or newer versions with [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
 - W2812B LED strip (see `/doc/circuit.md`)
 - Python: 3.8.18
-- [Poetry](https://python-poetry.org/)
+- Poetry
 - An MQTT broker (see `/doc/mosquitto.md`)
 
 ## Installation
