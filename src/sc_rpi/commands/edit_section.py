@@ -10,7 +10,7 @@ from webcolors import hex_to_rgb
 from sc_rpi.command import Command
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError, ParseError
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections
 
 if TYPE_CHECKING:
@@ -86,7 +86,8 @@ class EditSection(Command):
             )
             self._hw_controller.render()
             sections = self._hw_controller.list_sections()
-            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": map_sections(sections)})
+            payload = Status(map_sections(sections))
+            return Response(HTTPStatus.ACCEPTED, payload)
         except KeyError as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,

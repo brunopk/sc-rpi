@@ -7,7 +7,7 @@ from sc_rpi.command import Command
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models import responses
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response
 
 
 class GetConfig(Command):
@@ -64,4 +64,4 @@ class GetConfig(Command):
             strip_config,
         )
 
-        return ResponseOk(HTTPStatus.ACCEPTED, config)
+        return Response(HTTPStatus.ACCEPTED, config)

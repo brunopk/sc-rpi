@@ -11,6 +11,6 @@ if TYPE_CHECKING:
 
 @dataclass
 class Status:
-  """Represent the current status of the system."""
+  """Contains available sections."""
 
-  section: list[Section]
+  sections: list[Section]

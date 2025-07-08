@@ -5,7 +5,7 @@ from http import HTTPStatus
 from sc_rpi.command import Command
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response
 
 
 class Reset(Command):
@@ -37,4 +37,4 @@ class Reset(Command):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        return ResponseOk(HTTPStatus.ACCEPTED)
+        return Response(HTTPStatus.ACCEPTED)

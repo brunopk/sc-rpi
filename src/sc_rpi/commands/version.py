@@ -11,7 +11,7 @@ from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.errors import ApiError
 from sc_rpi.models import responses
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response
 
 
 class Version(Command):
@@ -51,8 +51,10 @@ class Version(Command):
         :return Response:   Returns this object with result of the execution
         """
         try:
-            data = responses.commands.Version(python_version(), self._get_sc_rpi_version())
-            return ResponseOk(HTTPStatus.ACCEPTED, data)
+            payload = responses.commands.Version(
+                python_version(), self._get_sc_rpi_version()
+            )
+            return Response(HTTPStatus.ACCEPTED, payload)
         except FileNotFoundError as ex:
             raise ApiError from ex
         except ApiError:

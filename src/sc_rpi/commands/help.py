@@ -6,7 +6,7 @@ from sc_rpi.command import Command
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models import responses
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response
 from sc_rpi.utils.commands import command_utils
 
 
@@ -42,6 +42,6 @@ class Help(Command):
         """
         command_names = command_utils.load_command_names()
         data = responses.commands.Help(sorted(command_names))
-        return ResponseOk(HTTPStatus.ACCEPTED, data)
+        return Response(HTTPStatus.ACCEPTED, data)
 
 

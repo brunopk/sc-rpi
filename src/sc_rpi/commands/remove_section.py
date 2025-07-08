@@ -9,7 +9,7 @@ from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError, ParseError
-from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections
 
 
@@ -62,6 +62,7 @@ class RemoveSection(Command):
             self._hw_controller.remove_sections(self._sections)
             self._hw_controller.render()
             sections = self._hw_controller.list_sections()
-            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": map_sections(sections)})
+            payload = Status(map_sections(sections))
+            return Response(HTTPStatus.ACCEPTED, payload)
         except KeyError as ex:
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.SECTION_NOT_FOUND) from ex

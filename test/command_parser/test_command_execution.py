@@ -8,7 +8,7 @@ from json import dumps
 from unittest import TestCase
 
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.responses import Response, ResponseOk, Section
+from sc_rpi.models.responses import Response, Section
 from sc_rpi.utils.commands import CommandParser
 from sc_rpi.utils.config.main import load_configurations
 
@@ -58,12 +58,12 @@ class TestCommandExecution(TestCase):
 
         resp = section_add_cmd.run()
 
-        if (not isinstance(resp, ResponseOk)):
-            raise Exception("resp must be a ResponseOk instance")
-        if (resp.data is None):
-            error_msg = '"data" cannot be None'
+        if (not isinstance(resp, Response)):
+            raise Exception("resp must be a Response instance")
+        if (resp.payload is None):
+            error_msg = '"payload" cannot be None'
             raise KeyError(error_msg)
-        sections = resp.data.get("sections")
+        sections = resp.payload.sections
         if (sections is None):
             error_msg = '"sections" cannot be None'
             raise KeyError(error_msg)
