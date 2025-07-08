@@ -51,7 +51,7 @@ class Version(Command):
         :return Response:   Returns this object with result of the execution
         """
         try:
-            data = responses.Version(python_version(), self._get_sc_rpi_version())
+            data = responses.commands.Version(python_version(), self._get_sc_rpi_version())
             return ResponseOk(HTTPStatus.ACCEPTED, data)
         except FileNotFoundError as ex:
             raise ApiError from ex

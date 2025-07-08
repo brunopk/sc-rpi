@@ -41,7 +41,7 @@ class Help(Command):
 
         """
         command_names = command_utils.load_command_names()
-        data = responses.Help(sorted(command_names))
+        data = responses.commands.Help(sorted(command_names))
         return ResponseOk(HTTPStatus.ACCEPTED, data)
 
 
