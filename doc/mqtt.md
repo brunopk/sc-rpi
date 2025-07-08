@@ -1,6 +1,6 @@
 # MQTT
 
-**To work with MQTT, it's very useful to have [MQTT Explorer](https://mqtt-explorer.com/). It can be installed on macOS using Homebrew. This application is extremely helpful for development and troubleshooting.**
+**To work with MQTT, it's very useful to have [MQTT Explorer](https://mqtt-explorer.com/). It can be installed on macOS using Homebrew or as a Home Assistant add-on (see [Gollum add-on repository for Home Assistant](https://github.com/GollumDom/addon-repository) and [this](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739/5) post on HA forum). This application is extremely helpful for development and troubleshooting.**
 
 ## MQTT integration with HA
 
@@ -25,3 +25,5 @@ Go to the add-on configuration page and set the "Logins" field like this :
 
 - [Official MQTT protocol site](https://mqtt.org/)
 - [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
+- [Gollum add-on repository for Home Assistant](https://github.com/GollumDom/addon-repository)
+- [Addon MQTT Explorer new Version](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739)
