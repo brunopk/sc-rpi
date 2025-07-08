@@ -3,7 +3,6 @@
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.responses import Response
-from sc_rpi.utils import Collector
 
 # TODO: move this class to utils package
 
@@ -20,11 +19,7 @@ class Command:
     """
 
     def __init__(
-        self,
-        command_name: str,
-        config: Config,
-        hw_controller: HardwareController,
-        collector: Collector,
+        self, command_name: str, config: Config, hw_controller: HardwareController,
     ) -> None:
         """Initialize the instance (constructor).
 
@@ -32,14 +27,12 @@ class Command:
             command_name (str): It should be the camelcase version of the class name.
             config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
-            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
         self.command_name = command_name
         self.args: dict = {}
         self._config = config
         self._hw_controller = hw_controller
-        self._collector = collector
 
     def validate_arguments(self) -> None:
         """Validate the arguments.

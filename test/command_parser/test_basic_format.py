@@ -7,7 +7,6 @@ import logging
 from unittest import TestCase
 
 from sc_rpi.controllers import HardwareController
-from sc_rpi.utils import Collector
 from sc_rpi.utils.commands import CommandParser
 from sc_rpi.utils.config.main import load_configurations
 
@@ -22,17 +21,12 @@ class TestCreatingSections(TestCase):
         """Set required configurations before running each test case."""
         config = load_configurations()
         logging.basicConfig(level=None)
-        collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(config, hw_controller, collector)
+        self.parser = CommandParser(config, hw_controller)
 
     def test_add_section_basic_format(self) -> None:
         """Test case test_add_section_basic_format."""
         self.parser.parse('{"name": "add_section"}')
-
-    def test_disconnect_basic_format(self) -> None:
-        """Test case test_disconnect_basic_format."""
-        self.parser.parse('{"name": "disconnect"}')
 
     def test_edit_section_basic_format(self) -> None:
         """Test case test_edit_section_basic_format."""

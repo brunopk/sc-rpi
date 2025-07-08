@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class SectionInternal:
+class Section:
     """Represents a set of leds in the strip.
 
     This class is intended for internal use, not for API users.

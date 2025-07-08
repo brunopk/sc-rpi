@@ -10,8 +10,7 @@ from webcolors import rgb_to_hex
 
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models import SectionInternal
-from sc_rpi.models.responses import Section
+from sc_rpi.models import Section
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config
@@ -88,31 +87,10 @@ class SectionController:
             section_id, new_start, new_end, new_color_list, is_on=is_on
         )
 
-    def get_section(self, section_id: str) -> Section:
-        """Find and returns a section.
-
-        Args:
-            section_id (str): Identify the section to be searched.
-
-        Raises:
-            KeyError:
-
-        Returns:
-            Section: Returns the section.
-
-        """
-        return Section(
-            section_id,
-            self._limits_by_id[section_id][0],
-            self._limits_by_id[section_id][1],
-            rgb_to_hex(self._color_list_by_id[section_id][0]),
-            is_on=self._is_on_by_id[section_id],
-        )
-
-    def list_sections(self) -> list[SectionInternal]:
+    def list_sections(self) -> list[Section]:
         """Return all sections ordered by their respective (start, end) limits."""
         return [
-            SectionInternal(
+            Section(
                 self._section_ids[i],
                 self._limits[i],
                 self._color_list[i],
@@ -122,7 +100,12 @@ class SectionController:
         ]
 
     def new_section(
-        self, start: int, end: int, color: tuple[int, int, int], *_args: object, is_on: bool,
+        self,
+        start: int,
+        end: int,
+        color: tuple[int, int, int],
+        *_args: object,
+        is_on: bool,
     ) -> Section:
         """Define a new section.
 
@@ -142,7 +125,7 @@ class SectionController:
         section_id = str(uuid1())
         color_list = [color] * (end - start + 1)
         self._insert_section(section_id, start, end, color_list, is_on=is_on)
-        return Section(section_id, start, end, rgb_to_hex(color), is_on=False)
+        return Section(section_id, (start, end), color_list, is_on=is_on)
 
     def remove_all_sections(self) -> None:
         """Remove all sections."""

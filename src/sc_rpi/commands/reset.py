@@ -6,7 +6,6 @@ from sc_rpi.command import Command
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.responses import Response, ResponseOk
-from sc_rpi.utils import Collector
 
 
 class Reset(Command):
@@ -17,7 +16,6 @@ class Reset(Command):
         command_name: str,
         config: Config,
         hw_controller: HardwareController,
-        collector: Collector,
     ) -> None:
         """Initialize the instance (constructor).
 
@@ -25,10 +23,9 @@ class Reset(Command):
             command_name (str): It should be the camelcase version of the class name.
             config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
-            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, config, hw_controller, collector)
+        super().__init__(command_name, config, hw_controller)
 
     def validate_arguments(self) -> None:
         """Validate command arguments."""

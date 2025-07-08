@@ -6,6 +6,33 @@ from dataclasses import is_dataclass
 from enum import Enum
 from typing import Any
 
+from webcolors import rgb_to_hex
+
+from sc_rpi.models import Section, responses
+
+
+def map_sections(section_list: list[Section]) -> list[responses.Section]:
+    """Convert a `Section` instances to `responses.Section`.
+
+    Args:
+        section_list (list[Section]): Section list. All entries in the section are
+            assumed to have the same color.
+
+    Returns:
+        list[responses.Section]: The converted list
+
+    """
+    return [
+        responses.Section(
+            section.id,
+            section.limits[0],
+            section.limits[1],
+            rgb_to_hex(section.color_list[0]),
+            section.is_on,
+        )
+        for section in section_list
+    ]
+
 
 def to_dict(obj: Any) -> dict | list | str:
     """Convert any `@dataclass` decorated object into a dict.

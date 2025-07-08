@@ -9,7 +9,6 @@ from unittest import TestCase
 
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.responses import Response, ResponseOk, Section
-from sc_rpi.utils import Collector
 from sc_rpi.utils.commands import CommandParser
 from sc_rpi.utils.config.main import load_configurations
 
@@ -25,9 +24,8 @@ class TestCommandExecution(TestCase):
         """Set required configurations before running each test case."""
         config = load_configurations()
         logging.basicConfig(level=None)
-        collector = Collector()
         hw_controller = HardwareController(config)
-        self.parser = CommandParser(config, hw_controller, collector)
+        self.parser = CommandParser(config, hw_controller)
 
     def test_add_section(self) -> None:
         """Test case test_add_section."""
@@ -36,16 +34,6 @@ class TestCommandExecution(TestCase):
         cmd = self.parser.parse(
             f'{{"name": "{command_name}", "args": {{"sections": []}}}}',
         )
-        cmd.validate_arguments()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-
-    def test_disconnect(self) -> None:
-        """Test case test_disconnect."""
-        command_name = "disconnect"
-
-        cmd = self.parser.parse(f'{{"name": "{command_name}"}}')
         cmd.validate_arguments()
         resp = cmd.run()
 

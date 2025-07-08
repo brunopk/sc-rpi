@@ -1,7 +1,6 @@
 """Models for the users of the API."""
 
 from sc_rpi.models.responses import commands
-from sc_rpi.models.responses.client import Client
 from sc_rpi.models.responses.error import Error
 from sc_rpi.models.responses.help import Help
 from sc_rpi.models.responses.response import Response
@@ -11,7 +10,6 @@ from sc_rpi.models.responses.section import Section
 from sc_rpi.models.responses.version import Version
 
 __all__ = [
-    "Client",
     "Error",
     "Help",
     "Response",

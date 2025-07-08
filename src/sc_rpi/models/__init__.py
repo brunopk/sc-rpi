@@ -1,5 +1,5 @@
 """Models for internal use."""
 
-from sc_rpi.models.section_internal import SectionInternal
+from sc_rpi.models.section import Section
 
-__all__ = ["SectionInternal"]
+__all__ = ["Section"]

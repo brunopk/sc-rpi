@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from sc_rpi.command import Command
     from sc_rpi.config import Config
     from sc_rpi.controllers import HardwareController
-    from sc_rpi.utils import Collector
 
 class CommandParser:
     """Used to parse commands (stringified JSON objects).
@@ -24,18 +23,12 @@ class CommandParser:
     `Draft7Validator.check_schema(schema)` before using that schema.
     """
 
-    def __init__(
-        self,
-        config: Config,
-        hw_controller: HardwareController,
-        collector: Collector,
-    ) -> None:
+    def __init__(self, config: Config, hw_controller: HardwareController) -> None:
         """Initialize the command parser.
 
         Args:
             config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
-            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
         command_paths = command_utils.load_command_paths()
@@ -78,7 +71,6 @@ class CommandParser:
 
         self._config = config
         self._hw_controller = hw_controller
-        self._collector = collector
 
     def parse(self, json: str) -> Command:
         """Parse JSON stringified representation of a command.
@@ -111,12 +103,7 @@ class CommandParser:
         cmd_class = self._commands.get(cmd_name)
         if cmd_class is None:
             raise ApiError
-        cmd_instance = cmd_class(
-            cmd_name,
-            self._config,
-            self._hw_controller,
-            self._collector,
-        )
+        cmd_instance = cmd_class(cmd_name, self._config, self._hw_controller)
         if "args" in json:
             cmd_instance.args = cmd_as_dict["args"]
 

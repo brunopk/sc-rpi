@@ -11,11 +11,12 @@ from sc_rpi.command import Command
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError, ParseError
 from sc_rpi.models.responses import Response, ResponseOk
+from sc_rpi.utils import map_sections
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config
     from sc_rpi.controllers import HardwareController
-    from sc_rpi.utils import Collector
+
 
 class EditSection(Command):
     """`edit_section` command."""
@@ -25,7 +26,6 @@ class EditSection(Command):
         command_name: str,
         config: Config,
         hw_controller: HardwareController,
-        collector: Collector,
     ) -> None:
         """Initialize the instance (constructor).
 
@@ -33,10 +33,9 @@ class EditSection(Command):
             command_name (str): It should be the camelcase version of the class name.
             config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
-            collector (Collector): Used to collect information of clients of SC RPI.
 
         """
-        super().__init__(command_name, config, hw_controller, collector)
+        super().__init__(command_name, config, hw_controller)
         arguments_schema = {
             "$schema": "https://json-schema.org/schema#",
             "type": "object",
@@ -87,7 +86,7 @@ class EditSection(Command):
             )
             self._hw_controller.render()
             sections = self._hw_controller.list_sections()
-            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": sections})
+            return ResponseOk(HTTPStatus.ACCEPTED, {"sections": map_sections(sections)})
         except KeyError as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,

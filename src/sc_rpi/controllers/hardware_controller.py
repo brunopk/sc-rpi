@@ -6,16 +6,12 @@ import logging
 from typing import TYPE_CHECKING
 
 from rpi_ws281x import Color, PixelStrip
-from webcolors import rgb_to_hex
 
 from sc_rpi.controllers.section_controller import SectionController
-from sc_rpi.models.responses import Section
 
 if TYPE_CHECKING:
-    from models.config import Config
-    from configparser import ConfigParser
-
-    from models import Section
+    from sc_rpi.config import Config
+    from sc_rpi.models import Section
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +38,6 @@ class HardwareController:
         self._strip_length = config.strip_config.strip_length
         self._is_on = False
         self._strip.begin()
-
 
     def concatenate_sections(self) -> list[tuple]:
         """Concatenates all sections in one list.
@@ -111,34 +106,14 @@ class HardwareController:
         """
         return self._section_controller.edit_section(section_id, start, end, color)
 
-    def get_section(self, section_id: str) -> Section:
-        """Find and returns a section.
-
-        Args:
-            section_id (str): ID of the section to look for.
-
-        Raises:
-            ApiError:
-
-        Returns:
-            Section: Found section.
-
-        """
-        return self._section_controller.get_section(section_id)
-
     def list_sections(self) -> list[Section]:
-        """Return all currently available sections in the strip.
+        """Return all defined sections.
 
         Returns:
             list[Section]: All currently available sections in the strip.
 
         """
-        return [
-            Section(
-                s.id, s.limits[0], s.limits[1], rgb_to_hex(s.color_list[0]), s.is_on,
-            )
-            for s in self._section_controller.list_sections()
-        ]
+        return self._section_controller.list_sections()
 
     def new_section(self, start: int, end: int, color: tuple[int, int, int]) -> Section:
         """Define a new section on the strip.
