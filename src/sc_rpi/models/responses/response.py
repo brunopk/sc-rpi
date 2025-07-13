@@ -37,8 +37,9 @@ class Response:
         Args:
             status (HTTPStatus): Status code (same status codes used in HTTP)
             payload (Any | None, optional): The result of a command. Defaults to None.
-            error (Error | None, optional): Error object (if the command failed),
-                `payload` and `error` cannot be set at the same time. Defaults to None.
+            error (Error | None, optional): Error object. Use it only if the command \
+                failed (`payload` and `error` cannot be set at the same time). Defaults \
+                    to None.
 
         """
         self.status = status.value

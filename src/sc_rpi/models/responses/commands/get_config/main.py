@@ -2,9 +2,9 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.models.responses.commands.get_config.mqtt_config import MQTTConfig
-from sc_rpi.models.responses.commands.get_config.strip_config import (
-    StripConfig,
+from sc_rpi.models.responses.commands.get_config.mqtt import MQTTConfig
+from sc_rpi.models.responses.commands.get_config.strip import (
+  StripConfig,
 )
 
 
@@ -25,7 +25,7 @@ class GetConfig:
 
   log_level: str
 
-  mqtt_config: MQTTConfig
+  mqtt: MQTTConfig
 
   status_led: int
 

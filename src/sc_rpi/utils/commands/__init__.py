@@ -1,6 +1,13 @@
 """Modules with utility classes and functions to work commands."""
 
-from sc_rpi.utils.commands import command_utils
-from sc_rpi.utils.commands.command_parser import CommandParser
+from sc_rpi.utils.commands.command_utils import (
+    load_command_names,
+    load_command_paths,
+    load_commands,
+)
 
-__all__ = ["CommandParser", "command_utils"]
+__all__ = [
+    "load_command_names",
+    "load_command_paths",
+    "load_commands",
+]

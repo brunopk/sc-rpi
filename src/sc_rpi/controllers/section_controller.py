@@ -6,11 +6,9 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 from uuid import uuid1
 
-from webcolors import rgb_to_hex
-
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models import Section
+from sc_rpi.models.internal import Section
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config

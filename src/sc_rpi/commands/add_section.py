@@ -4,87 +4,81 @@ from __future__ import annotations
 
 import logging
 from http import HTTPStatus
-from typing import TYPE_CHECKING
+from typing import Any
 
 from jsonschema import Draft7Validator
 from webcolors import hex_to_rgb
 
 from sc_rpi.command import Command
 from sc_rpi.enums import ErrorCode
-from sc_rpi.errors import ApiError, ParseError
+from sc_rpi.errors import ApiError
 from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections
 
-if TYPE_CHECKING:
-    from sc_rpi.config import Config
-    from sc_rpi.controllers import HardwareController
-
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class AddSection(Command):
     """`add_section` command."""
 
-    def __init__(
-        self,
-        command_name: str,
-        config: Config,
-        hw_controller: HardwareController,
-    ) -> None:
+    _DRAFT_VALIDATOR = Draft7Validator({
+        "$schema": "https://json-schema.org/schema#",
+        "$defs": {
+            "section": {
+                "type": "object",
+                "properties": {
+                    "start": {
+                        "type": "integer",
+                    },
+                    "end": {
+                        "type": "integer",
+                    },
+                    "color": {
+                        "type": "string",
+                        "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
+                    },
+                },
+                "required": ["start", "end", "color"],
+            },
+        },
+        "type": "object",
+        "properties": {
+            "sections": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/section"},
+            },
+        },
+        "required": ["sections"],
+    })
+
+    def __init__(self, command_arguments: dict | None, **kwargs: Any) -> None:
         """Initialize the instance (constructor).
 
         Args:
-            command_name (str): It should be the camelcase version of the class name.
-            config (Config): Configurations of SC RPI.
-            hw_controller (HardwareController): Used to control the strip.
+            command_arguments (dict | None): Command arguments (defined by user).
+            kwargs (Any): Arguments as defined in `Command` (`config`, \
+                `hw_controller`, etc).
 
         """
-        super().__init__(command_name, config, hw_controller)
-        arguments_schema = {
-            "$schema": "https://json-schema.org/schema#",
-            "$defs": {
-                "section": {
-                    "type": "object",
-                    "properties": {
-                        "start": {
-                            "type": "integer",
-                        },
-                        "end": {
-                            "type": "integer",
-                        },
-                        "color": {
-                            "type": "string",
-                            "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
-                        },
-                    },
-                    "required": ["start", "end", "color"],
-                },
-            },
-            "type": "object",
-            "properties": {
-                "sections": {
-                    "type": "array",
-                    "items": {"$ref": "#/$defs/section"},
-                },
-            },
-            "required": ["sections"],
-        }
-        self._validator = Draft7Validator(arguments_schema)
-
-    def validate_arguments(self) -> None:
-        """Validate command arguments."""
-        errors = list(self._validator.iter_errors(self.args))
-        if len(errors) > 0:
-            raise ParseError(errors)
-        self._test_overlapping([(s["start"], s["end"]) for s in self.args["sections"]])
+        super().__init__(command_arguments, **kwargs)
 
     def run(self) -> Response:
         """Execute the command.
 
-        :return Response:   Returns this object with result of the execution
+        :return Response: Contains the result of the execution
         """
+        if self._command_args is None:
+            raise ApiError(
+                HTTPStatus.BAD_REQUEST,
+                ErrorCode.BAD_REQUEST,
+                "args not defined",
+            )
+        self._test_overlapping(
+            [(s["start"], s["end"]) for s in self._command_args["sections"]],
+        )
         section_ids = []
+
         try:
-            for s in self.args["sections"]:
+            for s in self._command_args["sections"]:
                 color = hex_to_rgb(s["color"])
                 color = (int(color[0]), int(color[1]), int(color[2]))
                 new_section = self._hw_controller.new_section(
@@ -94,14 +88,15 @@ class AddSection(Command):
 
             self._hw_controller.render()
             sections = self._hw_controller.list_sections()
-            payload = Status(map_sections(sections))
-            return Response(HTTPStatus.ACCEPTED, payload)
+            result = Status(map_sections(sections))
+
+            return Response(HTTPStatus.ACCEPTED, result)
         except KeyError as ex:
-            LOGGER.warning("Rollback sections.")
+            logger.warning("Rollback sections.")
             self._hw_controller.remove_sections(section_ids)
             raise ApiError from ex
         except Exception as ex:
-            LOGGER.warning("Rollback sections.")
+            logger.warning("Rollback sections.")
             self._hw_controller.remove_sections(section_ids)
             raise ApiError from ex
 

@@ -1,10 +1,11 @@
 """Contains the `Help` class."""
 
+from __future__ import annotations
+
 from http import HTTPStatus
+from typing import Any
 
 from sc_rpi.command import Command
-from sc_rpi.config import Config
-from sc_rpi.controllers import HardwareController
 from sc_rpi.models import responses
 from sc_rpi.models.responses import Response
 from sc_rpi.utils.commands import command_utils
@@ -13,25 +14,22 @@ from sc_rpi.utils.commands import command_utils
 class Help(Command):
     """`help` command."""
 
-    def __init__(
-        self,
-        command_name: str,
-        config: Config,
-        hw_controller: HardwareController,
-    ) -> None:
+    def __init__(self, command_arguments: dict | None, **kwargs: Any) -> None:
         """Initialize the instance (constructor).
 
         Args:
-            command_name (str): It should be the camelcase version of the class name.
-            config (Config): Configurations of SC RPI.
-            hw_controller (HardwareController): Used to control the strip.
-            collector (Collector): Used to collect information of clients of SC RPI.
+            command_arguments (dict | None): Command arguments (defined by user).
+            kwargs (Any): Arguments as defined in `Command` (`config`, \
+                `hw_controller`, etc).
 
         """
-        super().__init__(command_name, config, hw_controller)
+        super().__init__(command_arguments, **kwargs)
 
-    def validate_arguments(self) -> None:
-        """Validate the arguments."""
+    def validate(self) -> None:
+        """Validate the arguments.
+
+        This method should be invoked before executing the command
+        """
 
     def run(self) -> Response:
         """Execute the command.
@@ -41,7 +39,6 @@ class Help(Command):
 
         """
         command_names = command_utils.load_command_names()
-        data = responses.commands.Help(sorted(command_names))
-        return Response(HTTPStatus.ACCEPTED, data)
+        result = responses.commands.Help(sorted(command_names))
 
-
+        return Response(HTTPStatus.ACCEPTED, result)

@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.config.mqtt_config import MQTTConfig
-from sc_rpi.config.strip_config import StripConfig
+from sc_rpi.config.mqtt import MQTTConfig
+from sc_rpi.config.strip import StripConfig
 
 
 @dataclass
@@ -23,7 +23,7 @@ class Config:
 
   log_level: str
 
-  mqtt_config: MQTTConfig
+  mqtt: MQTTConfig
 
   status_led: int
 

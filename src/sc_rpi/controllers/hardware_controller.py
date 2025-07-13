@@ -11,7 +11,7 @@ from sc_rpi.controllers.section_controller import SectionController
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config
-    from sc_rpi.models import Section
+    from sc_rpi.models.internal import Section
 
 LOGGER = logging.getLogger(__name__)
 
@@ -93,8 +93,8 @@ class HardwareController:
 
         Args:
             section_id (str): ID of the section that will be edited.
-            start (int | None, optional): New start position for the section.Defaults to
-                None.
+            start (int | None, optional): New start position for the section. Defaults \
+                to None.
             end (int | None, optional): New end position for the section. Defaults to
                 None.
             color (tuple[int, int, int] | None, optional): Color for each led in the
@@ -141,6 +141,9 @@ class HardwareController:
 
         Args:
             sections (list[str]): Sections to be removed (identified by their IDs)
+
+        Raises:
+            ApiError:
 
         """
         self._section_controller.remove_sections(sections)

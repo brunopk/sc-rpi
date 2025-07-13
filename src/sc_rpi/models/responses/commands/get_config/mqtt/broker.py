@@ -1,18 +1,12 @@
-"""Contains `MQTTConfig` class."""
+"""Contains `BrokerConfig` class."""
 
 from dataclasses import dataclass
 
 
 @dataclass
-class MQTTConfig:
+class BrokerConfig:
   """Contains configurations for MQTT broker."""
-
-  homeassistant_topic: str
 
   host: str
 
-  password: str
-
   port: int
-
-  username: str

@@ -1,50 +1,65 @@
 """Contains the `Command` class."""
 
-from sc_rpi.config import Config
-from sc_rpi.controllers import HardwareController
-from sc_rpi.models.responses import Response
+from __future__ import annotations
 
-# TODO: move this class to utils package
+from typing import TYPE_CHECKING
+
+from sc_rpi.errors import ApiError, ParseError
+
+if TYPE_CHECKING:
+
+    from sc_rpi.config import Config
+    from sc_rpi.controllers import HardwareController
+    from sc_rpi.models.responses import Response
+
 
 class Command:
     """Represents a command of SC RPI.
 
-    To implement a command:
+    To implement a command :
 
-    1. Create the corresponding module in the commands package.
-    2. Create the a child class of `Command` and name it with the camelized version of \
-        the module name. For example, if the module is `section_add.py`, the class \
-            name should be `SectionAdd`.
-    3. Copy and re-implement `__init__`, `run` and `validate_arguments`.
+    1. Create the corresponding module in the commands package
+    2. Create the class
+    3. Define the `_DRAFT_VALIDATOR` class attribute \
+        ([Draft specification](https://json-schema.org/specification))
+    3. Re-implement the `run` method
+    4. Re-implement `validate` method
+
+    Important considerations:
+    - The command class must inherit from `Command`
+    - The class name must be the camelized version of the module name.
+    - `validate` method validates arguments based on Draft specification defined in \
+        `_DRAFT_VALIDATOR`, re-implement this method only if custom logic is needed, \
+            otherwise re-implemented it with an empty body
+    - `__init__` method must invoke the `__init__` method of `Command`
+    - Command should not interact with MQTT, this is done by workers \
+        (`src/sc_rpi/worker.py`).
+
     """
 
     def __init__(
-        self, command_name: str, config: Config, hw_controller: HardwareController,
+        self,
+        command_args: dict | None,
+        config: Config,
+        hw_controller: HardwareController,
     ) -> None:
         """Initialize the instance (constructor).
 
         Args:
-            command_name (str): It should be the camelcase version of the class name.
+            command_args (dict | None): Command arguments.
             config (Config): Configurations of SC RPI.
             hw_controller (HardwareController): Used to control the strip.
 
         """
-        self.command_name = command_name
-        self.args: dict = {}
+        self._command_name = str(self.__module__)
+        self._command_args = command_args
         self._config = config
         self._hw_controller = hw_controller
 
-    def validate_arguments(self) -> None:
-        """Validate the arguments.
-
-        This method should be invoked before executing the command
-
-        Raises:
-            NotImplementedError: Raises this exception if the validation
-                is not implemented in the child class.
-
-        """
-        raise NotImplementedError
+    @property
+    def command_name(self) -> str:
+        """Command name (snake-case version)."""
+        return self._command_name
 
     def run(self) -> Response:
         """Execute the command.
@@ -54,3 +69,26 @@ class Command:
 
         """
         raise NotImplementedError
+
+    def validate(self) -> None:
+        """Validate the arguments.
+
+        This method should be invoked before executing the command
+
+        Raises:
+            ApiError:
+            ParseError:
+
+        """
+        validator = getattr(self.__class__, "_DRAFT_VALIDATOR", None)
+        if validator is None:
+            msg = (
+                "class attribute _DRAFT_VALIDATOR not defined in "
+                 f"{self.__class__.__name__} class"
+            )
+            raise ApiError(message=msg)
+        errors = [
+            e.message for e in validator.iter_errors(self._command_args)
+        ]
+        if len(errors) > 0:
+            raise ParseError(errors)

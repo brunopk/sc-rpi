@@ -25,5 +25,6 @@ Go to the add-on configuration page and set the "Logins" field like this :
 
 - [Official MQTT protocol site](https://mqtt.org/)
 - [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
+- [Home Assistant MQTT lights](https://www.home-assistant.io/integrations/light.mqtt/)
 - [Gollum add-on repository for Home Assistant](https://github.com/GollumDom/addon-repository)
 - [Addon MQTT Explorer new Version](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739)

@@ -3,12 +3,12 @@
 The main class is `Config`.
 """
 
+from sc_rpi.models.responses.commands.get_config import mqtt
 from sc_rpi.models.responses.commands.get_config.main import (
     GetConfig,
 )
-from sc_rpi.models.responses.commands.get_config.mqtt_config import MQTTConfig
-from sc_rpi.models.responses.commands.get_config.strip_config import (
+from sc_rpi.models.responses.commands.get_config.strip import (
     StripConfig,
 )
 
-__all__ = ["GetConfig", "MQTTConfig", "StripConfig"]
+__all__ = ["GetConfig", "StripConfig", "mqtt"]

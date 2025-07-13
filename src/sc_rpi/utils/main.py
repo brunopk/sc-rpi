@@ -4,11 +4,14 @@ from __future__ import annotations
 
 from dataclasses import is_dataclass
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from webcolors import rgb_to_hex
 
-from sc_rpi.models import Section, responses
+from sc_rpi.models import responses
+
+if TYPE_CHECKING:
+    from sc_rpi.models.internal import Section
 
 
 def map_sections(section_list: list[Section]) -> list[responses.Section]:

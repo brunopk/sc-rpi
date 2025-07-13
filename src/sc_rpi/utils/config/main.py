@@ -8,7 +8,7 @@ from configparser import ConfigParser
 import RPi.GPIO as GPIO
 from systemd.journal import JournalHandler
 
-from sc_rpi.config import Config, MQTTConfig, StripConfig
+from sc_rpi.config import Config, StripConfig, mqtt
 from sc_rpi.errors import ApiError
 
 """Load all configurations from `config.ini` file."""
@@ -34,12 +34,6 @@ def load_configurations() -> Config :
         log_level = config["MAIN"].get("log_level", "INFO")
         status_led = config["MAIN"].getint("status_led", 17)
 
-        homeassistant_topic = config["MQTT_BROKER"].get("homeassistant_topic")
-        host = config["MQTT_BROKER"].get("host")
-        password = config["MQTT_BROKER"].get("password")
-        port = config["MQTT_BROKER"].getint("port")
-        username = config["MQTT_BROKER"].get("username")
-
         brightness = config["PIXEL_STRIP"].getint("brightness", 255)
         channel = config["PIXEL_STRIP"].getint("channel", 0)
         dma = config["PIXEL_STRIP"].getint("dma", 10)
@@ -48,21 +42,41 @@ def load_configurations() -> Config :
         pin = config["PIXEL_STRIP"].getint("pin", 18)
         strip_length = config["PIXEL_STRIP"].getint("strip_length")
 
-        mqtt_config = _validate_mqtt_configuration(
-            homeassistant_topic, host, password, port, username,
+        mqtt_broker_host = config["MQTT.BROKER"].get("host")
+        mqtt_broker_password = config["MQTT.BROKER"].get("password")
+        mqtt_broker_port = config["MQTT.BROKER"].getint("port")
+        mqtt_broker_username = config["MQTT.BROKER"].get("username")
+
+        mqtt_ha_topic_prefix = config["MQTT.TOPICS"].get("ha_topic_prefix")
+        mqtt_sc_rpi_topic_prefix = config["MQTT.TOPICS"].get("sc_rpi_topic_prefix")
+
+        mqtt_configuration = _validate_mqtt_configuration(
+            mqtt_broker_host,
+            mqtt_broker_password,
+            mqtt_broker_port,
+            mqtt_broker_username,
+            mqtt_ha_topic_prefix,
+            mqtt_sc_rpi_topic_prefix,
         )
-        strip_config = _validate_strip_configuration(
-            brightness, channel, dma, freq_hz, invert, pin, strip_length,
+        strip_configuration = _validate_strip_configuration(
+            brightness,
+            channel,
+            dma,
+            freq_hz,
+            invert,
+            pin,
+            strip_length,
         )
+
         return _validate_configurations(
             connection_timeout,
             default_gateway,
             default_network_interface,
             env,
             log_level,
-            mqtt_config,
+            mqtt_configuration,
             status_led,
-            strip_config,
+            strip_configuration,
         )
 
     except ApiError:
@@ -87,7 +101,7 @@ def configure_logging(config: Config) -> None:
     handlers = []
     if config.env == "dev":
         console_handler = logging.StreamHandler()
-        console_handler.emit = __decorate_console_handler_emit(console_handler.emit)
+        console_handler.emit = _decorate_console_handler_emit(console_handler.emit)
 
         log_format = "%(asctime)s - %(name)s - %(levelname)s -- %(message)s"
         formatter = logging.Formatter(log_format)
@@ -105,7 +119,7 @@ def configure_status_led(config: Config):
     GPIO.setwarnings(False)
     GPIO.setup(config.status_led, GPIO.OUT)
 
-def __decorate_console_handler_emit(fn):
+def _decorate_console_handler_emit(fn):
     """Based on Stack Overflow post: \
 
     https://stackoverflow.com/questions/20706338/color-logging-using-logging-module-in-python.
@@ -134,9 +148,9 @@ def _validate_configurations(
         default_network_interface: str | None,
         env: str,
         log_level: str,
-        mqtt_config: MQTTConfig,
+        mqtt_config: mqtt.MQTTConfig,
         status_led: int,
-        strip: StripConfig) -> Config:
+        strip_config: StripConfig) -> Config:
 
     dev = "dev"
     prod = "rpi"
@@ -163,7 +177,7 @@ def _validate_configurations(
         log_level,
         mqtt_config,
         status_led,
-        strip,
+        strip_config,
     )
 
 def _validate_strip_configuration(
@@ -190,17 +204,36 @@ def _validate_strip_configuration(
     if strip_length is None:
         raise ApiError(message="strip_length not defined")
 
-    return StripConfig(brightness, channel, dma, freq_hz, invert, pin, strip_length)
+    return StripConfig(brightness, channel, dma, freq_hz, invert, pin, strip_length)    
 
 def _validate_mqtt_configuration(
-    homeassistant_topic: str | None,
+    broker_host: str | None,
+    broker_password: str | None,
+    broker_port: int | None,
+    broker_username: str | None,
+    ha_topic_prefix: str | None,
+    sc_rpi_topic_prefix: str | None,
+) -> mqtt.MQTTConfig:
+    broker_config = _validate_mqtt_broker_configuration(
+        broker_host,
+        broker_password,
+        broker_port,
+        broker_username,
+    )
+    topic_config = _validate_mqtt_topics_configuration(
+        ha_topic_prefix,
+        sc_rpi_topic_prefix,
+    )
+
+    return mqtt.MQTTConfig(broker_config, topic_config)
+
+def _validate_mqtt_broker_configuration(
     host: str | None,
     password: str | None,
     port: int | None,
     username: str | None,
-) -> MQTTConfig:
-    if homeassistant_topic is None:
-        raise ApiError(message="homeassistant_topic not defined")
+) -> mqtt.BrokerConfig:
+
     if host is None:
         raise ApiError(message="host not defined")
     if password is None:
@@ -210,4 +243,15 @@ def _validate_mqtt_configuration(
     if username is None:
         raise ApiError(message="username not defined")
 
-    return MQTTConfig(homeassistant_topic, host, password, port, username)
+    return mqtt.BrokerConfig(host, password, port, username)
+
+def _validate_mqtt_topics_configuration(
+    ha_topic_prefix: str | None,
+    sc_rpi_topic_prefix: str | None,
+) -> mqtt.TopicConfig:
+    if ha_topic_prefix is None:
+        raise ApiError(message="ha_topic_prefix not defined")
+    if sc_rpi_topic_prefix is None:
+        raise ApiError(message="sc_rpi_topic_prefix not defined")
+
+    return mqtt.TopicConfig(ha_topic_prefix, sc_rpi_topic_prefix)
