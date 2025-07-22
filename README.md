@@ -1,4 +1,4 @@
-# Strip Controller Raspberry
+# SC RPi
 
 Provides a simple MQTT API to control WS2812B LED strips connected to a Raspberry Pi, which can also be integrated with Home Assistant.
 
