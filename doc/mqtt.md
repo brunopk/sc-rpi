@@ -1,8 +1,15 @@
 # MQTT
 
-**To work with MQTT, it's very useful to have [MQTT Explorer](https://mqtt-explorer.com/). It can be installed on macOS using Homebrew or as a Home Assistant add-on (see [Gollum add-on repository for Home Assistant](https://github.com/GollumDom/addon-repository) and [this](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739/5) post on HA forum). This application is extremely helpful for development and troubleshooting.**
+MQTT (Message Queuing Telemetry Transport) is an application-level protocol, just like HTTP and others, defined around a **publish/subscribe architecture** (for more information, see the [official MQTT website](https://mqtt.org/)). SC RPi uses MQTT to provide its API and to integrate with Home Assistant. It relies on the [paho-mqtt](https://pypi.org/project/paho-mqtt/) library for working with this protocol in Python.
+
+> **To work with MQTT, you must have an MQTT broker, which is analogous to a server in HTTP. The recommended broker is Mosquitto (see [Mosquitto broker](#mosquitto-broker) below for more information).**
+>
+> **For development and troubleshooting, it is also strongly recommended to install [MQTT Explorer](https://mqtt-explorer.com/). It can be installed on macOS using Homebrew, or as a Home Assistant add-on (see the [Gollum add-on repository for Home Assistant](https://github.com/GollumDom/addon-repository) and [this post](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739/5) on the Home Assistant forum).**
+
 
 ## MQTT integration with HA
+
+TODO: explain more about topics
 
 Home Assistant provides an official integration for MQTT which can be installed by following [this](https://my.home-assistant.io/redirect/config_flow_start?domain=mqtt) link. But, as described in the [official documentation of the MQTT integration](https://www.home-assistant.io/integrations/mqtt/), **the first step to get MQTT and Home Assistant working is to choose a broker** (see also [Mosquitto broker](#mosquitto-broker) below).
 
