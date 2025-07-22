@@ -28,7 +28,8 @@ SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.c
 
     </br>
 
-For more information about Linux services refer to `/doc/systemd_configuration`.
+- For more information about Linux services refer to `/doc/systemd_configuration`
+- For more information about MQTT and Mosquitto broker, see `doc/mqtt.md`
 
 ## Development
 
