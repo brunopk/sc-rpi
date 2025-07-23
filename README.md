@@ -10,26 +10,25 @@
 
 - Raspberry Pi 3 or newer versions with Raspberry Pi OS
 - W2812B LED strip (see `/doc/circuit.md`)
-- Python: 3.8.18
+- Python: 3.9.x
 - Poetry
 - An MQTT broker (see `/doc/mqtt.md`)
 
-> **It's strongly recommended to install [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/) with Raspberry Pi Imager.**
+> **In order to avoid networking issues, it's preferable to use the Raspbian GNU/Linux 11 (bullseye) version. See `doc/network.md` to properly configure WiFi networks.**
 
 ## Installation
 
-SC RPI can be be manually installed as a [Linux service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services). The steps to install it can be summarized in the following steps :
-
-1. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-2. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
-3. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
-4. [Configure SC RPI](/doc/configurations.md)
-5. [Configure SC RPI as a Linux service](/doc/systemd_configuration.md)
+1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
+2. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
+3. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
+4. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
+5. [Configure SC RPi](/doc/configurations.md)
+6. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md)
 
     </br>
 
-- For more information about Linux services refer to `/doc/systemd_configuration`
-- For more information about MQTT and Mosquitto broker, see `doc/mqtt.md`
+Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see `/doc/systemd_configuration.md` for more information. For more information about Linux services and the Mosquitto broker, refer to `/doc/systemd_configuration.md` and `/doc/mqtt.md`, respectively.
+
 
 ## Development
 
