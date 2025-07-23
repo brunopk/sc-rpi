@@ -44,10 +44,10 @@ SC RPi is provided with more documentation in the `doc` folders :
 
 - [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
 - [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
-- [`doc/network_configuration`](doc/network_configuration) : network configuration in Rapsberry OS
+- [`doc/network_configuration`](doc/network_configuration.md) : network configuration in Rapsberry OS
 - [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
 - [`doc/commands.md`](doc/commands.md): SC RPi commands (through MQTT)
-- [`doc/development`](doc/development): useful documentation for SC RPi development
+- [`doc/development`](doc/development.md): useful documentation for SC RPi development
 
 ## Links
 
