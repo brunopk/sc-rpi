@@ -1,6 +1,6 @@
 # SC RPi
 
-**Provides a simple MQTT API to control WS2812B LED strips connected to a Raspberry Pi, which can also be integrated with Home Assistant.**
+**SC RPi (Strip Controller for Raspberry Pi) provides a simple MQTT API to control WS2812B LED strips connected to a Raspberry Pi, which can also be integrated with Home Assistant.**
 
 - For more information about how to build the circuit, see `doc/circuit.md`
 - For more information about MQTT and how it's used in SC RPi, see `doc/mqtt.md`
@@ -49,6 +49,9 @@ SC RPi is provided with more documentation in the `doc` folders :
 - [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
 - [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
 - [`doc/network_configuration`](doc/network_configuration) : network configuration in Rapsberry OS
+- [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
+- [`doc/commands.md`](doc/commands.md): SC RPi commands (through MQTT)
+- [`doc/development`](doc/development): useful documentation for SC RPi development
 
 ## Links
 
