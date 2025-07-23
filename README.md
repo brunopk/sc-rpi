@@ -8,7 +8,7 @@
 
 ## Requirements
 
-- Raspberry Pi 3 or newer versions with Raspberry Pi OS
+- Raspberry Pi 3 with Raspberry Pi OS
 - W2812B LED strip (see `/doc/circuit.md`)
 - Python: 3.9.x
 - Poetry
