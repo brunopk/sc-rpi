@@ -14,7 +14,7 @@
 - Poetry
 - An MQTT broker (see `/doc/mqtt.md`)
 
-> **In order to avoid networking issues, it's preferable to use the Raspbian GNU/Linux 11 (bullseye) version. See `doc/network.md` to properly configure WiFi networks.**
+> **The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller. In this project, the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library is used to control WS2812B LEDs, leveraging the PWM or DMA peripherals to achieve the precise timing required by the LED protocol.**
 
 ## Installation
 
@@ -27,8 +27,7 @@
 
     </br>
 
-Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see `/doc/systemd_configuration.md` for more information. For more information about Linux services and the Mosquitto broker, refer to `/doc/systemd_configuration.md` and `/doc/mqtt.md`, respectively.
-
+Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see `/doc/systemd_configuration.md` for more information.
 
 ## Development
 
@@ -42,6 +41,14 @@ Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/
     ```
 
 For more information refer to `doc/development`.
+
+## Documentation
+
+SC RPi is provided with more documentation in the `doc` folders :
+
+- [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
+- [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
+- [`doc/network_configuration`](doc/network_configuration) : network configuration in Rapsberry OS
 
 ## Links
 
