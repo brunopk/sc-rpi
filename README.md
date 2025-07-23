@@ -49,6 +49,8 @@ SC RPi is provided with more documentation in the `doc` folders :
 - [`doc/commands.md`](doc/commands.md): SC RPi commands (through MQTT)
 - [`doc/development.md`](doc/development.md): useful documentation for SC RPi development
 
+  </br>
+
 ## Links
 
 - [Official Python distribution of the rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
