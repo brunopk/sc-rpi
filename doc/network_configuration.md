@@ -10,7 +10,59 @@ To connect to a WiFi network :
 sudo nmcli device wifi connect "YourSSID" --ask
 ```
 
-> **For Raspbian GNU/Linux 11 (Bullseye) version the following configuration must be done.**
+To discover WiFi networks (with or without `sudo`):
+
+```bash
+nmcli device wifi list
+```
+
+## Common errors
+
+### Soft blocked
+
+If `nmcli` (`nmcli` command with no arguments) returns something like this :
+
+```
+wlan0: unavailable
+  "Broadcom BCM43438 combo and Bluetooth Low Energy"
+  wifi (brcmfmac), B8:27:EB:95:E0:32, **sw disabled**, hw, mtu 1500
+```
+
+Run this :
+
+```bash
+rfkill list
+```
+
+and ensure it returns `Soft blocked: yes` :
+
+```
+0: phy0: Wireless LAN
+    Soft blocked: yes
+    Hard blocked: no
+```
+
+If this is the case, unblock it with this command :
+
+```bash
+sudo rfkill unblock wifi
+```
+
+and then turn WiFi on with `nmcli` :
+
+```bash
+nmcli radio wifi on
+```
+
+Finally, to test `nmcli` is working :
+
+```bash
+nmcli device wifi list
+```
+
+This will return the list of available WiFi networks.
+
+### Configuration in Raspbian GNU/Linux 11 (Bullseye)**
 
 </br>
 
