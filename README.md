@@ -10,8 +10,8 @@
 - Poetry
 - An MQTT broker (see `/doc/mqtt.md`)
 
-> **The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller. In this project, the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library is used to control WS2812B LEDs, leveraging the PWM or DMA peripherals to achieve the precise timing required by the LED protocol.**
-
+>**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
+>
 ## Installation
 
 1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
