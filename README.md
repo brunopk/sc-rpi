@@ -8,7 +8,7 @@
 - W2812B LED strip (see [`/doc/circuit.md`](/doc/circuit.md))
 - Python
 - Poetry
-- An MQTT broker (see `/doc/mqtt.md`)
+- An MQTT broker (see [`/doc/mqtt.md`](/doc/mqtt.md))
 
 >**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
 >
