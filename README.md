@@ -5,7 +5,7 @@
 ## Requirements
 
 - Raspberry Pi 3 with Raspberry Pi OS
-- W2812B LED strip (see `/doc/circuit.md`)
+- W2812B LED strip (see [`/doc/circuit.md`](/doc/circuit.md))
 - Python
 - Poetry
 - An MQTT broker (see `/doc/mqtt.md`)
@@ -23,7 +23,7 @@
 
     </br>
 
-Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see `/doc/systemd_configuration.md` for more information.
+Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see [`/doc/systemd_configuration.md`](/doc/systemd_configuration.md) for more information.
 
 ## Development
 
