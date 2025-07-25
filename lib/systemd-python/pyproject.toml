@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{ include="../"}]
 
 [tool.poetry.dependencies]
-python = "3.8.18"
+python = "^3.9"
 
 
 [build-system]

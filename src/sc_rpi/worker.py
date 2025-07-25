@@ -8,12 +8,10 @@ from threading import Thread
 
 from paho.mqtt.client import MQTTMessage
 
-from sc_rpi.command import Command
 from sc_rpi.config import Config
-from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.utils.commands import load_commands
+from sc_rpi.models.command import Command
 from sc_rpi.utils.mqtt import topic_utils
 
 logger = logging.getLogger(__name__)
@@ -31,8 +29,6 @@ class Worker(Thread):
         super().__init__(daemon=True, name="WorkerThread")
         self._message_queue : Queue[MQTTMessage] = Queue()
         self._config = config
-        self._command_dictionary = load_commands()
-        self._hw_controller = HardwareController(config)
 
     def put_message(self, message: MQTTMessage) -> None:
         """Put a message into a internal queue to be processed.
@@ -81,6 +77,9 @@ class Worker(Thread):
         logger.info("_process_ha_command")
         try:
             cmd_as_dict: dict = loads(msg.payload.decode())
+            # cmd = from_dict(data_class=HACommand, data=cmd_as_dict)
+            # TODO: CONTINUE implementing all commands (take add_section as example)
+            # print(cmd)
         except Exception as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,
@@ -100,6 +99,7 @@ class Worker(Thread):
         logger.info("_process_sc_rpi_command")
 
         try:
+            # TODO: Take into account that if some error occurs when parsing from `dict` (`from_dict` method), Mashumaro will raise `InvalidFieldValue`.
             cmd_as_dict: dict = loads(msg.payload.decode())
             cmd_name = cmd_as_dict.get("name")
             cmd_args = cmd_as_dict.get("args")

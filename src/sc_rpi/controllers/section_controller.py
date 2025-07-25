@@ -8,7 +8,7 @@ from uuid import uuid1
 
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models.internal import Section
+from sc_rpi.models.common import Section
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config

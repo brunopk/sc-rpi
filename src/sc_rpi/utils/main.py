@@ -11,7 +11,7 @@ from webcolors import rgb_to_hex
 from sc_rpi.models import responses
 
 if TYPE_CHECKING:
-    from sc_rpi.models.internal import Section
+    from sc_rpi.models.common import Section
 
 
 def map_sections(section_list: list[Section]) -> list[responses.Section]:

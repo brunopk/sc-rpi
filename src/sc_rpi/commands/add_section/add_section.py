@@ -3,63 +3,27 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Any
 
-from jsonschema import Draft7Validator
 from webcolors import hex_to_rgb
 
-from sc_rpi.command import Command
+from sc_rpi.commands.add_section.add_section_args import AddSectionArgs
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections
 
 logger = logging.getLogger(__name__)
 
-class AddSection(Command):
+@dataclass
+class AddSection(Command[AddSectionArgs]):
     """`add_section` command."""
 
-    _DRAFT_VALIDATOR = Draft7Validator({
-        "$schema": "https://json-schema.org/schema#",
-        "$defs": {
-            "section": {
-                "type": "object",
-                "properties": {
-                    "start": {
-                        "type": "integer",
-                    },
-                    "end": {
-                        "type": "integer",
-                    },
-                    "color": {
-                        "type": "string",
-                        "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
-                    },
-                },
-                "required": ["start", "end", "color"],
-            },
-        },
-        "type": "object",
-        "properties": {
-            "sections": {
-                "type": "array",
-                "items": {"$ref": "#/$defs/section"},
-            },
-        },
-        "required": ["sections"],
-    })
+    args: AddSectionArgs
 
-    def __init__(self, command_arguments: dict | None, **kwargs: Any) -> None:
-        """Initialize the instance (constructor).
-
-        Args:
-            command_arguments (dict | None): Command arguments (defined by user).
-            kwargs (Any): Arguments as defined in `Command` (`config`, \
-                `hw_controller`, etc).
-
-        """
-        super().__init__(command_arguments, **kwargs)
+    name: str = "add_section"
 
     def run(self) -> Response:
         """Execute the command.

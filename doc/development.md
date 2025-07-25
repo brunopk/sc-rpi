@@ -14,6 +14,15 @@ It may be convenient to install it **globally**:
 pip install poetry
 ```
 
+> Ensure that after invoking any `poetry` command the following section is still present in `pyproject.toml` :
+>
+> ```toml
+> [tool.poetry.group.rpi-only-deps.dependencies]
+> #systemd-python = "235"
+> #"RPi.GPIO" = "0.7.1"
+> #rpi-ws281x = "5.0.0"
+> ```
+
 ### Installing development dependencies
 
 The dependencies required for running on Raspberry Pi are almost the same as those required for development, but there are some exceptions, for example :
@@ -75,22 +84,6 @@ In order to run the application as a Python module :
       "python.analysis.extraPaths": ["src"]
     }
     ```
-
-### Useful tips about Visual Code
-
-As a workaround to view threads in the 'Call Stack' section panel of Visual Studio Code, the following line in main.py:
-
-```python
-web.run_app(app, print=logger.info, port=port, host=host)
-```
-
-can be modified to:
-
-```python
-web.run_app(app, print=logger.info)
-```
-
-This modification retains the essential functionality without passing the port or host arguments, which don't allow setting custom port and host. Consequently, the server will start on default ones: port=8080 and host=0.0.0.0.".
 
 ## Transferring code to the Raspberry Pi
 

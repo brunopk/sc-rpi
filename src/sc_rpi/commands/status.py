@@ -5,7 +5,7 @@ from __future__ import annotations
 from http import HTTPStatus
 from typing import Any
 
-from sc_rpi.command import Command
+from sc_rpi.utils.commands.command import Command
 from sc_rpi.models import responses
 from sc_rpi.models.responses import Response
 from sc_rpi.utils import map_sections

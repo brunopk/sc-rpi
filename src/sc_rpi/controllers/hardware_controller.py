@@ -11,7 +11,7 @@ from sc_rpi.controllers.section_controller import SectionController
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config
-    from sc_rpi.models.internal import Section
+    from sc_rpi.models.common import Section
 
 LOGGER = logging.getLogger(__name__)
 

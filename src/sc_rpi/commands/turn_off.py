@@ -7,7 +7,7 @@ from typing import Any
 
 from jsonschema import Draft7Validator
 
-from sc_rpi.command import Command
+from sc_rpi.utils.commands.command import Command
 from sc_rpi.errors import ParseError
 from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections

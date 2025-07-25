@@ -12,3 +12,4 @@ class ErrorCode(Enum):
     SECTION_OVERLAPPING = 4
     SECTION_NOT_FOUND = 5
     COMMAND_NOT_FOUND = 6
+    INVALID_COLOR = 7

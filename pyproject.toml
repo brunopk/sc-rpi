@@ -7,12 +7,12 @@ readme = "README.md"
 packages=[{from= "src", include = "sc_rpi"}]
 
 [tool.poetry.dependencies]
-python = "3.8.18"
-jsonschema = "4.21.1"
+python = "^3.9"
 inflector = "3.1.1"
 webcolors = "1.13"
 toml = "^0.10.2"
 paho-mqtt = "^2.1.0"
+mashumaro = "^3.16"
 
 [tool.poetry.group.dev.dependencies]
 "RPi.GPIO" = {path = "lib/RPI.GPIO", develop = true}

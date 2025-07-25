@@ -8,7 +8,7 @@ from sc_rpi.config.strip import StripConfig
 
 @dataclass
 class Config:
-  """Main configuration class.
+  """Contains SC RPi configurations.
 
   This class may encapsulate other configuration classes.
   """
