@@ -1,4 +1,4 @@
-"""Contains the `CommandArgs` class."""
+"""Contains the `Section` class."""
 
 import re
 from dataclasses import dataclass
@@ -9,8 +9,8 @@ from sc_rpi.errors import ApiError
 
 
 @dataclass
-class AddSectionArgs:
-    """Defines arguments for `add_section` command."""
+class Section:
+    """Defines a section in the strip."""
 
     start: int
 

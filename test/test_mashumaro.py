@@ -17,7 +17,7 @@ class TestMashumaro(TestCase):
         """Test test_deserializing_json."""
         json_data = {
             "name": "add_section",
-            "args": {"start": 0, "end": 50, "color": "#aa22bb"},
+            "args": [{"start": 0, "end": 50, "color": "#aa22bb"}],
         }
         cmd = Command.from_dict(json_data)
         self.assertIsInstance(cmd, Command)

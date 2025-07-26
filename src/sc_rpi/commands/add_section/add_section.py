@@ -8,7 +8,7 @@ from http import HTTPStatus
 
 from webcolors import hex_to_rgb
 
-from sc_rpi.commands.add_section.add_section_args import AddSectionArgs
+from sc_rpi.commands.add_section.section import Section
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.command import Command
@@ -18,10 +18,10 @@ from sc_rpi.utils import map_sections
 logger = logging.getLogger(__name__)
 
 @dataclass
-class AddSection(Command[AddSectionArgs]):
+class AddSection(Command[list[Section]]):
     """`add_section` command."""
 
-    args: AddSectionArgs
+    args: list[Section]
 
     name: str = "add_section"
 
@@ -30,24 +30,14 @@ class AddSection(Command[AddSectionArgs]):
 
         :return Response: Contains the result of the execution
         """
-        if self._command_args is None:
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "args not defined",
-            )
-        self._test_overlapping(
-            [(s["start"], s["end"]) for s in self._command_args["sections"]],
-        )
+        self._test_overlapping([(s.start, s.end) for s in self.args])
         section_ids = []
 
         try:
-            for s in self._command_args["sections"]:
-                color = hex_to_rgb(s["color"])
+            for s in self.args:
+                color = hex_to_rgb(s.color)
                 color = (int(color[0]), int(color[1]), int(color[2]))
-                new_section = self._hw_controller.new_section(
-                    s["start"], s["end"], color,
-                )
+                new_section = self._hw_controller.new_section(s.start, s.end, color)
                 section_ids.append(new_section.id)
 
             self._hw_controller.render()
