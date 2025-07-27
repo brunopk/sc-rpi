@@ -1,4 +1,4 @@
-"""Contains the `SectionAdd` class."""
+"""Contains the `AddSection` class."""
 
 from __future__ import annotations
 

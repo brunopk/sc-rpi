@@ -10,7 +10,10 @@ from sc_rpi.errors import ApiError
 
 @dataclass
 class Section:
-    """Defines a section in the strip."""
+    """Defines a section in the strip. \
+
+    Used for `add_section` command arguments.
+    """
 
     start: int
 

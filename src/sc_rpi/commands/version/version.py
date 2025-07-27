@@ -2,32 +2,24 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from http import HTTPStatus
 from pathlib import Path
 from platform import python_version
-from typing import Any
 
 import toml
 
-from sc_rpi.utils.commands.command import Command
 from sc_rpi.errors import ApiError
 from sc_rpi.models import responses
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 
 
-class Version(Command):
+@dataclass
+class Version(Command[None]):
     """`version` command."""
 
-    def __init__(self, command_arguments: dict | None, **kwargs: Any) -> None:
-        """Initialize the instance (constructor).
-
-        Args:
-            command_arguments (dict | None): Command arguments (defined by user).
-            kwargs (Any): Arguments as defined in `Command` (`config`, \
-                `hw_controller`, etc).
-
-        """
-        super().__init__(command_arguments, **kwargs)
+    name: str = "version"
 
     def run(self) -> Response:
         """Execute the command.
@@ -48,12 +40,6 @@ class Version(Command):
             raise
         except Exception as ex:
             raise ApiError from ex
-
-    def validate(self) -> None:
-        """Validate the arguments.
-
-        This method should be invoked before executing the command
-        """
 
     def _get_sc_rpi_version(self) -> str:
         sc_rpi_version = None

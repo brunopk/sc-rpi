@@ -2,28 +2,20 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Any
 
-from sc_rpi.utils.commands.command import Command
 from sc_rpi.models import responses
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils import map_sections
 
 
-class Status(Command):
+@dataclass
+class Status(Command[None]):
     """`status` command."""
 
-    def __init__(self, command_arguments: dict | None, **kwargs: Any) -> None:
-        """Initialize the instance (constructor).
-
-        Args:
-            command_arguments (dict | None): Command arguments (defined by user).
-            kwargs (Any): Arguments as defined in `Command` (`config`, \
-                `hw_controller`, etc).
-
-        """
-        super().__init__(command_arguments, **kwargs)
+    name: str = "status"
 
     def validate(self) -> None:
         """Validate the arguments.

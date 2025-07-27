@@ -78,7 +78,6 @@ class Worker(Thread):
         try:
             cmd_as_dict: dict = loads(msg.payload.decode())
             # cmd = from_dict(data_class=HACommand, data=cmd_as_dict)
-            # TODO: CONTINUE implementing all commands (take add_section as example)
             # print(cmd)
         except Exception as ex:
             raise ApiError(
