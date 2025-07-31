@@ -11,10 +11,7 @@ from sc_rpi.mqtt import callbacks
 from sc_rpi.utils.config import configure_logging, load_configurations
 from sc_rpi.worker import Worker
 
-# TODO: modify turn_on turn_off to turn on/off only sections (not the whole strip)
-# TODO: TEST all commands (turn_off DONE, turn_on DONE, test that they turn off/turn on only specified sections)
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
-# TODO: implement initializing strip from a JSON file with commands.
 
 logger = logging.getLogger(__name__)
 
