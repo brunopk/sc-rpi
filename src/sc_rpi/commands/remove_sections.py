@@ -14,11 +14,11 @@ from sc_rpi.utils import map_sections
 
 @dataclass
 class RemoveSections(Command[list[str]]):
-    """`remove_section` command."""
+    """`remove_sections` command."""
 
     args: list[str]
 
-    name: str = "remove_section"
+    name: str = "remove_sections"
 
     def validate(self) -> None:
         """Validate the arguments.

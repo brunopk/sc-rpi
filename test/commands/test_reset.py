@@ -1,33 +1,34 @@
-"""Contains the `TestAddSection` class."""
+"""Contains the `TestReset` class."""
 
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.reset import Reset
+from sc_rpi.commands import reset
 from sc_rpi.controllers import HardwareController
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils.config import load_configurations
 
 
 class TestReset(TestCase):
-    """Tests for src/commands/reset.py."""
+    """Tests for `reset` command."""
 
     @classmethod
     def setUpClass(cls) -> None:
         """Set required configurations before running any test."""
         logging.basicConfig(level=None)
         cls.config = load_configurations()
-        cls.hw_controller = HardwareController(config=cls.config)
-
-    def setUp(self) -> None:
-        """Set required configurations before running each test case."""
-        self.hw_controller.remove_all_sections()
+        cls.hw_controller = HardwareController(cls.config)
 
     def test_basic_invocation(self) -> None:
-        """Test case test_basic_invocation."""
-        command = Reset(None, config=self.config, hw_controller=self.hw_controller)
-        command.validate()
-        resp = command.run()
-
-        self.assertIsInstance(resp, Response)
-
+        """Basic test case."""
+        cmd = Command.from_dict_wrapper(
+            {
+                "name": "reset",
+            },
+            self.__class__.config,
+            self.__class__.hw_controller,
+        )
+        cmd.validate()
+        result = cmd.run()
+        self.assertIsInstance(result, Response)

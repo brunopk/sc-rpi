@@ -1,17 +1,17 @@
-"""Contains the `TestEditSection` class."""
+"""Contains the `TestTurnSectionOn` class."""
 
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands import add_section, edit_section
+from sc_rpi.commands import add_section, turn_section_on
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response, Section
 from sc_rpi.utils.config import load_configurations
 
 
-class TestEditSection(TestCase):
-    """Tests for `edit_section` command."""
+class TestTurnSectionOn(TestCase):
+    """Tests `turn_section_on` command."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -49,18 +49,15 @@ class TestEditSection(TestCase):
         if not isinstance(first_section, Section):
             raise Exception("section[0] must be a Section instance")
 
-        section_edit_cmd = Command.from_dict_wrapper(
-            {
-                "name": "edit_section",
-                "args": {
-                    "section_id": first_section.id,
-                    "start": 10,
-                },
-            },
+        command = Command.from_dict_wrapper(
+            {"name": "turn_section_on", "args": {"section_id": first_section.id}},
             self.__class__.config,
             self.__class__.hw_controller,
         )
-        section_edit_cmd.validate()
-        resp = section_edit_cmd.run()
-
+        command.validate()
+        try:
+            resp = command.run()
+        except Exception as ex:
+            print(ex)
+            raise ex
         self.assertIsInstance(resp, Response)

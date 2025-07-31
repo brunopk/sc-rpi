@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Generic, Optional, TypeVar
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Generic, Optional, TypeVar
 
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
@@ -10,14 +11,13 @@ from mashumaro.types import Discriminator
 
 from sc_rpi.config import Config
 from sc_rpi.controllers import HardwareController
-from sc_rpi.utils.config import load_configurations
 
 if TYPE_CHECKING:
     from sc_rpi.models.responses import Response
 
-
 CommandArgs = TypeVar("CommandArgs")
 
+@dataclass
 class Command(Generic[CommandArgs], DataClassJSONMixin):
     """Represents a command of SC RPi.
 
@@ -36,27 +36,31 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         Mashumaro discriminator to work correctly (discriminator is configured in the \
             `Config` class below).
     - The value for `name` should be the command name that API users will use when \
-        invoking the command and it should be the snake-case version of the command \
-            class.
+        invoking the command and it should be the snake-case version of the class name \
     - `validate` method may be re-defined if custom logic is needed.
     - Command should not interact with MQTT, this is done by workers \
         (`src/sc_rpi/worker.py`).
-    - In order to avoid multi-threading related issues with class attributes \
-        (`hw_controller`, `config`, etc.), this class should be used only in one thread.
+    - Use `from_dict_wrapper` instead of `from_dict` to create `Command` instances \
+        from a dictionary. If some error occurs when using this method, Mashumaro will \
+            raise `InvalidFieldValue`.
+    - This class is not thead-safe which means that internal attributes such as \
+        `_config` may be shared between a number of `Command` instances in different \
+            threads.
     - All subclasses must be imported before using them in order for mashumaro \
-        discriminators to work correctly (even if only one of them is used).
-    - If some error occurs when parsing from `dict` (`from_dict` method), Mashumaro \
-        will raise `InvalidFieldValue`.
+        discriminators to work correctly.
+    - Do not use `to_dict`, this will method will expose private class attributes \
+        (such as `_config`) when serializing to a dictionary (if command serialization \
+            is necessary, find out how to hide fields in mashumaro)
 
     """
 
     name: str
 
-    args: CommandArgs
+    args: Optional[CommandArgs] = None
 
-    _config: ClassVar[Optional[Config]] = None
+    _config: Optional[Config] = None
 
-    _hw_controller: ClassVar[Optional[HardwareController]] = None
+    _hw_controller: Optional[HardwareController] = None
 
     class Config(BaseConfig):
         """Mashumaro config."""
@@ -67,18 +71,31 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         )
 
     @classmethod
-    def _load_hw_controller(cls, config: Config) -> HardwareController:
-        if cls._hw_controller is None:
-            print("_load_hw_controller invoked (REMOVE THIS print)")
-            cls._hw_controller = HardwareController(config)
-        return cls._hw_controller
+    def from_dict_wrapper(
+        cls,
+        data: dict,
+        config: Config,
+        hw_controller: HardwareController,
+    ) -> Command:
+        """Generate a command from a dictionary.
 
-    @classmethod
-    def _load_sc_rpi_config(cls) -> Config:
-        if cls._config is None:
-            print("_load_sc_rpi_config invoked (REMOVE THIS print)")
-            cls._config = load_configurations()
-        return cls._config
+        This method is a wrapper for mashumaro from_dict.
+
+        Args:
+            data: dict: Dictionary from which to create the object.
+            config (Config): SC RPi configuration. Take into account that `Command` is \
+                not thead-safe (this `Config` instance may be shared between a number \
+                    of `Command` instances in different threads).
+            hw_controller (HardwareController): Used to control hardware. Take into \
+                account that `Command` is not thead-safe (this `Config` instance may \
+                    be shared between a number of `Command` instances in different \
+                        threads).
+
+        """
+        cmd = cls.from_dict(data)
+        cmd._config = config
+        cmd._hw_controller = hw_controller
+        return cmd
 
     def run(self) -> Response:
         """Execute the command.
@@ -90,7 +107,7 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         raise NotImplementedError
 
     def validate(self) -> None:
-        """Validate the arguments.
+        """Validate the arguments (override it if custom logic is needed).
 
         This method should be invoked before executing the command
 
@@ -99,7 +116,3 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
             ParseError:
 
         """
-    def __post_init__(self) -> None:
-        """Post initialization (see Mashumaro documentation)."""
-        self._config = self._load_sc_rpi_config()
-        self._hw_controller = self._load_hw_controller(self._config)

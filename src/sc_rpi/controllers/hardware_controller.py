@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from rpi_ws281x import Color, PixelStrip
@@ -11,10 +12,11 @@ from sc_rpi.controllers.section_controller import SectionController
 
 if TYPE_CHECKING:
     from sc_rpi.config import Config
-    from sc_rpi.models.common import Section
+    from sc_rpi.controllers.section import Section
 
 LOGGER = logging.getLogger(__name__)
 
+@dataclass
 class HardwareController:
     """Provides an interface to control the strip (hardware)."""
 

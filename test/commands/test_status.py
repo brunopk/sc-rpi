@@ -3,31 +3,32 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.status import Status
+from sc_rpi.commands import status
 from sc_rpi.controllers import HardwareController
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils.config import load_configurations
 
 
-class TestStatus(TestCase):
-    """Tests for src/commands/status.py."""
+class TestAddSection(TestCase):
+    """Tests for `add_section` command."""
 
     @classmethod
     def setUpClass(cls) -> None:
         """Set required configurations before running any test."""
         logging.basicConfig(level=None)
         cls.config = load_configurations()
-        cls.hw_controller = HardwareController(config=cls.config)
-
-    def setUp(self) -> None:
-        """Set required configurations before running each test case."""
-        self.hw_controller.remove_all_sections()
+        cls.hw_controller = HardwareController(cls.config)
 
     def test_basic_invocation(self) -> None:
-        """Test case test_basic_invocation."""
-        command = Status(None, config=self.config, hw_controller=self.hw_controller)
-        command.validate()
-        resp = command.run()
-
-        self.assertIsInstance(resp, Response)
-
+        """Basic test case."""
+        cmd = Command.from_dict_wrapper(
+            {
+                "name": "status",
+            },
+            self.__class__.config,
+            self.__class__.hw_controller,
+        )
+        cmd.validate()
+        result = cmd.run()
+        self.assertIsInstance(result, Response)

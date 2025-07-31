@@ -3,32 +3,29 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.add_section import AddSection
+from sc_rpi.commands import add_section
 from sc_rpi.controllers import HardwareController
+from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils.config import load_configurations
-from sc_rpi.errors import ApiError
 
 
 class TestAddSection(TestCase):
-    """Tests for src/commands/add_section.py."""
+    """Tests for `add_section` command."""
 
     @classmethod
     def setUpClass(cls) -> None:
         """Set required configurations before running any test."""
         logging.basicConfig(level=None)
         cls.config = load_configurations()
-        cls.hw_controller = HardwareController(config=cls.config)
-
-    def setUp(self) -> None:
-        """Set required configurations before running each test case."""
-        self.hw_controller.remove_all_sections()
+        cls.hw_controller = HardwareController(cls.config)
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
-        command = AddSection(
+        cmd = Command.from_dict_wrapper(
             {
-                "sections": [
+                "name": "add_section",
+                "args": [
                     {
                         "start": 0,
                         "end": 149,
@@ -36,9 +33,9 @@ class TestAddSection(TestCase):
                     },
                 ],
             },
-            config=self.config,
-            hw_controller=self.hw_controller,
+            self.__class__.config,
+            self.__class__.hw_controller,
         )
-        command.validate()
-        result = command.run()
+        cmd.validate()
+        result = cmd.run()
         self.assertIsInstance(result, Response)
