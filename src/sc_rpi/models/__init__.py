@@ -1,5 +1,5 @@
 """Models (`@dataclass` annotated classes)."""
 
-from sc_rpi.models import command, ha, responses
+from sc_rpi.models import command, homeassistant, responses
 
-__all__ = ["command", "ha", "responses"]
+__all__ = ["command", "homeassistant", "responses"]

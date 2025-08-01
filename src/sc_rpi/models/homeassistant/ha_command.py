@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from sc_rpi.models.ha.color import Color
+from sc_rpi.models.homeassistant.color import Color
 
 
 @dataclass
