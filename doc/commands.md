@@ -1,6 +1,6 @@
 # Commands
 
-# TODO: update with MQTT information
+# TODO: update with MQTT information (explaining how commands are sent)
 
 The API consists of commands transmitted via JSON-formatted messages over a [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) connection. All commands have the same format :
 
@@ -46,53 +46,6 @@ and optionally a `data` field which is another (nested) JSON object :
 where `code` is the error code (string).
 
 In general for requests and responses colors are represented in hexadecimal. **All responses (failure or success) will have a `status` key**, which is an integer that adheres to the same semantics as in HTTP.
-
-## add_section
-
-Define a new section.
-
-### Example
-  
-```json
-{
-  "name": "add_section",
-  "args": {
-    "sections": [{
-        "start": 0,
-        "end": 149,
-        "color": "#ff0000"
-      }, {
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00"
-    }]
-  }
-}
-```
-
-Returns:
-  
-```json
-{
-  "status": 201, 
-  "command": "add_section", 
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
-        "start": 0,
-        "end": 149,
-        "color": "#ff0000",
-        "is_on": true
-      }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
-  }
-}
-```
 
 ## disconnect
 
@@ -288,41 +241,6 @@ Returns:
       "command_1",
       "command_2"
     ]
-  }
-}
-```
-
-## remove_section
-
-Remove sections by id.
-
-### Example
-  
-```json
-{
-  "name": "remove_section",
-  "args": {
-    "sections": [
-      "123e4567-e89b-12d3-a456-42661417400"
-    ]
-  }
-}
-```
-
-Returns:
-
-```json
-{
-  "status": 201,
-  "command": "remove_section",
-  "data": {
-    "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174001",
-        "start": 150,
-        "end": 299,
-        "color": "#00ff00",
-        "is_on": true
-    }]
   }
 }
 ```

@@ -3,10 +3,10 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands import add_section, edit_section
+from sc_rpi.commands import edit_section
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response, Section
+from sc_rpi.models.responses import Response
 from sc_rpi.utils.config import load_configurations
 
 
@@ -22,38 +22,13 @@ class TestEditSection(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""
-        section_add_cmd = Command.from_dict_wrapper(
-            {
-                "name": "add_section",
-                "args": [
-                    {
-                        "start": 0,
-                        "end": 10,
-                        "color": "#ffff00",
-                    },
-                ],
-            },
-            self.__class__.config,
-            self.__class__.hw_controller,
-        )
-        resp = section_add_cmd.run()
-
-        if resp.payload is None:
-            error_msg = '"payload" cannot be None'
-            raise KeyError(error_msg)
-        sections = resp.payload.sections
-        if sections is None:
-            error_msg = '"sections" cannot be None'
-            raise KeyError(error_msg)
-        first_section = sections[0]
-        if not isinstance(first_section, Section):
-            raise Exception("section[0] must be a Section instance")
+        new_section = self.__class__.hw_controller.new_section(0, 10, (255, 255, 0))
 
         section_edit_cmd = Command.from_dict_wrapper(
             {
                 "name": "edit_section",
                 "args": {
-                    "section_id": first_section.id,
+                    "section_id": new_section.id,
                     "start": 10,
                 },
             },
