@@ -1,0 +1,23 @@
+env: dev
+default_gateway: 192.168.0.1
+default_network_interface: en0
+status_led: 17
+connection_timeout: 0.25
+log_level: DEBUG
+mqtt:
+    broker:
+        host: homeassistant.local
+        port: 1883
+        username: test
+        password: test
+    topics:
+        ha_topic_prefix: homeassistant
+        sc_rpi_topic_prefix: 8 
+strip_config:
+    brightness: 255
+    channel: 0
+    dma: 10
+    freq_hz: 800000
+    invert: False
+    pin: 18
+    strip_length: 300

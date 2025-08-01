@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import logging
-from configparser import ConfigParser
+from pathlib import Path
 
 import RPi.GPIO as GPIO
+import yaml
 from systemd.journal import JournalHandler
 
-from sc_rpi.config import Config, StripConfig, mqtt
+from sc_rpi.config import Config
 from sc_rpi.errors import ApiError
 
 """Load all configurations from `config.ini` file."""
@@ -24,63 +25,9 @@ def load_configurations() -> Config :
 
     """
     try:
-        config = ConfigParser()
-        config.read("./config.ini")
-
-        connection_timeout = config["MAIN"].getfloat("connection_timeout")
-        default_gateway = config["MAIN"].get("default_gateway")
-        default_network_interface = config["MAIN"].get("default_network_interface")
-        env = config["MAIN"].get("env", "dev")
-        log_level = config["MAIN"].get("log_level", "INFO")
-        status_led = config["MAIN"].getint("status_led", 17)
-
-        brightness = config["PIXEL_STRIP"].getint("brightness", 255)
-        channel = config["PIXEL_STRIP"].getint("channel", 0)
-        dma = config["PIXEL_STRIP"].getint("dma", 10)
-        freq_hz = config["PIXEL_STRIP"].getint("freq_hz", 800000)
-        invert = config["PIXEL_STRIP"].getboolean("invert", False)
-        pin = config["PIXEL_STRIP"].getint("pin", 18)
-        strip_length = config["PIXEL_STRIP"].getint("strip_length")
-
-        mqtt_broker_host = config["MQTT.BROKER"].get("host")
-        mqtt_broker_password = config["MQTT.BROKER"].get("password")
-        mqtt_broker_port = config["MQTT.BROKER"].getint("port")
-        mqtt_broker_username = config["MQTT.BROKER"].get("username")
-
-        mqtt_ha_topic_prefix = config["MQTT.TOPICS"].get("ha_topic_prefix")
-        mqtt_sc_rpi_topic_prefix = config["MQTT.TOPICS"].get("sc_rpi_topic_prefix")
-
-        mqtt_configuration = _validate_mqtt_configuration(
-            mqtt_broker_host,
-            mqtt_broker_password,
-            mqtt_broker_port,
-            mqtt_broker_username,
-            mqtt_ha_topic_prefix,
-            mqtt_sc_rpi_topic_prefix,
-        )
-        strip_configuration = _validate_strip_configuration(
-            brightness,
-            channel,
-            dma,
-            freq_hz,
-            invert,
-            pin,
-            strip_length,
-        )
-
-        return _validate_configurations(
-            connection_timeout,
-            default_gateway,
-            default_network_interface,
-            env,
-            log_level,
-            mqtt_configuration,
-            status_led,
-            strip_configuration,
-        )
-
-    except ApiError:
-        raise
+        with Path.open(Path("config.yaml")) as f:
+            config_dict = yaml.load(f, Loader=yaml.SafeLoader)
+            return Config.from_dict(config_dict)
     except KeyError as ex:
         raise ApiError from ex
     except Exception as ex:
@@ -141,117 +88,3 @@ def _decorate_console_handler_emit(fn):
 
         return fn(*args)
     return new
-
-def _validate_configurations(
-        connection_timeout: float | None,
-        default_gateway: str | None,
-        default_network_interface: str | None,
-        env: str,
-        log_level: str,
-        mqtt_config: mqtt.MQTTConfig,
-        status_led: int,
-        strip_config: StripConfig) -> Config:
-
-    dev = "dev"
-    prod = "rpi"
-    available_envs = [dev, prod]
-
-    if env not in available_envs:
-        raise ApiError(
-            message=f"{env} must be one of these: ${available_envs}",
-        )
-    if connection_timeout is None:
-        raise ApiError(message="connection_timeout not defined")
-    if default_gateway is None:
-        raise ApiError(message="default_gateway not defined")
-    if default_network_interface is None:
-        raise ApiError(message="default_network_interface not defined")
-    if status_led is None:
-        raise ApiError(message="status_led not defined")
-
-    return Config(
-        connection_timeout,
-        default_gateway,
-        default_network_interface,
-        env,
-        log_level,
-        mqtt_config,
-        status_led,
-        strip_config,
-    )
-
-def _validate_strip_configuration(
-    brightness: int | None,
-    channel: int | None,
-    dma: int | None,
-    freq_hz: int | None,
-    invert: bool | None,
-    pin: int | None,
-    strip_length: int | None,
-) -> StripConfig:
-    if brightness is None:
-        raise ApiError(message="brightness not defined")
-    if channel is None:
-        raise ApiError(message="channel not defined")
-    if dma is None:
-        raise ApiError(message="dma not defined")
-    if freq_hz is None:
-        raise ApiError(message="freq_hz not defined")
-    if invert is None:
-        raise ApiError(message="invert not defined")
-    if pin is None:
-        raise ApiError(message="pin not defined")
-    if strip_length is None:
-        raise ApiError(message="strip_length not defined")
-
-    return StripConfig(brightness, channel, dma, freq_hz, invert, pin, strip_length)    
-
-def _validate_mqtt_configuration(
-    broker_host: str | None,
-    broker_password: str | None,
-    broker_port: int | None,
-    broker_username: str | None,
-    ha_topic_prefix: str | None,
-    sc_rpi_topic_prefix: str | None,
-) -> mqtt.MQTTConfig:
-    broker_config = _validate_mqtt_broker_configuration(
-        broker_host,
-        broker_password,
-        broker_port,
-        broker_username,
-    )
-    topic_config = _validate_mqtt_topics_configuration(
-        ha_topic_prefix,
-        sc_rpi_topic_prefix,
-    )
-
-    return mqtt.MQTTConfig(broker_config, topic_config)
-
-def _validate_mqtt_broker_configuration(
-    host: str | None,
-    password: str | None,
-    port: int | None,
-    username: str | None,
-) -> mqtt.BrokerConfig:
-
-    if host is None:
-        raise ApiError(message="host not defined")
-    if password is None:
-        raise ApiError(message="password not defined")
-    if port is None:
-        raise ApiError(message="port not defined")
-    if username is None:
-        raise ApiError(message="username not defined")
-
-    return mqtt.BrokerConfig(host, password, port, username)
-
-def _validate_mqtt_topics_configuration(
-    ha_topic_prefix: str | None,
-    sc_rpi_topic_prefix: str | None,
-) -> mqtt.TopicConfig:
-    if ha_topic_prefix is None:
-        raise ApiError(message="ha_topic_prefix not defined")
-    if sc_rpi_topic_prefix is None:
-        raise ApiError(message="sc_rpi_topic_prefix not defined")
-
-    return mqtt.TopicConfig(ha_topic_prefix, sc_rpi_topic_prefix)

@@ -2,12 +2,14 @@
 
 from dataclasses import dataclass
 
+from mashumaro.mixins.json import DataClassJSONMixin
+
 from sc_rpi.config.mqtt import MQTTConfig
 from sc_rpi.config.strip import StripConfig
 
 
 @dataclass
-class Config:
+class Config(DataClassJSONMixin):
   """Contains SC RPi configurations.
 
   This class may encapsulate other configuration classes.

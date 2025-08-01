@@ -12,6 +12,7 @@ from sc_rpi.utils.config import configure_logging, load_configurations
 from sc_rpi.worker import Worker
 
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
+# TODO: implement connection verification as before (sending ping to the default gateway)
 
 logger = logging.getLogger(__name__)
 
