@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.config.mqtt import MQTTConfig
-from sc_rpi.config.strip import StripConfig
+from sc_rpi.models.config.mqtt import MQTTConfig
+from sc_rpi.models.config.strip import StripConfig
 
 
 @dataclass

@@ -9,12 +9,12 @@ import RPi.GPIO as GPIO
 import yaml
 from systemd.journal import JournalHandler
 
-from sc_rpi.config import Config
 from sc_rpi.errors import ApiError
+from sc_rpi.models.config import Config
 
 """Load all configurations from `config.ini` file."""
 
-def load_configurations() -> Config :
+def load_configurations() -> Config:
     """Load all configurations from `config.ini` file.
 
     Raises:

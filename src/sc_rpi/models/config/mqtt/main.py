@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.config.mqtt.broker import BrokerConfig
-from sc_rpi.config.mqtt.topics import TopicConfig
+from sc_rpi.models.config.mqtt.broker import BrokerConfig
+from sc_rpi.models.config.mqtt.topics import TopicConfig
 
 
 @dataclass

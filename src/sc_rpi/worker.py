@@ -17,7 +17,7 @@ from sc_rpi.utils.mqtt import topic_utils
 logger = logging.getLogger(__name__)
 
 class Worker(Thread):
-    """Process messages in a different thread (worker thread)."""
+    """Process messages in a dedicated thread (worker thread)."""
 
     def __init__(self, config: Config) -> None:
         """Initialize the instance (constructor).
