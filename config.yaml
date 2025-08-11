@@ -21,3 +21,10 @@ strip_config:
     invert: False
     pin: 18
     strip_length: 300
+    sections:
+        - ha_entity_id: ws2812b_strip_section_1
+          start: 0
+          end: 149
+        - ha_entity_id: ws2812b_strip_section_2  
+          start: 150
+          end: 299

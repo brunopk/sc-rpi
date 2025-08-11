@@ -36,4 +36,6 @@ class EditSection(Command[EditSectionArgs]):
         sections = self._hw_controller.list_sections()
         result = Status(map_sections(sections))
 
+        # TODO: all commands should return the command name (add command name as attribute of Response)
+        # TODO: all commands should have a package named models
         return Response(HTTPStatus.ACCEPTED, result)

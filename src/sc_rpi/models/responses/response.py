@@ -45,3 +45,5 @@ class Response:
         self.status = status.value
         self.payload = payload
         self.error = error
+        # TODO: set the correct command name
+        self.command = "asdasd"

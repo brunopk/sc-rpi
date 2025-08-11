@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from sc_rpi.models.responses.commands.get_config.strip_config.section import Section
+
 
 @dataclass
 class StripConfig:
@@ -20,3 +22,5 @@ class StripConfig:
   pin: int
 
   strip_length: int
+
+  sections: list[Section]

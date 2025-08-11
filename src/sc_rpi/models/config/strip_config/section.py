@@ -14,7 +14,3 @@ class Section:
     start: int
 
     end: int
-
-    color: str
-
-    is_on: bool

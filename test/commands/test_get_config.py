@@ -1,6 +1,7 @@
 """Contains the `TestGetConfig` class."""
 
 import logging
+from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands import get_config
@@ -19,6 +20,8 @@ class TestGetConfig(TestCase):
         logging.basicConfig(level=None)
         cls.config = load_configurations()
         cls.hw_controller = HardwareController(cls.config)
+        cls.hw_controller.new_section(0, 149, (255, 255, 255))
+        cls.hw_controller.new_section(150, 299, (255, 255, 255))
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
@@ -31,4 +34,7 @@ class TestGetConfig(TestCase):
         )
         cmd.validate()
         result = cmd.run()
+        self.assertTrue(len(result.payload.strip_config.sections) > 0)
         self.assertIsInstance(result, Response)
+        # TODO: add this line to all command test
+        self.assertIsInstance(asdict(result), dict)

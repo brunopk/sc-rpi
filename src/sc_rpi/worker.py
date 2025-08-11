@@ -8,10 +8,10 @@ from threading import Thread
 
 from paho.mqtt.client import MQTTMessage
 
-from sc_rpi.config import Config
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.command import Command
+from sc_rpi.models.config import Config
 from sc_rpi.utils.mqtt import topic_utils
 
 logger = logging.getLogger(__name__)

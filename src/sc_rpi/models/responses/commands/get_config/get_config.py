@@ -2,14 +2,16 @@
 
 from dataclasses import dataclass
 
+from mashumaro.mixins.json import DataClassJSONMixin
+
 from sc_rpi.models.responses.commands.get_config.mqtt import MQTTConfig
-from sc_rpi.models.responses.commands.get_config.strip import (
+from sc_rpi.models.responses.commands.get_config.strip_config import (
   StripConfig,
 )
 
 
 @dataclass
-class GetConfig:
+class GetConfig(DataClassJSONMixin):
   """Main configuration class.
 
   This class may encapsulate other configuration classes.
