@@ -37,5 +37,5 @@ class EditSection(Command[EditSectionArgs]):
         result = Status(map_sections(sections))
 
         # TODO: all commands should return the command name (add command name as attribute of Response)
-        # TODO: all commands should have a package named models
+        # TODO: all commands should have its models in his own command package (src/sc_rpi/commands/*)
         return Response(HTTPStatus.ACCEPTED, result)
