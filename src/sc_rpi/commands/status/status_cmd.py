@@ -1,18 +1,18 @@
-"""Contains the `Status` class."""
+"""Contains the `StatusCmd` class."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from sc_rpi.models import responses
+from sc_rpi.commands.status.status_resp import StatusResp
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils import map_sections
 
 
 @dataclass
-class Status(Command[None]):
+class StatusCmd(Command[None]):
     """`status` command."""
 
     name: str = "status"
@@ -32,6 +32,6 @@ class Status(Command[None]):
         """
         sections = self._hw_controller.list_sections()
         sections = self._hw_controller.list_sections()
-        result = responses.commands.Status(map_sections(sections))
+        resp = StatusResp(map_sections(sections))
 
-        return Response(HTTPStatus.ACCEPTED, result)
+        return Response(HTTPStatus.ACCEPTED, StatusCmd.name, resp)
