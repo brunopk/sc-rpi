@@ -1,5 +1,5 @@
 """`turn_section_off` command."""
 
-from sc_rpi.commands.turn_section_off import turn_section_off
+from sc_rpi.commands.turn_section_off.turn_section_off_cmd import TurnSectionOffCmd
 
-__all__ = ["turn_section_off"]
+__all__ = ["TurnSectionOffCmd"]

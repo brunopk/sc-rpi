@@ -1,4 +1,4 @@
-"""Contains the `TurnSectionOff` class."""
+"""Contains the `TurnSectionOffCmd` class."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from sc_rpi.utils import map_sections
 
 
 @dataclass
-class TurnSectionOff(Command[TurnSectionOffArgs]):
+class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
     """`turn_section_off` command."""
 
     args: TurnSectionOffArgs
