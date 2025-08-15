@@ -1,9 +1,10 @@
 """Contains the `TestTurnSectionOn` class."""
 
 import logging
+from dataclasses import asdict
 from unittest import TestCase
 
-from sc_rpi.commands import turn_section_on
+from sc_rpi.commands.turn_section_on import TurnSectionOnCmd
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
@@ -31,4 +32,7 @@ class TestTurnSectionOn(TestCase):
         )
         command.validate()
         resp = command.run()
+
         self.assertIsInstance(resp, Response)
+        self.assertIsInstance(asdict(resp), dict)
+        self.assertEqual(resp.command_name, TurnSectionOnCmd.name)

@@ -1,6 +1,7 @@
 """Contains the `TestAddSection` class."""
 
 import logging
+from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.version import VersionCmd
@@ -30,5 +31,8 @@ class TestVersion(TestCase):
             self.__class__.hw_controller,
         )
         cmd.validate()
-        result = cmd.run()
-        self.assertIsInstance(result, Response)
+        resp = cmd.run()
+
+        self.assertIsInstance(resp, Response)
+        self.assertIsInstance(asdict(resp), dict)
+        self.assertEqual(resp.command_name, VersionCmd.name)

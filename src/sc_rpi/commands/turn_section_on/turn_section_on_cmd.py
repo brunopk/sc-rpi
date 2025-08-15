@@ -1,4 +1,4 @@
-"""Contains the `TurnSectionOn` class."""
+"""Contains the `TurnSectionOnCmd` class."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from sc_rpi.utils import map_sections
 
 
 @dataclass
-class TurnSectionOn(Command[TurnSectionOnArgs]):
+class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
     """`turn_section_on` command."""
 
     args: TurnSectionOnArgs

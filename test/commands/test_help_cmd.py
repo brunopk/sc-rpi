@@ -1,5 +1,6 @@
 """Contains the `TestAddSection` class."""
 
+from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.help import HelpCmd
@@ -15,5 +16,8 @@ class TestHelp(TestCase):
         command =Command.from_dict({"name": "help"})
         command.validate()
         resp = command.run()
+
         self.assertIsInstance(resp, Response)
+        self.assertIsInstance(asdict(resp), dict)
+        self.assertEqual(resp.command_name, HelpCmd.name)
 

@@ -1,6 +1,7 @@
 """Contains the `TestStatus` class."""
 
 import logging
+from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.status import StatusCmd
@@ -32,6 +33,9 @@ class TestStatus(TestCase):
             self.__class__.hw_controller,
         )
         cmd.validate()
-        result = cmd.run()
-        self.assertTrue(len(result.payload.sections) > 0)
-        self.assertIsInstance(result, Response)
+        resp = cmd.run()
+
+        self.assertTrue(len(resp.payload.sections) > 0)
+        self.assertIsInstance(resp, Response)
+        self.assertIsInstance(asdict(resp), dict)
+        self.assertEqual(resp.command_name, StatusCmd.name)

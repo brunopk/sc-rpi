@@ -39,3 +39,4 @@ class TestEditSection(TestCase):
         resp = section_edit_cmd.run()
 
         self.assertIsInstance(resp, Response)
+        self.assertEqual(resp.command_name, EditSectionCmd.name)

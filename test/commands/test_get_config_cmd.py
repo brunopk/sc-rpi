@@ -33,8 +33,9 @@ class TestGetConfig(TestCase):
             self.__class__.hw_controller,
         )
         cmd.validate()
-        result = cmd.run()
-        self.assertTrue(len(result.payload.strip_config.sections) > 0)
-        self.assertIsInstance(result, Response)
-        # TODO: add this line to all command test
-        self.assertIsInstance(asdict(result), dict)
+        resp = cmd.run()
+
+        self.assertTrue(len(resp.payload.strip_config.sections) > 0)
+        self.assertIsInstance(resp, Response)
+        self.assertIsInstance(asdict(resp), dict)
+        self.assertEqual(resp.command_name, GetConfigCmd.name)
