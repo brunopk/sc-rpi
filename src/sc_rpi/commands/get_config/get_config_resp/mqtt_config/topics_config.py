@@ -1,10 +1,10 @@
-"""Contains `TopicConfig` class."""
+"""Contains `TopicsConfig` class."""
 
 from dataclasses import dataclass
 
 
 @dataclass
-class TopicConfig:
+class TopicsConfig:
   """Contains MQTT topics (or prefixes)."""
 
   ha_topic_prefix: str

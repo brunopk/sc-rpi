@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.models.config.mqtt import MQTTConfig
-from sc_rpi.models.config.strip_config import StripConfig
+from sc_rpi.models.config.mqtt_config.mqtt_config import MQTTConfig
+from sc_rpi.models.config.strip_config.strip_config import StripConfig
 
 
 @dataclass
@@ -25,7 +25,7 @@ class Config(DataClassJSONMixin):
 
   log_level: str
 
-  mqtt: MQTTConfig
+  mqtt_config: MQTTConfig
 
   status_led: int
 

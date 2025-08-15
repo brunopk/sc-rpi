@@ -1,5 +1,5 @@
 """`edit_section` command."""
 
-from sc_rpi.commands.edit_section.edit_section import EditSection
+from sc_rpi.commands.edit_section.edit_section_cmd import EditSectionCmd
 
-__all__ = ["EditSection"]
+__all__ = ["EditSectionCmd"]

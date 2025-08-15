@@ -3,7 +3,7 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.edit_section import EditSection
+from sc_rpi.commands.edit_section import EditSectionCmd
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.command import Command
 from sc_rpi.utils.config import load_configurations

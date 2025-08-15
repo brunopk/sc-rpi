@@ -20,7 +20,7 @@ class Response:
 
     status: int
 
-    command: str | None
+    command_name: str | None
 
     payload: Any | None
 
@@ -29,21 +29,22 @@ class Response:
     def __init__(
         self,
         status: HTTPStatus,
+        command_name: str,
         payload: Any | None = None,
         error: Error | None = None,
     ) -> None:
         """Initialize the object.
 
         Args:
-            status (HTTPStatus): Status code (same status codes used in HTTP)
+            status (HTTPStatus): Status code (same status codes used in HTTP).
+            command_name (str): Name of the command that returned the response.
             payload (Any | None, optional): The result of a command. Defaults to None.
             error (Error | None, optional): Error object. Use it only if the command \
-                failed (`payload` and `error` cannot be set at the same time). Defaults \
-                    to None.
+                failed (`payload` and `error` cannot be set at the same time). \
+                    Defaults to None.
 
         """
         self.status = status.value
         self.payload = payload
         self.error = error
-        # TODO: set the correct command name
-        self.command = "asdasd"
+        self.command_name = command_name

@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.models.responses.commands.get_config.strip_config.section import Section
+from sc_rpi.commands.get_config.get_config_resp.strip_config.section import Section
 
 
 @dataclass

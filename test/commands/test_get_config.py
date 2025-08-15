@@ -4,7 +4,7 @@ import logging
 from dataclasses import asdict
 from unittest import TestCase
 
-from sc_rpi.commands import get_config
+from sc_rpi.commands.get_config import GetConfigCmd
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response

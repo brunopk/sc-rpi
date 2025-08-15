@@ -1,4 +1,4 @@
-"""Contains the `GetConfig` class."""
+"""Contains the `GetConfigCommand` class."""
 
 from __future__ import annotations
 
@@ -6,7 +6,14 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.models import responses
+from sc_rpi.commands.get_config.get_config_resp import (
+    BrokerConfig,
+    GetConfigResp,
+    MQTTConfig,
+    StripConfig,
+    TopicsConfig,
+    Section
+)
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 
@@ -15,7 +22,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class GetConfig(Command[None]):
+class GetConfigCmd(Command[None]):
     """`get_config` command."""
 
     name: str = "get_config"
@@ -34,7 +41,7 @@ class GetConfig(Command[None]):
 
         """
         sections = self._map_sections(self._config.strip_config.sections)
-        strip_config = responses.commands.get_config.strip_config.StripConfig(
+        strip_config = StripConfig(
             self._config.strip_config.brightness,
             self._config.strip_config.channel,
             self._config.strip_config.dma,
@@ -46,21 +53,21 @@ class GetConfig(Command[None]):
         )
 
 
-        mqtt_broker_config = responses.commands.get_config.mqtt.BrokerConfig(
-            self._config.mqtt.broker.host,
-            self._config.mqtt.broker.port,
+        mqtt_broker_config = BrokerConfig(
+            self._config.mqtt_config.broker_config.host,
+            self._config.mqtt_config.broker_config.port,
         )
-        mqtt_topics = responses.commands.get_config.mqtt.TopicConfig(
-            self._config.mqtt.topics.ha_topic_prefix,
-            self._config.mqtt.topics.sc_rpi_topic_prefix,
+        mqtt_topics = TopicsConfig(
+            self._config.mqtt_config.topics_config.ha_topic_prefix,
+            self._config.mqtt_config.topics_config.sc_rpi_topic_prefix,
         )
-        mqtt_config = responses.commands.get_config.mqtt.MQTTConfig(
+        mqtt_config = MQTTConfig(
             mqtt_broker_config,
             mqtt_topics,
         )
 
 
-        config = responses.commands.get_config.GetConfig(
+        resp = GetConfigResp(
             self._config.connection_timeout,
             self._config.default_gateway,
             self._config.default_network_interface,
@@ -71,14 +78,14 @@ class GetConfig(Command[None]):
             strip_config,
         )
 
-        return Response(HTTPStatus.ACCEPTED, config)
+        # TODO: CONTINUE
+        # TODO: all commands should return the command name (add command name as attribute of Response)
+        # TODO: all commands should have its models in his own command package (src/sc_rpi/commands/*)
+        return Response(HTTPStatus.ACCEPTED, GetConfigCmd.name, resp)
 
-    def _map_sections(
-        self,
-        sections: list[strip_config.Section],
-    ) -> list[responses.commands.get_config.strip_config.Section]:
+    def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
         return [
-            responses.commands.get_config.strip_config.Section(
+            Section(
                 section.ha_entity_id,
                 section.start,
                 section.end,

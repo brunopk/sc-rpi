@@ -1,17 +1,19 @@
-"""Contains the `GetConfigResponse` class."""
+"""Contains the `GetConfigResp` class."""
 
 from dataclasses import dataclass
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.models.responses.commands.get_config.mqtt import MQTTConfig
-from sc_rpi.models.responses.commands.get_config.strip_config import (
+from sc_rpi.commands.get_config.get_config_resp.mqtt_config.mqtt_config import (
+  MQTTConfig,
+)
+from sc_rpi.commands.get_config.get_config_resp.strip_config.strip_config import (
   StripConfig,
 )
 
 
 @dataclass
-class GetConfig(DataClassJSONMixin):
+class GetConfigResp(DataClassJSONMixin):
   """Main configuration class.
 
   This class may encapsulate other configuration classes.
@@ -27,7 +29,7 @@ class GetConfig(DataClassJSONMixin):
 
   log_level: str
 
-  mqtt: MQTTConfig
+  mqtt_config: MQTTConfig
 
   status_led: int
 
