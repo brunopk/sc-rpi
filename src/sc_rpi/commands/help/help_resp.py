@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Help:
+class HelpResp:
     """Contain helpful information for users."""
 
     commands: list[str]

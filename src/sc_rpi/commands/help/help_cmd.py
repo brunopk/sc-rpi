@@ -1,18 +1,18 @@
-"""Contains the `Help` class."""
+"""Contains the `HelpCmd` class."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from sc_rpi.models import responses
+from sc_rpi.commands.help.help_resp import HelpResp
 from sc_rpi.models.command import Command
 from sc_rpi.models.responses import Response
 from sc_rpi.utils.commands import command_utils
 
 
 @dataclass
-class Help(Command[None]):
+class HelpCmd(Command[None]):
     """`help` command."""
 
     name: str = "help"
@@ -31,6 +31,10 @@ class Help(Command[None]):
 
         """
         command_names = command_utils.load_command_names()
-        result = responses.commands.Help(sorted(command_names))
+        resp = HelpResp(sorted(command_names))
 
-        return Response(HTTPStatus.ACCEPTED, result)
+        # TODO: CONTINUE
+        # TODO: all commands should return the command name (add command name as attribute of Response)
+        # TODO: all commands should have its models in his own command package (src/sc_rpi/commands/*)
+
+        return Response(HTTPStatus.ACCEPTED, HelpCmd.name ,resp)

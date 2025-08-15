@@ -3,8 +3,7 @@
 Module names should match with command names.
 """
 
-from sc_rpi.models.responses.commands.help import Help
 from sc_rpi.models.responses.commands.status import Status
 from sc_rpi.models.responses.commands.version import Version
 
-__all__ = ["Help", "Status", "Version"]
+__all__ = ["Status", "Version"]

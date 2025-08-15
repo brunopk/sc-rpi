@@ -77,10 +77,6 @@ class GetConfigCmd(Command[None]):
             self._config.status_led,
             strip_config,
         )
-
-        # TODO: CONTINUE
-        # TODO: all commands should return the command name (add command name as attribute of Response)
-        # TODO: all commands should have its models in his own command package (src/sc_rpi/commands/*)
         return Response(HTTPStatus.ACCEPTED, GetConfigCmd.name, resp)
 
     def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
