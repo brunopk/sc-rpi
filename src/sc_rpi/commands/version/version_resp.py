@@ -1,4 +1,4 @@
-"""Contains the Section class."""
+"""Contains the `VersionResp` class."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Version:
+class VersionResp:
     """Includes different version numbers, such as the SC RPI version."""
 
     python_version: str
