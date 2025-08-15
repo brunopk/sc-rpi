@@ -1,4 +1,4 @@
-"""Contains the `Reset` class."""
+"""Contains the `ResetCmd` class."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from sc_rpi.models.responses import Response
 
 
 @dataclass
-class Reset(Command[None]):
+class ResetCmd(Command[None]):
     """`reset` command."""
 
     name: str = "reset"
@@ -29,4 +29,4 @@ class Reset(Command[None]):
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
 
-        return Response(HTTPStatus.ACCEPTED)
+        return Response(HTTPStatus.ACCEPTED, ResetCmd.name)
