@@ -1,38 +1,31 @@
-"""Contains the `GetConfigResp` class."""
+"""Contains the `EditSectionResp` class."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from mashumaro.mixins.json import DataClassJSONMixin
+from sc_rpi.commands.get_config.get_config_resp.config import Config
+from sc_rpi.models import Response
 
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.mqtt_config import (
-  MQTTConfig,
-)
-from sc_rpi.commands.get_config.get_config_resp.strip_config.strip_config import (
-  StripConfig,
-)
+if TYPE_CHECKING:
+  from http import HTTPStatus
 
+# TODO: create a response object for all commands
 
 @dataclass
-class GetConfigResp(DataClassJSONMixin):
-  """Main configuration class.
+class GetConfigResp(Response[Config]):
+  """Contains available sections."""
 
-  This class may encapsulate other configuration classes.
-  """
+  payload: Config
 
-  connection_timeout: float
+  def __init__(self, status: HTTPStatus, command_name: str, payload: Config) -> None:
+        """Initialize the object.
 
-  default_gateway: str
+        Args:
+            status (HTTPStatus): Status code (same status codes used in HTTP).
+            command_name (str): Name of the command that returned the response.
+            payload (Config): The result of a command.
 
-  default_network_interface: str
-
-  env: str
-
-  log_level: str
-
-  mqtt_config: MQTTConfig
-
-  status_led: int
-
-  strip_config: StripConfig
-
-
+        """
+        super().__init__(status, command_name, payload, None)

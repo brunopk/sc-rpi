@@ -36,6 +36,5 @@ class TestGetConfig(TestCase):
         resp = cmd.run()
 
         self.assertTrue(len(resp.payload.strip_config.sections) > 0)
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(asdict(resp), dict)
+        self.assertIsInstance(resp.to_json(), str)
         self.assertEqual(resp.command_name, GetConfigCmd.name)

@@ -10,15 +10,18 @@ from sc_rpi.models import Response, StatusResp
 if TYPE_CHECKING:
   from http import HTTPStatus
 
-# TODO: create a response object for all commands
-
 @dataclass
 class EditSectionResp(Response[StatusResp]):
-  """Contains available sections."""
+    """Contains available sections."""
 
-  payload: StatusResp
+    payload: StatusResp
 
-  def __init__(self, status: HTTPStatus, command_name: str, payload: StatusResp) -> None:
+    def __init__(
+        self,
+        status: HTTPStatus,
+        command_name: str,
+        payload: StatusResp,
+    ) -> None:
         """Initialize the object.
 
         Args:

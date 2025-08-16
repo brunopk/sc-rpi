@@ -6,15 +6,23 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.get_config.get_config_resp import (
+from sc_rpi.commands.get_config.get_config_resp.config import Config
+from sc_rpi.commands.get_config.get_config_resp.get_config_resp import GetConfigResp
+from sc_rpi.commands.get_config.get_config_resp.mqtt_config.broker_config import (
     BrokerConfig,
-    GetConfigResp,
+)
+from sc_rpi.commands.get_config.get_config_resp.mqtt_config.mqtt_config import (
     MQTTConfig,
-    Section,
-    StripConfig,
+)
+from sc_rpi.commands.get_config.get_config_resp.mqtt_config.topics_config import (
     TopicsConfig,
 )
-from sc_rpi.models import Response
+from sc_rpi.commands.get_config.get_config_resp.strip_config.section import (
+    Section,
+)
+from sc_rpi.commands.get_config.get_config_resp.strip_config.strip_config import (
+    StripConfig,
+)
 from sc_rpi.models.command import Command
 
 if TYPE_CHECKING:
@@ -33,7 +41,7 @@ class GetConfigCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> Response:
+    def run(self) -> GetConfigResp:
         """Execute the command.
 
         Returns:
@@ -67,7 +75,7 @@ class GetConfigCmd(Command[None]):
         )
 
 
-        resp = GetConfigResp(
+        payload = Config(
             self._config.connection_timeout,
             self._config.default_gateway,
             self._config.default_network_interface,
@@ -77,7 +85,8 @@ class GetConfigCmd(Command[None]):
             self._config.status_led,
             strip_config,
         )
-        return Response(HTTPStatus.ACCEPTED, GetConfigCmd.name, resp)
+
+        return GetConfigResp(HTTPStatus.ACCEPTED, GetConfigCmd.name, payload)
 
     def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
         return [

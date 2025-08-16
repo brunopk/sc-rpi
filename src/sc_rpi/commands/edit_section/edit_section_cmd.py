@@ -8,7 +8,7 @@ from webcolors import hex_to_rgb
 
 from sc_rpi.commands.edit_section.edit_section_args import EditSectionArgs
 from sc_rpi.commands.edit_section.edit_section_resp import EditSectionResp
-from sc_rpi.models import Response, StatusResp
+from sc_rpi.models import StatusResp
 from sc_rpi.models.command import Command
 from sc_rpi.utils import map_sections
 
@@ -21,7 +21,7 @@ class EditSectionCmd(Command[EditSectionArgs]):
 
     name: str = "edit_section"
 
-    def run(self) -> Response:
+    def run(self) -> EditSectionResp:
         """Execute the command.
 
         :return Response: Contains the result of the execution.
