@@ -1,4 +1,4 @@
-"""Contains the `SectionResp` class."""
+"""Contains the `SectionAux` class."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class SectionResp:
+class SectionAux:
     """Represents a section of leds in the strip."""
 
     ha_entity_id: str

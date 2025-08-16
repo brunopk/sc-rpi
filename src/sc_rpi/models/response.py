@@ -8,7 +8,7 @@ from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
 from mashumaro.types import Discriminator
 
-from sc_rpi.models import ErrorResp
+from sc_rpi.models import Error
 
 if TYPE_CHECKING:
     from http import HTTPStatus
@@ -28,14 +28,14 @@ class Response(Generic[Payload], DataClassJSONMixin):
 
     payload: Optional[Payload]
 
-    error: Optional[ErrorResp]
+    error: Optional[Error]
 
     def __init__(
         self,
         status: HTTPStatus,
         command_name: str,
         payload: Optional[Payload] = None,
-        error: Optional[ErrorResp] = None,
+        error: Optional[Error] = None,
     ) -> None:
         """Initialize the object.
 

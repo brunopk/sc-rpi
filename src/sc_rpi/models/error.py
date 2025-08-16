@@ -1,4 +1,4 @@
-"""Contains the `ErrorResp` class."""
+"""Contains the `Error` class."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from sc_rpi.enums import ErrorCode
 
 @dataclass
-class ErrorResp:
+class Error:
     """Contains the error code which indicates what is the error \
 
     about and a description for more information (optional).
