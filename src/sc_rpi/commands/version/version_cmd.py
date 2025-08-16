@@ -11,8 +11,8 @@ import toml
 
 from sc_rpi.commands.version.version_resp import VersionResp
 from sc_rpi.errors import ApiError
+from sc_rpi.models import Response
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response
 
 
 @dataclass

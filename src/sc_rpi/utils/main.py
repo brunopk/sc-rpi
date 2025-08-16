@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING, Any
 
 from webcolors import rgb_to_hex
 
-from sc_rpi.models import responses
+from sc_rpi.models import SectionResp
 
 if TYPE_CHECKING:
     from sc_rpi.controllers import Section
 
 
-def map_sections(section_list: list[Section]) -> list[responses.Section]:
+def map_sections(section_list: list[Section]) -> list[SectionResp]:
     """Convert a `Section` instances to `responses.Section`.
 
     Args:
@@ -26,7 +26,7 @@ def map_sections(section_list: list[Section]) -> list[responses.Section]:
 
     """
     return [
-        responses.Section(
+        SectionResp(
             section.id,
             section.limits[0],
             section.limits[1],

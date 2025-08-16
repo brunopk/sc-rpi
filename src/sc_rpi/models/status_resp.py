@@ -1,4 +1,4 @@
-"""Contains the `Status` class."""
+"""Contains the `StatusResp` class."""
 
 from __future__ import annotations
 
@@ -6,11 +6,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-  from .section import Section
+  from sc_rpi.models.section_resp import SectionResp
 
 
 @dataclass
-class Status:
+class StatusResp:
   """Contains available sections."""
 
-  sections: list[Section]
+  sections: list[SectionResp]

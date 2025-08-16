@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.help.help_resp import HelpResp
+from sc_rpi.models import Response
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response
 from sc_rpi.utils.commands import command_utils
 
 

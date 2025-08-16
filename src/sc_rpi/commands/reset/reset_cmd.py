@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
+from sc_rpi.models import Response
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response
 
 
 @dataclass

@@ -10,12 +10,12 @@ from sc_rpi.commands.get_config.get_config_resp import (
     BrokerConfig,
     GetConfigResp,
     MQTTConfig,
+    Section,
     StripConfig,
     TopicsConfig,
-    Section
 )
+from sc_rpi.models import Response
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import strip_config

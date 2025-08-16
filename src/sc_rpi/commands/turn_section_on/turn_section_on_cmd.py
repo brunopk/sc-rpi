@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.turn_section_on.turn_section_on_args import TurnSectionOnArgs
+from sc_rpi.models import Response, StatusResp
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response, Status
 from sc_rpi.utils import map_sections
 
 
@@ -29,6 +29,6 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
         self._hw_controller.turn_on(self.args.section_id)
         self._hw_controller.render()
         sections = self._hw_controller.list_sections()
-        resp = Status(map_sections(sections))
+        resp = StatusResp(map_sections(sections))
 
         return Response(HTTPStatus.ACCEPTED, TurnSectionOnCmd.name, resp)

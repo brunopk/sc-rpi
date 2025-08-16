@@ -6,8 +6,8 @@ from unittest import TestCase
 
 from sc_rpi.commands.turn_section_on import TurnSectionOnCmd
 from sc_rpi.controllers import HardwareController
+from sc_rpi.models import Response
 from sc_rpi.models.command import Command
-from sc_rpi.models.responses import Response
 from sc_rpi.utils.config import load_configurations
 
 
