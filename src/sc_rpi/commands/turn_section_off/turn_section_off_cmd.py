@@ -29,6 +29,6 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         self._hw_controller.turn_off(self.args.section_id)
         self._hw_controller.render()
         sections = self._hw_controller.list_sections()
-        result = Status(map_sections(sections))
+        resp = Status(map_sections(sections))
 
-        return Response(HTTPStatus.ACCEPTED, result)
+        return Response(HTTPStatus.ACCEPTED, TurnSectionOffCmd.name, resp)

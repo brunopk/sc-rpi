@@ -33,8 +33,4 @@ class HelpCmd(Command[None]):
         command_names = command_utils.load_command_names()
         resp = HelpResp(sorted(command_names))
 
-        # TODO: CONTINUE
-        # TODO: all commands should return the command name (add command name as attribute of Response)
-        # TODO: all commands should have its models in his own command package (src/sc_rpi/commands/*)
-
         return Response(HTTPStatus.ACCEPTED, HelpCmd.name ,resp)
