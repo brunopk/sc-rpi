@@ -2,17 +2,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, Optional, TypeVar
+
+from mashumaro.config import BaseConfig
+from mashumaro.mixins.json import DataClassJSONMixin
+from mashumaro.types import Discriminator
+
+from sc_rpi.models import ErrorResp
 
 if TYPE_CHECKING:
     from http import HTTPStatus
-    from typing import Any
 
-    from sc_rpi.models.responses import Error
-
+Payload = TypeVar("Payload")
 
 @dataclass
-class Response:
+class Response(Generic[Payload], DataClassJSONMixin):
     """Response for all commands.
 
     It may be an error or a successful response.
@@ -20,18 +24,18 @@ class Response:
 
     status: int
 
-    command_name: str | None
+    command_name: Optional[str]
 
-    payload: Any | None
+    payload: Optional[Payload]
 
-    error: Error | None
+    error: Optional[ErrorResp]
 
     def __init__(
         self,
         status: HTTPStatus,
         command_name: str,
-        payload: Any | None = None,
-        error: Error | None = None,
+        payload: Optional[Payload] = None,
+        error: Optional[ErrorResp] = None,
     ) -> None:
         """Initialize the object.
 
@@ -48,3 +52,11 @@ class Response:
         self.payload = payload
         self.error = error
         self.command_name = command_name
+
+    class Config(BaseConfig):
+        """Mashumaro config."""
+
+        discriminator = Discriminator(
+            field="command_name",
+            include_subtypes=True,
+        )
