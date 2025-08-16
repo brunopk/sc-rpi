@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from enums import ErrorCode
+    from sc_rpi.enums import ErrorCode
 
 @dataclass
 class Error:
