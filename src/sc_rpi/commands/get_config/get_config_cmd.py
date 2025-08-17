@@ -6,8 +6,10 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.get_config.get_config_resp.config import Config
 from sc_rpi.commands.get_config.get_config_resp.get_config_resp import GetConfigResp
+from sc_rpi.commands.get_config.get_config_resp.get_config_resp_payload import (
+    GetConfigRespPayload,
+)
 from sc_rpi.commands.get_config.get_config_resp.mqtt_config.broker_config import (
     BrokerConfig,
 )
@@ -75,7 +77,7 @@ class GetConfigCmd(Command[None]):
         )
 
 
-        payload = Config(
+        payload = GetConfigRespPayload(
             self._config.connection_timeout,
             self._config.default_gateway,
             self._config.default_network_interface,

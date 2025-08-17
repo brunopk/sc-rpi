@@ -1,4 +1,4 @@
-"""Contains the `Config` class."""
+"""Contains the `GetConfigRespPayload` class."""
 
 from dataclasses import dataclass
 
@@ -13,7 +13,7 @@ from sc_rpi.commands.get_config.get_config_resp.strip_config.strip_config import
 
 
 @dataclass
-class Config(DataClassJSONMixin):
+class GetConfigRespPayload(DataClassJSONMixin):
   """Main configuration class.
 
   This class may encapsulate other configuration classes.

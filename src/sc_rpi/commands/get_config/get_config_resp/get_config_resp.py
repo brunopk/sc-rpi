@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.get_config.get_config_resp.config import Config
+from sc_rpi.commands.get_config.get_config_resp.get_config_resp_payload import (
+  GetConfigRespPayload,
+)
 from sc_rpi.models import Response
 
 if TYPE_CHECKING:
@@ -14,18 +16,23 @@ if TYPE_CHECKING:
 # TODO: create a response object for all commands
 
 @dataclass
-class GetConfigResp(Response[Config]):
-  """Contains available sections."""
+class GetConfigResp(Response[GetConfigRespPayload]):
+    """Contains available sections."""
 
-  payload: Config
+    payload: GetConfigRespPayload
 
-  def __init__(self, status: HTTPStatus, command_name: str, payload: Config) -> None:
+    def __init__(
+        self,
+        status: HTTPStatus,
+        command_name: str,
+        payload: GetConfigRespPayload,
+    ) -> None:
         """Initialize the object.
 
         Args:
             status (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            payload (Config): The result of a command.
+            payload (GetConfigRespPayload): The result of a command.
 
         """
         super().__init__(status, command_name, payload, None)
