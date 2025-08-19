@@ -1,0 +1,1 @@
+"""Contains MQTT configuration classes."""

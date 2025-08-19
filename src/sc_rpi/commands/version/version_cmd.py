@@ -10,8 +10,8 @@ from platform import python_version
 import toml
 
 from sc_rpi.commands.version.version_resp import VersionResp
+from sc_rpi.commands.version.version_resp_payload import VersionRespPayload
 from sc_rpi.errors import ApiError
-from sc_rpi.models import Response
 from sc_rpi.models.command import Command
 
 
@@ -21,7 +21,7 @@ class VersionCmd(Command[None]):
 
     name: str = "version"
 
-    def run(self) -> Response:
+    def run(self) -> VersionResp:
         """Execute the command.
 
         Returns:
@@ -29,8 +29,8 @@ class VersionCmd(Command[None]):
 
         """
         try:
-            resp = VersionResp(python_version(), self._get_sc_rpi_version())
-            return Response(HTTPStatus.ACCEPTED, VersionCmd.name, resp)
+            payload = VersionRespPayload(python_version(), self._get_sc_rpi_version())
+            return VersionResp(HTTPStatus.ACCEPTED, VersionCmd.name, payload)
         except FileNotFoundError as ex:
             raise ApiError from ex
         except ApiError:

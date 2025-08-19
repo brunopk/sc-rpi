@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.turn_section_off.turn_section_off_args import TurnSectionOffArgs
-from sc_rpi.models import Response, StatusResp
+from sc_rpi.commands.turn_section_off.turn_section_off_resp import TurnSectionOffResp
+from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
 from sc_rpi.utils import map_sections
 
@@ -29,6 +30,6 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         self._hw_controller.turn_off(self.args.section_id)
         self._hw_controller.render()
         sections = self._hw_controller.list_sections()
-        resp = StatusResp(map_sections(sections))
+        payload = StatusRespPayload(map_sections(sections))
 
-        return Response(HTTPStatus.ACCEPTED, TurnSectionOffCmd.name, resp)
+        return TurnSectionOffResp(HTTPStatus.ACCEPTED, TurnSectionOffCmd.name, payload)

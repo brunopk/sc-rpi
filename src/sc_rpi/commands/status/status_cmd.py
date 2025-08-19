@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.status.status_resp import StatusResp
-from sc_rpi.models import Response
+from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
 from sc_rpi.utils import map_sections
 
@@ -32,6 +32,6 @@ class StatusCmd(Command[None]):
         """
         sections = self._hw_controller.list_sections()
         sections = self._hw_controller.list_sections()
-        resp = StatusResp(map_sections(sections))
+        payload = StatusRespPayload(map_sections(sections))
 
-        return Response(HTTPStatus.ACCEPTED, StatusCmd.name, resp)
+        return StatusResp(HTTPStatus.ACCEPTED, StatusCmd.name, payload)

@@ -2,12 +2,8 @@
 
 from dataclasses import dataclass
 
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.broker_config import (
-  BrokerConfig,
-)
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.topics_config import (
-  TopicsConfig,
-)
+from sc_rpi.commands.get_config.mqtt_config.broker_config import BrokerConfig
+from sc_rpi.commands.get_config.mqtt_config.topics_config import TopicsConfig
 
 
 @dataclass

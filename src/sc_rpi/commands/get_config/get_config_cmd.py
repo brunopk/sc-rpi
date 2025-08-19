@@ -6,25 +6,13 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.get_config.get_config_resp.get_config_resp import GetConfigResp
-from sc_rpi.commands.get_config.get_config_resp.get_config_resp_payload import (
-    GetConfigRespPayload,
-)
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.broker_config import (
-    BrokerConfig,
-)
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.mqtt_config import (
-    MQTTConfig,
-)
-from sc_rpi.commands.get_config.get_config_resp.mqtt_config.topics_config import (
-    TopicsConfig,
-)
-from sc_rpi.commands.get_config.get_config_resp.strip_config.section import (
-    Section,
-)
-from sc_rpi.commands.get_config.get_config_resp.strip_config.strip_config import (
-    StripConfig,
-)
+from sc_rpi.commands.get_config.get_config_resp import GetConfigResp
+from sc_rpi.commands.get_config.get_config_resp_payload import GetConfigRespPayload
+from sc_rpi.commands.get_config.mqtt_config.broker_config import BrokerConfig
+from sc_rpi.commands.get_config.mqtt_config.mqtt_config import MQTTConfig
+from sc_rpi.commands.get_config.mqtt_config.topics_config import TopicsConfig
+from sc_rpi.commands.get_config.strip_config.section import Section
+from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
 from sc_rpi.models.command import Command
 
 if TYPE_CHECKING:

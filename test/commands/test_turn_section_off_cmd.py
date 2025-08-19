@@ -1,7 +1,6 @@
 """Contains the `TestTurnSectionOff` class."""
 
 import logging
-from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.turn_section_off import TurnSectionOffCmd
@@ -34,5 +33,5 @@ class TestTurnSectionOff(TestCase):
         resp = command.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertIsInstance(asdict(resp), dict)
+        self.assertIsInstance(resp.to_json(), str)
         self.assertEqual(resp.command_name, TurnSectionOffCmd.name)

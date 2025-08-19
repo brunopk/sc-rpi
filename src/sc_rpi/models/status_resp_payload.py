@@ -10,7 +10,7 @@ from sc_rpi.models.section_aux import SectionAux
 
 
 @dataclass
-class StatusResp(DataClassJSONMixin):
+class StatusRespPayload(DataClassJSONMixin):
   """Contains available sections."""
 
   sections: list[SectionAux]

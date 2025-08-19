@@ -1,6 +1,5 @@
-"""Contains the `TestAddSection` class."""
+"""Contains the `TestHelp` class."""
 
-from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.help import HelpCmd
@@ -18,6 +17,6 @@ class TestHelp(TestCase):
         resp = command.run()
 
         self.assertIsInstance(resp, Response)
-        self.assertIsInstance(asdict(resp), dict)
+        self.assertIsInstance(resp.to_json(), str)
         self.assertEqual(resp.command_name, HelpCmd.name)
 

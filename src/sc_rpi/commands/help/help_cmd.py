@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.help.help_resp import HelpResp
-from sc_rpi.models import Response
+from sc_rpi.commands.help.help_resp_payload import HelpRespPayload
 from sc_rpi.models.command import Command
 from sc_rpi.utils.commands import command_utils
 
@@ -23,7 +23,7 @@ class HelpCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> Response:
+    def run(self) -> HelpResp:
         """Execute the command.
 
         Returns:
@@ -31,6 +31,6 @@ class HelpCmd(Command[None]):
 
         """
         command_names = command_utils.load_command_names()
-        resp = HelpResp(sorted(command_names))
+        payload = HelpRespPayload(sorted(command_names))
 
-        return Response(HTTPStatus.ACCEPTED, HelpCmd.name ,resp)
+        return HelpResp(HTTPStatus.ACCEPTED, HelpCmd.name, payload)

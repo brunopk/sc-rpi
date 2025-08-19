@@ -36,6 +36,5 @@ class TestStatus(TestCase):
         resp = cmd.run()
 
         self.assertTrue(len(resp.payload.sections) > 0)
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(asdict(resp), dict)
+        self.assertIsInstance(resp.to_json(), str)
         self.assertEqual(resp.command_name, StatusCmd.name)
