@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import TYPE_CHECKING
-from uuid import uuid1
+from typing import TYPE_CHECKING, Optional
 
 from sc_rpi.controllers.section import Section
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 
 if TYPE_CHECKING:
-    from sc_rpi.config import Config
+    from sc_rpi.models.config import Config
+    from sc_rpi.models.config.strip_config import StripConfig
 
 class SectionController:
     """Used to control sections in the strip.
@@ -25,7 +25,7 @@ class SectionController:
         """Initialize the object (constructor).
 
         Args:
-            config (Config): Configuration of SC RPI.
+            config (Config): SC RPi configuration.
 
         """
         self._strip_length = config.strip_config.strip_length
@@ -37,6 +37,7 @@ class SectionController:
         self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
         self._limits_by_id: dict[str, tuple[int, int]] = {}
         self._is_on_by_id: dict[str, bool] = {}
+        self._init_sections(config.strip_config)
 
     def edit_section(
         self,
@@ -99,18 +100,20 @@ class SectionController:
 
     def new_section(
         self,
+        section_id: str,
         start: int,
         end: int,
-        color: tuple[int, int, int],
+        color: Optional[tuple[int, int, int]] = None,
         *_args: object,
         is_on: bool,
     ) -> Section:
         """Define a new section.
 
         Args:
+            section_id (str): identifies unequivocally the section.
             start (int): Start position.
             end (int): End position.
-            color (tuple[int, int, int]): Color (RGB)
+            color (tuple[int, int, int] | None, optional): Color (RGB). Defaults to None
             is_on (bool): Indicates if the section is turned on/off
 
         Raises:
@@ -120,8 +123,11 @@ class SectionController:
             Section: Created section.
 
         """
-        section_id = str(uuid1())
-        color_list = [color] * (end - start + 1)
+        color_list = (
+            [color] * (end - start + 1)
+            if color is not None
+            else [(0, 0, 0)] * (end - start + 1)
+        )
         self._insert_section(section_id, start, end, color_list, is_on=is_on)
         return Section(section_id, (start, end), color_list, is_on=is_on)
 
@@ -244,3 +250,12 @@ class SectionController:
         del self._color_list_by_id[section_id]
         del self._limits_by_id[section_id]
         del self._is_on_by_id[section_id]
+
+    def _init_sections(self, strip_config: StripConfig) -> None:
+        for section in strip_config.sections:
+            self.new_section(
+                section.ha_entity_id,
+                section.start,
+                section.end,
+                is_on=False,
+            )

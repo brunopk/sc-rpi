@@ -24,7 +24,7 @@ strip_config:
     sections:
         - ha_entity_id: ws2812b_strip_section_1
           start: 0
-          end: 149
+          end: 99
         - ha_entity_id: ws2812b_strip_section_2  
-          start: 150
-          end: 299
+          start: 100
+          end: 199

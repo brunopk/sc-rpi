@@ -20,8 +20,6 @@ class TestStatus(TestCase):
         logging.basicConfig(level=None)
         cls.config = load_configurations()
         cls.hw_controller = HardwareController(cls.config)
-        cls.hw_controller.new_section(0, 149, (255, 255, 255))
-        cls.hw_controller.new_section(150, 299, (255, 255, 255))
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""

@@ -22,7 +22,12 @@ class TestTurnSectionOn(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""
-        new_section = self.__class__.hw_controller.new_section(0, 10, (255, 255, 0))
+        new_section = self.__class__.hw_controller.new_section(
+            "s",
+            200,
+            299,
+            (255, 255, 0),
+        )
 
         command = Command.from_dict_wrapper(
             {"name": "turn_section_on", "args": {"section_id": new_section.id}},

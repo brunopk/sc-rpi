@@ -24,16 +24,16 @@ class TestRemovingSections(TestCase):
 
     def test_removing_all_sections(self) -> None:
         """Test case test_removing_all_sections."""
-        self.controller.new_section(0, 10, (0, 0, 0))
+        self.controller.new_section("s", 0, 10, (0, 0, 0))
         self.controller.remove_all_sections()
-        self.controller.new_section(2, 20, (0, 0, 0))
+        self.controller.new_section("s", 2, 20, (0, 0, 0))
 
     def test_removing_specific_sections(self) -> None:
         """Test case test_removing_specific_sections."""
-        self.controller.new_section(0, 9, (0, 0, 0))
-        s2 = self.controller.new_section(10, 19, (0, 0, 0))
-        s3 = self.controller.new_section(20, 29, (0, 0, 0))
-        s4 = self.controller.new_section(30, 39, (0, 0, 0))
+        self.controller.new_section("s_1", 0, 9, (0, 0, 0))
+        s2 = self.controller.new_section("s_2", 10, 19, (0, 0, 0))
+        s3 = self.controller.new_section("s_3", 20, 29, (0, 0, 0))
+        s4 = self.controller.new_section("s_4", 30, 39, (0, 0, 0))
         self.controller.remove_sections([])
         self.assertRaises(ApiError, self.controller.remove_sections, ["asd"])
         self.controller.remove_sections([s2.id, s3.id])
@@ -42,7 +42,7 @@ class TestRemovingSections(TestCase):
 
     def test_setting_color_for_deleted_section(self) -> None:
         """Test case test_setting_color_for_deleted_section."""
-        section_id = self.controller.new_section(1, 1, (0, 0, 0))
+        section_id = self.controller.new_section("s_1", 1, 1, (0, 0, 0))
         self.controller.remove_all_sections()
         self.assertRaises(ApiError, self.controller.edit_section, (0, 0, 0), section_id)
 

@@ -23,7 +23,7 @@ class TestEditingSections(TestCase):
 
     def test_length(self) -> None:
         """Test case test_length."""
-        section = self.controller.new_section(0, 100, (0, 0, 0))
+        section = self.controller.new_section("s", 0, 100, (0, 0, 0))
         self.controller.edit_section(section.id, 20, 100)
         self.assertEqual(
             self.controller._strip_length,
@@ -34,7 +34,7 @@ class TestEditingSections(TestCase):
     def test_colors(self) -> None:
         """Test case test_colors."""
         new_color = (1, 2, 3)
-        section = self.controller.new_section(0, 100, (0, 0, 0))
+        section = self.controller.new_section("s", 0, 100, (0, 0, 0))
         self.controller.edit_section(section.id, 20, 100)
         self.controller.edit_section(section.id, color=new_color)
         self.controller.render()

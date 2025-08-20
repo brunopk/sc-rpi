@@ -77,9 +77,10 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         config: Config,
         hw_controller: HardwareController,
     ) -> Command:
-        """Generate a command from a dictionary.
+        """Generate a command instance from a dictionary representation of a command.
 
-        This method is a wrapper for mashumaro from_dict.
+        The generated command receives a HardwareController instance, allowing it to \
+            interact with the strip. This method wraps Mashumaro `from_dict` method.
 
         Args:
             data: dict: Dictionary from which to create the object.

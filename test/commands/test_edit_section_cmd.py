@@ -21,14 +21,19 @@ class TestEditSection(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""
-        new_section = self.__class__.hw_controller.new_section(0, 10, (255, 255, 0))
+        new_section = self.__class__.hw_controller.new_section(
+            "s",
+            200,
+            299,
+            (255, 255, 0),
+        )
 
         section_edit_cmd = Command.from_dict_wrapper(
             {
                 "name": "edit_section",
                 "args": {
                     "section_id": new_section.id,
-                    "start": 10,
+                    "end": 298,
                 },
             },
             self.__class__.config,

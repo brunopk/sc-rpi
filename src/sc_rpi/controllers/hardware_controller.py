@@ -11,8 +11,8 @@ from rpi_ws281x import Color, PixelStrip
 from sc_rpi.controllers.section_controller import SectionController
 
 if TYPE_CHECKING:
-    from sc_rpi.config import Config
     from sc_rpi.controllers.section import Section
+    from sc_rpi.models.config import Config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -117,10 +117,17 @@ class HardwareController:
         """
         return self._section_controller.list_sections()
 
-    def new_section(self, start: int, end: int, color: tuple[int, int, int]) -> Section:
+    def new_section(
+        self,
+        section_id: str,
+        start: int,
+        end: int,
+        color: tuple[int, int, int],
+    ) -> Section:
         """Define a new section on the strip.
 
         Args:
+            section_id (str): identifies unequivocally the section.
             start (int): Start position of the section.
             end (int): End position of the section.
             color (Tuple[int, int, int]): Color for each led in the section.
@@ -129,7 +136,13 @@ class HardwareController:
             ApiError:
 
         """
-        return self._section_controller.new_section(start, end, color, is_on=True)
+        return self._section_controller.new_section(
+            section_id,
+            start,
+            end,
+            color,
+            is_on=True,
+        )
 
     def remove_all_sections(self) -> None:
         """Remove all sections.
