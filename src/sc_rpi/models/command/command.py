@@ -79,18 +79,14 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
     ) -> Command:
         """Generate a command instance from a dictionary representation of a command.
 
-        The generated command receives a HardwareController instance, allowing it to \
-            interact with the strip. This method wraps Mashumaro `from_dict` method.
+        This method wraps Mashumaro `from_dict` method.
 
         Args:
             data: dict: Dictionary from which to create the object.
             config (Config): SC RPi configuration. Take into account that `Command` is \
                 not thead-safe (this `Config` instance may be shared between a number \
                     of `Command` instances in different threads).
-            hw_controller (HardwareController): Used to control hardware. Take into \
-                account that `Command` is not thead-safe (this `Config` instance may \
-                    be shared between a number of `Command` instances in different \
-                        threads).
+            hw_controller (HardwareController): Used to interact with the hardware.
 
         """
         cmd = cls.from_dict(data)

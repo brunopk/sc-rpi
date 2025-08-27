@@ -8,6 +8,7 @@ from threading import Thread
 
 from paho.mqtt.client import MQTTMessage
 
+from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.command import Command
@@ -27,8 +28,10 @@ class Worker(Thread):
 
         """
         super().__init__(daemon=True, name="WorkerThread")
+        logger.debug("Initializing worker")
         self._message_queue : Queue[MQTTMessage] = Queue()
         self._config = config
+        self._hw_controller = HardwareController(config)
 
     def put_message(self, message: MQTTMessage) -> None:
         """Put a message into a internal queue to be processed.
@@ -72,6 +75,10 @@ class Worker(Thread):
                 # TODO: continue
 
             self._message_queue.task_done()
+
+    def _publish_ha_entities(self, ) -> None:
+        logger.info("Publishing entities for Home Assistant")
+        # TODO: CONTINUE load sections from yaml when application is starting
 
     def _get_ha_command(self, msg: MQTTMessage) -> None:
         logger.info("_process_ha_command")

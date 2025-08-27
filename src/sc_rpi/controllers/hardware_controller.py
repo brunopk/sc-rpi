@@ -14,11 +14,14 @@ if TYPE_CHECKING:
     from sc_rpi.controllers.section import Section
     from sc_rpi.models.config import Config
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 @dataclass
 class HardwareController:
-    """Provides an interface to control the strip (hardware)."""
+    """Provides an interface to control the strip (hardware).
+
+    This class is not thead-safe, it cannot be shared between different threads.
+    """
 
     def __init__(self, config: Config) -> None:
         """Initialize the object (constructor).
@@ -27,7 +30,9 @@ class HardwareController:
             config (Config): Configurations of SC RPI.
 
         """
+        logger.debug("Initializing HardwareController instance")
         self._section_controller = SectionController(config)
+        logger.debug("Initializing PixelStrip instance")
         self._strip = PixelStrip(
             config.strip_config.strip_length,
             config.strip_config.pin,
@@ -168,9 +173,9 @@ class HardwareController:
         colors = self.concatenate_sections()
         if len(colors) == 0 or not self._is_on:
             if len(colors) == 0:
-                LOGGER.warning("No sections defined (rendering Color(0, 0, 0))")
+                logger.warning("No sections defined (rendering Color(0, 0, 0))")
             if not self._is_on:
-                LOGGER.warning("Strip is turned off (Color(0, 0, 0))")
+                logger.warning("Strip is turned off (Color(0, 0, 0))")
             for i in range(self._strip_length):
                 self._strip.setPixelColor(i, Color(0, 0, 0))
         else:

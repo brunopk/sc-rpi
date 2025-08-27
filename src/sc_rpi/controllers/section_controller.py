@@ -31,6 +31,7 @@ class SectionController:
             config (Config): SC RPi configuration.
 
         """
+        logger.debug("Initializing SectionController instance")
         self._strip_length = config.strip_config.strip_length
         self._config = config
         self._section_ids: list[str] = []
@@ -255,12 +256,16 @@ class SectionController:
         del self._is_on_by_id[section_id]
 
     def _init_sections(self, strip_config: StripConfig) -> None:
-        logger.info("Initializing strip sections (%s)", len(strip_config.sections))
+        logger.info("Initialing strip with %d sections", len(strip_config.sections))
         for section in strip_config.sections:
-            logger.debug("Creating section from %d to %d", section.start, section.end)
             self.new_section(
                 section.ha_entity_id,
                 section.start,
                 section.end,
                 is_on=False,
+            )
+            logger.debug(
+                "New strip section from %d to %d",
+                section.start,
+                section.end,
             )

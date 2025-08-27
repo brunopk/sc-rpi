@@ -32,11 +32,15 @@ client.on_message = callbacks.on_message
 client.on_connect = callbacks.on_connect
 client.user_data_set((config, worker))
 client.username_pw_set(
-    config.mqtt.broker.username,
-    config.mqtt.broker.password,
+    config.mqtt_config.broker_config.username,
+    config.mqtt_config.broker_config.password,
 )
-logger.info("Connecting to MQTT broker on %s", config.mqtt.broker.host)
-client.connect(config.mqtt.broker.host, config.mqtt.broker.port, 60)
+logger.info("Connecting to MQTT broker on %s", config.mqtt_config.broker_config.host)
+client.connect(
+    config.mqtt_config.broker_config.host,
+    config.mqtt_config.broker_config.port,
+    60,
+)
 
 try:
     client.loop_forever()
