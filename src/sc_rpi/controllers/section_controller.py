@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Optional
 
@@ -12,6 +13,8 @@ from sc_rpi.errors import ApiError
 if TYPE_CHECKING:
     from sc_rpi.models.config import Config
     from sc_rpi.models.config.strip_config import StripConfig
+
+logger = logging.getLogger(__name__)
 
 class SectionController:
     """Used to control sections in the strip.
@@ -252,7 +255,9 @@ class SectionController:
         del self._is_on_by_id[section_id]
 
     def _init_sections(self, strip_config: StripConfig) -> None:
+        logger.info("Initializing strip sections (%s)", len(strip_config.sections))
         for section in strip_config.sections:
+            logger.debug("Creating section from %d to %d", section.start, section.end)
             self.new_section(
                 section.ha_entity_id,
                 section.start,
