@@ -10,7 +10,6 @@ from sc_rpi.commands.get_config.get_config_resp import GetConfigResp
 from sc_rpi.commands.get_config.get_config_resp_payload import GetConfigRespPayload
 from sc_rpi.commands.get_config.mqtt_config.broker_config import BrokerConfig
 from sc_rpi.commands.get_config.mqtt_config.mqtt_config import MQTTConfig
-from sc_rpi.commands.get_config.mqtt_config.topics_config import TopicsConfig
 from sc_rpi.commands.get_config.strip_config.section import Section
 from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
 from sc_rpi.models.command import Command
@@ -55,14 +54,7 @@ class GetConfigCmd(Command[None]):
             self._config.mqtt_config.broker_config.host,
             self._config.mqtt_config.broker_config.port,
         )
-        mqtt_topics = TopicsConfig(
-            self._config.mqtt_config.topics_config.ha_topic_prefix,
-            self._config.mqtt_config.topics_config.sc_rpi_topic_prefix,
-        )
-        mqtt_config = MQTTConfig(
-            mqtt_broker_config,
-            mqtt_topics,
-        )
+        mqtt_config = MQTTConfig(mqtt_broker_config)
 
 
         payload = GetConfigRespPayload(
@@ -81,9 +73,10 @@ class GetConfigCmd(Command[None]):
     def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
         return [
             Section(
-                section.ha_entity_id,
-                section.start,
                 section.end,
+                section.ha_entity_id,
+                section.ha_name,
+                section.start,
             )
             for section in sections
         ]

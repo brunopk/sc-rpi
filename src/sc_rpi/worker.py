@@ -1,37 +1,52 @@
 """Contains the `Worker` class."""
 
+from __future__ import annotations
+
 import logging
 from http import HTTPStatus
 from json import loads
 from queue import Queue
 from threading import Thread
-
-from paho.mqtt.client import MQTTMessage
+from typing import TYPE_CHECKING
 
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models.command import Command
-from sc_rpi.models.config import Config
-from sc_rpi.utils.mqtt import topic_utils
+from sc_rpi.models.homeassistant import HAMQTTDiscoveryMessage
+from sc_rpi.utils.mqtt import (
+    build_ha_command_topic,
+    build_ha_discovery_topic,
+    build_ha_state_topic,
+    matches_ha_command_topic,
+    matches_sc_rpi_command_topic,
+)
+
+if TYPE_CHECKING:
+    from paho.mqtt.client import Client, MQTTMessage
+
+    from sc_rpi.models.command import Command
+    from sc_rpi.models.config import Config
+    from sc_rpi.models.config.strip_config import Section
 
 logger = logging.getLogger(__name__)
 
 class Worker(Thread):
     """Process messages in a dedicated thread (worker thread)."""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, client: Client) -> None:
         """Initialize the instance (constructor).
 
         Args:
           config (Config): SC RPi configuration.
+          client (Client): Paho MQTT client.
 
         """
         super().__init__(daemon=True, name="WorkerThread")
         logger.debug("Initializing worker")
-        self._message_queue : Queue[MQTTMessage] = Queue()
         self._config = config
+        self._client = client
         self._hw_controller = HardwareController(config)
+        self._message_queue : Queue[MQTTMessage] = Queue()
 
     def put_message(self, message: MQTTMessage) -> None:
         """Put a message into a internal queue to be processed.
@@ -44,20 +59,22 @@ class Worker(Thread):
 
     def run(self) -> None:
         """Code to be executed in the new thread."""
+        self._publish_ha_entities(self._config.strip_config.sections)
+
         while True:
             msg = self._message_queue.get()
 
             logger.debug("Message received for %s topic", msg.topic)
 
             try:
-                if topic_utils.matches_ha_command_topic(msg.topic):
+                # TODO: CONTINUE
+                if matches_ha_command_topic(msg.topic):
                     ha_command = self._get_ha_command(msg)
-                if topic_utils.matches_sc_rpi_command_topic(msg.topic):
+                if matches_sc_rpi_command_topic(msg.topic):
                     sc_rpi_command = self._get_sc_rpi_command(msg)
 
                 sc_rpi_command.validate()
                 sc_rpi_command.run()
-                #TODO: continue
             except ApiError as ex:
                 logger.exception(
                     "Error executing %s command: %s",
@@ -76,9 +93,24 @@ class Worker(Thread):
 
             self._message_queue.task_done()
 
-    def _publish_ha_entities(self, ) -> None:
+    def _publish_ha_entities(self, sections: list[Section]) -> None:
         logger.info("Publishing entities for Home Assistant")
-        # TODO: CONTINUE load sections from yaml when application is starting
+        for section in sections:
+            command_topic = build_ha_command_topic(section.ha_entity_id)
+            state_topic = build_ha_state_topic(section.ha_entity_id)
+            discovery_message = HAMQTTDiscoveryMessage(
+                section.ha_name,
+                brightness=True,
+                command_topic=command_topic,
+                rgb=True,
+                schema="json",
+                state_topic=state_topic,
+                unique_id=section.ha_entity_id,
+            )
+            discovery_topic = build_ha_discovery_topic(section.ha_entity_id)
+            # TODO: add retain=True (this is just for testing)
+            self._client.publish(discovery_topic, discovery_message.to_json())
+
 
     def _get_ha_command(self, msg: MQTTMessage) -> None:
         logger.info("_process_ha_command")

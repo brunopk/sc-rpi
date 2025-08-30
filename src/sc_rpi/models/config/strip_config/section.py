@@ -9,8 +9,10 @@ from dataclasses import dataclass
 class Section:
     """Represents a section of leds in the strip."""
 
+    end: int
+
     ha_entity_id: str
 
-    start: int
+    ha_name: str
 
-    end: int
+    start: int

@@ -24,10 +24,9 @@ if config.env == "dev":
 else:
     logger.info("Starting application")
 
-worker = Worker(config)
-worker.start()
-
 client = Client(CallbackAPIVersion.VERSION2)
+worker = Worker(config, client)
+
 client.on_message = callbacks.on_message
 client.on_connect = callbacks.on_connect
 client.user_data_set((config, worker))
@@ -35,12 +34,16 @@ client.username_pw_set(
     config.mqtt_config.broker_config.username,
     config.mqtt_config.broker_config.password,
 )
+
+
 logger.info("Connecting to MQTT broker on %s", config.mqtt_config.broker_config.host)
 client.connect(
     config.mqtt_config.broker_config.host,
     config.mqtt_config.broker_config.port,
     60,
 )
+
+worker.start()
 
 try:
     client.loop_forever()
