@@ -96,19 +96,32 @@ class Worker(Thread):
     def _publish_ha_entities(self, sections: list[Section]) -> None:
         logger.info("Publishing entities for Home Assistant")
         for section in sections:
-            command_topic = build_ha_command_topic(section.ha_entity_id)
-            state_topic = build_ha_state_topic(section.ha_entity_id)
+            command_topic = build_ha_command_topic(section.id)
+            state_topic = build_ha_state_topic(section.id)
+
+            """
+            HA requires unique_id it to be unique to allow the entity to be managed \
+                through the UI
+            """
+
             discovery_message = HAMQTTDiscoveryMessage(
-                section.ha_name,
+                section.name,
                 brightness=True,
                 command_topic=command_topic,
                 rgb=True,
                 schema="json",
                 state_topic=state_topic,
-                unique_id=section.ha_entity_id,
+                object_id=section.id,
+                unique_id=section.id,
             )
-            discovery_topic = build_ha_discovery_topic(section.ha_entity_id)
+            discovery_topic = build_ha_discovery_topic(section.id)
             # TODO: add retain=True (this is just for testing)
+            logger.info(
+                "Publishing strip section %s (%d - %d)",
+                section.id,
+                section.start,
+                section.end,
+            )
             self._client.publish(discovery_topic, discovery_message.to_json())
 
 

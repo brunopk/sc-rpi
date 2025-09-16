@@ -19,11 +19,11 @@ strip_config:
     pin: 18
     strip_length: 300
     sections:
-        - ha_name: WS2812B strip section 1
-          ha_entity_id: ws2812b_strip_section_1
+        - name: WS2812B Strip Section 1
+          id: ws2812b_strip_section_1
           start: 0
           end: 99
-        - ha_name: WS2812B strip section 1
-          ha_entity_id: ws2812b_strip_section_2
+        - name: WS2812B Strip Section 2
+          id: ws2812b_strip_section_2
           start: 100
           end: 199

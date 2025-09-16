@@ -74,8 +74,8 @@ class GetConfigCmd(Command[None]):
         return [
             Section(
                 section.end,
-                section.ha_entity_id,
-                section.ha_name,
+                section.id,
+                section.name,
                 section.start,
             )
             for section in sections

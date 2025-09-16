@@ -11,8 +11,8 @@ class Section:
 
     end: int
 
-    ha_entity_id: str
+    id: str
 
-    ha_name: str
+    name: str
 
     start: int

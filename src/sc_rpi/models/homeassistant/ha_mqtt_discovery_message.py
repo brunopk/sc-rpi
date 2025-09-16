@@ -23,10 +23,14 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     command_topic: str
 
+    object_id: str
+
     rgb: bool
 
     schema: str
 
     state_topic: str
+
+    # HA requires it to be unique to allow the entity to be managed through the UI
 
     unique_id: str

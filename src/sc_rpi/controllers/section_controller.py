@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class SectionController:
     """Used to control sections in the strip.
 
@@ -66,7 +67,8 @@ class SectionController:
             index = self._section_ids.index(section_id)
         except ValueError as ex:
             raise ApiError(
-                status=HTTPStatus.NOT_FOUND, code=ErrorCode.SECTION_NOT_FOUND,
+                status=HTTPStatus.NOT_FOUND,
+                code=ErrorCode.SECTION_NOT_FOUND,
             ) from ex
 
         is_on = self._is_on_by_id[section_id]
@@ -184,7 +186,8 @@ class SectionController:
         """
         if section_id not in self._section_ids:
             raise ApiError(
-                status=HTTPStatus.NOT_FOUND, code=ErrorCode.SECTION_NOT_FOUND,
+                status=HTTPStatus.NOT_FOUND,
+                code=ErrorCode.SECTION_NOT_FOUND,
             )
         index = self._section_ids.index(section_id)
         self._is_on_by_id[section_id] = False
@@ -202,7 +205,8 @@ class SectionController:
         """
         if section_id not in self._section_ids:
             raise ApiError(
-                status=HTTPStatus.NOT_FOUND, code=ErrorCode.SECTION_NOT_FOUND,
+                status=HTTPStatus.NOT_FOUND,
+                code=ErrorCode.SECTION_NOT_FOUND,
             )
         index = self._section_ids.index(section_id)
         self._is_on_by_id[section_id] = True
@@ -256,16 +260,10 @@ class SectionController:
         del self._is_on_by_id[section_id]
 
     def _init_sections(self, strip_config: StripConfig) -> None:
-        logger.info("Initialing strip with %d sections", len(strip_config.sections))
         for section in strip_config.sections:
             self.new_section(
-                section.ha_entity_id,
+                section.id,
                 section.start,
                 section.end,
                 is_on=False,
-            )
-            logger.debug(
-                "New strip section from %d to %d",
-                section.start,
-                section.end,
             )
