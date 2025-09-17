@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
-from sc_rpi.models.homeassistant import HAMQTTDiscoveryMessage
+from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
 from sc_rpi.utils.mqtt import (
     build_ha_command_topic,
     build_ha_discovery_topic,
@@ -64,12 +64,12 @@ class Worker(Thread):
         while True:
             msg = self._message_queue.get()
 
-            logger.debug("Message received for %s topic", msg.topic)
+            logger.debug("Message received on topic %s", msg.topic)
 
             try:
-                # TODO: CONTINUE
                 if matches_ha_command_topic(msg.topic):
                     ha_command = self._get_ha_command(msg)
+                    # TODO: continue
                 if matches_sc_rpi_command_topic(msg.topic):
                     sc_rpi_command = self._get_sc_rpi_command(msg)
 
@@ -125,26 +125,16 @@ class Worker(Thread):
             self._client.publish(discovery_topic, discovery_message.to_json())
 
 
-    def _get_ha_command(self, msg: MQTTMessage) -> None:
-        logger.info("_process_ha_command")
+    def _get_ha_command(self, msg: MQTTMessage) -> HACommand:
         try:
             cmd_as_dict: dict = loads(msg.payload.decode())
-            # cmd = from_dict(data_class=HACommand, data=cmd_as_dict)
-            # print(cmd)
+            return HACommand.from_dict(cmd_as_dict)
         except Exception as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,
                 ErrorCode.BAD_REQUEST,
                 "Invalid JSON",
             ) from ex
-        if not isinstance(cmd_as_dict, dict):
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "Invalid JSON",
-            )
-
-        # TODO: continue
 
     def _get_sc_rpi_command(self, msg: MQTTMessage) -> Command:
         logger.info("_process_sc_rpi_command")
