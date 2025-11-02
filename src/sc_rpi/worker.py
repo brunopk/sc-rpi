@@ -31,7 +31,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 class Worker(Thread):
-    """Process messages in a dedicated thread (worker thread)."""
+    """Collects messages and process them.
+
+    Collects messages in a internal queue (see `put_message` method) and process \
+        them in a dedicated thread. Current implementation uses **one** thread to \
+            process all messages.
+    """
 
     def __init__(self, config: Config, client: Client) -> None:
         """Initialize the instance (constructor).
@@ -68,10 +73,11 @@ class Worker(Thread):
 
             try:
                 if matches_ha_command_topic(msg.topic):
-                    ha_command = self._get_ha_command(msg)
-                    # TODO: continue
+                    ha_command = self._parse_ha_msg(msg)
+                    # TODO: CONTINUE (continue with _parse_sc_rpi_msg, convert to an sc rpi command and try to execute the command)
+                    logger.debug("asdad")
                 if matches_sc_rpi_command_topic(msg.topic):
-                    sc_rpi_command = self._get_sc_rpi_command(msg)
+                    sc_rpi_command = self._parse_sc_rpi_msg(msg)
 
                 sc_rpi_command.validate()
                 sc_rpi_command.run()
@@ -116,16 +122,29 @@ class Worker(Thread):
             )
             discovery_topic = build_ha_discovery_topic(section.id)
             # TODO: add retain=True (this is just for testing)
+            self._client.publish(discovery_topic, discovery_message.to_json())
             logger.info(
-                "Publishing strip section %s (%d - %d)",
-                section.id,
+                "Strip section from %d to %d published to HA (unique_id: %s)",
                 section.start,
                 section.end,
+                section.id,
             )
-            self._client.publish(discovery_topic, discovery_message.to_json())
 
+    def _parse_ha_msg(self, msg: MQTTMessage) -> HACommand:
+        """Parse a message from Home Assistant (command topic).
 
-    def _get_ha_command(self, msg: MQTTMessage) -> HACommand:
+        Args:
+            msg (MQTTMessage): Message received in the `on_message` callback passed to \
+                the Paho client object.
+
+        Raises:
+            ApiError: Raises this error if there's any problem parsing the message, \
+                for example if some attribute don't have required format.
+
+        Returns:
+            HACommand:
+
+        """
         try:
             cmd_as_dict: dict = loads(msg.payload.decode())
             return HACommand.from_dict(cmd_as_dict)
@@ -136,7 +155,8 @@ class Worker(Thread):
                 "Invalid JSON",
             ) from ex
 
-    def _get_sc_rpi_command(self, msg: MQTTMessage) -> Command:
+    def _parse_sc_rpi_msg(self, msg: MQTTMessage) -> Command:
+        # TODO: implement similar to _parse_ha_msg method
         logger.info("_process_sc_rpi_command")
 
         try:

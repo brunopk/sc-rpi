@@ -9,6 +9,12 @@ from mashumaro.mixins.json import DataClassJSONMixin
 class HAMQTTDiscoveryMessage(DataClassJSONMixin):
     """Used for the Home Assistant entity discovery process.
 
+    Important :
+
+    - Home Assistant requires `unique_id` to be unique to allow the entity to be \
+      managed through the UI.
+    - `object_id` is used as part of an entity's command topic name.
+
     More information:
       - [MQTT Discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery): \
         describes the discovery process in general.
@@ -30,7 +36,5 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
     schema: str
 
     state_topic: str
-
-    # HA requires it to be unique to allow the entity to be managed through the UI
 
     unique_id: str
