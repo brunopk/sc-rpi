@@ -8,7 +8,7 @@ from http import HTTPStatus
 from sc_rpi.commands.help.help_resp import HelpResp
 from sc_rpi.commands.help.help_resp_payload import HelpRespPayload
 from sc_rpi.models.command import Command
-from sc_rpi.utils.commands import command_utils
+from sc_rpi.utils.commands.main import load_command_names
 
 
 @dataclass
@@ -30,7 +30,7 @@ class HelpCmd(Command[None]):
             Response: Contains the result of the execution
 
         """
-        command_names = command_utils.load_command_names()
+        command_names = load_command_names()
         payload = HelpRespPayload(sorted(command_names))
 
         return HelpResp(HTTPStatus.ACCEPTED, HelpCmd.name, payload)

@@ -28,7 +28,7 @@ class ApiError(Exception):
             *args: Optional arguments.
 
         """
-        super().__init__(*args)
+        super().__init__(message, *args)
         self.status = status
         self.code = code
         self.message = message

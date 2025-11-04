@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from sc_rpi.errors import ApiError
+
 HA_COMMAND_TOPIC_PATTERN = re.compile(r"^homeassistant\/light\/([^\/#\x00]+)\/set$")
 SC_RPI_COMMAND_TOPIC_PATTERN = re.compile(r"^scrpi\/commands$")
 
@@ -108,3 +110,9 @@ def matches_sc_rpi_command_topic(topic: str) -> bool:
 
   """
   return SC_RPI_COMMAND_TOPIC_PATTERN.match(topic) is not None
+
+def get_object_id_from_ha_command_topic(topic: str) -> str:
+  match = HA_COMMAND_TOPIC_PATTERN.match(topic)
+  if match is None:
+    raise ApiError(message=f"Cannot extract object_id from topic {topic}")
+  return match.groups(1)

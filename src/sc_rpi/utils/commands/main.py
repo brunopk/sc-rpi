@@ -1,4 +1,4 @@
-"""Contains functions to work commands."""
+"""Contains functions to work with commands."""
 
 from __future__ import annotations
 
@@ -30,3 +30,4 @@ def load_command_names() -> list[str]:
     """
     commands_paths = load_command_paths()
     return [path.stem for path in commands_paths]
+

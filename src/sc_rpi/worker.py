@@ -13,6 +13,7 @@ from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
+from sc_rpi.utils.commands.adapter import map_ha_command_to_sc_rpi_command
 from sc_rpi.utils.mqtt import (
     build_ha_command_topic,
     build_ha_discovery_topic,
@@ -20,6 +21,8 @@ from sc_rpi.utils.mqtt import (
     matches_ha_command_topic,
     matches_sc_rpi_command_topic,
 )
+
+# TODO: check why the applications seems to hang up after catching an exception when receiving a command
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
@@ -74,9 +77,16 @@ class Worker(Thread):
             try:
                 if matches_ha_command_topic(msg.topic):
                     ha_command = self._parse_ha_msg(msg)
-                    # TODO: CONTINUE (continue with _parse_sc_rpi_msg, convert to an sc rpi command and try to execute the command)
+                    sc_rpi_command = map_ha_command_to_sc_rpi_command(
+                        ha_command,
+                        msg.topic,
+                        self._config,
+                        self._hw_controller,
+                    )
+                    # TODO: CONTINUE try to execute the command
                     logger.debug("asdad")
                 if matches_sc_rpi_command_topic(msg.topic):
+                    # TODO: CONTINUE with _parse_sc_rpi_msg
                     sc_rpi_command = self._parse_sc_rpi_msg(msg)
 
                 sc_rpi_command.validate()

@@ -2,6 +2,7 @@
 
 from enum import Enum
 
+# TODO: use strings instead of numbers for API users
 
 class ErrorCode(Enum):
     """Error codes for the user."""
@@ -13,3 +14,4 @@ class ErrorCode(Enum):
     SECTION_NOT_FOUND = 5
     COMMAND_NOT_FOUND = 6
     INVALID_COLOR = 7
+    INVALID_COMMAND = 8

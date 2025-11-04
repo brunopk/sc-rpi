@@ -8,6 +8,7 @@ from mashumaro.mixins.json import DataClassJSONMixin
 
 from sc_rpi.models.section_aux import SectionAux
 
+# TODO: rename to ResponsePayload
 
 @dataclass
 class StatusRespPayload(DataClassJSONMixin):
