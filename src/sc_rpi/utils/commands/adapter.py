@@ -20,8 +20,6 @@ if TYPE_CHECKING:
     from sc_rpi.models.config.config import Config
     from sc_rpi.models.homeassistant import HACommand
 
-# TODO:  move this to a new package utils.homeassistant
-
 def map_ha_command_to_sc_rpi_command(
     ha_command: HACommand,
     ha_command_topic: str,
@@ -60,7 +58,6 @@ def map_ha_command_to_sc_rpi_command(
             _config=sc_rpi_config,
             _hw_controller=hw_controller,
         )
-    # TODO: CONTINUE check if it is a command to change bright or another command
 
     raise ApiError(
         HTTPStatus.BAD_REQUEST,

@@ -1,3 +1,5 @@
+"""Provides a mock for classes in rpi_ws281x module."""
+
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -12,10 +14,11 @@ class PixelStrip:
     pass
 
   def begin(self):
-    _logger.info('Initializing strip ...')
-  
+    _logger.info("Initializing strip ...")
+
   def setPixelColor(self, index: int, color: Color):
     pass
 
-  def show(self):
-    _logger.info('Displaying light colors ...')
+  def show(self) -> None:
+    """Show the actual state of the strip."""
+    _logger.info("Changing colors")

@@ -43,7 +43,6 @@ class HardwareController:
             config.strip_config.channel,
         )
         self._strip_length = config.strip_config.strip_length
-        self._is_on = False
         self._strip.begin()
 
     def concatenate_sections(self) -> list[tuple]:
@@ -171,13 +170,10 @@ class HardwareController:
     def render(self) -> None:
         """Render the actual configuration on the hardware."""
         colors = self.concatenate_sections()
-        if len(colors) == 0 or not self._is_on:
-            if len(colors) == 0:
-                logger.warning("No sections defined (rendering Color(0, 0, 0))")
-            if not self._is_on:
-                logger.warning("Strip is turned off (Color(0, 0, 0))")
-            for i in range(self._strip_length):
-                self._strip.setPixelColor(i, Color(0, 0, 0))
+        if len(colors) == 0:
+            logger.warning(
+                "Nothing to render, probably sections were not defined correctly",
+            )
         else:
             for i, c in enumerate(colors):
                 self._strip.setPixelColor(i, Color(c[0], c[1], c[2]))

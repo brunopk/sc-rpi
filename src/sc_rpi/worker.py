@@ -22,7 +22,8 @@ from sc_rpi.utils.mqtt import (
     matches_sc_rpi_command_topic,
 )
 
-# TODO: check why the applications seems to hang up after catching an exception when receiving a command
+# TODO: check why the applications seems to hang up after catching an exception when receiving a command (try sending two commands one after the other)
+# TODO: return the state after a command is invoked
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
@@ -71,22 +72,21 @@ class Worker(Thread):
 
         while True:
             msg = self._message_queue.get()
+            msg_payload = msg.payload.decode()
 
-            logger.debug("Message received on topic %s", msg.topic)
+            logger.debug("Message received on topic %s: %s", msg.topic, msg_payload)
 
             try:
                 if matches_ha_command_topic(msg.topic):
-                    ha_command = self._parse_ha_msg(msg)
+                    ha_command = self._parse_ha_msg(msg_payload)
                     sc_rpi_command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
                         self._config,
                         self._hw_controller,
                     )
-                    # TODO: CONTINUE try to execute the command
-                    logger.debug("asdad")
                 if matches_sc_rpi_command_topic(msg.topic):
-                    # TODO: CONTINUE with _parse_sc_rpi_msg
+                    # TODO: continue with _parse_sc_rpi_msg
                     sc_rpi_command = self._parse_sc_rpi_msg(msg)
 
                 sc_rpi_command.validate()
@@ -94,7 +94,7 @@ class Worker(Thread):
             except ApiError as ex:
                 logger.exception(
                     "Error executing %s command: %s",
-                    sc_rpi_command.command_name,
+                    sc_rpi_command.name,
                     ex.message,
                     exc_info=ex,
                 )
@@ -102,7 +102,7 @@ class Worker(Thread):
             except Exception as ex:
                 logger.exception(
                     "Error executing %s command: %s",
-                    sc_rpi_command.command_name,
+                    sc_rpi_command.name,
                     exc_info=ex,
                 )
                 # TODO: continue
@@ -110,7 +110,6 @@ class Worker(Thread):
             self._message_queue.task_done()
 
     def _publish_ha_entities(self, sections: list[Section]) -> None:
-        logger.info("Publishing entities for Home Assistant")
         for section in sections:
             command_topic = build_ha_command_topic(section.id)
             state_topic = build_ha_state_topic(section.id)
@@ -134,13 +133,13 @@ class Worker(Thread):
             # TODO: add retain=True (this is just for testing)
             self._client.publish(discovery_topic, discovery_message.to_json())
             logger.info(
-                "Strip section from %d to %d published to HA (unique_id: %s)",
+                "Strip section from %d to %d published to Home Assistant as %s",
                 section.start,
                 section.end,
                 section.id,
             )
 
-    def _parse_ha_msg(self, msg: MQTTMessage) -> HACommand:
+    def _parse_ha_msg(self, msg: str) -> HACommand:
         """Parse a message from Home Assistant (command topic).
 
         Args:
@@ -156,7 +155,7 @@ class Worker(Thread):
 
         """
         try:
-            cmd_as_dict: dict = loads(msg.payload.decode())
+            cmd_as_dict: dict = loads(msg)
             return HACommand.from_dict(cmd_as_dict)
         except Exception as ex:
             raise ApiError(

@@ -115,4 +115,4 @@ def get_object_id_from_ha_command_topic(topic: str) -> str:
   match = HA_COMMAND_TOPIC_PATTERN.match(topic)
   if match is None:
     raise ApiError(message=f"Cannot extract object_id from topic {topic}")
-  return match.groups(1)
+  return match.groups()[0]

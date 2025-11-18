@@ -10,6 +10,7 @@ from typing import Optional
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 
+# TODO: use is_valid_color from utils
 
 @dataclass
 class EditSectionArgs:
