@@ -23,7 +23,7 @@ from sc_rpi.utils.mqtt import (
 )
 
 # TODO: check why the applications seems to hang up after catching an exception when receiving a command (try sending two commands one after the other)
-# TODO: return the state after a command is invoked
+# TODO: CONTINUE return the state after a command is invoked
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
