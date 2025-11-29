@@ -12,6 +12,7 @@ from sc_rpi.commands.turn_section_on.turn_section_on_resp import TurnSectionOnRe
 from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
 
+# TODO: use rgb notation in all places instead of hex
 
 @dataclass
 class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
