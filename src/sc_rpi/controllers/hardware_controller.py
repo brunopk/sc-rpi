@@ -180,8 +180,17 @@ class HardwareController:
 
         self._strip.show()
 
-    def turn_on(self, section_id: str | None = None) -> None:
+    def turn_on(
+        self,
+        section_id: str | None = None,
+        color: tuple[int, int, int] | None = None,
+    ) -> None:
         """Turn on the entire strip or an specific section.
+
+        Args:
+            section_id (str | None, optional): Use `None` to turn the whole strip on.
+            color (tuple[int, int, int] | None, optional): Color for all leds in the \
+                section.
 
         Raises:
             ApiError:
@@ -190,7 +199,7 @@ class HardwareController:
         if section_id is None:
             self._is_on = True
         else:
-            self._section_controller.turn_section_on(section_id)
+            self._section_controller.turn_section_on(section_id, color)
 
     def turn_off(self, section_id: str | None = None) -> None:
         """Turn off the entire strip or an specific section.

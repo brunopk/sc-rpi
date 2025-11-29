@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import is_dataclass
 from enum import Enum
 from re import fullmatch
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from webcolors import rgb_to_hex
 
@@ -15,20 +15,17 @@ if TYPE_CHECKING:
     from sc_rpi.controllers import Section
 
 
-def is_valid_color(color: Optional[str]) -> bool:
+def is_valid_color(color: str) -> bool:
     """Validate a color.
 
     Args:
-        c (str): Color in hex notation.
+        color (str): Color in hex notation.
 
     Returns:
         bool: Returns `True` if it's a valid color. Otherwise, returns `False`
 
     """
-    return (
-        color is not None
-        and fullmatch(r"^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$", color) is not None
-    )
+    return fullmatch(r"^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$", color) is not None
 
 
 def map_sections(section_list: list[Section]) -> list[SectionAux]:

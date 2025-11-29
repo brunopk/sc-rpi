@@ -80,6 +80,8 @@ class SectionController:
             color_list = self._color_list_by_id[section_id]
             new_color_list = [color_list[0]] * (new_end - new_start + 1)
 
+        # TODO: test if setting color is working correctly
+
         del self._section_ids[index]
         del self._color_list[index]
         del self._limits[index]
@@ -89,7 +91,11 @@ class SectionController:
         del self._is_on_by_id[section_id]
 
         self._insert_section(
-            section_id, new_start, new_end, new_color_list, is_on=is_on
+            section_id,
+            new_start,
+            new_end,
+            new_color_list,
+            is_on=is_on,
         )
 
     def list_sections(self) -> list[Section]:
@@ -193,11 +199,19 @@ class SectionController:
         self._is_on_by_id[section_id] = False
         self._is_on.insert(index, False)
 
-    def turn_section_on(self, section_id: str) -> None:
+    # TODO: add/modify test to see if turning section on with a color is working correctly
+
+    def turn_section_on(
+        self,
+        section_id: str,
+        color: Optional[tuple[int, int, int]] = None,
+    ) -> None:
         """Turn a section on.
 
         Args:
             section_id (str): Section to be turned on.
+            color (tuple[int, int, int] | None, optional): Color for all leds in the \
+                section.
 
         Raises:
             ApiError:
@@ -208,9 +222,17 @@ class SectionController:
                 status=HTTPStatus.NOT_FOUND,
                 code=ErrorCode.SECTION_NOT_FOUND,
             )
+
+        color = color if color is not None else (255, 255, 255)
         index = self._section_ids.index(section_id)
+        section_start = self._limits_by_id[section_id][1]
+        section_end = self._limits_by_id[section_id][0]
+        color_list = [color] * (section_end - section_start)
+
         self._is_on_by_id[section_id] = True
         self._is_on.insert(index, True)
+        self._color_list[index] = color_list
+        self._color_list_by_id[section_id] = color_list
 
     def _insert_section(
         self,
@@ -242,8 +264,8 @@ class SectionController:
         self._is_on.insert(index, True)
         self._section_ids.insert(index, section_id)
         self._color_list.insert(index, color_list)
-        self._limits.insert(index, (start, end))
         self._color_list_by_id[section_id] = color_list
+        self._limits.insert(index, (start, end))
         self._limits_by_id[section_id] = (start, end)
         self._is_on_by_id[section_id] = is_on
 

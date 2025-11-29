@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Optional
 
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
+from sc_rpi.utils import is_valid_color
 
-# TODO: use is_valid_color from utils
 
 @dataclass
 class EditSectionArgs:
@@ -32,8 +31,6 @@ class EditSectionArgs:
                 ErrorCode.BAD_REQUEST,
                 "at least one attribute must not be null",
             )
-        if self.color is not None and not re.fullmatch(
-            r"^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$", self.color,
-        ):
+        if self.color is not None and not is_valid_color(self.color):
             raise ApiError(HTTPStatus.BAD_REQUEST, ErrorCode.INVALID_COLOR)
 

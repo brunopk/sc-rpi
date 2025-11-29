@@ -21,4 +21,4 @@ class PixelStrip:
 
   def show(self) -> None:
     """Show the actual state of the strip."""
-    _logger.info("Changing colors")
+    _logger.debug("Changing colors")
