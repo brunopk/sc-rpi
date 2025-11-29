@@ -8,7 +8,8 @@ from paho.mqtt.client import Client
 from paho.mqtt.enums import CallbackAPIVersion
 
 from sc_rpi.mqtt import callbacks
-from sc_rpi.utils.config import configure_logging, load_configurations
+from sc_rpi.utils.config import load_configurations
+from sc_rpi.utils.logging import configure_logging
 from sc_rpi.worker import Worker
 
 # TODO: uncomment all classes from rpi_ws281x used in src/controller.py
