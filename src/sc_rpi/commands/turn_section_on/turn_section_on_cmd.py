@@ -28,9 +28,7 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
             Response: Contains the result of the execution
 
         """
-
         # TODO: CONTINUE
-
         self._hw_controller.turn_on(self.args.section_id)
         self._hw_controller.render()
         sections = self._hw_controller.list_sections()
