@@ -4,8 +4,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from webcolors import hex_to_rgb
-
 from sc_rpi.commands.edit_section.edit_section_args import EditSectionArgs
 from sc_rpi.commands.edit_section.edit_section_resp import EditSectionResp
 from sc_rpi.models import StatusRespPayload
