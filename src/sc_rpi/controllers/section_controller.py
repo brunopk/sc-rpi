@@ -223,16 +223,19 @@ class SectionController:
                 code=ErrorCode.SECTION_NOT_FOUND,
             )
 
-        color = color if color is not None else (255, 255, 255)
-        index = self._section_ids.index(section_id)
-        section_start = self._limits_by_id[section_id][1]
-        section_end = self._limits_by_id[section_id][0]
-        color_list = [color] * (section_end - section_start)
+        section_index = self._section_ids.index(section_id)
 
-        self._is_on_by_id[section_id] = True
-        self._is_on.insert(index, True)
-        self._color_list[index] = color_list
-        self._color_list_by_id[section_id] = color_list
+        if color is not None:
+            for color_index, _ in enumerate(self._color_list_by_id[section_id]):
+                self._color_list[section_index][color_index] = color
+                self._color_list_by_id[section_id][color_index] = color
+
+            self._is_on[section_index] = True
+            self._is_on_by_id[section_id] = True
+        else:
+            for section_index, section_id in enumerate(self._section_ids):
+                self._is_on[section_index] = True
+                self._is_on_by_id[section_id] = True
 
     def _insert_section(
         self,

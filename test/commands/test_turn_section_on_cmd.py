@@ -9,6 +9,9 @@ from sc_rpi.models import Response
 from sc_rpi.models.command import Command
 from sc_rpi.utils.config import load_configurations
 
+# TODO: move all logging.basicConfig out of test case classes
+
+logging.basicConfig(level=logging.DEBUG)
 
 class TestTurnSectionOn(TestCase):
     """Tests `turn_section_on` command."""
@@ -16,7 +19,6 @@ class TestTurnSectionOn(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         """Set required configurations before running any test."""
-        logging.basicConfig(level=None)
         cls.config = load_configurations()
         cls.hw_controller = HardwareController(cls.config)
 

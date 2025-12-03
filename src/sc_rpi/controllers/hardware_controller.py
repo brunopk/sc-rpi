@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# TODO: test what happend after removing this @dataclass (it should not be necessary)
+
 @dataclass
 class HardwareController:
     """Provides an interface to control the strip (hardware).
@@ -30,9 +32,13 @@ class HardwareController:
             config (Config): Configurations of SC RPI.
 
         """
+        # Creates sections (as defined in config)
         logger.debug("Initializing HardwareController instance")
         self._section_controller = SectionController(config)
         logger.debug("Initializing PixelStrip instance")
+
+        self._strip_length = config.strip_config.strip_length
+
         self._strip = PixelStrip(
             config.strip_config.strip_length,
             config.strip_config.pin,
@@ -42,7 +48,6 @@ class HardwareController:
             config.strip_config.brightness,
             config.strip_config.channel,
         )
-        self._strip_length = config.strip_config.strip_length
         self._strip.begin()
 
     def concatenate_sections(self) -> list[tuple]:
@@ -180,15 +185,15 @@ class HardwareController:
 
         self._strip.show()
 
-    def turn_on(
+    def turn_section_on(
         self,
-        section_id: str | None = None,
+        section_id: str,
         color: tuple[int, int, int] | None = None,
     ) -> None:
         """Turn on the entire strip or an specific section.
 
         Args:
-            section_id (str | None, optional): Use `None` to turn the whole strip on.
+            section_id (str): Section of the strip to be turned on.
             color (tuple[int, int, int] | None, optional): Color for all leds in the \
                 section.
 
@@ -200,6 +205,8 @@ class HardwareController:
             self._is_on = True
         else:
             self._section_controller.turn_section_on(section_id, color)
+
+    # TODO: change section_id: str | None = None to section_id: str , test turning section off (check that all sections remains unchanged)
 
     def turn_off(self, section_id: str | None = None) -> None:
         """Turn off the entire strip or an specific section.
