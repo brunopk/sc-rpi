@@ -26,14 +26,20 @@ class EditSectionCmd(Command[EditSectionArgs]):
 
         :return Response: Contains the result of the execution.
         """
-        color = hex_to_rgb(self.args.color) if self.args.color is not None else None
+        color = (
+            (self.args.color.r, self.args.color.g, self.args.color.b)
+            if self.args.color is not None
+            else None
+        )
         self._hw_controller.edit_section(
             self.args.section_id,
             self.args.start,
             self.args.end,
             color,
         )
+
         self._hw_controller.render()
+
         sections = self._hw_controller.list_sections()
         payload = StatusRespPayload(map_sections(sections))
 
