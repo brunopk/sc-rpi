@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from sc_rpi.models.color import Color
+
 
 @dataclass
 class SectionAux:
@@ -15,6 +17,6 @@ class SectionAux:
 
     end: int
 
-    color: str
+    color: Color
 
     is_on: bool

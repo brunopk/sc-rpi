@@ -8,7 +8,7 @@ from typing import Optional
 from mashumaro.mixins.json import DataClassJSONMixin
 
 from sc_rpi.enums.homeassistant import State
-from sc_rpi.models.homeassistant.color import Color
+from sc_rpi.models.color import Color
 
 
 @dataclass

@@ -5,15 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from webcolors import hex_to_rgb
-
 from sc_rpi.commands.turn_section_on.turn_section_on_args import TurnSectionOnArgs
 from sc_rpi.commands.turn_section_on.turn_section_on_resp import TurnSectionOnResp
 from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
 from sc_rpi.utils import map_sections
 
-# TODO: CONTINUE use rgb notation in all places instead of hex
 
 @dataclass
 class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
@@ -30,8 +27,15 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
             Response: Contains the result of the execution
 
         """
-        self._hw_controller.turn_section_on(self.args.section_id)
+        color = (
+            (self.args.color.r, self.args.color.g, self.args.color.b)
+            if self.args.color is not None
+            else None
+        )
+        self._hw_controller.turn_section_on(self.args.section_id, color)
+
         self._hw_controller.render()
+
         sections = self._hw_controller.list_sections()
         payload = StatusRespPayload(map_sections(sections))
 

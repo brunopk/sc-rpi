@@ -25,10 +25,15 @@ class TestMashumaro(TestCase):
 
 
     def test_deserializing_json(self):
-        """Test test_deserializing_json."""
+        """test_deserializing_json."""
         json_data = {
             "name": "edit_section",
-            "args": {"section_id": "xx", "start": 0, "end": 50, "color": "#aa22bb"},
+            "args": {
+                "section_id": "xx",
+                "start": 0,
+                "end": 50,
+                "color": {"r": 100, "g": 100, "b": 100},
+            },
         }
         cmd = Command.from_dict_wrapper(
             json_data,
