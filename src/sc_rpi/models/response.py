@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 Payload = TypeVar("Payload")
 
+# TODO: move this into a new models.response package
+
 @dataclass
 class Response(Generic[Payload], DataClassJSONMixin):
     """Response for all commands.

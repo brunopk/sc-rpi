@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 MAX_RGB = 255
 
+# TODO: move this into a new package/module utils.colors
+
 def is_valid_color(color: tuple[int, int, int]) -> bool:
     """Validate a color.
 
@@ -30,6 +32,7 @@ def is_valid_color(color: tuple[int, int, int]) -> bool:
         and 0 <= color[2] <= MAX_RGB
     )
 
+# TODO: move this into a new utils.mapping package
 
 def map_sections(section_list: list[Section]) -> list[SectionAux]:
     """Convert a `Section` instances to `responses.Section`.

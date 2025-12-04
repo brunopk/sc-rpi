@@ -11,7 +11,6 @@ from sc_rpi.errors import ApiError
 from sc_rpi.models.color import Color
 from sc_rpi.utils import is_valid_color
 
-# TODO: CONTINUE: get the color and turn the strip with this color
 
 @dataclass
 class TurnSectionOnArgs:

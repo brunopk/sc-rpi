@@ -20,6 +20,8 @@ if TYPE_CHECKING:
     from sc_rpi.models.config.config import Config
     from sc_rpi.models.homeassistant import HACommand
 
+# TODO: move this into a new utils.mapping package
+
 def map_ha_command_to_sc_rpi_command(
     ha_command: HACommand,
     ha_command_topic: str,
@@ -43,6 +45,8 @@ def map_ha_command_to_sc_rpi_command(
 
     """
     section_id = get_object_id_from_ha_command_topic(ha_command_topic)
+
+    # TODO: CONTINUE: get the color and turn the strip with this color
 
     if ha_command.state == State.ON:
         cmd_args = TurnSectionOnArgs(section_id)
