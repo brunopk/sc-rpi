@@ -9,7 +9,7 @@ from typing import Optional
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.color import Color
-from sc_rpi.utils import is_valid_color
+from sc_rpi.utils.colors import is_valid_color
 
 
 @dataclass

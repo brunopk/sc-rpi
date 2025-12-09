@@ -7,9 +7,10 @@ from http import HTTPStatus
 
 from sc_rpi.commands.turn_section_on.turn_section_on_args import TurnSectionOnArgs
 from sc_rpi.commands.turn_section_on.turn_section_on_resp import TurnSectionOnResp
-from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
-from sc_rpi.utils import map_sections
+from sc_rpi.models.response import Response
+from sc_rpi.models.response.status_resp_payload import StatusRespPayload
+from sc_rpi.utils.mappings import map_sections
 
 
 @dataclass

@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.models import Response, StatusRespPayload
+from sc_rpi.models.response import Response
+from sc_rpi.models.response.status_resp_payload import StatusRespPayload
 
 if TYPE_CHECKING:
     from http import HTTPStatus

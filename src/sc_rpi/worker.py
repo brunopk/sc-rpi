@@ -13,7 +13,7 @@ from sc_rpi.controllers import HardwareController
 from sc_rpi.enums import ErrorCode
 from sc_rpi.errors import ApiError
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
-from sc_rpi.utils.commands.adapter import map_ha_command_to_sc_rpi_command
+from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
 from sc_rpi.utils.mqtt import (
     build_ha_command_topic,
     build_ha_discovery_topic,

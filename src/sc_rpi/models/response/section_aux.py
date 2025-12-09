@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 from sc_rpi.models.color import Color
 
-# TODO: move this into a new models.response package
 
 @dataclass
 class SectionAux:

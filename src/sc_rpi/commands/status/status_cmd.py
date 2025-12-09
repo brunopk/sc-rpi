@@ -6,9 +6,10 @@ from dataclasses import dataclass
 from http import HTTPStatus
 
 from sc_rpi.commands.status.status_resp import StatusResp
-from sc_rpi.models import Response, StatusRespPayload
 from sc_rpi.models.command import Command
-from sc_rpi.utils import map_sections
+from sc_rpi.models.response import Response
+from sc_rpi.models.response.status_resp_payload import StatusRespPayload
+from sc_rpi.utils.mappings import map_sections
 
 
 @dataclass

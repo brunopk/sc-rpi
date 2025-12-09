@@ -6,9 +6,9 @@ from http import HTTPStatus
 
 from sc_rpi.commands.edit_section.edit_section_args import EditSectionArgs
 from sc_rpi.commands.edit_section.edit_section_resp import EditSectionResp
-from sc_rpi.models import StatusRespPayload
 from sc_rpi.models.command import Command
-from sc_rpi.utils import map_sections
+from sc_rpi.models.response.status_resp_payload import StatusRespPayload
+from sc_rpi.utils.mappings import map_sections
 
 
 @dataclass

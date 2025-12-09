@@ -3,8 +3,8 @@
 from unittest import TestCase
 
 from sc_rpi.commands.help import HelpCmd
-from sc_rpi.models import Response
 from sc_rpi.models.command import Command
+from sc_rpi.models.response import Response
 
 
 class TestHelp(TestCase):

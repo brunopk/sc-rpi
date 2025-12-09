@@ -1,13 +1,12 @@
 """Contains the `TestStatus` class."""
 
 import logging
-from dataclasses import asdict
 from unittest import TestCase
 
 from sc_rpi.commands.status import StatusCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models import Response
 from sc_rpi.models.command import Command
+from sc_rpi.models.response import Response
 from sc_rpi.utils.config import load_configurations
 
 

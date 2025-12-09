@@ -8,14 +8,12 @@ from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
 from mashumaro.types import Discriminator
 
-from sc_rpi.models import Error
+from sc_rpi.models.response.error import Error
 
 if TYPE_CHECKING:
     from http import HTTPStatus
 
 Payload = TypeVar("Payload")
-
-# TODO: move this into a new models.response package
 
 @dataclass
 class Response(Generic[Payload], DataClassJSONMixin):

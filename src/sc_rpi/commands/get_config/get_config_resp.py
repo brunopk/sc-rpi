@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sc_rpi.commands.get_config.get_config_resp_payload import GetConfigRespPayload
-from sc_rpi.models import Response
+from sc_rpi.models.response import Response
 
 if TYPE_CHECKING:
   from http import HTTPStatus
