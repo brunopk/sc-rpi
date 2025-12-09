@@ -37,16 +37,14 @@ def _decorate_console_handler_emit(fn):
     """
     def new(*args):
         level_no = args[0].levelno
-        if level_no >= logging.CRITICAL:
+        if level_no >= logging.CRITICAL or level_no >= logging.ERROR:
             args[0].levelname = f"\x1b[1;31m{args[0].levelname}\x1b[0m"
-        elif level_no >= logging.ERROR:
-            args[0].levelname = f"\x1b[31m{args[0].levelname}\x1b[0m"
         elif level_no >= logging.WARNING:
-            args[0].levelname = f"\x1b[33m{args[0].levelname}\x1b[0m"
+            args[0].levelname = f"\x1b[1;33m{args[0].levelname}\x1b[0m"
         elif level_no >= logging.INFO:
-            args[0].levelname = f"\x1b[32m{args[0].levelname}\x1b[0m"
+            args[0].levelname = f"\x1b[1;32m{args[0].levelname}\x1b[0m"
         elif level_no >= logging.DEBUG:
-            args[0].levelname = f"\x1b[35m{args[0].levelname}\x1b[0m"
+            args[0].levelname = f"\x1b[1;35m{args[0].levelname}\x1b[0m"
 
         return fn(*args)
     return new
