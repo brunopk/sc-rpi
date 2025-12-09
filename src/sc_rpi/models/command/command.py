@@ -13,7 +13,7 @@ from sc_rpi.controllers import HardwareController
 from sc_rpi.models.config import Config
 
 if TYPE_CHECKING:
-    from sc_rpi.models import Response
+    from sc_rpi.models.response import Response
 
 CommandArgs = TypeVar("CommandArgs")
 

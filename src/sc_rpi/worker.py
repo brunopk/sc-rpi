@@ -92,6 +92,16 @@ class Worker(Thread):
                 sc_rpi_command.run()
 
                 # TODO: CONTINUE return the state after a command is invoked
+                # 1. _publish_ha_entities must return a list of "Publisher" for each published sections (containing a topic and a function to publish a message)
+                # 2. Create a class ScRpiPublisher to publish results for SCRpi users
+                # 3. Worker must mantain a dictionary to associate section id to Publisher (only for HA)
+                # 4: All commands must return a Result object with this attributes :
+                #   - modified_sections: list of sections id that were modified
+                #   - sections: dictionary containing a dictionary with section id as keys and SectioAux as value (used to send state for HA)
+                #   - response_for_user: Response object
+                # 5: If modified_sections is not empty -> notify home assistant all changed sections
+                # 6: Always notify result through the "main" Publisher so user gets any change made on the strip) (observer pattern)
+
 
             except ApiError as ex:
                 logger.exception(
@@ -134,6 +144,7 @@ class Worker(Thread):
             discovery_topic = build_ha_discovery_topic(section.id)
             # TODO: add retain=True (this is just for testing)
             self._client.publish(discovery_topic, discovery_message.to_json())
+
             logger.info(
                 "Strip section from %d to %d published to Home Assistant as %s",
                 section.start,
