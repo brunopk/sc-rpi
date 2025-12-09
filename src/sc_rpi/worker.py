@@ -96,8 +96,7 @@ class Worker(Thread):
                 # 2. Create a class ScRpiPublisher to publish results for SCRpi users
                 # 3. Worker must mantain a dictionary to associate section id to Publisher (only for HA)
                 # 4: All commands must return a Result object with this attributes :
-                #   - modified_sections: list of sections id that were modified
-                #   - sections: dictionary containing a dictionary with section id as keys and SectioAux as value (used to send state for HA)
+                #   - modified_sections: a dictionary containing section id as keys and SectioAux as value (used to send state for HA)
                 #   - response_for_user: Response object
                 # 5: If modified_sections is not empty -> notify home assistant all changed sections
                 # 6: Always notify result through the "main" Publisher so user gets any change made on the strip) (observer pattern)
