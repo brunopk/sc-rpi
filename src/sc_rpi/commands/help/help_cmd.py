@@ -8,7 +8,7 @@ from http import HTTPStatus
 from sc_rpi.commands.help.help_resp import HelpResp
 from sc_rpi.commands.help.help_resp_payload import HelpRespPayload
 from sc_rpi.models.command import Command
-from sc_rpi.utils.commands.main import load_command_names
+from sc_rpi.utils.commands.dynamic_loading import load_command_names
 
 
 @dataclass
