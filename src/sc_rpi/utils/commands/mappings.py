@@ -47,7 +47,7 @@ def map_ha_command_to_sc_rpi_command(
     # TODO: once state publishing (after executing command) for home assistant is implemented, test if state attribute is present or not
 
     if ha_command.state == State.ON:
-        cmd_args = TurnSectionOnArgs(section_id)
+        cmd_args = TurnSectionOnArgs(section_id, ha_command.color)
         return TurnSectionOnCmd(
             args=cmd_args,
             _config=sc_rpi_config,
