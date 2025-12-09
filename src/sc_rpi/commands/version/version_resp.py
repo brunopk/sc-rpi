@@ -19,16 +19,16 @@ class VersionResp(Response[VersionRespPayload]):
 
     def __init__(
         self,
-        status: HTTPStatus,
+        status_code: HTTPStatus,
         command_name: str,
-        payload: VersionRespPayload,
+        version_resp_payload: VersionRespPayload,
     ) -> None:
         """Initialize the object.
 
         Args:
-            status (HTTPStatus): Status code (same status codes used in HTTP).
+            status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            payload (VersionRespPayload): The result of a command.
+            version_resp_payload (VersionRespPayload): The result of a command.
 
         """
-        super().__init__(status, command_name, payload, None)
+        super().__init__(status_code, command_name, version_resp_payload, None)

@@ -8,10 +8,9 @@ from mashumaro.mixins.json import DataClassJSONMixin
 
 from sc_rpi.models.response.section_aux import SectionAux
 
-# TODO: rename to ResponsePayload
 
 @dataclass
-class StatusRespPayload(DataClassJSONMixin):
+class Status(DataClassJSONMixin):
   """Contains available sections."""
 
   sections: list[SectionAux]

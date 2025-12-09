@@ -6,30 +6,30 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sc_rpi.models.response import Response
-from sc_rpi.models.response.status_resp_payload import StatusRespPayload
+from sc_rpi.models.response.status import Status
 
 if TYPE_CHECKING:
     from http import HTTPStatus
 
 
 @dataclass
-class StatusResp(Response[StatusRespPayload]):
+class StatusResp(Response[Status]):
     """Contains available sections."""
 
-    payload: StatusRespPayload
+    payload: Status
 
     def __init__(
         self,
-        status: HTTPStatus,
+        status_code: HTTPStatus,
         command_name: str,
-        payload: StatusRespPayload,
+        status: Status,
     ) -> None:
         """Initialize the object.
 
         Args:
-            status (HTTPStatus): Status code (same status codes used in HTTP).
+            status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            payload (StatusRespPayload): The result of a command.
+            status (Status): The result of the command.
 
         """
-        super().__init__(status, command_name, payload, None)
+        super().__init__(status_code, command_name, status, None)

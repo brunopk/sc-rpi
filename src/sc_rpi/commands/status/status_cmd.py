@@ -8,7 +8,7 @@ from http import HTTPStatus
 from sc_rpi.commands.status.status_resp import StatusResp
 from sc_rpi.models.command import Command
 from sc_rpi.models.response import Response
-from sc_rpi.models.response.status_resp_payload import StatusRespPayload
+from sc_rpi.models.response.status import Status
 from sc_rpi.utils.mappings import map_sections
 
 
@@ -33,6 +33,6 @@ class StatusCmd(Command[None]):
         """
         sections = self._hw_controller.list_sections()
         sections = self._hw_controller.list_sections()
-        payload = StatusRespPayload(map_sections(sections))
+        payload = Status(map_sections(sections))
 
         return StatusResp(HTTPStatus.ACCEPTED, StatusCmd.name, payload)
