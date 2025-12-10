@@ -1,12 +1,18 @@
 """Utility functions to set logging configurations."""
 
 import logging
+from logging import Formatter, StreamHandler, basicConfig
+from logging.handlers import QueueHandler, QueueListener
+from multiprocessing import Queue
 
+from logging_loki import LokiHandler
 from systemd.journal import JournalHandler
 
 from sc_rpi.models.config import Config
+from sc_rpi.utils.logging.ignore_loki_filter import IgnoreLokiFilter
 
 
+# TODO: Explain how to install Grafana loki based on https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/
 def configure_logging(config: Config) -> None:
     """Configure the `logging` library.
 
@@ -18,16 +24,36 @@ def configure_logging(config: Config) -> None:
 
     """
     level = config.log_level
-    handler = logging.StreamHandler()
+
     if config.env == "prod":
-        handler = JournalHandler()
+        journal_handler = JournalHandler()
 
-    handler.emit = _decorate_console_handler_emit(handler.emit)
+        queue = Queue(-1)
+        queue_handler = QueueHandler(queue)
+
+        loki_handler = LokiHandler(
+            url="http://localhost:3100/loki/api/v1/push",
+            tags={"application": "my-app"},
+            auth=("username", "password"),
+            version="1",
+        )
+        loki_handler.addFilter(IgnoreLokiFilter())
+
+        listener = QueueListener(queue, loki_handler)
+        listener.start()
+
+        basicConfig(level=level, handlers=[queue_handler, journal_handler])
+        return
+
+    stream_handler = StreamHandler()
+    stream_handler.emit = _decorate_console_handler_emit(stream_handler.emit)
+
     log_format = "%(asctime)s - %(name)s - %(levelname)s -- %(message)s"
-    formatter = logging.Formatter(log_format)
-    handler.setFormatter(formatter)
+    formatter = Formatter(log_format)
+    stream_handler.setFormatter(formatter)
 
-    logging.basicConfig(level=level, handlers=[handler])
+    basicConfig(level=level, handlers=[stream_handler])
+
 
 def _decorate_console_handler_emit(fn):
     """Based on Stack Overflow post: \
