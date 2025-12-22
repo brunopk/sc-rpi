@@ -1,6 +1,6 @@
 # SC RPi
 
-**A lightweight MQTT-based API for controlling WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or mobile application.**
+**A lightweight [MQTT](https://mqtt.org/) API for controlling WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or mobile application.**
 
 It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
@@ -22,12 +22,8 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
 2. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-3. Install Docker to run the following containers (optional):
-   - [Glances](https://glances.readthedocs.io/en/latest/docker.html#docker)
-   - Grafana Loki
-4. Install Home Assistant add-ons:
-   - [Mosquitto broker](https://github.com/home-assistant/addons/tree/master/mosquitto)
-   - [Grafana](https://github.com/hassio-addons/addon-grafana) (optional)
+3. [Install Docker and additional containers](/doc/docker.md)
+4. [Install Home Assistant add-ons](/doc/homeassistant.md#add-ons)
 5. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
 6. [Configure SC RPi](/doc/configurations.md)
 7. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
@@ -54,22 +50,20 @@ For more information refer to `doc/development`.
 
 SC RPi is provided with more documentation in the `doc` folders :
 
-- [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
-- [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
-- [`doc/network_configuration.md`](doc/network_configuration.md) : network configuration in Rapsberry OS
 - [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
-- [`doc/commands.md`](doc/commands.md): SC RPi commands (through MQTT)
+- [`doc/commands.md`](doc/commands.md): describes SC RPi commands
 - [`doc/development.md`](doc/development.md): useful documentation for SC RPi development
+- [`doc/docker.md`](/doc/docker.md): additional Docker containers to run in the Raspberry Pi
+- [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
+- [`doc/network_configuration.md`](doc/network_configuration.md) : network configuration in Raspberry Pi OS
+- [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
+- [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
 
   </br>
 
 ## Links
 
 - [Building the circuit for SC RPI](doc/circuit.md)
-- [Glances with Docker](https://glances.readthedocs.io/en/latest/docker.html#docker)
-- [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
-- [Home Assistant Grafana add-on](https://github.com/hassio-addons/addon-grafana)
-- [Home Assistant Mosquitto broker add-on](https://github.com/home-assistant/addons/tree/master/mosquitto)
 - [Linux network configuration](/doc/network_configuration.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [Official MQTT protocol site](https://mqtt.org/)
