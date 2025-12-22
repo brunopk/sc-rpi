@@ -1,6 +1,8 @@
 # SC RPi
 
-**A lightweight MQTT-based API for controlling WS2812B LED strips connected to a Raspberry Pi. It supports direct MQTT messaging and integrates seamlessly with Home Assistant via its official MQTT integration.**
+**A lightweight MQTT-based API for controlling WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or mobile application.**
+
+It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
 ## Requirements
 
@@ -10,7 +12,7 @@
 - Poetry
 - An MQTT broker (see [`/doc/mqtt.md`](/doc/mqtt.md))
 
-</br> 
+  </br>
 
 >**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
 
@@ -25,6 +27,7 @@
 
     </br>
 
+### Optional t
 Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see [`/doc/systemd_configuration.md`](/doc/systemd_configuration.md) for more information.
 
 ## Development
@@ -55,14 +58,15 @@ SC RPi is provided with more documentation in the `doc` folders :
 
 ## Links
 
+- [Building the circuit for SC RPI](doc/circuit.md)
+- [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
+- [Linux network configuration](/doc/network_configuration.md)
+- [MQTT Explorer](https://mqtt-explorer.com/)
+- [Official MQTT protocol site](https://mqtt.org/)
 - [Official Python distribution of the rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
 - [Official Poetry website](https://python-poetry.org/)
 - [Python virtual environments](doc/virtual_environments.md)
 - [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
 - [SC RPI commands](doc/commands.md)
-- [Building the circuit for SC RPI](doc/circuit.md)
 - [Systemd configuration for SC RPI](/doc/systemd_configuration.md)
 - [What is Systemctl? An In-Depth Overview](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview)
-- [Linux network configuration](/doc/network_configuration.md)
-- [Official MQTT protocol site](https://mqtt.org/)
-- [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
