@@ -4,6 +4,8 @@
 
 It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
+>**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
+
 ## Requirements
 
 - Raspberry Pi 3 with Raspberry Pi OS
@@ -14,24 +16,22 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
   </br>
 
->**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
-
 ## Installation
 
 1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
 2. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-3. Install Docker (optional):
-   1. Install Glances
-   2. Install Grafana Loki
-4. Install recommended Home Assistant add-ons (optional):
-   - Glances
-   - Grafana
+3. Install Docker to run the following containers (optional):
+   - [Glances](https://glances.readthedocs.io/en/latest/docker.html#docker)
+   - Grafana Loki
+4. Install Home Assistant add-ons:
+   - [Mosquitto broker](https://github.com/home-assistant/addons/tree/master/mosquitto)
+   - [Grafana](https://github.com/hassio-addons/addon-grafana) (optional)
 5. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
-6. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
-7. [Configure SC RPi](/doc/configurations.md)
-8. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
-9. Configure Glances in Home Assistant
-10. Configure Grafana Loki using the Grafana Home Assistant add-on.
+6. [Configure SC RPi](/doc/configurations.md)
+7. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
+8. Configure Glances in Home Assistant as a new integration (optional)
+9. Configure Grafana Loki datasource using the Grafana Home Assistant add-on (optional).
+10. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
 
     </br>
 
@@ -64,7 +64,10 @@ SC RPi is provided with more documentation in the `doc` folders :
 ## Links
 
 - [Building the circuit for SC RPI](doc/circuit.md)
+- [Glances with Docker](https://glances.readthedocs.io/en/latest/docker.html#docker)
 - [Home Assistant MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
+- [Home Assistant Grafana add-on](https://github.com/hassio-addons/addon-grafana)
+- [Home Assistant Mosquitto broker add-on](https://github.com/home-assistant/addons/tree/master/mosquitto)
 - [Linux network configuration](/doc/network_configuration.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [Official MQTT protocol site](https://mqtt.org/)
