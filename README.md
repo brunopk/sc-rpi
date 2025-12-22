@@ -25,9 +25,13 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 3. Install Docker to run the following containers (optional):
    - [Glances](https://glances.readthedocs.io/en/latest/docker.html#docker)
    - Grafana Loki
+  
+     </br>
 4. Install Home Assistant add-ons:
    - [Mosquitto broker](https://github.com/home-assistant/addons/tree/master/mosquitto)
    - [Grafana](https://github.com/hassio-addons/addon-grafana) (optional)
+  
+     </br>
 5. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
 6. [Configure SC RPi](/doc/configurations.md)
 7. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
