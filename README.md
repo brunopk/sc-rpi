@@ -4,6 +4,8 @@
 
 It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
+</br>
+
 >**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
 
 ## Requirements
@@ -78,3 +80,4 @@ SC RPi is provided with more documentation in the `doc` folders :
 - [SC RPI commands](doc/commands.md)
 - [Systemd configuration for SC RPI](/doc/systemd_configuration.md)
 - [What is Systemctl? An In-Depth Overview](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview)
+  </br>
