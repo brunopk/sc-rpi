@@ -8,7 +8,7 @@ It's optional but recommended to install the [Grafana](https://github.com/hassio
 
 ### Mosquitto broker
 
-For information about Mosquitto broker add-on refer to [`doc/mqtt.md`](doc/mqtt.md).
+For information about Mosquitto broker add-on refer to [Mosquitto broker](/doc/mqtt.md#mosquitto-broker) section in `doc/mqtt.md`.
 
 ### MQTT Explorer
 
@@ -20,3 +20,4 @@ For development and troubleshooting, it is also strongly recommended to install 
 - [Grafana add-on](https://github.com/hassio-addons/addon-grafana)
 - [Home Assistant forum thread about MQTT Explorer](https://community.home-assistant.io/t/addon-mqtt-explorer-new-version/603739/5)
 - [MQTT Explorer](https://mqtt-explorer.com/)
+- [Mosquitto broker](/doc/mqtt.md#mosquitto-broker)
