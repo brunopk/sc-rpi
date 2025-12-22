@@ -20,15 +20,20 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
 2. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-3. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
-4. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
-5. [Configure SC RPi](/doc/configurations.md)
-6. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md)
+3. Install Docker (optional):
+   1. Install Glances
+   2. Install Grafana Loki
+4. Install recommended Home Assistant add-ons (optional):
+   - Glances
+   - Grafana
+5. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
+6. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
+7. [Configure SC RPi](/doc/configurations.md)
+8. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
+9. Configure Glances in Home Assistant
+10. Configure Grafana Loki using the Grafana Home Assistant add-on.
 
     </br>
-
-### Optional t
-Optionally, SC RPi can be installed as a [service](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview/#managing-services) to start automatically after boot; see [`/doc/systemd_configuration.md`](/doc/systemd_configuration.md) for more information.
 
 ## Development
 
