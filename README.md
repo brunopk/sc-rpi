@@ -6,8 +6,6 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 </br>
 
->**The Raspberry Pi 3 uses the Broadcom BCM2837 SoC, which includes a hardware PWM controller and can be controlled from Python using the [`rpi_ws281x`](https://github.com/jgarff/rpi_ws281x) library.**
-
 ## Requirements
 
 - Raspberry Pi 3 with Raspberry Pi OS
@@ -20,25 +18,23 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 ## Installation
 
-1. [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
-2. [Install required Linux dependencies](/doc/required_linux_dependencies.md)
-3. [Install Docker and additional containers](/doc/docker.md)
-4. [Install Home Assistant add-ons](/doc/homeassistant.md#add-ons)
-5. [Install SC RPI (Python application)](/doc/sc_rpi_installation.md)
-6. [Configure SC RPi](/doc/configurations.md)
-7. [Configure SC RPi as a Linux service](/doc/systemd_configuration.md) (optional)
-8. Configure Glances in Home Assistant as a new integration (optional)
-9. Configure Grafana Loki datasource using the Grafana Home Assistant add-on (optional).
-10. [Configure Mosquitto broker](/doc/mqtt.md#mosquitto-broker-configuration)
+1. [Install Linux dependencies](/doc/linux_dependencies.md)
+2. [Install and configure Home Assistant add-ons (optional)](/doc/homeassistant.md#optional-add-ons)
+3. [Install and configure Mosquitto broker](/doc/homeassistant.md#mosquitto-broker-required)
+4. [Install and configure SC RPi (Python)](/doc/sc_rpi_installation.md)
+5. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
 
     </br>
+
+> [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
 
 ## Development
 
 1. [Create the virtual environment](/doc/virtual_environments.md)
 2. [Activate the environment](/doc/virtual_environments.md#activating-the-environment)
 3. [Install development dependencies with poetry](/doc/development.md#installing-development-dependencies)
-4. Run the application :
+4. [Install and configure MQTT Explorer add-on for Home Assistant (optional)](/doc/homeassistant.md#mqtt-explorer)
+5. Run the application :
 
     ```bash
     python -m sc_rpi.main
@@ -54,7 +50,7 @@ SC RPi is provided with more documentation in the `doc` folders :
 - [`doc/commands.md`](doc/commands.md): describes SC RPi commands
 - [`doc/development.md`](doc/development.md): useful documentation for SC RPi development
 - [`doc/docker.md`](/doc/docker.md): additional Docker containers to run in the Raspberry Pi
-- [`doc/mqtt.md`](doc/mqtt.md): information of MQTT, Mosquitto broker, etc.
+- [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
 - [`doc/network_configuration.md`](doc/network_configuration.md) : network configuration in Raspberry Pi OS
 - [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
 - [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)

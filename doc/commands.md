@@ -1,9 +1,20 @@
 # Commands
 
-# TODO: update with MQTT information (explaining how commands are sent)
-# TODO: explain that all commands returns the same format (RespPayload)
+[MQTT](https://mqtt.org/) (Message Queuing Telemetry Transport) is an application-level protocol, just like HTTP and others, defined around a publish/subscribe architecture. SC RPi uses MQTT to provide its API and to integrate with Home Assistant. It relies on the [paho-mqtt](https://pypi.org/project/paho-mqtt/) library for working with this protocol in Python.
 
-The API consists of commands transmitted via JSON-formatted messages over a [WebSocket](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/) connection. All commands have the same format :
+Commands are received from Home Assistant or directly from an MQTT client library such as [Paho](https://pypi.org/project/paho-mqtt/) or using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/). SC RPi is integrated with Home Assistant by listening to specific MQTT topics that are defined with the **[MQTT discovery mechanism](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)**. **Some of the most important topics to interact with Home Assistant are these:**
+
+- Home Assistant command topic
+- State topic
+
+**Additionally, there some specific topics to interact with SC RPi directly:**
+
+- SC RPi command topic
+- Result topic (for successful and failed SC RPi command execution results)
+
+These two topics are defined in `config.yaml`. For more information about topics see also [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py).
+
+All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages. Commands sent through the **SC RPi command topic** have the same format:
 
 ```json
 {
@@ -12,31 +23,23 @@ The API consists of commands transmitted via JSON-formatted messages over a [Web
 }
 ```
 
-where `args` is another JSON (nested) object. **Successful command execution** will return a response with this format :
+where `args` is another JSON object. All commands execution will return a result through the **result topic** with this format :
 
 ```json
 {
     "status": 201,
-    "command": "command_name"
+    "command_name": "command_name"
 }
 ```
 
-and optionally a `data` field which is another (nested) JSON object :
+where `status` is an integer that adheres to the same semantics as in HTTP. Optionally, successful command results will have a **`payload`** field. 
 
-```json
-{
-    "status": 201,
-    "command": "command_name",
-    "data": {}
-}
-```
-
-**Failed command execution** will return a response with this format :
+Instead of `payload`, failed command messages will have an **`error`** field. Both, `payload` and `error` are JSON objects. An example of a failed command result is this:
 
 ```json
 {
     "status": 400,
-    "command": "command_name",
+    "command_name": "command_name",
     "error": {
       "code": "ALREADY_ON",
       "description": "Section already on"
@@ -46,36 +49,15 @@ and optionally a `data` field which is another (nested) JSON object :
 
 where `code` is the error code (string).
 
-In general for requests and responses colors are represented in hexadecimal. **All responses (failure or success) will have a `status` key**, which is an integer that adheres to the same semantics as in HTTP.
-
-## disconnect
-
-Close the connection.
-
-### Example
-
-```json
-{
-  "name": "disconnect"
-}
-```
-
-Returns:
-  
-```json
-{
-  "status": 201,
-  "command": "disconnect"
-}
-```
+> **Colors are represented as an array of three values (RGB).**
 
 ## edit_section
 
-Change attributes of a section (see `section_new`).
+Change attributes of a section.
 
 Required arguments:
 
-- `id` : id of the section to edit
+- `section_id` : id of the section to edit (string)
 
 ### Example 1
   
@@ -83,7 +65,7 @@ Required arguments:
 {
   "name": "edit_section",
   "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
+    "section_id": "section_1",
     "end": 40
   }
 }
@@ -94,19 +76,19 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "edit_section",
-  "data": {
+  "command_name": "edit_section",
+  "payload": {
     "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "id": "section_1",
         "start": 0,
-        "end": 149,
-        "color": "#ff0000",
+        "end": 40,
+        "color": [255, 0, 0],
         "is_on": true
       }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "id": "section_2",
         "start": 150,
         "end": 299,
-        "color": "#00ff00",
+        "color": [0, 255, 0],
         "is_on": true
     }]
   }
@@ -119,7 +101,7 @@ Returns:
 {
   "name": "edit_section",
   "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
+    "section_id": "section_1",
     "end": 40,
     "start": 10
   }
@@ -131,19 +113,19 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "edit_section",
+  "command_name": "edit_section",
   "data": {
     "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "id": "section_1",
         "start": 10,
         "end": 40,
-        "color": "#ff0000",
+        "color": [255, 0, 0],
         "is_on": true
       }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "id": "section_2",
         "start": 150,
         "end": 299,
-        "color": "#00ff00",
+        "color": [0, 255, 0],
         "is_on": true
     }]
   }
@@ -156,8 +138,8 @@ Returns:
 {
   "name": "edit_section",
   "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000",
-    "color": "#abc123"
+    "section_id": "section_1",
+    "color": [123, 123, 123]
   }
 }
 ```
@@ -167,19 +149,19 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "edit_section",
+  "command_name": "edit_section",
   "data": {
     "sections": [{
-        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "id": "section_1",
         "start": 10,
         "end": 40,
-        "color": "#abc123",
+        "color": [123, 123, 123],
         "is_on": true
       }, {
-        "id": "123e4567-e89b-12d3-a456-426614174001",
+        "id": "section_2",
         "start": 150,
         "end": 299,
-        "color": "#00ff00",
+        "color": [0, 255, 0],
         "is_on": true
     }]
   }
@@ -203,8 +185,8 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "get_config",
-  "data": {
+  "command_name": "get_config",
+  "payload": {
     "connection_timeout": 0.25,
     "default_gateway": "192.168.0.1",
     "default_network_interface": "en0",
@@ -236,8 +218,8 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "help",
-  "data": {
+  "command_name": "help",
+  "payload": {
     "commands": [
       "command_1",
       "command_2"
@@ -263,8 +245,8 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "reset",
-  "data": {
+  "command_name": "reset",
+  "payload": {
     "sections": []
   }
 }
@@ -287,12 +269,8 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "section_remove",
-  "data": {
-    "clients": [{
-        "ip": "127.0.0.1",
-        "port": 49672
-    }],
+  "command_name": "status",
+  "payload": {
     "sections": [{
         "id": "123e4567-e89b-12d3-a456-426614174001",
         "start": 150,
@@ -304,7 +282,7 @@ Returns:
 }
 ```
 
-## turn_off
+## turn_section_off
 
 Turn off specific sections or the whole strip
 
@@ -312,7 +290,7 @@ Turn off specific sections or the whole strip
   
 ```json
 {
-  "name": "turn_off"
+  "name": "turn_section_off"
 }
 ```
 
@@ -322,7 +300,7 @@ Turn off specific sections or the whole strip
 {
   "name": "turn_off",
   "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000"
+    "section_id": "section_1"
   }
 }
 ```
@@ -332,34 +310,61 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "turn_off",
+  "command_name": "turn_section_off",
   "data": {
     "sections": [{
-          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "id": "section_1",
           "start": 0,
           "end": 149,
-          "color": "#ff0000",
+          "color": [255, 0, 0],
           "is_on": false
         }, {
-          "id": "123e4567-e89b-12d3-a456-426614174001",
+          "id": "section_2",
           "start": 150,
           "end": 299,
-          "color": "#00ff00",
+          "color": [0, 255, 0],
           "is_on": true
     }]
   }
 }
 ```
 
-## turn_on
+## turn_section_on
 
 Turn on specific sections or the whole strip
 
 ### Example 1
-  
+
 ```json
 {
-  "name": "turn_on"
+  "name": "turn_section_on",
+  "args": {
+    "section_id": "section_1"
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 201,
+  "command_name": "turn_section_on",
+  "data": {
+    "sections": [{
+          "id": "section_1",
+          "start": 0,
+          "end": 149,
+          "color": [255, 0, 0],
+          "is_on": true
+        }, {
+          "id": "section_2",
+          "start": 150,
+          "end": 299,
+          "color": [0, 255, 0],
+          "is_on": true
+    }]
+  }
 }
 ```
 
@@ -367,9 +372,10 @@ Turn on specific sections or the whole strip
 
 ```json
 {
-  "name": "turn_on",
+  "name": "turn_section_on",
   "args": {
-    "section_id": "123e4567-e89b-12d3-a456-426614174000"
+    "section_id": "section_1",
+    "color": [123, 123, 123]
   }
 }
 ```
@@ -379,19 +385,19 @@ Returns:
 ```json
 {
   "status": 201,
-  "command": "turn_on",
+  "command_name": "turn_section_on",
   "data": {
     "sections": [{
-          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "id": "section_1",
           "start": 0,
           "end": 149,
-          "color": "#ff0000",
+          "color": [123, 123, 123],
           "is_on": true
         }, {
-          "id": "123e4567-e89b-12d3-a456-426614174001",
+          "id": "section_2",
           "start": 150,
           "end": 299,
-          "color": "#00ff00",
+          "color": [0, 255, 0],
           "is_on": true
     }]
   }
@@ -413,14 +419,17 @@ Returns :
 ```json
 {
   "status": 202,
-  "data": {
+  "command_name": "version",
+  "payload": {
       "python_version": "3.8.18",
       "sc_rpi_version": "0.1.0"
-  },
-  "command": "version"
+  }
 }
 ```
 
 ## Links
 
-- [Send WebSocket requests with Postman](https://learning.postman.com/docs/sending-requests/websocket/websocket-overview/)
+- [Home Assistant - MQTT Discovery mechanism](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)
+- [MQTT Explorer - Official site](https://mqtt-explorer.com/)
+- [MQTT protocol - Official site](https://mqtt.org/)
+- [Paho](https://pypi.org/project/paho-mqtt/)
