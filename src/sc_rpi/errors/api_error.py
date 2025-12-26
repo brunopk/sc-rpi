@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
-from sc_rpi.enums import ErrorCode
+from sc_rpi.enums.error_code import ErrorCode
 
 
 class ApiError(Exception):

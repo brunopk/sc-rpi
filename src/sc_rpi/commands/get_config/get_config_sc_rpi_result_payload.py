@@ -9,7 +9,7 @@ from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
 
 
 @dataclass
-class GetConfigRespPayload(DataClassJSONMixin):
+class GetConfigScRpiResultPayload(DataClassJSONMixin):
   """Main configuration class.
 
   This class may encapsulate other configuration classes.

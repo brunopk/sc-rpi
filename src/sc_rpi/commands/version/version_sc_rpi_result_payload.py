@@ -8,7 +8,7 @@ from mashumaro.mixins.json import DataClassJSONMixin
 
 
 @dataclass
-class VersionRespPayload(DataClassJSONMixin):
+class VersionScRpiResultPayload(DataClassJSONMixin):
     """Includes different version numbers, such as the SC RPI version."""
 
     python_version: str

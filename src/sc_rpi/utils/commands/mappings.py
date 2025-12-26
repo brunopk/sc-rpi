@@ -9,10 +9,10 @@ from sc_rpi.commands.turn_section_off import TurnSectionOffCmd
 from sc_rpi.commands.turn_section_off.turn_section_off_args import TurnSectionOffArgs
 from sc_rpi.commands.turn_section_on import TurnSectionOnCmd
 from sc_rpi.commands.turn_section_on.turn_section_on_args import TurnSectionOnArgs
-from sc_rpi.enums import ErrorCode
+from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant import State
 from sc_rpi.errors import ApiError
-from sc_rpi.utils.mqtt import get_object_id_from_ha_command_topic
+from sc_rpi.utils.topic_utils import get_object_id_from_ha_command_topic
 
 if TYPE_CHECKING:
     from sc_rpi.controllers.hardware_controller import HardwareController
@@ -47,7 +47,11 @@ def map_ha_command_to_sc_rpi_command(
     # TODO: once state publishing (after executing command) for home assistant is implemented, test if state attribute is present or not
 
     if ha_command.state == State.ON:
-        cmd_args = TurnSectionOnArgs(section_id, ha_command.color)
+        cmd_args = TurnSectionOnArgs(
+            section_id,
+            ha_command.color,
+            ha_command.brightness,
+        )
         return TurnSectionOnCmd(
             args=cmd_args,
             _config=sc_rpi_config,

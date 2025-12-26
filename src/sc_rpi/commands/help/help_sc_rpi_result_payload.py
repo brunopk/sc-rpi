@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class HelpRespPayload:
+class HelpScRpiResultPayload:
     """Contain helpful information for users."""
 
     commands: list[str]

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Error:
+class ScRpiError:
     """Contains the error code which indicates what is the error \
 
     about and a description for more information (optional).

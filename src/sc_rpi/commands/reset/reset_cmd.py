@@ -5,8 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from sc_rpi.models.command import Command
-from sc_rpi.models.response import Response
+from mashumaro.mixins.json import DataClassJSONMixin
+
+from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command_result.sc_rpi_result import ScRpiResult
+
+# TODO: return the correct object for each MQTT topic
 
 
 @dataclass
@@ -21,7 +25,7 @@ class ResetCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> Response:
+    def run(self) -> dict[str, DataClassJSONMixin | str]:
         """Execute the command.
 
         :return Response: Contains the result of the execution.
@@ -29,4 +33,4 @@ class ResetCmd(Command[None]):
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
 
-        return Response(HTTPStatus.ACCEPTED, ResetCmd.name)
+        return ScRpiResult(HTTPStatus.ACCEPTED, ResetCmd.name)

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.models.response.section_aux import SectionAux
+from sc_rpi.models.command.command_result.section_aux import SectionAux
 
 
 @dataclass

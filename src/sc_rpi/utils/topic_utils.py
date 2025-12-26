@@ -6,7 +6,12 @@ import re
 
 from sc_rpi.errors import ApiError
 
-HA_COMMAND_TOPIC_PATTERN = re.compile(r"^homeassistant\/light\/([^\/#\x00]+)\/set$")
+# This regexp SHOULD use the same prefix defined in HA_CUSTOM_TOPIC_PREFIX
+HA_COMMAND_TOPIC_PATTERN = re.compile(r"^scrpi\/homeassistant\/([^\/#\x00]+)/command$")
+
+# Prefix used for special topics (for example state topic) set on the discovery message
+HA_CUSTOM_TOPIC_PREFIX = "scrpi/homeassistant"
+
 SC_RPI_COMMAND_TOPIC_PATTERN = re.compile(r"^scrpi\/commands$")
 
 def build_ha_discovery_topic(object_id: str) -> str:
@@ -27,7 +32,7 @@ def build_ha_discovery_topic(object_id: str) -> str:
   return f"homeassistant/light/{object_id}/config"
 
 def build_ha_command_topic(object_id: str = "+") -> str:
-  """Build Home Assistant command topic for all entities provided by SC RPi.
+  """Build Home Assistant command topic.
 
   More information in [Home Assistant MQTT lights](https://www.home-assistant.io/integrations/light.mqtt).
 
@@ -42,10 +47,11 @@ def build_ha_command_topic(object_id: str = "+") -> str:
       str: The topic name.
 
   """
-  return f"homeassistant/light/{object_id}/set"
+  # This should match with HA_COMMAND_TOPIC_PATTERN
+  return f"{HA_CUSTOM_TOPIC_PREFIX}/{object_id}/command"
 
 def build_ha_state_topic(object_id: str) -> str:
-  """Build Home Assistant entity state topic \
+  """Build topic to receive state updates \
 
    More information in [Home Assistant MQTT lights](https://www.home-assistant.io/integrations/light.mqtt).
 
@@ -58,7 +64,7 @@ def build_ha_state_topic(object_id: str) -> str:
       str: The topic name.
 
   """
-  return f"homeassistant/light/{object_id}/state"
+  return f"{HA_CUSTOM_TOPIC_PREFIX}/{object_id}/state"
 
 def build_sc_rpi_command_topic() -> str:
   """Build the SC RPi command topic.
@@ -72,7 +78,7 @@ def build_sc_rpi_command_topic() -> str:
   """
   return "sc_rpi/commands"
 
-def build_sc_rpi_response_topic() -> str:
+def build_sc_rpi_result_topic() -> str:
   """Build the SC RPi responses topic.
 
   Returns:

@@ -10,11 +10,13 @@ from threading import Thread
 from typing import TYPE_CHECKING
 
 from sc_rpi.controllers import HardwareController
-from sc_rpi.enums import ErrorCode
+from sc_rpi.enums.error_code import ErrorCode
+from sc_rpi.enums.homeassistant.color_mode import ColorMode
+from sc_rpi.enums.homeassistant.schema import Schema
 from sc_rpi.errors import ApiError
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
-from sc_rpi.utils.mqtt import (
+from sc_rpi.utils.topic_utils import (
     build_ha_command_topic,
     build_ha_discovery_topic,
     build_ha_state_topic,
@@ -31,7 +33,8 @@ if TYPE_CHECKING:
     from sc_rpi.models.config import Config
     from sc_rpi.models.config.strip_config import Section
 
-logger = logging.getLogger(__name__)
+# TODO: rename all logger to LOGGER
+LOGGER = logging.getLogger(__name__)
 
 class Worker(Thread):
     """Collects messages and process them.
@@ -50,7 +53,7 @@ class Worker(Thread):
 
         """
         super().__init__(daemon=True, name="WorkerThread")
-        logger.debug("Initializing worker")
+        LOGGER.debug("Initializing worker")
         self._config = config
         self._client = client
         self._hw_controller = HardwareController(config)
@@ -73,9 +76,11 @@ class Worker(Thread):
             msg = self._message_queue.get()
             msg_payload = msg.payload.decode()
 
-            logger.debug("Message received on topic %s: %s", msg.topic, msg_payload)
+            LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_payload)
 
             try:
+                sc_rpi_command = None
+
                 if matches_ha_command_topic(msg.topic):
                     ha_command = self._parse_ha_msg(msg_payload)
                     sc_rpi_command = map_ha_command_to_sc_rpi_command(
@@ -84,40 +89,40 @@ class Worker(Thread):
                         self._config,
                         self._hw_controller,
                     )
-                if matches_sc_rpi_command_topic(msg.topic):
+                elif matches_sc_rpi_command_topic(msg.topic):
                     # TODO: continue with _parse_sc_rpi_msg
                     sc_rpi_command = self._parse_sc_rpi_msg(msg)
+                else:
+                    LOGGER.warning("Message received on unexpected topic %s", msg.topic)
 
-                sc_rpi_command.validate()
-                sc_rpi_command.run()
+                if sc_rpi_command is not None:
+                    sc_rpi_command.validate()
+                    sc_rpi_command_result = sc_rpi_command.run()
+                    if len(sc_rpi_command_result.keys()) == 0:
+                        LOGGER.warning(
+                            "No topics to return result of %s command",
+                            sc_rpi_command.name,
+                        )
+                    else:
+                        for topic_name in sc_rpi_command_result:
+                            topic_payload = (
+                                sc_rpi_command_result[topic_name]
+                                if isinstance(sc_rpi_command_result[topic_name], str)
+                                else sc_rpi_command_result[topic_name].to_json()
+                            )
+                            LOGGER.debug("Publishing result to %s topic", topic_name)
+                            self._client.publish(topic_name, topic_payload)
+                            # TODO: CONTINUE send sc_rpi result (success or error) in the corresponding topic
 
-                # TODO: CONTINUE return the state after a command is invoked
-                # 1. _publish_ha_entities must return entity information (state topic, etc)
-                # 2. Create a list of "Publisher" for each published section with information from (1)
-                # 3. Create an instance of Publisher results for SCRpi users
-                # 4. Worker must mantain a dictionary to associate section id to Publisher (only for HA)
-                # 5: All commands must return a Result object with this attributes :
-                #   - modified_sections: a dictionary containing section id as keys and SectioAux as value (used to send state for HA)
-                #   - response_for_user: Response object
-                # 6: If modified_sections is not empty -> notify home assistant all changed sections
-                # 7: Always notify result through the "main" Publisher so user gets any change made on the strip) (observer pattern)
-
-
-            except ApiError as ex:
-                logger.exception(
-                    "Error executing %s command: %s",
-                    sc_rpi_command.name,
-                    ex.message,
-                    exc_info=ex,
-                )
-                # TODO: continue
             except Exception as ex:
-                logger.exception(
-                    "Error executing %s command: %s",
-                    sc_rpi_command.name,
-                    exc_info=ex,
-                )
-                # TODO: continue
+                if sc_rpi_command is not None:
+                    LOGGER.exception(
+                        "Error executing command %s",
+                        sc_rpi_command.name,
+                        exc_info=ex,
+                    )
+                else:
+                    LOGGER.exception("Error executing command", exc_info=ex)
 
             self._message_queue.task_done()
 
@@ -135,17 +140,17 @@ class Worker(Thread):
                 section.name,
                 brightness=True,
                 command_topic=command_topic,
-                rgb=True,
-                schema="json",
-                state_topic=state_topic,
                 object_id=section.id,
+                schema=Schema.JSON,
+                state_topic=state_topic,
+                supported_color_modes=[ColorMode.RGB],
                 unique_id=section.id,
             )
             discovery_topic = build_ha_discovery_topic(section.id)
             # TODO: add retain=True (this is just for testing)
             self._client.publish(discovery_topic, discovery_message.to_json())
 
-            logger.info(
+            LOGGER.info(
                 "Strip section from %d to %d published to Home Assistant as %s",
                 section.start,
                 section.end,
@@ -179,7 +184,7 @@ class Worker(Thread):
 
     def _parse_sc_rpi_msg(self, msg: MQTTMessage) -> Command:
         # TODO: implement similar to _parse_ha_msg method
-        logger.info("_process_sc_rpi_command")
+        LOGGER.info("_process_sc_rpi_command")
 
         try:
             # TODO: Take into account that if some error occurs when parsing from `dict` (`from_dict` method), Mashumaro will raise `InvalidFieldValue`.

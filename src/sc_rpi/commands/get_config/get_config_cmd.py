@@ -6,17 +6,23 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.get_config.get_config_resp import GetConfigResp
-from sc_rpi.commands.get_config.get_config_resp_payload import GetConfigRespPayload
+from mashumaro.mixins.json import DataClassJSONMixin
+
+from sc_rpi.commands.get_config.get_config_sc_rpi_result import GetConfigScRpiResult
+from sc_rpi.commands.get_config.get_config_sc_rpi_result_payload import (
+    GetConfigScRpiResultPayload,
+)
 from sc_rpi.commands.get_config.mqtt_config.broker_config import BrokerConfig
 from sc_rpi.commands.get_config.mqtt_config.mqtt_config import MQTTConfig
 from sc_rpi.commands.get_config.strip_config.section import Section
 from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
-from sc_rpi.models.command import Command
+from sc_rpi.models.command.command import Command
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import strip_config
 
+
+# TODO: return the correct object for each MQTT topic
 
 @dataclass
 class GetConfigCmd(Command[None]):
@@ -30,7 +36,7 @@ class GetConfigCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> GetConfigResp:
+    def run(self) -> dict[str, DataClassJSONMixin | str]:
         """Execute the command.
 
         Returns:
@@ -57,7 +63,7 @@ class GetConfigCmd(Command[None]):
         mqtt_config = MQTTConfig(mqtt_broker_config)
 
 
-        payload = GetConfigRespPayload(
+        payload = GetConfigScRpiResultPayload(
             self._config.connection_timeout,
             self._config.default_gateway,
             self._config.default_network_interface,
@@ -68,7 +74,7 @@ class GetConfigCmd(Command[None]):
             strip_config,
         )
 
-        return GetConfigResp(HTTPStatus.ACCEPTED, GetConfigCmd.name, payload)
+        return GetConfigScRpiResult(HTTPStatus.ACCEPTED, GetConfigCmd.name, payload)
 
     def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
         return [

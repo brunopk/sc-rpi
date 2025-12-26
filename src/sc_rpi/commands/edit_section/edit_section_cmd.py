@@ -4,12 +4,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
+from mashumaro.mixins.json import DataClassJSONMixin
+
 from sc_rpi.commands.edit_section.edit_section_args import EditSectionArgs
-from sc_rpi.commands.edit_section.edit_section_resp import EditSectionResp
-from sc_rpi.models.command import Command
-from sc_rpi.models.response.status import Status
+from sc_rpi.commands.edit_section.edit_section_sc_rpi_result import (
+    EditSectionScRpiResult,
+)
+from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command_result.status import Status
 from sc_rpi.utils.mappings import map_sections
 
+# TODO: return the correct object for each MQTT topic
 
 @dataclass
 class EditSectionCmd(Command[EditSectionArgs]):
@@ -19,7 +24,7 @@ class EditSectionCmd(Command[EditSectionArgs]):
 
     name: str = "edit_section"
 
-    def run(self) -> EditSectionResp:
+    def run(self) -> dict[str, DataClassJSONMixin | str]:
         """Execute the command.
 
         :return Response: Contains the result of the execution.
@@ -41,4 +46,4 @@ class EditSectionCmd(Command[EditSectionArgs]):
         sections = self._hw_controller.list_sections()
         status = Status(map_sections(sections))
 
-        return EditSectionResp(HTTPStatus.ACCEPTED, EditSectionCmd.name, status)
+        return EditSectionScRpiResult(HTTPStatus.ACCEPTED, EditSectionCmd.name, status)

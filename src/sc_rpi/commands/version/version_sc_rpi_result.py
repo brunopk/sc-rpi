@@ -5,30 +5,33 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.version.version_resp_payload import VersionRespPayload
-from sc_rpi.models.response import Response
+from sc_rpi.commands.version.version_sc_rpi_result_payload import (
+  VersionScRpiResultPayload,
+)
+from sc_rpi.models.command.command_result.sc_rpi_result import ScRpiResult
 
 if TYPE_CHECKING:
   from http import HTTPStatus
 
 @dataclass
-class VersionResp(Response[VersionRespPayload]):
+class VersionScRpiResult(ScRpiResult[VersionScRpiResultPayload]):
     """Contains available sections."""
 
-    payload: VersionRespPayload
+    payload: VersionScRpiResultPayload
 
     def __init__(
         self,
         status_code: HTTPStatus,
         command_name: str,
-        version_resp_payload: VersionRespPayload,
+        version_sc_rpi_result_payload: VersionScRpiResultPayload,
     ) -> None:
         """Initialize the object.
 
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            version_resp_payload (VersionRespPayload): The result of a command.
+            version_sc_rpi_result_payload (VersionScRpiResultPayload): The result of a \
+                command.
 
         """
-        super().__init__(status_code, command_name, version_resp_payload, None)
+        super().__init__(status_code, command_name, version_sc_rpi_result_payload, None)

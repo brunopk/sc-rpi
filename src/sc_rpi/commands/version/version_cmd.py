@@ -8,11 +8,16 @@ from pathlib import Path
 from platform import python_version
 
 import toml
+from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.commands.version.version_resp import VersionResp
-from sc_rpi.commands.version.version_resp_payload import VersionRespPayload
+from sc_rpi.commands.version.version_sc_rpi_result import VersionScRpiResult
+from sc_rpi.commands.version.version_sc_rpi_result_payload import (
+    VersionScRpiResultPayload,
+)
 from sc_rpi.errors import ApiError
-from sc_rpi.models.command import Command
+from sc_rpi.models.command.command import Command
+
+# TODO: return the correct object for each MQTT topic
 
 
 @dataclass
@@ -21,7 +26,7 @@ class VersionCmd(Command[None]):
 
     name: str = "version"
 
-    def run(self) -> VersionResp:
+    def run(self) -> dict[str, DataClassJSONMixin | str]:
         """Execute the command.
 
         Returns:
@@ -29,8 +34,8 @@ class VersionCmd(Command[None]):
 
         """
         try:
-            payload = VersionRespPayload(python_version(), self._get_sc_rpi_version())
-            return VersionResp(HTTPStatus.ACCEPTED, VersionCmd.name, payload)
+            payload = VersionScRpiResultPayload(python_version(), self._get_sc_rpi_version())
+            return VersionScRpiResult(HTTPStatus.ACCEPTED, VersionCmd.name, payload)
         except FileNotFoundError as ex:
             raise ApiError from ex
         except ApiError:

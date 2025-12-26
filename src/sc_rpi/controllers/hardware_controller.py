@@ -32,7 +32,7 @@ class HardwareController:
             config (Config): Configurations of SC RPI.
 
         """
-        # Creates sections (as defined in config)
+        # Creates sections from config
         logger.debug("Initializing HardwareController instance")
         self._section_controller = SectionController(config)
         logger.debug("Initializing PixelStrip instance")
@@ -116,6 +116,21 @@ class HardwareController:
 
         """
         return self._section_controller.edit_section(section_id, start, end, color)
+
+    def get_section(self, section_id: str) -> Section:
+        """Obtain a section by ID.
+
+        Args:
+            section_id (str): Section to find.
+
+        Returns:
+            Section: Returns found section or raise an exception.
+
+        Raises:
+            ApiError:
+
+        """
+        return self._section_controller.get_section(section_id)
 
     def list_sections(self) -> list[Section]:
         """Return all defined sections.

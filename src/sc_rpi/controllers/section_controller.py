@@ -7,7 +7,7 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING, Optional
 
 from sc_rpi.controllers.section import Section
-from sc_rpi.enums import ErrorCode
+from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors import ApiError
 
 if TYPE_CHECKING:
@@ -96,6 +96,28 @@ class SectionController:
             new_end,
             new_color_list,
             is_on=is_on,
+        )
+
+    def get_section(self, section_id: str) -> Section:
+        """Obtain a section by ID.
+
+        Args:
+            section_id (str): Section to find.
+
+        Returns:
+            Section: Returns found section or raise an exception.
+
+        Raises:
+            ApiError:
+
+        """
+        if section_id not in self._section_ids:
+            raise ApiError(HTTPStatus.NOT_FOUND, ErrorCode.SECTION_NOT_FOUND)
+        return Section(
+            section_id,
+            self._limits_by_id[section_id],
+            self._color_list_by_id[section_id],
+            self._is_on_by_id[section_id],
         )
 
     def list_sections(self) -> list[Section]:

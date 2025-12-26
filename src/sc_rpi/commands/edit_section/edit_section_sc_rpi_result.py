@@ -1,19 +1,18 @@
-"""Contains the `StatusResp` class."""
+"""Contains the `EditSectionResp` class."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.models.response import Response
-from sc_rpi.models.response.status import Status
+from sc_rpi.models.command.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.command.command_result.status import Status
 
 if TYPE_CHECKING:
-    from http import HTTPStatus
-
+  from http import HTTPStatus
 
 @dataclass
-class StatusResp(Response[Status]):
+class EditSectionScRpiResult(ScRpiResult[Status]):
     """Contains available sections."""
 
     payload: Status

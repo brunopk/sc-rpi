@@ -1,9 +1,16 @@
 """Contains the HAMQTTDiscoveryMessage class."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Optional
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
+from sc_rpi.enums.homeassistant.color_mode import ColorMode
+from sc_rpi.enums.homeassistant.schema import Schema
+
+# TODO: Investigate why rgb topic is not working (by the way state topic is being used so it's not an important issue)
 
 @dataclass
 class HAMQTTDiscoveryMessage(DataClassJSONMixin):
@@ -13,7 +20,11 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     - Home Assistant requires `unique_id` to be unique to allow the entity to be \
       managed through the UI.
-    - `object_id` is used as part of an entity's command topic name.
+    - When schema is defined as JSON, Home Assistant will expect state, color, etc as \
+      keys of a JSON object in state topic messages.
+    - `rgb` attribute cannot be set when `supported_color_modes` contains \
+      `ColorMode.RGB` (see Home Assistant error logs).
+    - `rgb_state_topic` is optional (RGB color is sent in state_topic)
 
     More information:
       - [MQTT Discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery): \
@@ -23,6 +34,11 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     """
 
+    class Config:
+      """Required by Mashumaro library."""
+
+      omit_none = True
+
     name: str
 
     brightness: bool
@@ -31,10 +47,14 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     object_id: str
 
-    rgb: bool
-
-    schema: str
-
     state_topic: str
 
     unique_id: str
+
+    rgb: Optional[bool] = None
+
+    rgb_state_topic: Optional[str] = None
+
+    schema: Optional[Schema] = None
+
+    supported_color_modes: Optional[list[ColorMode]] = None

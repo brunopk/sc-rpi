@@ -1,18 +1,19 @@
-"""Contains the `TurnSectionOnResp` class."""
+"""Contains the `StatusResp` class."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.models.response import Response
-from sc_rpi.models.response.status import Status
+from sc_rpi.models.command.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.command.command_result.status import Status
 
 if TYPE_CHECKING:
-  from http import HTTPStatus
+    from http import HTTPStatus
+
 
 @dataclass
-class TurnSectionOnResp(Response[Status]):
+class StatusScRpiResult(ScRpiResult[Status]):
     """Contains available sections."""
 
     payload: Status
@@ -28,7 +29,7 @@ class TurnSectionOnResp(Response[Status]):
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            status (Status): The result of a command.
+            status (Status): The result of the command.
 
         """
         super().__init__(status_code, command_name, status, None)

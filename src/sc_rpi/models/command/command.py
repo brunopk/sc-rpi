@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Dict, Generic, Optional, TypeVar
 
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
@@ -11,9 +11,6 @@ from mashumaro.types import Discriminator
 
 from sc_rpi.controllers import HardwareController
 from sc_rpi.models.config import Config
-
-if TYPE_CHECKING:
-    from sc_rpi.models.response import Response
 
 CommandArgs = TypeVar("CommandArgs")
 
@@ -92,11 +89,12 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         cmd._hw_controller = hw_controller
         return cmd
 
-    def run(self) -> Response:
+    def run(self) -> Dict[str, DataClassJSONMixin | str]:
         """Execute the command.
 
         Returns:
-            Response: Contains the result of the execution
+            Dict[str, DataClassJSONMixin | str]: Each key represents an MQTT topic and \
+                the value represents the message that will be sent trough that topic
 
         """
         raise NotImplementedError

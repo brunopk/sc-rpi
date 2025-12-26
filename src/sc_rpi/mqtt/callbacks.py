@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from paho.mqtt.client import MQTTMessage
 
-from sc_rpi.utils.mqtt.topic_utils import (
+from sc_rpi.utils.topic_utils import (
     build_ha_command_topic,
     build_sc_rpi_command_topic,
 )

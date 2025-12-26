@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sc_rpi.models.color import Color
-from sc_rpi.models.response.section_aux import SectionAux
+from sc_rpi.models.command.command_result.section_aux import SectionAux
 
 if TYPE_CHECKING:
     from sc_rpi.controllers import Section
@@ -35,4 +35,14 @@ def map_sections(section_list: list[Section]) -> list[SectionAux]:
         )
         for section in section_list
     ]
+
+def map_color_to_ha_format(color: tuple[int, int, int]):
+    """Map a color to required format for RGB color state topic for Home Assistant.
+
+    Args:
+        color (tuple[int, int, int]): Color to be mapped (RBG)
+
+    """
+    return str(color)[1:-1].replace(" ", "")
+
 
