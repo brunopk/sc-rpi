@@ -217,6 +217,7 @@ class SectionController:
                 status=HTTPStatus.NOT_FOUND,
                 code=ErrorCode.SECTION_NOT_FOUND,
             )
+
         index = self._section_ids.index(section_id)
         self._is_on_by_id[section_id] = False
         self._is_on.insert(index, False)
@@ -226,7 +227,7 @@ class SectionController:
     def turn_section_on(
         self,
         section_id: str,
-        color: Optional[tuple[int, int, int]] = None,
+        color: tuple[int, int, int] | None = None,
     ) -> None:
         """Turn a section on.
 

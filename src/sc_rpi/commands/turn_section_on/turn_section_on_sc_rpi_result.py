@@ -21,14 +21,14 @@ class TurnSectionOnScRpiResult(ScRpiResult[Status]):
         self,
         status_code: HTTPStatus,
         command_name: str,
-        status: Status,
+        sc_rpi_result_payload: Status,
     ) -> None:
         """Initialize the object.
 
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            status (Status): The result of a command.
+            sc_rpi_result_payload (Status): Payload for the result of a command.
 
         """
-        super().__init__(status_code, command_name, status, None)
+        super().__init__(status_code, command_name, sc_rpi_result_payload, None)

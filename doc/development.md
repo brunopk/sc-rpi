@@ -1,9 +1,5 @@
 # Development
 
-## MQTT
-
-MQTT communication is handled using the [Paho](https://pypi.org/project/paho-mqtt/) library.
-
 ## Poetry
 
 Among other features, Poetry provides a mechanism to have different dependencies for different environments. For instance testing libraries are only available for development environment.
@@ -35,7 +31,7 @@ So to install development dependencies :
 
 1. Comment out all dependencies which are listed in `rpi-only-deps` group.
 2. Uncomment all dependencies which are listed in `dev` group.
-3. Install `dev` dependencies :
+3. Install all dependencies including `dev` dependencies :
 
     ```bash
     poetry install --with=dev 

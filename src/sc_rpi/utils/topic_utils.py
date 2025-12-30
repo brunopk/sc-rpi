@@ -85,7 +85,7 @@ def build_sc_rpi_result_topic() -> str:
       str: The topic name.
 
   """
-  return "scrpi/response"
+  return "scrpi/result"
 
 def matches_ha_command_topic(topic: str) -> bool:
   """Indicate whether the topic matches the Home Assistant command topic \

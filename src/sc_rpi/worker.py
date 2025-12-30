@@ -53,7 +53,9 @@ class Worker(Thread):
 
         """
         super().__init__(daemon=True, name="WorkerThread")
+
         LOGGER.debug("Initializing worker")
+
         self._config = config
         self._client = client
         self._hw_controller = HardwareController(config)
@@ -83,36 +85,36 @@ class Worker(Thread):
 
                 if matches_ha_command_topic(msg.topic):
                     ha_command = self._parse_ha_msg(msg_payload)
-                    sc_rpi_command = map_ha_command_to_sc_rpi_command(
+                    command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
                         self._config,
                         self._hw_controller,
                     )
                 elif matches_sc_rpi_command_topic(msg.topic):
-                    # TODO: continue with _parse_sc_rpi_msg
+                    # TODO: CONTINUE with _parse_sc_rpi_msg
                     sc_rpi_command = self._parse_sc_rpi_msg(msg)
                 else:
                     LOGGER.warning("Message received on unexpected topic %s", msg.topic)
 
                 if sc_rpi_command is not None:
-                    sc_rpi_command.validate()
-                    sc_rpi_command_result = sc_rpi_command.run()
-                    if len(sc_rpi_command_result.keys()) == 0:
+                    command.validate()
+                    command_result = sc_rpi_command.run()
+                    if len(command_result.keys()) == 0:
                         LOGGER.warning(
                             "No topics to return result of %s command",
                             sc_rpi_command.name,
                         )
                     else:
-                        for topic_name in sc_rpi_command_result:
+                        for topic_name in command_result:
                             topic_payload = (
-                                sc_rpi_command_result[topic_name]
-                                if isinstance(sc_rpi_command_result[topic_name], str)
-                                else sc_rpi_command_result[topic_name].to_json()
+                                command_result[topic_name]
+                                if isinstance(command_result[topic_name], str)
+                                else command_result[topic_name].to_json()
                             )
                             LOGGER.debug("Publishing result to %s topic", topic_name)
                             self._client.publish(topic_name, topic_payload)
-                            # TODO: CONTINUE send sc_rpi result (success or error) in the corresponding topic
+                            # TODO: CONTINUE send sc_rpi error in the corresponding topic
 
             except Exception as ex:
                 if sc_rpi_command is not None:

@@ -43,6 +43,7 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
             if self.args.color is not None
             else None
         )
+
         self._hw_controller.turn_section_on(self.args.section_id, color)
 
         sections = self._hw_controller.list_sections()
@@ -53,16 +54,16 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
             sc_rpi_result_payload,
         )
 
+        """
+        Setting the correct brightness is not implemented (it just returns what \
+            receives)
+        """
         turned_on_section = self._hw_controller.get_section(self.args.section_id)
-        ha_entity_state = (
-            HAState(
-                State.ON,
-                brightness=self.args.brightness,
-                color=self.args.color,
-                color_mode=ColorMode.RGB,
-            )
-            if turned_on_section.is_on
-            else HAState(State.OFF, brightness=self.args.brightness)
+        ha_entity_state = HAState(
+            State.ON,
+            brightness=self.args.brightness,
+            color=self.args.color,
+            color_mode=ColorMode.RGB,
         )
         ha_entity_state_topic = build_ha_state_topic(turned_on_section.id)
 

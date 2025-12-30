@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 # TODO: test what happend after removing this @dataclass (it should not be necessary)
 
+# TODO: log all actions (turning on section etc)
+
 @dataclass
 class HardwareController:
     """Provides an interface to control the strip (hardware).
@@ -34,11 +36,12 @@ class HardwareController:
         """
         # Creates sections from config
         logger.debug("Initializing HardwareController instance")
+
         self._section_controller = SectionController(config)
-        logger.debug("Initializing PixelStrip instance")
 
         self._strip_length = config.strip_config.strip_length
 
+        logger.debug("Initializing PixelStrip instance")
         self._strip = PixelStrip(
             config.strip_config.strip_length,
             config.strip_config.pin,
@@ -205,33 +208,30 @@ class HardwareController:
         section_id: str,
         color: tuple[int, int, int] | None = None,
     ) -> None:
-        """Turn on the entire strip or an specific section.
+        """Turn on a section off the strip.
 
         Args:
             section_id (str): Section of the strip to be turned on.
-            color (tuple[int, int, int] | None, optional): Color for all leds in the \
-                section.
+            color (tuple[int, int, int] | None, optional): Specified section will be \
+                turned on with this color.
 
         Raises:
             ApiError:
 
         """
-        if section_id is None:
-            self._is_on = True
-        else:
-            self._section_controller.turn_section_on(section_id, color)
+        self._section_controller.turn_section_on(section_id, color)
 
-    # TODO: change section_id: str | None = None to section_id: str , test turning section off (check that all sections remains unchanged)
+    # TODO: test turning section off (check that all sections remains unchanged)
 
-    def turn_off(self, section_id: str | None = None) -> None:
-        """Turn off the entire strip or an specific section.
+    def turn_section_off(self, section_id: str) -> None:
+        """Turn off a section off the strip.
+
+        Args:
+            section_id (str): Section of the strip to be turned off.
 
         Raises:
             ApiError:
 
         """
-        if section_id is None:
-            self._is_on = False
-        else:
-            self._section_controller.turn_section_off(section_id)
+        self._section_controller.turn_section_off(section_id)
 

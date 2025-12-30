@@ -429,6 +429,7 @@ Returns :
 
 ## Links
 
+- [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
 - [Home Assistant - MQTT Discovery mechanism](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)
 - [MQTT Explorer - Official site](https://mqtt-explorer.com/)
 - [MQTT protocol - Official site](https://mqtt.org/)

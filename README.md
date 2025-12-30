@@ -59,10 +59,12 @@ SC RPi is provided with more documentation in the `doc` folders :
 
 ## Links
 
+- [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
 - [Building the circuit for SC RPI](doc/circuit.md)
 - [Linux network configuration](/doc/network_configuration.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [Official MQTT protocol site](https://mqtt.org/)
+- [Official Paho PyPI website](https://pypi.org/project/paho-mqtt/)
 - [Official Python distribution of the rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
 - [Official Poetry website](https://python-poetry.org/)
 - [Python virtual environments](doc/virtual_environments.md)
