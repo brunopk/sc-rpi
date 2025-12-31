@@ -2,15 +2,15 @@
 
 [MQTT](https://mqtt.org/) (Message Queuing Telemetry Transport) is an application-level protocol, just like HTTP and others, defined around a publish/subscribe architecture. SC RPi uses MQTT to provide its API and to integrate with Home Assistant. It relies on the [paho-mqtt](https://pypi.org/project/paho-mqtt/) library for working with this protocol in Python.
 
-Commands are received from Home Assistant or directly from an MQTT client library such as [Paho](https://pypi.org/project/paho-mqtt/) or using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/). SC RPi is integrated with Home Assistant by listening to specific MQTT topics that are defined with the **[MQTT discovery mechanism](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)**. **Some of the most important topics to interact with Home Assistant are these:**
+Commands are received from Home Assistant or directly from an MQTT client library such as [Paho](https://pypi.org/project/paho-mqtt/) or using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/). SC RPi is integrated with Home Assistant by listening to specific MQTT topics that are defined with the **[MQTT discovery mechanism](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)**. Some of the most important topics to interact with Home Assistant are these:
 
-- Home Assistant command topic
-- State topic
+- **Home Assistant command topic**
+- **State topic**
 
 **Additionally, there some specific topics to interact with SC RPi directly:**
 
-- SC RPi command topic: `scrpi/<section-id>/command`
-- Result topic (for successful and failed SC RPi command execution results): `scrpi/result`
+- **S**C RPi command topic: `scrpi/<section-id>/command`**
+- **Result topic (for successful and failed SC RPi command execution results): `scrpi/result`**
 
 Note that **there's a specific command topic for each section in the strip**, similar to Home Assistant that requires a different topic for each entity (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages. Commands sent through the SC RPi command topic have the same format:
 
