@@ -49,7 +49,7 @@ where `code` is the error code (string).
 
 > **Colors are represented as an array of three values (RGB).**
 
-## edit_section
+## `edit_section`
 
 Change attributes of a section.
 
@@ -166,7 +166,7 @@ Returns:
 }
 ```
 
-## get_config
+## `get_config`
 
 Returns configuration parameters of SC RPI.
 
@@ -199,7 +199,7 @@ Returns:
 }
 ```
 
-## help
+## `help`
 
 Return available commands.
 
@@ -226,7 +226,7 @@ Returns:
 }
 ```
 
-## reset
+## `reset`
 
 Remove all sections.
 
@@ -250,7 +250,7 @@ Returns:
 }
 ```
 
-## status
+## `status`
 
 Return information of the current status of SC RPI.
 
@@ -280,7 +280,7 @@ Returns:
 }
 ```
 
-## turn_section_off
+## `turn_section_off`
 
 Turn off specific sections or the whole strip
 
@@ -327,7 +327,7 @@ Returns:
 }
 ```
 
-## turn_section_on
+## `turn_section_on`
 
 Turn on specific sections or the whole strip
 
@@ -402,7 +402,7 @@ Returns:
 }
 ```
 
-## version
+## `version`
 
 ### Example
   
