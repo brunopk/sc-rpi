@@ -80,6 +80,11 @@ class Worker(Thread):
 
             LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_payload)
 
+            """
+            All commands (from Home Assistant or from user) are first converted to \
+                an SC RPi command
+            """
+
             try:
                 sc_rpi_command = None
 
@@ -96,10 +101,13 @@ class Worker(Thread):
                     sc_rpi_command = self._parse_sc_rpi_msg(msg)
                 else:
                     LOGGER.warning("Message received on unexpected topic %s", msg.topic)
+                    continue
 
                 if sc_rpi_command is not None:
                     command.validate()
+
                     command_result = sc_rpi_command.run()
+
                     if len(command_result.keys()) == 0:
                         LOGGER.warning(
                             "No topics to return result of %s command",
@@ -115,6 +123,16 @@ class Worker(Thread):
                             LOGGER.debug("Publishing result to %s topic", topic_name)
                             self._client.publish(topic_name, topic_payload)
                             # TODO: CONTINUE send sc_rpi error in the corresponding topic
+
+            except ApiError as ex:
+                if sc_rpi_command is not None:
+                    LOGGER.warning(
+                        "Error executing command %s",
+                        sc_rpi_command.name,
+                        exc_info=ex,
+                    )
+                else:
+                    LOGGER.warning("Error executing command", exc_info=ex)
 
             except Exception as ex:
                 if sc_rpi_command is not None:
@@ -189,7 +207,6 @@ class Worker(Thread):
         LOGGER.info("_process_sc_rpi_command")
 
         try:
-            # TODO: Take into account that if some error occurs when parsing from `dict` (`from_dict` method), Mashumaro will raise `InvalidFieldValue`.
             cmd_as_dict: dict = loads(msg.payload.decode())
             cmd_name = cmd_as_dict.get("name")
             cmd_args = cmd_as_dict.get("args")
