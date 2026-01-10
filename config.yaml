@@ -3,7 +3,7 @@ default_gateway: 192.168.0.1
 default_network_interface: en0
 status_led: 17
 connection_timeout: 0.25
-log_level: DEBUG
+log_level: INFO
 mqtt_config:
     broker_config:
         host: homeassistant.local
