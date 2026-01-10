@@ -7,7 +7,7 @@ Commands are received from Home Assistant or directly from an MQTT client librar
 - **Home Assistant command topic**
 - **State topic**
 
-Home Assistant requires one command topic for each entity defined with the discovery mechanism mentioned before. **Additionally, there some specific topics to interact with SC RPi directly:**
+Home Assistant requires to define one command topic for each entity. **Additionally, there some specific topics to interact with SC RPi directly:**
 
 - **SC RPi command topic: `scrpi/command`**
 - **Result topic (for successful and failed SC RPi command execution results): `scrpi/result`**
