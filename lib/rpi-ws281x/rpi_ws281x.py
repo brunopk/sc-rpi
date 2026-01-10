@@ -2,7 +2,7 @@
 
 import logging
 
-_logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class Color:
@@ -14,11 +14,11 @@ class PixelStrip:
     pass
 
   def begin(self):
-    _logger.info("Initializing strip ...")
+    LOGGER.debug("Initializing strip")
 
   def setPixelColor(self, index: int, color: Color):
     pass
 
   def show(self) -> None:
     """Show the actual state of the strip."""
-    _logger.debug("Changing colors")
+    LOGGER.debug("Changing colors")
