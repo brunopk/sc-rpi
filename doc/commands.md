@@ -21,7 +21,7 @@ Note that there's **one** command topic for all sections in the strip (see [`/sr
 }
 ```
 
-where `args` is another JSON object. All commands execution will return a result through the **result topic** with this format :
+`args` is another JSON object. All commands execution will return a result through the **result topic** with this format :
 
 ```json
 {
@@ -30,7 +30,7 @@ where `args` is another JSON object. All commands execution will return a result
 }
 ```
 
-where `status` is an integer that adheres to the same semantics as in HTTP. Optionally, successful command results will have a **`payload`** field. 
+`status` is an integer that adheres to the same semantics as in HTTP. Optionally, successful command results will have a **`payload`** field. 
 
 Instead of `payload`, failed command messages will have an **`error`** field. Both, `payload` and `error` are JSON objects. An example of a failed command result is this:
 
