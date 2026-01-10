@@ -10,9 +10,9 @@ Commands are received from Home Assistant or directly from an MQTT client librar
 Home Assistant requires to define one command topic for each entity. **Additionally, there some specific topics to interact with SC RPi directly:**
 
 - **SC RPi command topic: `scrpi/command`**
-- **Result topic (for successful and failed SC RPi command execution results): `scrpi/result`**
+- **Result topic: `scrpi/result`**
 
-Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages. Commands sent through the SC RPi command topic have the same format:
+Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). The result topic is for both, successful and failed SC RPi command execution results. All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages. Commands sent through the SC RPi command topic have the same format:
 
 ```json
 {
