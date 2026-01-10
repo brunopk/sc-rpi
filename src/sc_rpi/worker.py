@@ -54,7 +54,7 @@ class Worker(Thread):
         """
         super().__init__(daemon=True, name="WorkerThread")
 
-        LOGGER.debug("Initializing worker")
+        LOGGER.info("Initializing worker")
 
         self._config = config
         self._client = client
@@ -90,7 +90,7 @@ class Worker(Thread):
 
                 if matches_ha_command_topic(msg.topic):
                     ha_command = self._parse_ha_msg(msg_payload)
-                    command = map_ha_command_to_sc_rpi_command(
+                    sc_rpi_command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
                         self._config,
@@ -104,7 +104,7 @@ class Worker(Thread):
                     continue
 
                 if sc_rpi_command is not None:
-                    command.validate()
+                    sc_rpi_command.validate()
 
                     command_result = sc_rpi_command.run()
 
