@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar, Union
 
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
@@ -13,6 +13,8 @@ from sc_rpi.controllers import HardwareController
 from sc_rpi.models.config import Config
 
 CommandArgs = TypeVar("CommandArgs")
+
+CommandResult = dict[str, Union[DataClassJSONMixin, str]]
 
 @dataclass
 class Command(Generic[CommandArgs], DataClassJSONMixin):
@@ -89,7 +91,7 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         cmd._hw_controller = hw_controller
         return cmd
 
-    def run(self) -> Dict[str, DataClassJSONMixin | str]:
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:

@@ -4,21 +4,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import TYPE_CHECKING
 
 from sc_rpi.commands.turn_section_off.turn_section_off_args import TurnSectionOffArgs
 from sc_rpi.commands.turn_section_off.turn_section_off_sc_rpi_result import (
     TurnSectionOffScRpiResult,
 )
 from sc_rpi.enums.homeassistant.state import State
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command import Command, CommandResult
 from sc_rpi.models.command.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.mappings import map_sections
 from sc_rpi.utils.topic_utils import build_ha_state_topic, build_sc_rpi_result_topic
 
-if TYPE_CHECKING:
-    from mashumaro.mixins.json import DataClassJSONMixin
 
 @dataclass
 class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
@@ -28,7 +26,8 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
 
     name: str = "turn_section_off"
 
-    def run(self) -> dict[str, DataClassJSONMixin | str]:
+    @log_call()
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:

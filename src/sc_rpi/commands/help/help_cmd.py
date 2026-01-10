@@ -5,11 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from http import HTTPStatus
 
-from mashumaro.mixins.json import DataClassJSONMixin
-
 from sc_rpi.commands.help.help_sc_rpi_result import HelpScRpiResult
 from sc_rpi.commands.help.help_sc_rpi_result_payload import HelpScRpiResultPayload
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command import Command, CommandResult
+from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.commands.dynamic_loading import load_command_names
 
 # TODO: return the correct object for each MQTT topic
@@ -27,7 +26,8 @@ class HelpCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> dict[str, DataClassJSONMixin | str]:
+    @log_call()
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:

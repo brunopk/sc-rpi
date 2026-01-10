@@ -6,8 +6,6 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from mashumaro.mixins.json import DataClassJSONMixin
-
 from sc_rpi.commands.get_config.get_config_sc_rpi_result import GetConfigScRpiResult
 from sc_rpi.commands.get_config.get_config_sc_rpi_result_payload import (
     GetConfigScRpiResultPayload,
@@ -16,7 +14,8 @@ from sc_rpi.commands.get_config.mqtt_config.broker_config import BrokerConfig
 from sc_rpi.commands.get_config.mqtt_config.mqtt_config import MQTTConfig
 from sc_rpi.commands.get_config.strip_config.section import Section
 from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command import Command, CommandResult
+from sc_rpi.utils.commands.decorators import log_call
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import strip_config
@@ -36,7 +35,8 @@ class GetConfigCmd(Command[None]):
         This method should be invoked before executing the command
         """
 
-    def run(self) -> dict[str, DataClassJSONMixin | str]:
+    @log_call()
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:

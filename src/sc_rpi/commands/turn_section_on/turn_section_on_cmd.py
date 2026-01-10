@@ -13,9 +13,10 @@ from sc_rpi.commands.turn_section_on.turn_section_on_sc_rpi_result import (
 )
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.state import State
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command import Command, CommandResult
 from sc_rpi.models.command.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.mappings import map_sections
 from sc_rpi.utils.topic_utils import (
     build_ha_state_topic,
@@ -31,7 +32,8 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
 
     name: str = "turn_section_on"
 
-    def run(self) -> dict[str, DataClassJSONMixin | str]:
+    @log_call()
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:

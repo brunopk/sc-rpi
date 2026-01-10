@@ -8,14 +8,14 @@ from pathlib import Path
 from platform import python_version
 
 import toml
-from mashumaro.mixins.json import DataClassJSONMixin
 
 from sc_rpi.commands.version.version_sc_rpi_result import VersionScRpiResult
 from sc_rpi.commands.version.version_sc_rpi_result_payload import (
     VersionScRpiResultPayload,
 )
 from sc_rpi.errors import ApiError
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.command.command import Command, CommandResult
+from sc_rpi.utils.commands.decorators import log_call
 
 # TODO: return the correct object for each MQTT topic
 
@@ -26,7 +26,8 @@ class VersionCmd(Command[None]):
 
     name: str = "version"
 
-    def run(self) -> dict[str, DataClassJSONMixin | str]:
+    @log_call()
+    def run(self) -> CommandResult:
         """Execute the command.
 
         Returns:
