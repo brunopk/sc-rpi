@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Optional
 
 from sc_rpi.controllers.section import Section
 from sc_rpi.enums.error_code import ErrorCode
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import Config

@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 from paho.mqtt.client import MQTTMessage
 
 from sc_rpi.utils.topic_utils import (
+    SC_RPI_COMMAND_TOPIC,
     build_ha_command_topic,
-    build_sc_rpi_command_topic,
 )
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
@@ -50,13 +50,12 @@ def on_connect(
     if reason_code.is_failure:
         error_msg = f"Failed to connect: {reason_code}. "
         "loop_forever() will retry connection"
-        logger.error(error_msg)
+        LOGGER.error(error_msg)
     else:
         ha_command_topic = build_ha_command_topic()
-        logger.info("Subscribing to %s", ha_command_topic)
+        LOGGER.info("Subscribing to %s", ha_command_topic)
         client.subscribe(ha_command_topic)
 
-        sc_rpi_command_topic = build_sc_rpi_command_topic()
-        logger.info("Subscribing to %s", sc_rpi_command_topic)
-        client.subscribe(sc_rpi_command_topic)
+        LOGGER.info("Subscribing to %s", SC_RPI_COMMAND_TOPIC)
+        client.subscribe(SC_RPI_COMMAND_TOPIC)
 

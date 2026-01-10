@@ -13,7 +13,7 @@ from sc_rpi.commands.version.version_sc_rpi_result import VersionScRpiResult
 from sc_rpi.commands.version.version_sc_rpi_result_payload import (
     VersionScRpiResultPayload,
 )
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.command.command import Command, CommandResult
 from sc_rpi.utils.commands.decorators import log_call
 

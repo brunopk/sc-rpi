@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
 
 """"
 This regexp SHOULD use the same prefix defined in HA_TOPIC_PREFIX.
@@ -18,7 +18,9 @@ It's the prefix for HA_COMMAND_TOPIC_PATTERN
 """
 HA_TOPIC_PREFIX = "scrpi/homeassistant"
 
-SC_RPI_COMMAND_TOPIC_PATTERN = re.compile(r"^scrpi\/([^\/#\x00]+)/command$")
+SC_RPI_COMMAND_TOPIC = "scrpi/command"
+
+SC_RPI_RESULT_TOPIC = "scrpi/result"
 
 def build_ha_discovery_topic(object_id: str) -> str:
   """Build Home Assistant entity discovery topic.
@@ -71,28 +73,6 @@ def build_ha_state_topic(object_id: str) -> str:
   """
   return f"{HA_TOPIC_PREFIX}/{object_id}/state"
 
-def build_sc_rpi_command_topic(section_id: str = "+") -> str:
-  """Build the SC RPi command topic.
-
-  Args:
-      section_id (str): Section ID to which send the commands. Defaults to '+' to \
-        consume messages for any section.
-
-  Returns:
-      str: The topic name.
-
-  """
-  return f"scrpi/{section_id}/command"
-
-def build_sc_rpi_result_topic() -> str:
-  """Build the SC RPi responses topic.
-
-  Returns:
-      str: The topic name.
-
-  """
-  return "scrpi/result"
-
 def matches_ha_command_topic(topic: str) -> bool:
   """Indicate whether the topic matches the Home Assistant command topic \
 
@@ -121,7 +101,7 @@ def matches_sc_rpi_command_topic(topic: str) -> bool:
         topic.
 
   """
-  return SC_RPI_COMMAND_TOPIC_PATTERN.match(topic) is not None
+  return topic == SC_RPI_COMMAND_TOPIC or topic == SC_RPI_COMMAND_TOPIC + "/"
 
 def get_object_id_from_ha_command_topic(topic: str) -> str:
   """Extract object ID from topic.

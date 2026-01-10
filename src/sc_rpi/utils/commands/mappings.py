@@ -11,12 +11,12 @@ from sc_rpi.commands.turn_section_on import TurnSectionOnCmd
 from sc_rpi.commands.turn_section_on.turn_section_on_args import TurnSectionOnArgs
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant import State
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
 from sc_rpi.utils.topic_utils import get_object_id_from_ha_command_topic
 
 if TYPE_CHECKING:
     from sc_rpi.controllers.hardware_controller import HardwareController
-    from sc_rpi.models.command import Command
+    from sc_rpi.models.command.command import Command
     from sc_rpi.models.config.config import Config
     from sc_rpi.models.homeassistant import HACommand
 

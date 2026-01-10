@@ -1,4 +1,5 @@
-"""Successful response for all commands."""
+"""Contain the `ScRpiResult` class."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -57,6 +58,7 @@ class ScRpiResult(Generic[ScRpiResultPayload], DataClassJSONMixin):
     class Config(BaseConfig):
         """Mashumaro config."""
 
+        omit_none = True
         discriminator = Discriminator(
             field="command_name",
             include_subtypes=True,

@@ -11,12 +11,16 @@ from typing import TYPE_CHECKING
 
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums.error_code import ErrorCode
+from sc_rpi.enums.invoker import Invoker
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.schema import Schema
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
+from sc_rpi.models.command.command import Command
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
+from sc_rpi.utils.mappings import map_exception_to_sc_rpi_result
 from sc_rpi.utils.topic_utils import (
+    SC_RPI_RESULT_TOPIC,
     build_ha_command_topic,
     build_ha_discovery_topic,
     build_ha_state_topic,
@@ -29,7 +33,6 @@ from sc_rpi.utils.topic_utils import (
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
 
-    from sc_rpi.models.command import Command
     from sc_rpi.models.config import Config
     from sc_rpi.models.config.strip_config import Section
 
@@ -75,10 +78,11 @@ class Worker(Thread):
         self._publish_ha_entities(self._config.strip_config.sections)
 
         while True:
+            invoker = None
             msg = self._message_queue.get()
-            msg_payload = msg.payload.decode()
+            msg_decoded = msg.payload.decode()
 
-            LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_payload)
+            LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
 
             """
             All commands (from Home Assistant or from user) are first converted to \
@@ -89,7 +93,8 @@ class Worker(Thread):
                 sc_rpi_command = None
 
                 if matches_ha_command_topic(msg.topic):
-                    ha_command = self._parse_ha_msg(msg_payload)
+                    invoker = Invoker.HOME_ASSISTANT
+                    ha_command = self._parse_ha_msg(msg_decoded)
                     sc_rpi_command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
@@ -97,8 +102,8 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 elif matches_sc_rpi_command_topic(msg.topic):
-                    # TODO: CONTINUE with _parse_sc_rpi_msg
-                    sc_rpi_command = self._parse_sc_rpi_msg(msg)
+                    invoker = Invoker.USER
+                    sc_rpi_command = self._parse_sc_rpi_msg(msg_decoded)
                 else:
                     LOGGER.warning("Message received on unexpected topic %s", msg.topic)
                     continue
@@ -122,27 +127,10 @@ class Worker(Thread):
                             )
                             LOGGER.debug("Publishing result to %s topic", topic_name)
                             self._client.publish(topic_name, topic_payload)
-                            # TODO: CONTINUE send sc_rpi error in the corresponding topic
-
-            except ApiError as ex:
-                if sc_rpi_command is not None:
-                    LOGGER.warning(
-                        "Error executing command %s",
-                        sc_rpi_command.name,
-                        exc_info=ex,
-                    )
-                else:
-                    LOGGER.warning("Error executing command", exc_info=ex)
 
             except Exception as ex:
-                if sc_rpi_command is not None:
-                    LOGGER.exception(
-                        "Error executing command %s",
-                        sc_rpi_command.name,
-                        exc_info=ex,
-                    )
-                else:
-                    LOGGER.exception("Error executing command", exc_info=ex)
+
+                self._handle_exception(sc_rpi_command, invoker, ex)
 
             self._message_queue.task_done()
 
@@ -178,11 +166,10 @@ class Worker(Thread):
             )
 
     def _parse_ha_msg(self, msg: str) -> HACommand:
-        """Parse a message from Home Assistant (command topic).
+        """Parse a message from Home Assistant.
 
         Args:
-            msg (MQTTMessage): Message received in the `on_message` callback passed to \
-                the Paho client object.
+            msg (str): Decoded message (UTF-8).
 
         Raises:
             ApiError: Raises this error if there's any problem parsing the message, \
@@ -202,14 +189,24 @@ class Worker(Thread):
                 "Invalid JSON",
             ) from ex
 
-    def _parse_sc_rpi_msg(self, msg: MQTTMessage) -> Command:
-        # TODO: implement similar to _parse_ha_msg method
-        LOGGER.info("_process_sc_rpi_command")
+    def _parse_sc_rpi_msg(self, msg: str) -> Command:
+        """Parse a message from the user to SC RPi (command).
 
+        Args:
+             msg (str): Decoded message (UTF-8).
+
+
+        Raises:
+            ApiError: Raises this error if there's any problem parsing the message, \
+                for example if some attribute don't have required format.
+
+        Returns:
+            Command:
+
+        """
         try:
-            cmd_as_dict: dict = loads(msg.payload.decode())
-            cmd_name = cmd_as_dict.get("name")
-            cmd_args = cmd_as_dict.get("args")
+            cmd_as_dict: dict = loads(msg)
+            return Command.from_dict(cmd_as_dict)
         except Exception as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,
@@ -217,37 +214,38 @@ class Worker(Thread):
                 "Invalid JSON",
             ) from ex
 
-        if not isinstance(cmd_as_dict, dict):
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "Invalid JSON",
-            )
+    def _handle_exception(
+        self,
+        sc_rpi_command: Command | None,
+        invoker: Invoker | None,
+        ex: ApiError | Exception,
+    ) -> None:
+        """Send an `ScRpiResult` to the user.
 
-        if cmd_name is None:
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "'name' not defined",
-            )
+        Result is sent through the result topic **only** for users commands, not for \
+            Home Assistant commands.
 
-        if cmd_args is None:
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "'args' not defined",
-            )
+        Args:
+            sc_rpi_command (Command): Use this parameter if the exception was caused \
+                by a command.
+            invoker (Invoker): Represents who invoked the command. Use `None` if \
+                invoker cannot be determined
+            ex (ApiError | Exception): Exception to log its stack trace
 
-        cmd_class = self._command_dictionary.get(cmd_name)
-        if cmd_class is None:
-            raise ApiError(
-                HTTPStatus.NOT_FOUND,
-                ErrorCode.COMMAND_NOT_FOUND,
-                f"Command {cmd_name} not found",
-            )
-
-        return cmd_class(
-            cmd_args,
-            config=self._config,
-            hw_controller=self._hw_controller,
+        """
+        msg = (
+            f"Error executing command {sc_rpi_command.name}"
+            if sc_rpi_command is not None
+            else "Error executing command"
         )
+        if isinstance(ex, ApiError):
+            LOGGER.warning(msg, exc_info=ex)
+        else:
+            LOGGER.exception(msg, exc_info=ex)
+
+        if invoker == Invoker.USER:
+            try:
+                sc_rpi_result = map_exception_to_sc_rpi_result(ex, sc_rpi_command)
+                self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
+            except Exception as ex:
+                LOGGER.warning("Error sending result", exc_info=ex)

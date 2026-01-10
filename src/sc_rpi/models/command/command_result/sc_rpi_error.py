@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sc_rpi.enums import ErrorCode
+from sc_rpi.enums.error_code import ErrorCode
 
 
 @dataclass

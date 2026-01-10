@@ -15,7 +15,7 @@ from sc_rpi.models.command.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
 from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.mappings import map_sections
-from sc_rpi.utils.topic_utils import build_ha_state_topic, build_sc_rpi_result_topic
+from sc_rpi.utils.topic_utils import build_ha_state_topic, SC_RPI_RESULT_TOPIC
 
 
 @dataclass
@@ -56,11 +56,6 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         self._hw_controller.render()
 
         return {
-            self.__sc_rpi_result_topic: sc_rpi_result,
+            SC_RPI_RESULT_TOPIC: sc_rpi_result,
             ha_entity_state_topic: ha_entity_state,
         }
-
-    def __post_init__(self) -> None:
-        """Post initialization (see Mashumaro documentation)."""
-        self.__sc_rpi_result_topic = build_sc_rpi_result_topic()
-
