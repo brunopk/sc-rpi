@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from sc_rpi.controllers.section import Section
     from sc_rpi.models.config import Config
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 # TODO: test what happend after removing this @dataclass (it should not be necessary)
 
@@ -35,13 +35,13 @@ class HardwareController:
 
         """
         # Creates sections from config
-        logger.debug("Initializing HardwareController instance")
+        LOGGER.info("Initializing controller")
 
         self._section_controller = SectionController(config)
 
         self._strip_length = config.strip_config.strip_length
 
-        logger.debug("Initializing PixelStrip instance")
+        LOGGER.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
             config.strip_config.strip_length,
             config.strip_config.pin,
@@ -194,7 +194,7 @@ class HardwareController:
         """Render the actual configuration on the hardware."""
         colors = self.concatenate_sections()
         if len(colors) == 0:
-            logger.warning(
+            LOGGER.warning(
                 "Nothing to render, probably sections were not defined correctly",
             )
         else:
