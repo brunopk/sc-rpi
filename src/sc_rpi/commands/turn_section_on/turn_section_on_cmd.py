@@ -21,6 +21,7 @@ from sc_rpi.utils.topic_utils import (
     build_ha_state_topic,
 )
 
+# TODO: if section is not modify, do not return any message to HA
 
 @dataclass
 class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
@@ -67,11 +68,6 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
         )
         ha_entity_state_topic = build_ha_state_topic(turned_on_section.id)
 
-        """
-        IMPORTANT: rendering strip should be the last thing before returning from the \
-            function to avoid rendering anything before any part of the code could \
-                raise an exception.
-        """
         self._hw_controller.render()
 
         return {

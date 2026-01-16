@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from sc_rpi.models.config import strip_config
 
 
-# TODO: return the correct object for each MQTT topic
+# TODO: CONTINUE return the correct object for each MQTT topic
 
 @dataclass
 class GetConfigCmd(Command[None]):

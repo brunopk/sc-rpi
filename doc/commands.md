@@ -12,7 +12,7 @@ Home Assistant requires to define one command topic for each entity. **Additiona
 - **SC RPi command topic: `scrpi/command`**
 - **Result topic: `scrpi/result`**
 
-Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). The result topic is for both, successful and failed SC RPi command execution results. All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages. Commands sent through the SC RPi command topic have the same format:
+Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). The result topic is for both, successful and failed SC RPi command execution results. Commands sent through the SC RPi command topic have the same format:
 
 ```json
 {
@@ -21,7 +21,7 @@ Note that there's **one** command topic for all sections in the strip (see [`/sr
 }
 ```
 
-`args` is another JSON object. All commands execution will return a result through the **result topic** with this format :
+All commands, **from user or from Home Assistant**, will return a result through the **result topic** with this format :
 
 ```json
 {
@@ -30,9 +30,7 @@ Note that there's **one** command topic for all sections in the strip (see [`/sr
 }
 ```
 
-`status` is an integer that adheres to the same semantics as in HTTP. Optionally, successful command results will have a **`payload`** field. 
-
-Instead of `payload`, failed command messages will have an **`error`** field. Both, `payload` and `error` are JSON objects. An example of a failed command result is this:
+An example of a failed command result is this:
 
 ```json
 {
@@ -45,9 +43,22 @@ Instead of `payload`, failed command messages will have an **`error`** field. Bo
 }
 ```
 
-where `code` is the error code (string).
+**Notes for commands and results :**
 
-> **Colors are represented as an array of three values (RGB).**
+- All messages, to/from SC RPi and Home Assistant, are **JSON-formatted** messages.
+- Colors are represented as an array of three values (RGB).
+
+**Notes for commands :**
+
+- `args` is a JSON object.
+
+**Notes for results :**
+
+- `payload` and `error` are JSON objects.
+- `status` is an integer that adheres to the same semantics as in HTTP.
+- `code` is the error code (string).
+- Successful command results will have a `payload` field.
+- Failed command messages will have an `error` field (instead of `payload`).
 
 ## `edit_section`
 

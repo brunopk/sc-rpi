@@ -23,7 +23,7 @@ class HAState(DataClassJSONMixin):
 
     state: State
 
-    brightness: Optional[int]
+    brightness: Optional[int] = None
 
     color: Optional[Color] = None
 

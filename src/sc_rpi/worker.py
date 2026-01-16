@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums.error_code import ErrorCode
-from sc_rpi.enums.invoker import Invoker
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.schema import Schema
 from sc_rpi.errors.api_error import ApiError
@@ -78,14 +77,13 @@ class Worker(Thread):
         self._publish_ha_entities(self._config.strip_config.sections)
 
         while True:
-            invoker = None
             msg = self._message_queue.get()
             msg_decoded = msg.payload.decode()
 
             LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
 
             """
-            All commands (from Home Assistant or from user) are first converted to \
+            All commands, from Home Assistant or from user, are first converted to \
                 an SC RPi command
             """
 
@@ -93,8 +91,7 @@ class Worker(Thread):
                 sc_rpi_command = None
 
                 if matches_ha_command_topic(msg.topic):
-                    invoker = Invoker.HOME_ASSISTANT
-                    ha_command = self._parse_ha_msg(msg_decoded)
+                    ha_command = self._parse_ha_cmd(msg_decoded)
                     sc_rpi_command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
@@ -102,8 +99,7 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 elif matches_sc_rpi_command_topic(msg.topic):
-                    invoker = Invoker.USER
-                    sc_rpi_command = self._parse_sc_rpi_msg(msg_decoded)
+                    sc_rpi_command = self._parse_sc_rpi_cmd(msg_decoded)
                 else:
                     LOGGER.warning("Message received on unexpected topic %s", msg.topic)
                     continue
@@ -130,7 +126,7 @@ class Worker(Thread):
 
             except Exception as ex:
 
-                self._handle_exception(sc_rpi_command, invoker, ex)
+                self._handle_exception(sc_rpi_command, ex)
 
             self._message_queue.task_done()
 
@@ -165,11 +161,11 @@ class Worker(Thread):
                 section.id,
             )
 
-    def _parse_ha_msg(self, msg: str) -> HACommand:
+    def _parse_ha_cmd(self, cmd: str) -> HACommand:
         """Parse a message from Home Assistant.
 
         Args:
-            msg (str): Decoded message (UTF-8).
+            cmd (str): Command from Home Assistant (UTF-8 decoded).
 
         Raises:
             ApiError: Raises this error if there's any problem parsing the message, \
@@ -180,7 +176,7 @@ class Worker(Thread):
 
         """
         try:
-            cmd_as_dict: dict = loads(msg)
+            cmd_as_dict: dict = loads(cmd)
             return HACommand.from_dict(cmd_as_dict)
         except Exception as ex:
             raise ApiError(
@@ -189,11 +185,11 @@ class Worker(Thread):
                 "Invalid JSON",
             ) from ex
 
-    def _parse_sc_rpi_msg(self, msg: str) -> Command:
+    def _parse_sc_rpi_cmd(self, cmd: str) -> Command:
         """Parse a message from the user to SC RPi (command).
 
         Args:
-             msg (str): Decoded message (UTF-8).
+             cmd (str): Command for SC RPi decoded (UTF-8 decoded).
 
 
         Raises:
@@ -205,7 +201,7 @@ class Worker(Thread):
 
         """
         try:
-            cmd_as_dict: dict = loads(msg)
+            cmd_as_dict: dict = loads(cmd)
             return Command.from_dict(cmd_as_dict)
         except Exception as ex:
             raise ApiError(
@@ -217,7 +213,6 @@ class Worker(Thread):
     def _handle_exception(
         self,
         sc_rpi_command: Command | None,
-        invoker: Invoker | None,
         ex: ApiError | Exception,
     ) -> None:
         """Send an `ScRpiResult` to the user.
@@ -228,8 +223,6 @@ class Worker(Thread):
         Args:
             sc_rpi_command (Command): Use this parameter if the exception was caused \
                 by a command.
-            invoker (Invoker): Represents who invoked the command. Use `None` if \
-                invoker cannot be determined
             ex (ApiError | Exception): Exception to log its stack trace
 
         """
@@ -243,9 +236,8 @@ class Worker(Thread):
         else:
             LOGGER.exception(msg, exc_info=ex)
 
-        if invoker == Invoker.USER:
-            try:
-                sc_rpi_result = map_exception_to_sc_rpi_result(ex, sc_rpi_command)
-                self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
-            except Exception as ex:
-                LOGGER.warning("Error sending result", exc_info=ex)
+        try:
+            sc_rpi_result = map_exception_to_sc_rpi_result(ex, sc_rpi_command)
+            self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
+        except Exception as ex:
+            LOGGER.warning("Error sending result", exc_info=ex)

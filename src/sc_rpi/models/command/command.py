@@ -33,10 +33,14 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
 
 
     Important considerations:
+
     - **The new class must inherit from `Command`.**
     - **The new class must contain the `name` class attribute** in order for the \
         Mashumaro discriminator to work correctly (discriminator is configured in the \
             `Config` class below).
+    - **Rendering strip should be the last thing before returning from `run` \
+        to avoid rendering anything before any part of the code could raise an \
+            exception.**
     - The value for `name` should be the command name that API users will use when \
         invoking the command and it should be the snake-case version of the class name
     - Command should not interact with MQTT, this is done by workers \
