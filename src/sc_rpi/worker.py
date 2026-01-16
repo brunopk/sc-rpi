@@ -215,15 +215,14 @@ class Worker(Thread):
         sc_rpi_command: Command | None,
         ex: ApiError | Exception,
     ) -> None:
-        """Send an `ScRpiResult` to the user.
+        """Handle the exception sending the corresponding message through the \
 
-        Result is sent through the result topic **only** for users commands, not for \
-            Home Assistant commands.
+        corresponding topics.
 
         Args:
             sc_rpi_command (Command): Use this parameter if the exception was caused \
                 by a command.
-            ex (ApiError | Exception): Exception to log its stack trace
+            ex (ApiError | Exception): Exception to be handled.
 
         """
         msg = (
