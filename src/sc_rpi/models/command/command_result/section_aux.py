@@ -11,7 +11,7 @@ from sc_rpi.models.color import Color
 class SectionAux:
     """Represents a section of leds in the strip."""
 
-    ha_entity_id: str
+    id: str
 
     start: int
 

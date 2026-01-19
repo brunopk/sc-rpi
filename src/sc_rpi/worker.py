@@ -99,7 +99,11 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 elif matches_sc_rpi_command_topic(msg.topic):
-                    sc_rpi_command = self._parse_sc_rpi_cmd(msg_decoded)
+                    sc_rpi_command = self._parse_sc_rpi_cmd(
+                        msg_decoded,
+                        self._config,
+                        self._hw_controller,
+                    )
                 else:
                     LOGGER.warning("Message received on unexpected topic %s", msg.topic)
                     continue
@@ -185,11 +189,18 @@ class Worker(Thread):
                 "Invalid JSON",
             ) from ex
 
-    def _parse_sc_rpi_cmd(self, cmd: str) -> Command:
+    def _parse_sc_rpi_cmd(
+        self,
+        cmd: str,
+        config: Config,
+        hw_controller: HardwareController,
+    ) -> Command:
         """Parse a message from the user to SC RPi (command).
 
         Args:
-             cmd (str): Command for SC RPi decoded (UTF-8 decoded).
+            cmd (str): Command for SC RPi decoded (UTF-8).
+            config (Config): SC RPi configuration. 
+            hw_controller (HardwareController): Used to interact with the hardware.
 
 
         Raises:
@@ -202,7 +213,7 @@ class Worker(Thread):
         """
         try:
             cmd_as_dict: dict = loads(cmd)
-            return Command.from_dict(cmd_as_dict)
+            return Command.from_dict_wrapper(cmd_as_dict, config, hw_controller)
         except Exception as ex:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,

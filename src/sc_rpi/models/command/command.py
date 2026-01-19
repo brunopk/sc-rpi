@@ -41,17 +41,22 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
     - **Rendering strip should be the last thing before returning from `run` \
         to avoid rendering anything before any part of the code could raise an \
             exception.**
+    - **This class is not thread-safe**, this means that `Config` and \
+        `HardwareController` instances may be shared between a number of `Command` \
+            instances in different threads.
+    - **Use `from_dict_wrapper`** instead of `from_dict` to create `Command` instances \
+        from a dictionary.
+    - **Do not use `to_dict`**, this method will method will expose private class \
+        attributes such as `_config`.
+
+    Other considerations :
+
     - The value for `name` should be the command name that API users will use when \
         invoking the command and it should be the snake-case version of the class name
     - Command should not interact with MQTT, this is done by workers \
         (`src/sc_rpi/worker.py`).
-    - Use `from_dict_wrapper` instead of `from_dict` to create `Command` instances \
-        from a dictionary. If some error occurs when using this method, Mashumaro will \
-            raise `InvalidFieldValue`.
     - All subclasses must be imported before using them in order for mashumaro \
         discriminators to work correctly.
-    - Do not use `to_dict`, this method will method will expose private class \
-        attributes such as `_config`.
 
     """
 
@@ -84,9 +89,7 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
 
         Args:
             data: dict: Dictionary from which to create the command.
-            config (Config): SC RPi configuration. Take into account that `Command` is \
-                not thead-safe (this `Config` instance may be shared between a number \
-                    of `Command` instances in different threads).
+            config (Config): SC RPi configuration.
             hw_controller (HardwareController): Used to interact with the hardware.
 
         """

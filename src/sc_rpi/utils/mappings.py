@@ -68,7 +68,7 @@ def map_exception_to_sc_rpi_result(ex: Exception, sc_rpi_command: Command | None
         ScRpiResult(
             ex.status,
             command_name,
-            sc_rpi_error=ScRpiError(ex.code, str(ex.code)),
+            sc_rpi_error=ScRpiError(ex.code, ex.code.name),
         )
         if isinstance(ex, ApiError)
         else ScRpiResult(
