@@ -20,8 +20,6 @@ from sc_rpi.utils.topic_utils import (
     build_ha_state_topic,
 )
 
-# TODO: CONTINUE test all topic are returning the correct result
-
 
 @dataclass
 class EditSectionCmd(Command[EditSectionArgs]):
