@@ -14,7 +14,7 @@ from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.schema import Schema
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.models.command.command import Command
+from sc_rpi.models.commands.command import Command
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
 from sc_rpi.utils.mappings import map_exception_to_sc_rpi_result

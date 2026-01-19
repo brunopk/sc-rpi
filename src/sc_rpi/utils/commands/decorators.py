@@ -6,7 +6,7 @@ import logging
 from functools import wraps
 from typing import TYPE_CHECKING, Callable
 
-from sc_rpi.models.command.command import Command, CommandResult
+from sc_rpi.models.commands.command import Command, CommandResult
 
 if TYPE_CHECKING:
   from mashumaro.mixins.json import DataClassJSONMixin
