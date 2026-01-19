@@ -16,12 +16,10 @@ from sc_rpi.commands.get_config.strip_config.section import Section
 from sc_rpi.commands.get_config.strip_config.strip_config import StripConfig
 from sc_rpi.models.command.command import Command, CommandResult
 from sc_rpi.utils.commands.decorators import log_call
+from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import strip_config
-
-
-# TODO: CONTINUE return the correct object for each MQTT topic
 
 @dataclass
 class GetConfigCmd(Command[None]):
@@ -73,8 +71,13 @@ class GetConfigCmd(Command[None]):
             self._config.status_led,
             strip_config,
         )
+        sc_rpi_result = GetConfigScRpiResult(
+            HTTPStatus.ACCEPTED,
+            GetConfigCmd.name,
+            payload,
+        )
 
-        return GetConfigScRpiResult(HTTPStatus.ACCEPTED, GetConfigCmd.name, payload)
+        return {SC_RPI_RESULT_TOPIC: sc_rpi_result}
 
     def _map_sections(self, sections: list[strip_config.Section]) -> list[Section]:
         return [

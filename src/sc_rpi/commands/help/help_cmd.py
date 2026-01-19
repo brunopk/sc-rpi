@@ -10,8 +10,7 @@ from sc_rpi.commands.help.help_sc_rpi_result_payload import HelpScRpiResultPaylo
 from sc_rpi.models.command.command import Command, CommandResult
 from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.commands.dynamic_loading import load_command_names
-
-# TODO: return the correct object for each MQTT topic
+from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
@@ -36,5 +35,5 @@ class HelpCmd(Command[None]):
         """
         command_names = load_command_names()
         payload = HelpScRpiResultPayload(sorted(command_names))
-
-        return HelpScRpiResult(HTTPStatus.ACCEPTED, HelpCmd.name, payload)
+        sc_rpi_result = HelpScRpiResult(HTTPStatus.ACCEPTED, HelpCmd.name, payload)
+        return {SC_RPI_RESULT_TOPIC: sc_rpi_result }
