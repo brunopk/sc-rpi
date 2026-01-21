@@ -5,11 +5,17 @@ There're many ways to configure network in Linux :
 - [Using Network Manager](#using-network-manager)<!-- This is content table auto update in Visual Code-->
 - [Using WPA supplicant (through configuration files)](#using-wpa-supplicant)<!-- This is content table auto update in Visual Code-->
 
-**The preferred way to configure the network in Raspbian OS is using Network Manager.** To check to which device is the Raspberry connected:
+</br>
+
+> **The preferred way to configure the network in Raspbian OS is using Network Manager.**
+
+To check to which device is the Raspberry connected:
 
 ```bash
 ifconfig
 ```
+
+or :
 
 ```bash
 iw wlan0 link
@@ -79,7 +85,7 @@ sudo systemctl start NetworkManager
 
 ### Common errors
 
-### Soft blocked
+#### Soft blocked
 
 If `nmcli` (`nmcli` command with no arguments) returns something like this :
 

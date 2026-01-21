@@ -26,7 +26,7 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
     </br>
 
-**[Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network_configuration.md)**
+> Ensure the Raspberry Pi is properly connected to a wired or wireless (for more information refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)).
 
 ## Development
 
@@ -42,7 +42,7 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
     </br>
 
-For more information refer to [`doc/development`](doc/development.md).
+> For more information refer to [`doc/development`](doc/development.md).
 
 ## Documentation
 
