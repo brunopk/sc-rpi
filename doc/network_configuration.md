@@ -35,7 +35,7 @@ wpa_cli -i wlan0 STATUS
 
 </br>
 
-> It may be necessary to run this commands with `sudo`.
+> It may be necessary to run these commands with `sudo`.
 
 ## Using Network Manager
 
