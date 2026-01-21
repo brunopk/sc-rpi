@@ -131,7 +131,7 @@ This will return the list of available WiFi networks.
 
 ## Using WPA supplicant
 
-Network configuration can be set by editing */etc/wpa_supplicant/wpa_supplicant.conf* with something similar to this :
+Network configuration can be set by editing `/etc/wpa_supplicant/wpa_supplicant.conf` with something similar to this :
 
 ```conf
 network={
