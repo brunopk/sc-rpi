@@ -1,8 +1,37 @@
 # Network configuration
 
-**The preferred way to configure the network in Raspbian OS is using Network Manager (see [Using Network Manager](#using-network-manager) below)**, but it can also be configured with WPA Supplicant (see [Using WPA Supplicant](#using-wpa-supplicant) below).
+There're many ways to configure network in Linux :
 
-# Using Network Manager
+- [Using Network Manager](#using-network-manager)<!-- This is content table auto update in Visual Code-->
+- [Using WPA supplicant (through configuration files)](#using-wpa-supplicant)<!-- This is content table auto update in Visual Code-->
+
+**The preferred way to configure the network in Raspbian OS is using Network Manager.** To check to which device is the Raspberry connected:
+
+```bash
+ifconfig
+```
+
+```bash
+iw wlan0 link
+```
+
+or :
+
+```bash
+iwconfig wlan0
+```
+
+or :
+
+```bash
+wpa_cli -i wlan0 STATUS   
+```
+
+</br>
+
+> It may be necessary to run this commands with `sudo`.
+
+## Using Network Manager
 
 To connect to a WiFi network :
 
@@ -16,7 +45,39 @@ To discover WiFi networks (with or without `sudo`):
 nmcli device wifi list
 ```
 
-## Common errors
+### Using Network Manager with Raspbian GNU/Linux 11 (Bullseye)
+
+Install Network Manager (if not installed yet):
+
+```bash
+sudo apt install network-manager
+```
+
+Disable `dhcpcd` service (optional but recommended to avoid conflicts) :
+
+```bash
+sudo systemctl disable dhcpcd
+```
+
+stop it:
+
+```bash
+sudo systemctl stop dhcpcd
+```
+
+Finally, enable Network Manager service :
+
+```bash
+sudo systemctl enable NetworkManager
+```
+
+and start it:
+
+```bash
+sudo systemctl start NetworkManager
+```
+
+### Common errors
 
 ### Soft blocked
 
@@ -62,44 +123,7 @@ nmcli device wifi list
 
 This will return the list of available WiFi networks.
 
-### Configuration in Raspbian GNU/Linux 11 (Bullseye)**
-
-</br>
-
-##  Using Network Manager with Raspbian GNU/Linux 11 (Bullseye)
-
-Install Network Manager (if not installed yet):
-
-```bash
-sudo apt install network-manager
-```
-
-Disable `dhcpcd` service (optional but recommended to avoid conflicts) :
-
-```bash
-sudo systemctl disable dhcpcd
-```
-
-stop it:
-
-```bash
-sudo systemctl stop dhcpcd
-```
-
-Finally, enable Network Manager service :
-
-```bash
-sudo systemctl enable NetworkManager
-```
-
-and start it:
-
-```bash
-sudo systemctl start NetworkManager
-```
-
-
-# Using WPA supplicant
+## Using WPA supplicant
 
 Network configuration can be set by editing */etc/wpa_supplicant/wpa_supplicant.conf* with something similar to this :
 
@@ -112,28 +136,7 @@ network={
 }
 ```
 
-</br>
-</br>
-
-To check to which device is the Raspberry connected:
-
-```bash
-iw wlan0 link
-```
-
-or :
-
-```bash
-iwconfig wlan0
-```
-
-or :
-
-```bash
-wpa_cli -i wlan0 STATUS   
-```
-
 ## Links
 
-- [Querry wpa_supplicant with which AP is it associated](https://unix.stackexchange.com/questions/454472/querry-wpa-supplicant-with-which-ap-is-it-associated).
+- [Query wpa_supplicant with which AP is it associated](https://unix.stackexchange.com/questions/454472/querry-wpa-supplicant-with-which-ap-is-it-associated).
 - [Connecting with wpa_cli](https://wiki.archlinux.org/title/Wpa_supplicant#Connecting_with_wpa_cli)

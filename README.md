@@ -26,7 +26,7 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
     </br>
 
-> [Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network.md)
+**[Ensure the Raspberry Pi is properly connected to a wired (LAN) or wireless (WLAN) network](/doc/network_configuration.md)**
 
 ## Development
 
@@ -43,8 +43,6 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 For more information refer to `doc/development`.
 
 ## Documentation
-
-SC RPi is provided with more documentation in the `doc` folders :
 
 - [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
 - [`doc/commands.md`](doc/commands.md): describes SC RPi commands
