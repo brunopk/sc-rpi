@@ -40,7 +40,9 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
     python -m sc_rpi.main
     ```
 
-For more information refer to `doc/development`.
+    </br>
+
+For more information refer to [`doc/development`](doc/development.md).
 
 ## Documentation
 
