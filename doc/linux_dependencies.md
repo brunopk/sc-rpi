@@ -16,9 +16,9 @@ libsystemd-dev used to send logs though the journal systemd service. It can be i
 
 ## loki
 
-[Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool.
+[Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture.
 
-> For SC RPi it's not necessary to install Alloy nor other tools described in the official page, Loki is enough.
+> For SC RPi it's not necessary to install [Alloy](https://grafana.com/docs/alloy/latest/) nor other tools described in the official page, Loki is enough.
 
 The required steps to have Loki working correctly and automatically started after system boot :
 
@@ -85,7 +85,9 @@ In case of not being able to install the correct Python version with `apt-get`, 
 ## Links
 
 - [Glances - Install](https://glances.readthedocs.io/en/latest/install.html)
+- [Grafana Alloy](https://grafana.com/docs/alloy/latest/)
 - [Grafana Loki](https://grafana.com/docs/loki/latest/)
 - [Grafana Loki - Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/)
+- [Grafana Loki - Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/)
 - [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5))
 - [Systemd journal access with python API](https://stackoverflow.com/questions/58753748/systemd-journal-access-with-python-api).
