@@ -26,11 +26,7 @@
 
     </br>
 
-> Ensure the Raspberry Pi is properly connected to a wired or wireless (for more information refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)).
-
-</br>
-
-It's recommended to read [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be used for SC RPi an other third party tools.
+> Ensure the Raspberry Pi is properly connected to a wired or wireless. For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)), also take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi.
 
 ## Development
 
