@@ -16,11 +16,9 @@ libsystemd-dev used to send logs though the journal systemd service. It can be i
 
 ## loki
 
-[Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture.
+[Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture. **For SC RPi it's not necessary to install [Alloy](https://grafana.com/docs/alloy/latest/) nor other tools described in the official page, Loki is enough.**
 
-> For SC RPi it's not necessary to install [Alloy](https://grafana.com/docs/alloy/latest/) nor other tools described in the official page, Loki is enough.
-
-The required steps to have Loki working correctly and automatically started after system boot :
+The required steps to have Loki working correctly and as a Linux service are the following :
 
 1. [Install Loki](#installing-loki)
 2. [Configure Loki](#configure-loki)
@@ -28,7 +26,7 @@ The required steps to have Loki working correctly and automatically started afte
 
 > Configuration via YAML files and the Linux service creation is only necessary when installing manually.
 
-Then to check it's working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname)/.
+To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname).
 
 To visualize logs, install Grafana and configure the corresponding Grafana Loki datasource (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
 
