@@ -26,9 +26,7 @@ The required steps to have Loki working correctly and as a Linux service are the
 
 > Configuration via YAML files and the Linux service creation is only necessary when installing manually.
 
-To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname).
-
-To visualize logs, install Grafana and configure the corresponding Grafana Loki datasource (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
+**To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics** (replace raspberrypi.local for the corresponding hostname). **To visualize logs remotely, install Grafana and configure the corresponding Grafana Loki datasource in the Grafana instance running with Home Assistant** (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
 
 ### Installing Loki
 
