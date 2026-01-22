@@ -23,8 +23,10 @@ libsystemd-dev used to send logs though the journal systemd service. It can be i
 The required steps to have Loki working correctly and automatically started after system boot :
 
 1. [Install Loki](#installing-loki)
-2. [Configure Loki (only necessary when installing manually)](#configure-loki)
-3. [Configure Loki as a Linux service (only necessary when installing manually)](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)
+2. [Configure Loki](#configure-loki)
+3. [Configure Loki as a Linux service](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)
+
+> Configuration via YAML files and the Linux service creation is only necessary when installing manually.
 
 Then to check it's working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname)/.
 
@@ -34,7 +36,7 @@ To visualize logs, install Grafana and configure the corresponding Grafana Loki 
 
 There're many ways to install Grafana :
 
-- [From the official Loki GitHub page](#installing-loki-from-the-official-loki-github-page)<!---->
+- [From the official GitHub](#installing-loki-from-official-github)<!---->
 - [With `apt-get`](#installing-loki-with-apt-get)<!---->
 - [With Docker](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/)<!---->
 
@@ -66,7 +68,7 @@ More information: [Install Grafana Loki locally](https://grafana.com/docs/loki/l
 
 > By default configuration file will stored in `/etc/loki/config.yml`.
 
-#### Installing Loki from the official Loki GitHub page
+#### Installing Loki from official GitHub
 
 > Install from GitHub in case the official `apt-get` installs an old version.
 
