@@ -76,7 +76,7 @@ To install Loki from the official GitHub page follow instructions in [Setup Loki
 
 ### Configure Loki
 
-Create a YAML file or verify it's already created (usually named `loki-local-config.yaml`) as **it will be used for the start command**. Refer to [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) to obtain a sample configuration file.
+Create a YAML file or verify it's already created (usually named `loki-local-config.yaml`) as **it will be used for the start command**. Refer to [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) to obtain a sample configuration file.
 
 ### Configure Loki as a Linux Service
 
