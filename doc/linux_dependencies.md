@@ -23,8 +23,8 @@ libsystemd-dev used to send logs though the journal systemd service. It can be i
 The required steps to have Loki working correctly and automatically started after system boot :
 
 1. [Install Loki](#installing-loki)
-2. [Configure Loki](#configure-loki)
-3. [Configure Loki as a Linux service](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)
+2. [Configure Loki (only necessary when installing manually)](#configure-loki)
+3. [Configure Loki as a Linux service (only necessary when installing manually)](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)
 
 Then to visualize logs, install Grafana and configure the corresponding Grafana Loki datasource (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
 
@@ -50,11 +50,19 @@ More information: [Install Grafana Loki locally](https://grafana.com/docs/loki/l
     echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee /etc/apt/sources.list.d/grafana.list
     ```
 
-2. Install `loki` package :
+2. Update `apt-get` local registries :
+
+    ```bash
+    sudo apt-get update
+    ```
+
+3. Install `loki` package :
   
     ```bash
     sudo apt-get install loki
     ```
+
+> By default configuration file will stored in `/etc/loki/config.yml`. The default port is 3100.
 
 #### Installing Loki from the official Loki GitHub page
 
@@ -64,7 +72,7 @@ To install Loki from the official GitHub page follow instructions in [Setup Loki
 
 > Instead of using `gunzip` for uncompressing, use `unzip`.
 
-## Configure Loki
+### Configure Loki
 
 To start Loki, set the `loki-local-config.yaml` configuration file as **it will be used for the start command**. Take a look at [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) obtain an example of a Loki configuration file.
 
