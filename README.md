@@ -14,7 +14,7 @@
 
   </br>
 
-**A 64 bit version of Raspberry Pi OS is required** for some third party tools such as [Grafana Loki](doc/linux_dependencies.md#loki). See [Useful commands](/doc/raspberry_pi.md#useful-commands) section in [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md) to get which Raspberry Pi OS is installed.
+**A 64 bit version of Raspberry Pi OS is required** for some third party tools such as [Grafana Loki](doc/linux_dependencies.md#loki).
 
 ## Installation
 
