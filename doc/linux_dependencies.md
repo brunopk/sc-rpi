@@ -8,7 +8,7 @@ All dependencies listed below are not mandatory but useful for different purpose
 
 > It's recommended to install it as a Linux service to start Glances automatically after booting the system. For more information about Linux services, refer to [`/doc/systemd_configuration.md`](/doc/systemd_configuration.md).
 
-After installing Glances in the Raspberry Pi, install the [Glances add-on for Home Assistant](/doc/homeassistant.md#glances) to remotely visualize the metrics.
+**After installing Glances in the Raspberry Pi, install the [Glances add-on for Home Assistant](/doc/homeassistant.md#glances) to remotely visualize the metrics.**
 
 ## libsystemd-dev
 
