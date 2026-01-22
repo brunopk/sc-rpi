@@ -60,7 +60,7 @@ There're many ways to install Grafana :
     sudo apt-get install loki
     ```
 
-> By default configuration file will stored in `/etc/loki/config.yml`. For more refer to [Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/).
+> By default configuration file will stored in `/etc/loki/config.yml`. For more information refer to [Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/).
 
 #### Installing Loki from official GitHub
 
