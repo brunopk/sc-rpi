@@ -64,8 +64,6 @@ There're many ways to install Grafana :
 
 #### Installing Loki from official GitHub
 
-> Install from GitHub in case the official `apt-get` installs an old version.
-
 To install Loki from the official GitHub page follow instructions in [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5).
 
 > Instead of using `gunzip` for uncompressing, use `unzip`.
