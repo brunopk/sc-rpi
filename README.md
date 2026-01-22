@@ -25,7 +25,9 @@ A **64 bit** version of Raspberry Pi OS is required for some third party tools s
 
     </br>
 
-**Ensure the Raspberry Pi is properly connected to a wired or wireless.** For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)). Also, take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi.
+**Ensure the Raspberry Pi is properly connected to a wired or wireless.** For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md). Also, take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi.
+
+</br>
 
 After installing SC RPi, [install and configure Home Assistant](/doc/homeassistant.md) to connect with SC RPi.
 
