@@ -12,7 +12,7 @@ All dependencies listed below are not mandatory but useful for different purpose
 
 ## libsystemd-dev
 
-libsystemd-dev used to send logs though the journal systemd service. It can be installed through `apt-get`.
+libsystemd-dev used to send logs though the journal systemd service (particularly from a Python source code). It can be installed through `apt-get`.
 
 ## loki
 
