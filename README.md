@@ -8,13 +8,15 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 ## Requirements
 
-- Raspberry Pi 3 with Raspberry Pi OS
+- Raspberry Pi 3 with Raspberry Pi OS (see [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md))
 - W2812B LED strip (see [`/doc/circuit.md`](/doc/circuit.md))
 - Python
 - Poetry
 - An MQTT broker (see [`/doc/mqtt.md`](/doc/mqtt.md))
 
   </br>
+
+> A 64 bit version of Raspberry Pi OS is required for some packages as [Grafana Loki](doc/linux_dependencies.md#loki). See [Useful commands](/doc/raspberry_pi.md#useful-commands) section in [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md) to get which Raspberry Pi OS is installed.
 
 ## Installation
 
@@ -49,10 +51,10 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 - [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
 - [`doc/commands.md`](doc/commands.md): describes SC RPi commands
 - [`doc/development.md`](doc/development.md): useful documentation for SC RPi development
-- [`doc/docker.md`](/doc/docker.md): additional Docker containers to run in the Raspberry Pi
 - [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
 - [`doc/network_configuration.md`](doc/network_configuration.md) : network configuration in Raspberry Pi OS
 - [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
+- [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md): common issues and useful commands
 - [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
 
   </br>
@@ -61,6 +63,7 @@ It also provides a simple MQTT-based API to sends [commands](doc/commands.md) di
 
 - [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
 - [Building the circuit for SC RPI](doc/circuit.md)
+- [Grafana Loki](doc/linux_dependencies.md#loki)
 - [Linux network configuration](/doc/network_configuration.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [Official MQTT protocol site](https://mqtt.org/)
