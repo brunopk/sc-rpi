@@ -40,8 +40,6 @@ There're many ways to install Grafana :
 
 #### Installing Loki with `apt-get`
 
-More information: [Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/)
-
 1. Add GPG keys for official repos :
 
     ```bash
@@ -62,7 +60,7 @@ More information: [Install Grafana Loki locally](https://grafana.com/docs/loki/l
     sudo apt-get install loki
     ```
 
-> By default configuration file will stored in `/etc/loki/config.yml`.
+> By default configuration file will stored in `/etc/loki/config.yml`. For more refer to [Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/).
 
 #### Installing Loki from official GitHub
 
