@@ -38,7 +38,7 @@ There're many ways to install Grafana :
 - [With `apt-get`](#installing-loki-with-apt-get)<!---->
 - [With Docker](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/)<!---->
 
-Try installing Loki with `apt-get`, if it installs an old version go for the GitHub option. After installing Loki, configure it as a Linux **service** following instructions in [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)).
+> Install Loki manually only if `apt-get` brings an old version.
 
 #### Installing Loki with `apt-get`
 
@@ -76,7 +76,11 @@ To install Loki from the official GitHub page follow instructions in [Setup Loki
 
 ### Configure Loki
 
-To start Loki, set the `loki-local-config.yaml` configuration file as **it will be used for the start command**. Take a look at [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) obtain an example of a Loki configuration file.
+Create a YAML file or verify it's already created (usually named `loki-local-config.yaml`) as **it will be used for the start command**. Refer to [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) to obtain a sample configuration file.
+
+### Configure Loki as a Linux Service
+
+Refer to [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5).
 
 ## python
 
