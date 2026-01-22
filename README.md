@@ -19,14 +19,13 @@
 ## Installation
 
 1. [Install Linux dependencies](/doc/linux_dependencies.md)
-2. [Install and configure Home Assistant add-ons (optional)](/doc/homeassistant.md#optional-add-ons)
-3. [Install and configure Mosquitto broker](/doc/homeassistant.md#mosquitto-broker-required)
-4. [Install and configure SC RPi (Python)](/doc/sc_rpi_installation.md)
-5. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
+2. [Install and configure Mosquitto broker](/doc/homeassistant.md#mosquitto-broker-required)
+3. [Install and configure SC RPi (Python)](/doc/sc_rpi_installation.md)
+4. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
 
     </br>
 
-> Ensure the Raspberry Pi is properly connected to a wired or wireless. For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)). Also, take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi.
+> Ensure the Raspberry Pi is properly connected to a wired or wireless. For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md)). Also, take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi. After installing SC RPi, [install and configure Home Assistant](/doc/homeassistant.md) to connect with SC RPi.
 
 ## Development
 
