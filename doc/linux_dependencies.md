@@ -26,7 +26,9 @@ The required steps to have Loki working correctly and automatically started afte
 2. [Configure Loki (only necessary when installing manually)](#configure-loki)
 3. [Configure Loki as a Linux service (only necessary when installing manually)](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5)
 
-Then to visualize logs, install Grafana and configure the corresponding Grafana Loki datasource (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
+Then to check it's working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname)/.
+
+To visualize logs, install Grafana and configure the corresponding Grafana Loki datasource (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
 
 ### Installing Loki
 
@@ -62,7 +64,7 @@ More information: [Install Grafana Loki locally](https://grafana.com/docs/loki/l
     sudo apt-get install loki
     ```
 
-> By default configuration file will stored in `/etc/loki/config.yml`. The default port is 3100.
+> By default configuration file will stored in `/etc/loki/config.yml`.
 
 #### Installing Loki from the official Loki GitHub page
 
