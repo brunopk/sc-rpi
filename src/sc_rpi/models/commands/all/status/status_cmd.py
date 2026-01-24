@@ -11,7 +11,7 @@ from sc_rpi.models.commands.command_result.status import Status
 from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.mappings import map_sections
 
-# TODO: return the correct object for each MQTT topic
+# TODO: CONTINUE return the correct object for each MQTT topic
 
 
 @dataclass

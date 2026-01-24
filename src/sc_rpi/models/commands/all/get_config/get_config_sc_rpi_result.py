@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING
 from sc_rpi.models.commands.all.get_config.get_config_sc_rpi_result_payload import (
   GetConfigScRpiResultPayload,
 )
-from sc_rpi.models.commands.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.commands.command_result.sc_rpi_base_result import ScRpiBaseResult
 
 if TYPE_CHECKING:
   from http import HTTPStatus
 
 @dataclass
-class GetConfigScRpiResult(ScRpiResult[GetConfigScRpiResultPayload]):
+class GetConfigScRpiResult(ScRpiBaseResult[GetConfigScRpiResultPayload]):
     """Contains available sections."""
 
     payload: GetConfigScRpiResultPayload

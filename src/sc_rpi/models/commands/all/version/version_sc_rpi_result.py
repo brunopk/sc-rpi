@@ -8,13 +8,15 @@ from typing import TYPE_CHECKING
 from sc_rpi.models.commands.all.version.version_sc_rpi_result_payload import (
   VersionScRpiResultPayload,
 )
-from sc_rpi.models.commands.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.commands.command_result.sc_rpi_base_result import ScRpiBaseResult
 
 if TYPE_CHECKING:
   from http import HTTPStatus
 
+# TODO: add python version
+
 @dataclass
-class VersionScRpiResult(ScRpiResult[VersionScRpiResultPayload]):
+class VersionScRpiResult(ScRpiBaseResult[VersionScRpiResultPayload]):
     """Contains available sections."""
 
     payload: VersionScRpiResultPayload

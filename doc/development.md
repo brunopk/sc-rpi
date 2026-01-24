@@ -90,6 +90,7 @@ To facilitate development and testing on a Raspberry Pi, files can be efficientl
 ## Links
 
 - [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
+- [Mashumaro](https://pypi.org/project/mashumaro/)
 - [Official Paho PyPI website](https://pypi.org/project/paho-mqtt/)
 - [Official Poetry website](https://python-poetry.org/)
 - [Official Poetry website - Groups](https://python-poetry.org/docs/managing-dependencies#dependency-groups)

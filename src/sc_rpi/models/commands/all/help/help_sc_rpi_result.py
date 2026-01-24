@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING
 from sc_rpi.models.commands.all.help.help_sc_rpi_result_payload import (
   HelpScRpiResultPayload,
 )
-from sc_rpi.models.commands.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.commands.command_result.sc_rpi_base_result import ScRpiBaseResult
 
 if TYPE_CHECKING:
   from http import HTTPStatus
 
 @dataclass
-class HelpScRpiResult(ScRpiResult[HelpScRpiResultPayload]):
+class HelpScRpiResult(ScRpiBaseResult[HelpScRpiResultPayload]):
     """Response for the `help` command."""
 
     payload: HelpScRpiResultPayload

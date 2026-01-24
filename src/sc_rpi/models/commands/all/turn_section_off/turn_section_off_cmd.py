@@ -3,20 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from http import HTTPStatus
 
 from sc_rpi.enums.homeassistant.state import State
 from sc_rpi.models.commands.all.turn_section_off.turn_section_off_args import (
     TurnSectionOffArgs,
 )
-from sc_rpi.models.commands.all.turn_section_off.turn_section_off_sc_rpi_result import (
-    TurnSectionOffScRpiResult,
-)
 from sc_rpi.models.commands.command import Command, CommandResult
-from sc_rpi.models.commands.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.utils.commands.command_result import build_sc_rpi_status_result
 from sc_rpi.utils.commands.decorators import log_call
-from sc_rpi.utils.mappings import map_sections
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC, build_ha_state_topic
 
 
@@ -38,15 +33,8 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         """
         self._hw_controller.turn_section_off(self.args.section_id)
 
-        sections = self._hw_controller.list_sections()
-        sc_rpi_result_payload = Status(map_sections(sections))
-        sc_rpi_result = TurnSectionOffScRpiResult(
-            HTTPStatus.ACCEPTED,
-            TurnSectionOffCmd.name,
-            sc_rpi_result_payload,
-        )
-
         # TODO: test what happens if color and color mode is not sent to Home assistant
+        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
         ha_entity_state = HAState(State.OFF, brightness=0)
         ha_entity_state_topic = build_ha_state_topic(self.args.section_id)
 

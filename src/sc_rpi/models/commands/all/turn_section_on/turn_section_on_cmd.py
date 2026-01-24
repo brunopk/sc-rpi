@@ -3,21 +3,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from http import HTTPStatus
 
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.state import State
 from sc_rpi.models.commands.all.turn_section_on.turn_section_on_args import (
     TurnSectionOnArgs,
 )
-from sc_rpi.models.commands.all.turn_section_on.turn_section_on_sc_rpi_result import (
-    TurnSectionOnScRpiResult,
-)
 from sc_rpi.models.commands.command import Command, CommandResult
-from sc_rpi.models.commands.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.utils.commands.command_result import build_sc_rpi_status_result
 from sc_rpi.utils.commands.decorators import log_call
-from sc_rpi.utils.mappings import map_sections
 from sc_rpi.utils.topic_utils import (
     SC_RPI_RESULT_TOPIC,
     build_ha_state_topic,
@@ -49,14 +44,6 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
 
         self._hw_controller.turn_section_on(self.args.section_id, color)
 
-        sections = self._hw_controller.list_sections()
-        sc_rpi_result_payload = Status(map_sections(sections))
-        sc_rpi_result = TurnSectionOnScRpiResult(
-            HTTPStatus.ACCEPTED,
-            TurnSectionOnCmd.name,
-            sc_rpi_result_payload,
-        )
-
         """
         Setting the correct brightness is not implemented (it just returns what \
             receives)
@@ -69,6 +56,7 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
             color_mode=ColorMode.RGB,
         )
         ha_entity_state_topic = build_ha_state_topic(turned_on_section.id)
+        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
 
         self._hw_controller.render()
 

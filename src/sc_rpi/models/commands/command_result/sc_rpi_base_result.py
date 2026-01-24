@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 ScRpiResultPayload = TypeVar("ScRpiResultPayload")
 
 @dataclass
-class ScRpiResult(Generic[ScRpiResultPayload], DataClassJSONMixin):
+class ScRpiBaseResult(Generic[ScRpiResultPayload], DataClassJSONMixin):
     """Response for all commands.
 
     It may be an error or a successful response.

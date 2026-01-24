@@ -1,19 +1,16 @@
 """Contains the `ResetCmd` class."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
-from http import HTTPStatus
 
 from sc_rpi.models.commands.command import Command, CommandResult
-from sc_rpi.models.commands.command_result.sc_rpi_result import ScRpiResult
+from sc_rpi.models.commands.command_result.sc_rpi_status_result import ScRpiStatusResult
+from sc_rpi.utils.commands.command_result import build_sc_rpi_status_result
 from sc_rpi.utils.commands.decorators import log_call
-
-# TODO: CONTINUE return the correct object for each MQTT topic
+from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
-class ResetCmd(Command[None]):
+class ResetCmd(Command[ScRpiStatusResult]):
     """`reset` command."""
 
     name: str = "reset"
@@ -32,5 +29,5 @@ class ResetCmd(Command[None]):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-
-        return ScRpiResult(HTTPStatus.ACCEPTED, ResetCmd.name)
+        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
+        return { SC_RPI_RESULT_TOPIC: sc_rpi_result }

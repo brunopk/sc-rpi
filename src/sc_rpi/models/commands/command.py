@@ -56,7 +56,8 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
     - Command should not interact with MQTT, this is done by workers \
         (`src/sc_rpi/worker.py`).
     - All subclasses must be imported before using them in order for mashumaro \
-        discriminators to work correctly.
+        discriminators to work correctly (see discriminators in \
+            [Mashumaro documentation](https://pypi.org/project/mashumaro/)).
 
     """
 

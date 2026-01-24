@@ -12,7 +12,6 @@ from sc_rpi.models.config import Config
 from sc_rpi.utils.logging.ignore_loki_filter import IgnoreLokiFilter
 
 
-# TODO: Explain how to install Grafana loki based on https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/
 def configure_logging(config: Config) -> None:
     """Configure the `logging` library.
 
@@ -57,6 +56,19 @@ def configure_logging(config: Config) -> None:
 
     basicConfig(level=level, handlers=[stream_handler])
 
+def collapse_multiline_str_into_one_line(long_message: str) -> str:
+    """Collapse a multiline (defined between triple `"`) into a one-line string.
+
+    Useful to log long messages.
+
+    Args:
+        long_message (str): Multi line string to be transformed.
+
+    Returns:
+        str: Transformed string (one-line)
+
+    """
+    return " ".join(long_message.split())
 
 def _decorate_console_handler_emit(fn):
     """Based on Stack Overflow post: \

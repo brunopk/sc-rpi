@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from rpi_ws281x import Color, PixelStrip
 
 from sc_rpi.controllers.section_controller import SectionController
+from sc_rpi.utils.logging.logging import collapse_multiline_str_into_one_line
 
 if TYPE_CHECKING:
     from sc_rpi.controllers.section import Section
@@ -194,9 +195,9 @@ class HardwareController:
         """Render the actual configuration on the hardware."""
         colors = self.concatenate_sections()
         if len(colors) == 0:
-            LOGGER.warning(
-                "Nothing to render, probably sections were not defined correctly",
-            )
+            warning_msg = """Nothing to render, probably sections were not defined
+                correctly or reset command was invoked"""
+            LOGGER.warning(collapse_multiline_str_into_one_line(warning_msg))
         else:
             for i, c in enumerate(colors):
                 self._strip.setPixelColor(i, Color(c[0], c[1], c[2]))

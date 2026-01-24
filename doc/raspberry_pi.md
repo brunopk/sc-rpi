@@ -29,3 +29,9 @@ To get the installed Linux distribution:
 ```bash
 cat /etc/os-release
 ```
+
+To backup and compress a disk :
+
+```bash
+sudo dd if=/dev/diskX bs=4M status=progress | gzip > image.img.gz
+```

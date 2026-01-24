@@ -2,19 +2,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from http import HTTPStatus
 
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.state import State
 from sc_rpi.models.commands.all.edit_section.edit_section_args import EditSectionArgs
-from sc_rpi.models.commands.all.edit_section.edit_section_sc_rpi_result import (
-    EditSectionScRpiResult,
-)
 from sc_rpi.models.commands.command import Command, CommandResult
-from sc_rpi.models.commands.command_result.status import Status
 from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.utils.commands.command_result import build_sc_rpi_status_result
 from sc_rpi.utils.commands.decorators import log_call
-from sc_rpi.utils.mappings import map_sections
 from sc_rpi.utils.topic_utils import (
     SC_RPI_RESULT_TOPIC,
     build_ha_state_topic,
@@ -47,14 +42,7 @@ class EditSectionCmd(Command[EditSectionArgs]):
             color,
         )
 
-        sections = self._hw_controller.list_sections()
-        sc_rpi_result_payload = Status(map_sections(sections))
-        sc_rpi_result = EditSectionScRpiResult(
-            HTTPStatus.ACCEPTED,
-            EditSectionCmd.name,
-            sc_rpi_result_payload,
-        )
-
+        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
         result = {SC_RPI_RESULT_TOPIC: sc_rpi_result }
 
         modified_section = self._hw_controller.get_section(self.args.section_id)
