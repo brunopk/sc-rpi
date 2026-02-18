@@ -79,7 +79,7 @@ class SectionController:
             color_list = self._color_list_by_id[section_id]
             new_color_list = [color_list[0]] * (new_end - new_start + 1)
 
-        # TODO: test if setting color is working correctly
+        # TODO: CONTINUE test if setting color is working correctly
 
         del self._section_ids[index]
         del self._color_list[index]
@@ -221,7 +221,7 @@ class SectionController:
         self._is_on_by_id[section_id] = False
         self._is_on.insert(index, False)
 
-    # TODO: add/modify test to see if turning section on with a color is working correctly
+    # TODO: CONTINUE add/modify test to see if turning section on with a color is working correctly
 
     def turn_section_on(
         self,
