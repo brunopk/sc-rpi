@@ -11,8 +11,6 @@ from sc_rpi.models.commands.command_result.status import Status
 if TYPE_CHECKING:
   from http import HTTPStatus
 
-# TODO: Generalize this result edit_section, turn_section_off, turn_section_on, status, and reset should return the same result
-
 @dataclass
 class ScRpiStatusResult(ScRpiBaseResult[Status]):
     """Contains available sections."""

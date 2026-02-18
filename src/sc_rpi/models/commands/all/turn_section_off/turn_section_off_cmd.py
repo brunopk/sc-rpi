@@ -34,12 +34,15 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         self._hw_controller.turn_section_off(self.command_args.section_id)
 
         # TODO: test what happens if color and color mode is not sent to Home assistant
+
         sc_rpi_result = build_sc_rpi_status_result(
             self._hw_controller,
             self.command_name,
         )
         ha_entity_state = HAState(State.OFF, brightness=0)
         ha_entity_state_topic = build_ha_state_topic(self.command_args.section_id)
+
+        # TODO: move this comment to a .md file (documentation)
 
         """
         IMPORTANT: rendering strip should be the last thing before returning from the \
