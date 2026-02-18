@@ -16,8 +16,7 @@ from sc_rpi.models.commands.all.version.version_sc_rpi_result_payload import (
 )
 from sc_rpi.models.commands.command import Command, CommandResult
 from sc_rpi.utils.commands.decorators import log_call
-
-# TODO: return the correct object for each MQTT topic
+from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
@@ -39,13 +38,19 @@ class VersionCmd(Command[None]):
                 python_version(),
                 self._get_sc_rpi_version(),
             )
-            return VersionScRpiResult(HTTPStatus.ACCEPTED, VersionCmd.command_name, payload)
+            sc_rpi_result = VersionScRpiResult(
+                HTTPStatus.ACCEPTED,
+                VersionCmd.command_name,
+                payload,
+            )
         except FileNotFoundError as ex:
             raise ApiError from ex
         except ApiError:
             raise
         except Exception as ex:
             raise ApiError from ex
+
+        return {SC_RPI_RESULT_TOPIC: sc_rpi_result}
 
     def _get_sc_rpi_version(self) -> str:
         sc_rpi_version = None
