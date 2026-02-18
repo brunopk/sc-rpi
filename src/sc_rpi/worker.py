@@ -28,6 +28,7 @@ from sc_rpi.utils.topic_utils import (
 )
 
 # TODO: check why the applications seems to hang up after catching an exception when receiving a command (try sending two commands one after the other)
+# TODO: state (on/off) should be published when starting the application (test that state is correctly synchronized)
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
