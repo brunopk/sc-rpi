@@ -19,7 +19,7 @@ from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 class HelpCmd(Command[None]):
     """`help` command."""
 
-    name: str = "help"
+    command_name: str = "help"
 
     def validate(self) -> None:
         """Validate the arguments.
@@ -37,5 +37,10 @@ class HelpCmd(Command[None]):
         """
         command_names = load_command_names()
         payload = HelpScRpiResultPayload(sorted(command_names))
-        sc_rpi_result = HelpScRpiResult(HTTPStatus.ACCEPTED, HelpCmd.name, payload)
+        sc_rpi_result = HelpScRpiResult(
+            HTTPStatus.ACCEPTED,
+            HelpCmd.command_name,
+            payload,
+        )
+
         return {SC_RPI_RESULT_TOPIC: sc_rpi_result }

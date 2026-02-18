@@ -61,9 +61,9 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
 
     """
 
-    name: str
+    command_name: str
 
-    args: Optional[CommandArgs] = None
+    command_args: Optional[CommandArgs] = None
 
     _config: Optional[Config] = None
 
@@ -73,7 +73,7 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
         """Mashumaro config."""
 
         discriminator = Discriminator(
-            field="name",
+            field="command_name",
             include_subtypes=True,
         )
 

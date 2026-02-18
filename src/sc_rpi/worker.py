@@ -117,7 +117,7 @@ class Worker(Thread):
                     if len(command_result.keys()) == 0:
                         LOGGER.warning(
                             "No topics to return result of %s command",
-                            sc_rpi_command.name,
+                            sc_rpi_command.command_name,
                         )
                     else:
                         for topic_name in command_result:
@@ -238,7 +238,7 @@ class Worker(Thread):
 
         """
         msg = (
-            f"Error executing command {sc_rpi_command.name}"
+            f"Error executing command {sc_rpi_command.command_name}"
             if sc_rpi_command is not None
             else "Error executing command"
         )

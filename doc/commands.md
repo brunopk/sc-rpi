@@ -16,8 +16,8 @@ Note that there's **one** command topic for all sections in the strip (see [`/sr
 
 ```json
 {
-  "name": "command_name",
-  "args": {}
+  "command_name": "command_name",
+  "command_args": {}
 }
 ```
 
@@ -72,8 +72,8 @@ Required arguments:
   
 ```json
 {
-  "name": "edit_section",
-  "args": {
+  "command_name": "edit_section",
+  "command_args": {
     "section_id": "section_1",
     "end": 40
   }
@@ -108,8 +108,8 @@ Returns:
   
 ```json
 {
-  "name": "edit_section",
-  "args": {
+  "command_name": "edit_section",
+  "command_args": {
     "section_id": "section_1",
     "end": 40,
     "start": 10
@@ -145,8 +145,8 @@ Returns:
   
 ```json
 {
-  "name": "edit_section",
-  "args": {
+  "command_name": "edit_section",
+  "command_args": {
     "section_id": "section_1",
     "color": [123, 123, 123]
   }
@@ -185,7 +185,7 @@ Returns configuration parameters of SC RPI.
 
 ```json
 {
-  "name": "get_config"
+  "command_name": "get_config"
 }
 ```
 
@@ -218,7 +218,7 @@ Return available commands.
 
 ```json
 {
-  "name": "help"
+  "command_name": "help"
 }
 ```
 
@@ -245,7 +245,7 @@ Remove all sections.
 
 ```json
 {
-  "name": "reset"
+  "command_name": "reset"
 }
 ```
 
@@ -269,7 +269,7 @@ Return information of the current status of SC RPI.
   
 ```json
 {
-  "name": "status"
+  "command_name": "status"
 }
 ```
 
@@ -299,7 +299,7 @@ Turn off specific sections or the whole strip
   
 ```json
 {
-  "name": "turn_section_off"
+  "command_name": "turn_section_off"
 }
 ```
 
@@ -307,8 +307,8 @@ Turn off specific sections or the whole strip
 
 ```json
 {
-  "name": "turn_off",
-  "args": {
+  "command_name": "turn_off",
+  "command_args": {
     "section_id": "section_1"
   }
 }
@@ -346,8 +346,8 @@ Turn on specific sections or the whole strip
 
 ```json
 {
-  "name": "turn_section_on",
-  "args": {
+  "command_name": "turn_section_on",
+  "command_args": {
     "section_id": "section_1"
   }
 }
@@ -381,8 +381,8 @@ Returns:
 
 ```json
 {
-  "name": "turn_section_on",
-  "args": {
+  "command_name": "turn_section_on",
+  "command_args": {
     "section_id": "section_1",
     "color": [123, 123, 123]
   }
@@ -419,7 +419,7 @@ Returns:
   
 ```json
 {
-  "name": "version"
+  "command_name": "version"
 }
 ```
 

@@ -68,7 +68,7 @@ def map_exception_to_sc_rpi_result(
         ScRpiBaseResult: Object that can be send through an MQTT topic.
 
     """
-    command_name = sc_rpi_command.name if sc_rpi_command is not None else None
+    command_name = sc_rpi_command.command_name if sc_rpi_command is not None else None
     return (
         ScRpiBaseResult(
             ex.status,

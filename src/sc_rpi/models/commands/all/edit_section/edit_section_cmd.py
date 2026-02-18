@@ -20,9 +20,9 @@ from sc_rpi.utils.topic_utils import (
 class EditSectionCmd(Command[EditSectionArgs]):
     """`edit_section` command."""
 
-    args: EditSectionArgs
+    command_args: EditSectionArgs
 
-    name: str = "edit_section"
+    command_name: str = "edit_section"
 
     @log_call()
     def run(self) -> CommandResult:
@@ -31,28 +31,35 @@ class EditSectionCmd(Command[EditSectionArgs]):
         :return Response: Contains the result of the execution.
         """
         color = (
-            (self.args.color.r, self.args.color.g, self.args.color.b)
-            if self.args.color is not None
+            (
+                self.command_args.color.r,
+                self.command_args.color.g,
+                self.command_args.color.b,
+            )
+            if self.command_args.color is not None
             else None
         )
         self._hw_controller.edit_section(
-            self.args.section_id,
-            self.args.start,
-            self.args.end,
+            self.command_args.section_id,
+            self.command_args.start,
+            self.command_args.end,
             color,
         )
 
-        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
+        sc_rpi_result = build_sc_rpi_status_result(
+            self._hw_controller,
+            self.command_name,
+        )
         result = {SC_RPI_RESULT_TOPIC: sc_rpi_result }
 
-        modified_section = self._hw_controller.get_section(self.args.section_id)
+        modified_section = self._hw_controller.get_section(self.command_args.section_id)
         is_color_modified = (
             color is not None and modified_section.color_list[0] != color
         )
         if is_color_modified:
             ha_entity_state = HAState(
                 State.ON,
-                color=self.args.color,
+                color=self.command_args.color,
                 color_mode=ColorMode.RGB,
             )
             ha_entity_state_topic = build_ha_state_topic(modified_section.id)

@@ -13,7 +13,7 @@ from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 class ResetCmd(Command[ScRpiStatusResult]):
     """`reset` command."""
 
-    name: str = "reset"
+    command_name: str = "reset"
 
     def validate(self) -> None:
         """Validate the arguments.
@@ -29,5 +29,9 @@ class ResetCmd(Command[ScRpiStatusResult]):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
+        sc_rpi_result = build_sc_rpi_status_result(
+            self._hw_controller,
+            self.command_name,
+        )
+
         return { SC_RPI_RESULT_TOPIC: sc_rpi_result }

@@ -24,7 +24,7 @@ from sc_rpi.utils.commands.decorators import log_call
 class VersionCmd(Command[None]):
     """`version` command."""
 
-    name: str = "version"
+    command_name: str = "version"
 
     @log_call()
     def run(self) -> CommandResult:
@@ -35,8 +35,11 @@ class VersionCmd(Command[None]):
 
         """
         try:
-            payload = VersionScRpiResultPayload(python_version(), self._get_sc_rpi_version())
-            return VersionScRpiResult(HTTPStatus.ACCEPTED, VersionCmd.name, payload)
+            payload = VersionScRpiResultPayload(
+                python_version(),
+                self._get_sc_rpi_version(),
+            )
+            return VersionScRpiResult(HTTPStatus.ACCEPTED, VersionCmd.command_name, payload)
         except FileNotFoundError as ex:
             raise ApiError from ex
         except ApiError:

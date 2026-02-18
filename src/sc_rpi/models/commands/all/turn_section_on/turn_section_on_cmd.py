@@ -24,9 +24,9 @@ from sc_rpi.utils.topic_utils import (
 class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
     """`turn_section_on` command."""
 
-    args: TurnSectionOnArgs
+    command_args: TurnSectionOnArgs
 
-    name: str = "turn_section_on"
+    command_name: str = "turn_section_on"
 
     @log_call()
     def run(self) -> CommandResult:
@@ -37,26 +37,30 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
 
         """
         color = (
-            (self.args.color.r, self.args.color.g, self.args.color.b)
-            if self.args.color is not None
+            (
+                self.command_args.color.r,
+                self.command_args.color.g,
+                self.command_args.color.b,
+            )
+            if self.command_args.color is not None
             else None
         )
 
-        self._hw_controller.turn_section_on(self.args.section_id, color)
+        self._hw_controller.turn_section_on(self.command_args.section_id, color)
 
         """
         Setting the correct brightness is not implemented (it just returns what \
             receives)
         """
-        turned_on_section = self._hw_controller.get_section(self.args.section_id)
+        turned_on_section = self._hw_controller.get_section(self.command_args.section_id)
         ha_entity_state = HAState(
             State.ON,
-            brightness=self.args.brightness,
-            color=self.args.color,
+            brightness=self.command_args.brightness,
+            color=self.command_args.color,
             color_mode=ColorMode.RGB,
         )
         ha_entity_state_topic = build_ha_state_topic(turned_on_section.id)
-        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.name)
+        sc_rpi_result = build_sc_rpi_status_result(self._hw_controller, self.command_name)
 
         self._hw_controller.render()
 

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 class GetConfigCmd(Command[None]):
     """`get_config` command."""
 
-    name: str = "get_config"
+    command_name: str = "get_config"
 
     def validate(self) -> None:
         """Validate the arguments.
@@ -75,7 +75,7 @@ class GetConfigCmd(Command[None]):
         )
         sc_rpi_result = GetConfigScRpiResult(
             HTTPStatus.ACCEPTED,
-            GetConfigCmd.name,
+            GetConfigCmd.command_name,
             payload,
         )
 

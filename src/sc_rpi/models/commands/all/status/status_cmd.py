@@ -17,7 +17,7 @@ from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 class StatusCmd(Command[None]):
     """`status` command."""
 
-    name: str = "status"
+    command_name: str = "status"
 
     def validate(self) -> None:
         """Validate the arguments.
@@ -36,5 +36,10 @@ class StatusCmd(Command[None]):
         sections = self._hw_controller.list_sections()
         sections = self._hw_controller.list_sections()
         payload = Status(map_sections(sections))
-        sc_rpi_result = StatusScRpiResult(HTTPStatus.ACCEPTED, StatusCmd.name, payload)
+        sc_rpi_result = StatusScRpiResult(
+            HTTPStatus.ACCEPTED,
+            StatusCmd.command_name,
+            payload,
+        )
+
         return {SC_RPI_RESULT_TOPIC: sc_rpi_result}

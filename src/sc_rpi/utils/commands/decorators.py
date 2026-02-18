@@ -30,7 +30,7 @@ def log_call() -> Callable[
             **kwargs: any
         ) -> dict[str, DataClassJSONMixin | str]:
 
-            LOGGER.info("Executing %s command", self.name)
+            LOGGER.info("Executing %s command", self.command_name)
             return run(self, *args, **kwargs)
 
         return _wrapped_run_func
