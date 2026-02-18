@@ -10,8 +10,7 @@ from sc_rpi.models.commands.command import Command, CommandResult
 from sc_rpi.models.commands.command_result.status import Status
 from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.mappings import map_sections
-
-# TODO: CONTINUE return the correct object for each MQTT topic
+from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
@@ -37,5 +36,5 @@ class StatusCmd(Command[None]):
         sections = self._hw_controller.list_sections()
         sections = self._hw_controller.list_sections()
         payload = Status(map_sections(sections))
-
-        return StatusScRpiResult(HTTPStatus.ACCEPTED, StatusCmd.name, payload)
+        sc_rpi_result = StatusScRpiResult(HTTPStatus.ACCEPTED, StatusCmd.name, payload)
+        return {SC_RPI_RESULT_TOPIC: sc_rpi_result}
