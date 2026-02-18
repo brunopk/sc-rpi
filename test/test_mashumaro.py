@@ -3,11 +3,12 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.edit_section import EditSectionCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
+from sc_rpi.models.commands.all.edit_section.edit_section_cmd import EditSectionCmd
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
+# TODO: document how to run tests
 
 class TestMashumaro(TestCase):
     """Tests serializing/deserializing objects.
@@ -27,8 +28,8 @@ class TestMashumaro(TestCase):
     def test_deserializing_json(self):
         """test_deserializing_json."""
         json_data = {
-            "name": "edit_section",
-            "args": {
+            "command_name": "edit_section",
+            "command_args": {
                 "section_id": "xx",
                 "start": 0,
                 "end": 50,
