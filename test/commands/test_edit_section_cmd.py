@@ -12,6 +12,8 @@ from sc_rpi.utils.config import load_configurations
 
 # TODO: set log level to info for all tests
 
+# TODO: move all tests in test.commands to a new package test.models.commands.all
+
 class TestEditSection(TestCase):
     """Tests for `edit_section` command."""
 
