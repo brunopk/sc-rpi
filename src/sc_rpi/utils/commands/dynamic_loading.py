@@ -13,7 +13,7 @@ def load_command_paths() -> list[Path]:
 
     """
     root_package_path = Path(__file__).parent.parent.parent
-    commands_package = root_package_path / "commands"
+    commands_package = root_package_path / "models" / "commands" / "all"
     excluded_files = [(commands_package / "__pycache__").name]
     return [
         path
