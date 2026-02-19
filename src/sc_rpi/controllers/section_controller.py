@@ -79,8 +79,6 @@ class SectionController:
             color_list = self._color_list_by_id[section_id]
             new_color_list = [color_list[0]] * (new_end - new_start + 1)
 
-        # TODO: CONTINUE test if setting color is working correctly
-
         del self._section_ids[index]
         del self._color_list[index]
         del self._limits[index]

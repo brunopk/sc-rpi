@@ -31,12 +31,16 @@ class TestEditingSections(TestCase):
             "It must be the length of the strip",
         )
 
-    def test_colors(self) -> None:
+    def test_editing_sections(self) -> None:
         """Test case test_colors."""
         new_color = (1, 2, 3)
         section = self.controller.new_section("s", 0, 100, (0, 0, 0))
         self.controller.edit_section(section.id, 20, 100)
         self.controller.edit_section(section.id, color=new_color)
         self.controller.render()
+
+        # Verify that other sections remains unmodified
         self.assertEqual((0, 0, 0), self.controller.concatenate_sections()[0])
+
+        # Verify only the corresponding section is modified
         self.assertEqual(new_color, self.controller.concatenate_sections()[21])
