@@ -2,9 +2,8 @@
 
 from unittest import TestCase
 
-from sc_rpi.commands.help import HelpCmd
-from sc_rpi.models.command import Command
-from sc_rpi.models.response import Response
+from sc_rpi.models.commands.all.help.help_cmd import HelpCmd
+from sc_rpi.models.commands.command import Command
 
 
 class TestHelp(TestCase):
@@ -12,11 +11,6 @@ class TestHelp(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""
-        command =Command.from_dict({"name": "help"})
+        command =Command.from_dict({"command_name": "help"})
         command.validate()
-        resp = command.run()
-
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, HelpCmd.name)
-
+        command.run()

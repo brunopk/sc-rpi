@@ -4,7 +4,7 @@ import logging
 from unittest import TestCase
 
 from sc_rpi.controllers import HardwareController
-from sc_rpi.errors import ApiError
+from sc_rpi.errors.api_error import ApiError
 from sc_rpi.utils.config.main import load_configurations
 
 

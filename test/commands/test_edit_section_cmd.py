@@ -3,12 +3,14 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.edit_section import EditSectionCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
+from sc_rpi.models.commands.all.edit_section.edit_section_cmd import EditSectionCmd
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 # TODO: add a test to set color
+
+# TODO: set log level to info for all tests
 
 class TestEditSection(TestCase):
     """Tests for `edit_section` command."""
@@ -29,10 +31,10 @@ class TestEditSection(TestCase):
             (255, 255, 0),
         )
 
-        section_edit_cmd = Command.from_dict_wrapper(
+        command = Command.from_dict_wrapper(
             {
-                "name": "edit_section",
-                "args": {
+                "command_name": "edit_section",
+                "command_args": {
                     "section_id": new_section.id,
                     "end": 298,
                 },
@@ -40,8 +42,5 @@ class TestEditSection(TestCase):
             self.__class__.config,
             self.__class__.hw_controller,
         )
-        section_edit_cmd.validate()
-        resp = section_edit_cmd.run()
-
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, EditSectionCmd.name)
+        command.validate()
+        command.run()

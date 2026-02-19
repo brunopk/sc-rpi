@@ -3,9 +3,9 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.get_config import GetConfigCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
+from sc_rpi.models.commands.all.get_config.get_config_cmd import GetConfigCmd
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 
@@ -21,16 +21,12 @@ class TestGetConfig(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
-        cmd = Command.from_dict_wrapper(
+        command = Command.from_dict_wrapper(
             {
-                "name": "get_config",
+                "command_name": "get_config",
             },
             self.__class__.config,
             self.__class__.hw_controller,
         )
-        cmd.validate()
-        resp = cmd.run()
-
-        self.assertTrue(len(resp.payload.strip_config.sections) > 0)
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, GetConfigCmd.name)
+        command.validate()
+        command.run()

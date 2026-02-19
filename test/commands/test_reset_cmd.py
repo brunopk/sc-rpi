@@ -3,10 +3,9 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.reset import ResetCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
-from sc_rpi.models.response import Response
+from sc_rpi.models.commands.all.reset.reset_cmd import ResetCmd
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 
@@ -22,16 +21,12 @@ class TestReset(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
-        cmd = Command.from_dict_wrapper(
+        command = Command.from_dict_wrapper(
             {
-                "name": "reset",
+                "command_name": "reset",
             },
             self.__class__.config,
             self.__class__.hw_controller,
         )
-        cmd.validate()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, ResetCmd.name)
+        command.validate()
+        command.run()

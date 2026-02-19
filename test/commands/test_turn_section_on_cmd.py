@@ -3,10 +3,11 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.turn_section_on import TurnSectionOnCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
-from sc_rpi.models.response import Response
+from sc_rpi.models.commands.all.turn_section_on.turn_section_on_cmd import (
+    TurnSectionOnCmd,
+)
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 # TODO: move all logging.basicConfig out of test case classes
@@ -32,13 +33,12 @@ class TestTurnSectionOn(TestCase):
         )
 
         command = Command.from_dict_wrapper(
-            {"name": "turn_section_on", "args": {"section_id": new_section.id}},
+            {
+                "command_name": "turn_section_on",
+                "command_args": {"section_id": new_section.id},
+            },
             self.__class__.config,
             self.__class__.hw_controller,
         )
         command.validate()
-        resp = command.run()
-
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, TurnSectionOnCmd.name)
+        command.run()

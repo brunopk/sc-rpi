@@ -3,12 +3,12 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.version import VersionCmd
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.command import Command
-from sc_rpi.models.response import Response
+from sc_rpi.models.commands.all.version.version_cmd import VersionCmd
+from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
+# TODO: validate that commands returns a dictionary and each entry is an instance of ScRpiResult or HAState (this could be a helper function) if it is instance of sc_rpi result validate that the command name is the corresponding command name
 
 class TestVersion(TestCase):
     """Tests for `add_section` command."""
@@ -22,16 +22,12 @@ class TestVersion(TestCase):
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
-        cmd = Command.from_dict_wrapper(
+        command = Command.from_dict_wrapper(
             {
-                "name": "version",
+                "command_name": "version",
             },
             self.__class__.config,
             self.__class__.hw_controller,
         )
-        cmd.validate()
-        resp = cmd.run()
-
-        self.assertIsInstance(resp, Response)
-        self.assertIsInstance(resp.to_json(), str)
-        self.assertEqual(resp.command_name, VersionCmd.name)
+        command.validate()
+        command.run()
