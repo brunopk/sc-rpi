@@ -7,6 +7,7 @@ from mashumaro.mixins.json import DataClassJSONMixin
 from sc_rpi.models.config.mqtt_config.mqtt_config import MQTTConfig
 from sc_rpi.models.config.strip_config.strip_config import StripConfig
 
+# TODO: move all the Config hierarchy to this module
 
 @dataclass
 class Config(DataClassJSONMixin):
