@@ -3,9 +3,9 @@
 import logging
 from unittest import TestCase
 
+from sc_rpi.commands.available.version.version_cmd import VersionCmd
+from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.commands.all.version.version_cmd import VersionCmd
-from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 # TODO: validate that commands returns a dictionary and each entry is an instance of ScRpiResult or HAState (this could be a helper function) if it is instance of sc_rpi result validate that the command name is the corresponding command name

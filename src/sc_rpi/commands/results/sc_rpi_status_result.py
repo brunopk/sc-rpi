@@ -1,0 +1,36 @@
+"""Contains the `TurnSectionOffResp` class."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
+from sc_rpi.commands.results.status import Status
+
+if TYPE_CHECKING:
+  from http import HTTPStatus
+
+# TODO: rename to Status
+
+@dataclass
+class ScRpiStatusResult(ScRpiBaseResult[Status]):
+    """Contains available sections."""
+
+    payload: Status
+
+    def __init__(
+        self,
+        status_code: HTTPStatus,
+        command_name: str,
+        sc_rpi_result_payload: Status,
+    ) -> None:
+        """Initialize the object.
+
+        Args:
+            status_code (HTTPStatus): Status code (same status codes used in HTTP).
+            command_name (str): Name of the command that returned the response.
+            sc_rpi_result_payload (Status): Payload for the result of a command.
+
+        """
+        super().__init__(status_code, command_name, sc_rpi_result_payload, None)

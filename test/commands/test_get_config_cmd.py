@@ -3,9 +3,9 @@
 import logging
 from unittest import TestCase
 
+from sc_rpi.commands.available.get_config.command import GetConfig
+from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.commands.all.get_config.get_config_cmd import GetConfigCmd
-from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 

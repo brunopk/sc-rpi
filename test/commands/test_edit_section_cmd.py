@@ -3,16 +3,14 @@
 import logging
 from unittest import TestCase
 
+from sc_rpi.commands.available.edit_section.command import EditSectionCmd
+from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
-from sc_rpi.models.commands.all.edit_section.edit_section_cmd import EditSectionCmd
-from sc_rpi.models.commands.command import Command
 from sc_rpi.utils.config import load_configurations
 
 # TODO: add a test to set color
 
 # TODO: set log level to info for all tests
-
-# TODO: move all tests in test.commands to a new package test.models.commands.all
 
 class TestEditSection(TestCase):
     """Tests for `edit_section` command."""

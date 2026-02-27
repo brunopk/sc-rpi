@@ -5,16 +5,16 @@ from __future__ import annotations
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
+from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
+from sc_rpi.commands.results.sc_rpi_error import ScRpiError
+from sc_rpi.commands.results.section_aux import SectionAux
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.color import Color
-from sc_rpi.models.commands.command_result.sc_rpi_base_result import ScRpiBaseResult
-from sc_rpi.models.commands.command_result.sc_rpi_error import ScRpiError
-from sc_rpi.models.commands.command_result.section_aux import SectionAux
 
 if TYPE_CHECKING:
+    from sc_rpi.commands.base import Command
     from sc_rpi.controllers import Section
-    from sc_rpi.models.commands.command import Command
 
 def map_sections(section_list: list[Section]) -> list[SectionAux]:
     """Convert a `Section` instances to `responses.Section`.

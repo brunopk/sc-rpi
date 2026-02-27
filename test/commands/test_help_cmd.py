@@ -2,8 +2,8 @@
 
 from unittest import TestCase
 
-from sc_rpi.models.commands.all.help.help_cmd import HelpCmd
-from sc_rpi.models.commands.command import Command
+from sc_rpi.commands.available.help.help_cmd import HelpCmd
+from sc_rpi.commands.base import Command
 
 
 class TestHelp(TestCase):

@@ -5,26 +5,26 @@ from __future__ import annotations
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
+from sc_rpi.commands.available.turn_section_off.turn_section_off_args import (
+    TurnSectionOffArgs,
+)
+from sc_rpi.commands.available.turn_section_off.turn_section_off_cmd import (
+    TurnSectionOffCmd,
+)
+from sc_rpi.commands.available.turn_section_on.turn_section_on_args import (
+    TurnSectionOnArgs,
+)
+from sc_rpi.commands.available.turn_section_on.turn_section_on_cmd import (
+    TurnSectionOnCmd,
+)
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant import State
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.models.commands.all.turn_section_off.turn_section_off_args import (
-    TurnSectionOffArgs,
-)
-from sc_rpi.models.commands.all.turn_section_off.turn_section_off_cmd import (
-    TurnSectionOffCmd,
-)
-from sc_rpi.models.commands.all.turn_section_on.turn_section_on_args import (
-    TurnSectionOnArgs,
-)
-from sc_rpi.models.commands.all.turn_section_on.turn_section_on_cmd import (
-    TurnSectionOnCmd,
-)
 from sc_rpi.utils.topic_utils import get_object_id_from_ha_command_topic
 
 if TYPE_CHECKING:
+    from sc_rpi.commands.base import Command
     from sc_rpi.controllers.hardware_controller import HardwareController
-    from sc_rpi.models.commands.command import Command
     from sc_rpi.models.config.config import Config
     from sc_rpi.models.homeassistant import HACommand
 
@@ -59,14 +59,14 @@ def map_ha_command_to_sc_rpi_command(
             ha_command.brightness,
         )
         return TurnSectionOnCmd(
-            args=cmd_args,
+            command_args=cmd_args,
             _config=sc_rpi_config,
             _hw_controller=hw_controller,
         )
     if ha_command.state == State.OFF:
         cmd_args = TurnSectionOffArgs(section_id)
         return TurnSectionOffCmd(
-            args=cmd_args,
+            command_args=cmd_args,
             _config=sc_rpi_config,
             _hw_controller=hw_controller,
         )

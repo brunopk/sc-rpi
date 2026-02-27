@@ -3,11 +3,11 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.controllers import HardwareController
-from sc_rpi.models.commands.all.turn_section_on.turn_section_on_cmd import (
+from sc_rpi.commands.available.turn_section_on.turn_section_on_cmd import (
     TurnSectionOnCmd,
 )
-from sc_rpi.models.commands.command import Command
+from sc_rpi.commands.base import Command
+from sc_rpi.controllers import HardwareController
 from sc_rpi.utils.config import load_configurations
 
 # TODO: move all logging.basicConfig out of test case classes
