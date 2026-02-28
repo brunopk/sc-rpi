@@ -1,22 +1,24 @@
-"""Contains functions to map between different command objects."""
+"""Contains functions to map between different objects."""
 
 from __future__ import annotations
 
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
-from sc_rpi.commands.results.sc_rpi_error import ScRpiError
-from sc_rpi.commands.results.section_aux import SectionAux
+from sc_rpi.commands.results import Error, Result, Section
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.color import Color
 
 if TYPE_CHECKING:
     from sc_rpi.commands.base import Command
-    from sc_rpi.controllers import Section
+    from sc_rpi.models.section_internal_representation import (
+        SectionInternalRepresentation,
+    )
 
-def map_sections(section_list: list[Section]) -> list[SectionAux]:
+def map_section_list(
+    section_list: list[SectionInternalRepresentation],
+) -> list[Section]:
     """Convert a `Section` instances to `responses.Section`.
 
     Args:
@@ -28,7 +30,7 @@ def map_sections(section_list: list[Section]) -> list[SectionAux]:
 
     """
     return [
-        SectionAux(
+        Section(
             section.id,
             section.limits[0],
             section.limits[1],
@@ -51,35 +53,26 @@ def map_color_to_ha_format(color: tuple[int, int, int]) -> str:
     """
     return str(color)[1:-1].replace(" ", "")
 
-def map_exception_to_sc_rpi_result(
-    ex: Exception,
-    sc_rpi_command: Command | None,
-) -> ScRpiBaseResult:
-    """Map any exception into an `ScRpiBaseResult` that can be send through a MQTT \
-
-        topic.
+def map_exception(ex: Exception, command: Command | None) -> Result:
+    """Map any exception to a `Result`.
 
     Args:
         ex (Exception): Exception to be mapped. It may be an `ApiError.`
-        sc_rpi_command (Command): Command that caused the exception. Use this \
-            parameter if the exception was caused by a command.
+        command (Command): Command that caused the exception. Use this parameter if \
+            the exception was caused by a command.
 
     Returns:
         ScRpiBaseResult: Object that can be send through an MQTT topic.
 
     """
-    command_name = sc_rpi_command.command_name if sc_rpi_command is not None else None
+    command_name = command.command_name if command is not None else None
     return (
-        ScRpiBaseResult(
-            ex.status,
-            command_name,
-            sc_rpi_error=ScRpiError(ex.code, ex.code.name),
-        )
+        Result(ex.status, command_name, error=Error(ex.code, ex.code.name))
         if isinstance(ex, ApiError)
-        else ScRpiBaseResult(
+        else Result(
             HTTPStatus.INTERNAL_SERVER_ERROR,
             command_name,
-            sc_rpi_error=ScRpiError(
+            error=Error(
                 ErrorCode.INTERNAL_SERVER_ERROR,
                 ErrorCode.INTERNAL_SERVER_ERROR.name,
             ),

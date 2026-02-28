@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from sc_rpi.commands.available.edit_section.args import EditSectionArgs
 from sc_rpi.commands.base import Command, CommandResult
+from sc_rpi.commands.edit_section.args import EditSectionArgs
 from sc_rpi.enums.homeassistant.color_mode import ColorMode
 from sc_rpi.enums.homeassistant.state import State
 from sc_rpi.models.homeassistant.ha_state import HAState
-from sc_rpi.utils.commands.decorators import log_call
+from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.commands.results import build_sc_rpi_status_result
 from sc_rpi.utils.topic_utils import (
     SC_RPI_RESULT_TOPIC,
@@ -17,14 +17,14 @@ from sc_rpi.utils.topic_utils import (
 
 
 @dataclass
-class EditSectionCmd(Command[EditSectionArgs]):
+class EditSection(Command[EditSectionArgs]):
     """`edit_section` command."""
 
     command_args: EditSectionArgs
 
     command_name: str = "edit_section"
 
-    @log_call()
+    @log_before_running()
     def run(self) -> CommandResult:
         """Execute the command.
 

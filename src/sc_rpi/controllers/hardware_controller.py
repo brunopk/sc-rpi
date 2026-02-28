@@ -8,11 +8,13 @@ from typing import TYPE_CHECKING
 
 from rpi_ws281x import Color, PixelStrip
 
-from sc_rpi.controllers.section_controller import SectionController
+from sc_rpi.controllers.sections_controller import (
+    SectionInternalRepresentation,
+    SectionsController,
+)
 from sc_rpi.utils.logging.logging import collapse_multiline_str_into_one_line
 
 if TYPE_CHECKING:
-    from sc_rpi.controllers.section import Section
     from sc_rpi.models.config import Config
 
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +40,7 @@ class HardwareController:
         # Creates sections from config
         LOGGER.info("Initializing controller")
 
-        self._section_controller = SectionController(config)
+        self._sections_controller = SectionsController(config)
 
         self._strip_length = config.strip_config.strip_length
 
@@ -68,7 +70,7 @@ class HardwareController:
 
         """
         result = []
-        sections = self._section_controller.list_sections()
+        sections = self._sections_controller.list_sections()
         number_of_sections = len(sections)
         if number_of_sections > 0:
             result = [(0, 0, 0)] * sections[0].limits[0]
@@ -119,9 +121,9 @@ class HardwareController:
             ApiError:
 
         """
-        return self._section_controller.edit_section(section_id, start, end, color)
+        return self._sections_controller.edit_section(section_id, start, end, color)
 
-    def get_section(self, section_id: str) -> Section:
+    def get_section(self, section_id: str) -> SectionInternalRepresentation:
         """Obtain a section by ID.
 
         Args:
@@ -134,16 +136,16 @@ class HardwareController:
             ApiError:
 
         """
-        return self._section_controller.get_section(section_id)
+        return self._sections_controller.get_section(section_id)
 
-    def list_sections(self) -> list[Section]:
+    def list_sections(self) -> list[SectionInternalRepresentation]:
         """Return all defined sections.
 
         Returns:
             list[Section]: All currently available sections in the strip.
 
         """
-        return self._section_controller.list_sections()
+        return self._sections_controller.list_sections()
 
     def new_section(
         self,
@@ -151,7 +153,7 @@ class HardwareController:
         start: int,
         end: int,
         color: tuple[int, int, int],
-    ) -> Section:
+    ) -> SectionInternalRepresentation:
         """Define a new section on the strip.
 
         Args:
@@ -164,7 +166,7 @@ class HardwareController:
             ApiError:
 
         """
-        return self._section_controller.new_section(
+        return self._sections_controller.new_section(
             section_id,
             start,
             end,
@@ -177,7 +179,7 @@ class HardwareController:
 
         This will reset the whole controller to the state after instantiation.
         """
-        self._section_controller.remove_all_sections()
+        self._sections_controller.remove_all_sections()
 
     def remove_sections(self, sections: list[str]) -> None:
         """Remove one or more sections in the strip.
@@ -189,7 +191,7 @@ class HardwareController:
             ApiError:
 
         """
-        self._section_controller.remove_sections(sections)
+        self._sections_controller.remove_sections(sections)
 
     def render(self) -> None:
         """Render the actual configuration on the hardware."""

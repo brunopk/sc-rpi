@@ -1,4 +1,4 @@
-"""Contains the Section class."""
+"""Contains the `SectionInternalRepresentation`."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Section:
+class SectionInternalRepresentation:
     """Represents a set of leds in the strip.
 
     This class is intended for internal use, not for API users.

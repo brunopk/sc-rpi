@@ -2,20 +2,18 @@
 
 from http import HTTPStatus
 
-from sc_rpi.commands.results.sc_rpi_status_result import ScRpiStatusResult
-from sc_rpi.commands.results.status import Status
+from sc_rpi.commands.results import StatusResult, StatusResultPayload
 from sc_rpi.controllers.hardware_controller import HardwareController
-from sc_rpi.utils.mappings import map_sections
+from sc_rpi.utils.mappings import map_section_list
 
 
 def build_sc_rpi_status_result(
     hw_controller: HardwareController,
     command_name: str,
-) -> ScRpiStatusResult:
-    """Build an instance of `ScRpiStatusResult` representing the result of a command \
+) -> StatusResult:
+    """Build an instance of `StatusResult` representing the result of a command \
 
     execution.
-    `ScRpiStatusResult` is used for commands that should return the same results.
 
     Args:
         hw_controller (HardwareController): Used to obtain the current state of SC RPi \
@@ -23,14 +21,10 @@ def build_sc_rpi_status_result(
         command_name (str): Name of the command that is being executed
 
     Returns:
-        ScRpiStatusResult: Instance of `ScRpiStatusResult` representing the result of \
-          executing a command (`command_name`)
+        StatusResult: Instance of `StatusResult` representing the status of SC RPi \
+            (sections and other information)
 
     """
     sections = hw_controller.list_sections()
-    sc_rpi_result_payload = Status(map_sections(sections))
-    return ScRpiStatusResult(
-        HTTPStatus.ACCEPTED,
-        command_name,
-        sc_rpi_result_payload,
-    )
+    status_result_payload = StatusResultPayload(map_section_list(sections))
+    return StatusResult(HTTPStatus.ACCEPTED, command_name, status_result_payload)

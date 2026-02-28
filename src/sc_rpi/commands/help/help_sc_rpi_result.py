@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from sc_rpi.commands.available.help.help_sc_rpi_result_payload import (
   HelpScRpiResultPayload,
 )
-from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
+from sc_rpi.commands.sc_rpi_base_result import ScRpiBaseResult
 
 if TYPE_CHECKING:
   from http import HTTPStatus

@@ -14,7 +14,7 @@ from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.commands.dynamic_loading import load_command_names
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
-# TODO: CONTINUE do the same renaming that was done for get_config
+# TODO: CONTINUE do the same refact that was done for get_config
 
 @dataclass
 class HelpCmd(Command[None]):

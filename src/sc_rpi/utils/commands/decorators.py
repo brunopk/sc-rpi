@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger(__name__)
 
-def log_call() -> Callable[
+def log_before_running() -> Callable[
     [Callable[[object], CommandResult]],
     Callable[[object], CommandResult],
 ]:

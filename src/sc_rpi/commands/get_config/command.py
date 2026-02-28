@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.available.get_config.result import (
+from sc_rpi.commands.base import Command, CommandResult
+from sc_rpi.commands.get_config.result import (
     BrokerConfig,
     GetConfigResult,
     GetConfigResultPayload,
@@ -14,8 +15,7 @@ from sc_rpi.commands.available.get_config.result import (
     Section,
     StripConfig,
 )
-from sc_rpi.commands.base import Command, CommandResult
-from sc_rpi.utils.commands.decorators import log_call
+from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ class GetConfig(Command[None]):
         This method should be invoked before executing the command
         """
 
-    @log_call()
+    @log_before_running()
     def run(self) -> CommandResult:
         """Execute the command.
 

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
+from sc_rpi.commands.results import Result
 
 if TYPE_CHECKING:
   from http import HTTPStatus
@@ -82,7 +82,7 @@ class GetConfigResultPayload(DataClassJSONMixin):
   strip_config: StripConfig
 
 @dataclass
-class GetConfigResult(ScRpiBaseResult[GetConfigResultPayload]):
+class GetConfigResult(Result[GetConfigResultPayload]):
     """Contains available sections."""
 
     payload: GetConfigResultPayload

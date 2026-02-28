@@ -1,6 +1,2 @@
-"""Provides HardwareController class."""
+"""Contains different controllers such as controllers to interact with the hardware."""
 
-from sc_rpi.controllers.hardware_controller import HardwareController
-from sc_rpi.controllers.section import Section
-
-__all__ = ["HardwareController", "Section"]

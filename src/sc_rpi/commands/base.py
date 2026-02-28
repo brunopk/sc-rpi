@@ -9,7 +9,7 @@ from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
 from mashumaro.types import Discriminator
 
-from sc_rpi.controllers import HardwareController
+from sc_rpi.controllers.hardware_controller import HardwareController
 from sc_rpi.models.config import Config
 
 CommandArgs = TypeVar("CommandArgs")

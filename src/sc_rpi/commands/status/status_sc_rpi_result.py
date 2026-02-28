@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.results.sc_rpi_base_result import ScRpiBaseResult
 from sc_rpi.commands.results.status import Status
+from sc_rpi.commands.sc_rpi_base_result import ScRpiBaseResult
 
 if TYPE_CHECKING:
     from http import HTTPStatus

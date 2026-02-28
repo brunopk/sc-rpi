@@ -6,9 +6,9 @@ import logging
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Optional
 
-from sc_rpi.controllers.section import Section
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
+from sc_rpi.models.section_internal_representation import SectionInternalRepresentation
 
 if TYPE_CHECKING:
     from sc_rpi.models.config import Config
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger(__name__)
 
-class SectionController:
+class SectionsController:
     """Used to control sections in the strip.
 
     Sections are defined by a start and end position in the strip. All led in the same
@@ -95,7 +95,7 @@ class SectionController:
             is_on=is_on,
         )
 
-    def get_section(self, section_id: str) -> Section:
+    def get_section(self, section_id: str) -> SectionInternalRepresentation:
         """Obtain a section by ID.
 
         Args:
@@ -110,17 +110,17 @@ class SectionController:
         """
         if section_id not in self._section_ids:
             raise ApiError(HTTPStatus.NOT_FOUND, ErrorCode.SECTION_NOT_FOUND)
-        return Section(
+        return SectionInternalRepresentation(
             section_id,
             self._limits_by_id[section_id],
             self._color_list_by_id[section_id],
             self._is_on_by_id[section_id],
         )
 
-    def list_sections(self) -> list[Section]:
+    def list_sections(self) -> list[SectionInternalRepresentation]:
         """Return all sections ordered by their respective (start, end) limits."""
         return [
-            Section(
+            SectionInternalRepresentation(
                 self._section_ids[i],
                 self._limits[i],
                 self._color_list[i],
@@ -137,7 +137,7 @@ class SectionController:
         color: Optional[tuple[int, int, int]] = None,
         *_args: object,
         is_on: bool,
-    ) -> Section:
+    ) -> SectionInternalRepresentation:
         """Define a new section.
 
         Args:
@@ -160,7 +160,7 @@ class SectionController:
             else [(0, 0, 0)] * (end - start + 1)
         )
         self._insert_section(section_id, start, end, color_list, is_on=is_on)
-        return Section(section_id, (start, end), color_list, is_on=is_on)
+        return SectionInternalRepresentation(section_id, (start, end), color_list, is_on=is_on)
 
     def remove_all_sections(self) -> None:
         """Remove all sections."""
