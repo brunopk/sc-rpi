@@ -3,9 +3,9 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.available.reset.reset_cmd import ResetCmd
+from sc_rpi.commands import Reset
 from sc_rpi.commands.base import Command
-from sc_rpi.controllers import HardwareController
+from sc_rpi.controllers.hardware_controller import HardwareController
 from sc_rpi.utils.config import load_configurations
 
 

@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from sc_rpi.commands.available.help.help_cmd import HelpCmd
+from sc_rpi.commands import Help
 from sc_rpi.commands.base import Command
 
 

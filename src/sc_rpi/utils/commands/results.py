@@ -7,7 +7,7 @@ from sc_rpi.controllers.hardware_controller import HardwareController
 from sc_rpi.utils.mappings import map_section_list
 
 
-def build_sc_rpi_status_result(
+def build_status_result(
     hw_controller: HardwareController,
     command_name: str,
 ) -> StatusResult:

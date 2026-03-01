@@ -117,5 +117,3 @@ class StatusResult(Result[StatusResultPayload]):
 
         """
         super().__init__(status_code, command_name, payload, None)
-
-__all__ = ["StatusResult"]

@@ -9,6 +9,7 @@ from sc_rpi.utils.commands.decorators import log_call
 from sc_rpi.utils.commands.results import build_sc_rpi_status_result
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
+# TODO: CONTINUE do the same refact that was done for reset
 
 @dataclass
 class StatusCmd(Command[None]):

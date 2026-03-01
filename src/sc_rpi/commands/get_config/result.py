@@ -91,20 +91,20 @@ class GetConfigResult(Result[GetConfigResultPayload]):
         self,
         status_code: HTTPStatus,
         command_name: str,
-        result_payload: GetConfigResultPayload,
+        payload: GetConfigResultPayload,
     ) -> None:
         """Initialize the object.
 
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            result_payload (GetConfigResultPayload): The result of a command.
+            payload (HelpResultPayload): The result of the command.
 
         """
         super().__init__(
             status_code,
             command_name,
-            result_payload,
+            payload,
             None,
         )
 

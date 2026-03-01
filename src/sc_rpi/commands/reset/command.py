@@ -3,14 +3,13 @@
 from dataclasses import dataclass
 
 from sc_rpi.commands.base import Command, CommandResult
-from sc_rpi.commands.results.sc_rpi_status_result import ScRpiStatusResult
-from sc_rpi.utils.commands.decorators import log_call
-from sc_rpi.utils.commands.results import build_sc_rpi_status_result
+from sc_rpi.utils.commands.decorators import log_before_running
+from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
-class ResetCmd(Command[ScRpiStatusResult]):
+class Reset(Command[None]):
     """`reset` command."""
 
     command_name: str = "reset"
@@ -21,7 +20,7 @@ class ResetCmd(Command[ScRpiStatusResult]):
         This method should be invoked before executing the command
         """
 
-    @log_call()
+    @log_before_running()
     def run(self) -> CommandResult:
         """Execute the command.
 
@@ -29,9 +28,6 @@ class ResetCmd(Command[ScRpiStatusResult]):
         """
         self._hw_controller.remove_all_sections()
         self._hw_controller.render()
-        sc_rpi_result = build_sc_rpi_status_result(
-            self._hw_controller,
-            self.command_name,
-        )
+        result = build_status_result(self._hw_controller, self.command_name)
 
-        return { SC_RPI_RESULT_TOPIC: sc_rpi_result }
+        return { SC_RPI_RESULT_TOPIC: result }
