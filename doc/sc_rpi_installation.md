@@ -2,9 +2,9 @@
 
 SC RPI installation can be summarized in the following steps:
 
-1. Copy source code (see [Transferring code with `rsync`](#transferring-code-with-rsync) below)
-2. Create virtual environment (see `/doc/virtual_environments.md` for more information)
-3. Install the application with Poetry (see [Installing applications and dependencies with Poetry](#installing-applications-and-dependencies-with-poetry) below)
+1. Copy source code (refer to the [Transferring code with `rsync`](#transferring-code-with-rsync) section below)
+2. Create virtual environment (refer to `/doc/virtual_environments.md` for more information)
+3. Install Python dependencies (refer to the [Installing dependencies with Poetry](#installing-applications-and-dependencies-with-poetry) section below)
 
 </br>
 
@@ -31,19 +31,18 @@ rsync --recursive \
 
 For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
 
-## Installing applications and dependencies with Poetry
+## Installing dependencies with Poetry
 
-To install dependencies in the Raspberry Pi :
+Before installing dependencies :
 
-1. Comment out all dependencies which are listed in `dev` group.
-2. Uncomment all dependencies which are listed in `rpi-only-deps` group.
-3. Install dependencies :
+1. Comment out all dependencies below `[tool.poetry.group.dev.dependencies]`
+2. Uncomment all dependencies below `[tool.poetry.group.rpi-only-deps.dependencies]`
+
+Then invoke `poetry`:
 
 ```bash
 poetry install
 ```
-
-> This will install the dependencies in the virtual environment directories, along with the application. This means the application will be installed as a Python module, just like any other dependency.
 
 ## Links
 

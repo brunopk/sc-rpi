@@ -20,7 +20,7 @@ A **64 bit** version of Raspberry Pi OS is required for some third party tools s
 
 1. [Install Linux dependencies](/doc/linux_dependencies.md)
 2. [Install and configure Mosquitto broker](/doc/homeassistant.md#mosquitto-broker-required)
-3. [Install and configure SC RPi (Python)](/doc/sc_rpi_installation.md)
+3. [Install and configure SC RPi](/doc/sc_rpi_installation.md)
 4. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
 
     </br>
