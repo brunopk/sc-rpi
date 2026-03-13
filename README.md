@@ -1,20 +1,22 @@
 # SC RPi
 
-**A lightweight [MQTT](https://mqtt.org/) API for controlling WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or mobile application.** It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using an MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
+**Control WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or from its mobile application through [MQTT](https://mqtt.org/).** It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using a MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
 </br>
 
 ## Requirements
 
 - Raspberry Pi 3 with Raspberry Pi OS (see [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md))
-- W2812B LED strip (see [`/doc/circuit.md`](/doc/circuit.md))
-- Python
-- Poetry
-- An MQTT broker (see [`/doc/mqtt.md`](/doc/mqtt.md))
+- W2812B LED strip (refer to [`/doc/circuit.md`](/doc/circuit.md) more information)
+- uv package manager
+- An MQTT broker (refer to [`/doc/mqtt.md`](/doc/mqtt.md) for more information)
 
   </br>
 
-A **64 bit** version of Raspberry Pi OS is required for some third party tools such as [Grafana Loki](doc/linux_dependencies.md#loki).
+Notes:
+
+- 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
+- Python can be installed with `uv` or with the Raspberry Pi OS package manager.
 
 ## Installation
 
@@ -33,11 +35,10 @@ After installing SC RPi, [install and configure Home Assistant](/doc/homeassista
 
 ## Development
 
-1. [Create the virtual environment](/doc/virtual_environments.md)
-2. [Activate the environment](/doc/virtual_environments.md#activating-the-environment)
-3. [Install development dependencies with poetry](/doc/development.md#installing-development-dependencies)
-4. [Install and configure MQTT Explorer add-on for Home Assistant (optional)](/doc/homeassistant.md#mqtt-explorer)
-5. Run the application :
+1. [Activate the environment](/doc/virtual_environments.md#activating-the-environment)
+2. [Install development dependencies with `uv`](/doc/development.md#installing-development-dependencies)
+3. [Install and configure MQTT Explorer add-on for Home Assistant (optional)](/doc/homeassistant.md#mqtt-explorer)
+4. Run the application :
 
     ```bash
     python -m sc_rpi.main
@@ -45,7 +46,7 @@ After installing SC RPi, [install and configure Home Assistant](/doc/homeassista
 
     </br>
 
-For more information refer to [`doc/development`](doc/development.md).
+With `uv`, the virtual environment will be created automatically, for more information about `uv`, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 
 ## Documentation
 
@@ -70,11 +71,11 @@ For more information refer to [`doc/development`](doc/development.md).
 - [Official MQTT protocol site](https://mqtt.org/)
 - [Official Paho PyPI website](https://pypi.org/project/paho-mqtt/)
 - [Official Python distribution of the rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
-- [Official Poetry website](https://python-poetry.org/)
 - [Python virtual environments](doc/virtual_environments.md)
 - [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
 - [SC RPI commands](doc/commands.md)
 - [Systemd configuration for SC RPI](/doc/systemd_configuration.md)
+- [uv package manager](https://docs.astral.sh/uv/#highlights)
 - [What is Systemctl? An In-Depth Overview](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview)
   
   </br>

@@ -3,8 +3,7 @@
 SC RPI installation can be summarized in the following steps:
 
 1. Copy source code (refer to the [Transferring code with `rsync`](#transferring-code-with-rsync) section below)
-2. Create virtual environment (refer to `/doc/virtual_environments.md` for more information)
-3. Install Python dependencies (refer to the [Installing dependencies with Poetry](#installing-applications-and-dependencies-with-poetry) section below)
+2. Install Python dependencies (refer to the [Installing dependencies with `uv`](#installing-applications-and-dependencies-with-uv) section below)
 
 </br>
 
@@ -31,18 +30,17 @@ rsync --recursive \
 
 For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
 
-## Installing dependencies with Poetry
+## Installing dependencies with `uv`
 
-Before installing dependencies :
-
-1. Comment out all dependencies below `[tool.poetry.group.dev.dependencies]`
-2. Uncomment all dependencies below `[tool.poetry.group.rpi-only-deps.dependencies]`
-
-Then invoke `poetry`:
+Invoke `uv` like this :
 
 ```bash
-poetry install
+uv sync --only-group rpi
 ```
+
+</br>
+
+> `uv sync` create the virtual environment automatically (for more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md)).
 
 ## Links
 

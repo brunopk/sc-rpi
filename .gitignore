@@ -8,6 +8,7 @@ venv/
 static/css
 scripts/dist
 scripts/dist.tar.gz
+src/sc_rpi.egg-info
 */*.pyc
 *.whl
 *.lock
