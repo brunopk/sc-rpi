@@ -1,37 +1,45 @@
 # SC RPi
 
-**Control WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or from its mobile application through [MQTT](https://mqtt.org/).** It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using a MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
+**Control WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or from its mobile application through [MQTT](https://mqtt.org/).** 
+
+It also provides a simple MQTT-based API to sends [commands](doc/commands.md) directly, for example using a MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
 </br>
 
 ## Requirements
 
-- Raspberry Pi 3 with Raspberry Pi OS (see [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md))
-- W2812B LED strip (refer to [`/doc/circuit.md`](/doc/circuit.md) more information)
-- uv package manager
-- An MQTT broker (refer to [`/doc/mqtt.md`](/doc/mqtt.md) for more information)
+- Raspberry Pi 3 with Raspberry Pi OS (refer to [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md) for more information).
+- W2812B LED strip (refer to [`/doc/circuit.md`](/doc/circuit.md) more information).
+- uv (Python package manager).
+- A running instance of Home Assistant (real or virtual server).
+- An MQTT broker (refer to [`/doc/mqtt.md`](/doc/mqtt.md) for more information).
 
   </br>
 
-Notes:
+<!-- Notes:
+64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki). -->
 
-- 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
-- Python can be installed with `uv` or with the Raspberry Pi OS package manager.
+Python interpreter can be installed with `uv` (refer to the [uv](doc/development.md#uv) section in [`doc/development.md`](/doc/development.md#uv) for more information). Refer to [`doc/linux_dependencies.md`](doc/linux_dependencies.md) for more information about other not mandatory but useful software to install on the Raspberry.
+
+
 
 ## Installation
 
-1. [Install Linux dependencies](/doc/linux_dependencies.md)
-2. [Install and configure Mosquitto broker](/doc/homeassistant.md#mosquitto-broker-required)
-3. [Install and configure SC RPi](/doc/sc_rpi_installation.md)
-4. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
+1. [Install and configure the Mosquitto app for Home Assistant](/doc/homeassistant.md#mosquitto-broker)
+2. [Install and configure the MQTT integration for Home Assistant](https://www.home-assistant.io/integrations/mqtt/)
+4. [Install and configure SC RPi on the Raspberry Pi](/doc/sc_rpi_installation.md)
+5. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
 
     </br>
 
-**Ensure the Raspberry Pi is properly connected to a wired or wireless.** For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md). Also, take a look at [`doc/systemd_configuration.md`](doc/systemd_configuration.md) as Linux services will be widely used for SC RPi.
-
+Additional information:
 </br>
+- For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md).
+- For more information about MQTT and Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
+- To install SC RPi as a Linux service refer to [`doc/systemd_configuration.md`](doc/systemd_configuration.md).
 
-After installing SC RPi, [install and configure Home Assistant](/doc/homeassistant.md) to connect with SC RPi.
+  </br>
+
 
 ## Development
 
