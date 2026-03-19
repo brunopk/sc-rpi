@@ -32,15 +32,13 @@ For more information about `rsync` take a look at [this](https://gist.github.com
 
 ## Installing dependencies with `uv`
 
-Invoke `uv` like this :
-
 ```bash
 uv sync --only-group rpi
 ```
 
 </br>
 
-> `uv sync` create the virtual environment automatically (for more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md)).
+**`uv sync` create the virtual environment automatically**. For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 
 ## Links
 
