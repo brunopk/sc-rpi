@@ -27,8 +27,7 @@ Python interpreter can be installed with `uv` (refer to the [uv](doc/development
 
 1. [Install and configure the Mosquitto app for Home Assistant](/doc/homeassistant.md#mosquitto-broker)
 2. [Install and configure the MQTT integration for Home Assistant](https://www.home-assistant.io/integrations/mqtt/)
-4. [Install and configure SC RPi on the Raspberry Pi](/doc/sc_rpi_installation.md)
-5. [Install and configure Home Assistant MQTT integration](/doc/homeassistant.md#sc-rpi-integration-with-home-assistant)
+3. [Install and configure SC RPi on the Raspberry Pi](/doc/sc_rpi_installation.md)
 
     </br>
 
@@ -46,7 +45,9 @@ Additional information:
 1. [Activate the environment](/doc/virtual_environments.md#activating-the-environment)
 2. [Install development dependencies with `uv`](/doc/development.md#installing-development-dependencies)
 3. [Install and configure MQTT Explorer add-on for Home Assistant (optional)](/doc/homeassistant.md#mqtt-explorer)
-4. Run the application :
+4. [Upload the code to the Raspberry Pi](/doc/sc_rpi_installation.md#transferring-code-with-rsync)
+5. [Install Python dependencies with `uv`](/doc/sc_rpi_installation.md#transferring-code-with-rsync)
+6. Run the application :
 
     ```bash
     python -m sc_rpi.main
