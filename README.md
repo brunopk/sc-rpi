@@ -46,6 +46,7 @@ Additional information:</br>
 Additional information:</br>
 - For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md).
 - For more information about MQTT and Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
+- `uv` will create the virtual environment with the corresponding Python version automatically (for more information about this, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md)). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 - To install SC RPi as a Linux service refer to [`doc/systemd_configuration.md`](doc/systemd_configuration.md).
 
   </br>
@@ -53,8 +54,8 @@ Additional information:</br>
 
 ## Development
 
-1. [Install development dependencies with `uv`](/doc/development.md#installing-development-dependencies)
-2. [Install Python dependencies with `uv`](/doc/sc_rpi_installation.md#transferring-code-with-rsync)
+1. [Install and configure the Mosquitto app for Home Assistant](/doc/homeassistant.md#mosquitto-broker)
+2. [Install development dependencies with `uv`](/doc/development.md#installing-development-dependencies)
 3. Run the application :
 
     ```bash
@@ -64,10 +65,8 @@ Additional information:</br>
     </br>
 
 Additional information:</br>
-- Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
-- `uv` will create the virtual environment with the corresponding Python version automatically (for more information about this, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md)). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 
-  </br>
+Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
 
 ## Documentation
 
