@@ -23,6 +23,8 @@ Additional information:</br>
 - Python interpreter can be installed with [`uv`](doc/development.md#uv).
 - Refer to [`doc/linux_dependencies.md`](doc/linux_dependencies.md) for more information about other not mandatory but useful software for Raspberry Pi OS.
 
+  </br>
+
 
 
 ## Installation
@@ -82,11 +84,9 @@ Additional information:</br>
 
 - [A Beginner’s Guide to MQTT: Understanding MQTT, Mosquitto Broker, and Paho Python MQTT Client](https://medium.com/@potekh.anastasia/a-beginners-guide-to-mqtt-understanding-mqtt-mosquitto-broker-and-paho-python-mqtt-client-990822274923)
 - [Building the circuit for SC RPI](doc/circuit.md)
-- [Grafana Loki](doc/linux_dependencies.md#loki)
 - [Linux network configuration](/doc/network_configuration.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [Official MQTT protocol site](https://mqtt.org/)
-- [Official Paho PyPI website](https://pypi.org/project/paho-mqtt/)
 - [Official Python distribution of the rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python)
 - [Python virtual environments](doc/virtual_environments.md)
 - [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
