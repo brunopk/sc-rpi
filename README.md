@@ -10,11 +10,11 @@ It also provides a simple MQTT-based API to send [commands](doc/commands.md) dir
 
 ## Requirements
 
-- Raspberry Pi 3 with Raspberry Pi OS (refer to [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md) for more information).
+- Raspberry Pi 3 with Raspberry Pi OS 64 bit version (refer to [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md) for more information).
 - W2812B LED strip (refer to [`/doc/circuit.md`](/doc/circuit.md) for more information).
 - uv (Python package manager).
 - A running instance of Home Assistant (real or virtual server).
-- An MQTT broker (refer to [`/doc/mqtt.md`](/doc/mqtt.md) for more information).
+- An MQTT broker (refer to [Installation](#installation) section for more information).
 
   </br>
 
@@ -64,7 +64,7 @@ Additional information:</br>
 
 Additional information:</br>
 
-Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
+Optionally install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
 
 ## Documentation
 
