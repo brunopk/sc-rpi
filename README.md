@@ -1,6 +1,6 @@
 # SC RPi
 
-**Control WS2812B LED strips connected to a Raspberry Pi from the Home Assistant web or the mobile application, through [MQTT](https://mqtt.org/).** 
+**Control WS2812B LED strips connected to a Raspberry Pi through [MQTT](https://mqtt.org/) using the Home Assistant web interface or the mobile application.** 
 
 </br>
 
