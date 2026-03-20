@@ -15,7 +15,6 @@ virtualenv -m /usr/bin/python .direnv
 where */usr/bin/python points* to the Python interpreter.
 
 </br>
-</br>
 
 > In order to be automatically detected by Visual Code IDE, create the virtual environment in a folder called *.direnv*
 
@@ -24,3 +23,8 @@ where */usr/bin/python points* to the Python interpreter.
 ```bash
 source .direnv/bin/activate
 ```
+
+</br>
+
+> By default the `uv sync` will create the virtual environment on the `.venv` folder.
+
