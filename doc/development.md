@@ -4,7 +4,7 @@
 
 `uv` is a Python package manager developed in Rust with many binaries distributions that can be easily installed on different operative systems. Among other features, `uv` provides a mechanism to have different dependencies for different environments. For instance, for SC RPi there are some mocked libraries **only available for development** (refer to the [Installing development dependencies](#installing-development-dependencies) section for more information).
 
-## Installing dependencies 
+### Installing dependencies 
 
 ```bash
 uv sync --only-group rpi
@@ -12,7 +12,7 @@ uv sync --only-group rpi
 
 </br>
 
-**`uv sync` create the virtual environment automatically**. For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
+**`uv sync` create the virtual environment automatically**. For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md). **Use this command on the Raspberry Pi, not for development on other systems.**
 
 ### Installing development dependencies
 
