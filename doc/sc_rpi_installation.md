@@ -1,4 +1,4 @@
-# SC RPI installation
+# SC RPi installation
 
 SC RPI installation can be summarized in the following steps:
 
