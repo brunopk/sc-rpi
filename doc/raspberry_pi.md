@@ -18,6 +18,21 @@ systemctl enable ssh.service
 
 ## Useful commands
 
+Transferring code with `rsync`
+
+```bash
+rsync --recursive \
+  --progress \
+  --archive \
+  --exclude-from=.gitignore \
+  --exclude=doc \
+  --exclude=.git \
+  --exclude=.gitignore \
+   . user@ipaddress:~/dest/ 
+```
+
+For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
+
 Get system architecture:
 
 ```bash
