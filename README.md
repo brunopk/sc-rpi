@@ -32,7 +32,7 @@ Additional information:</br>
 
 1. [Install and configure the Mosquitto app for Home Assistant](/doc/homeassistant.md#mosquitto-broker)
 2. [Install and configure the MQTT integration for Home Assistant](https://www.home-assistant.io/integrations/mqtt/)
-3. [Upload the code to the Raspberry Py](/doc/raspberry_pi.md#useful-commands)
+3. [Upload the code to the Raspberry Pi](/doc/raspberry_pi.md#useful-commands)
 5. [Install Python dependencies with `uv`](/doc/development.md#installing-dependencies)
 6. [Activate the virtual environment](/doc/virtual_environments.md#activating-the-environment)
 7. Run the application :
