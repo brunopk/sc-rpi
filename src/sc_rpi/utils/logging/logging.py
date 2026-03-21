@@ -2,14 +2,10 @@
 
 import logging
 from logging import Formatter, StreamHandler, basicConfig
-from logging.handlers import QueueHandler, QueueListener
+from logging.handlers import QueueHandler
 from multiprocessing import Queue
 
-from logging_loki import LokiHandler
-from systemd.journal import JournalHandler
-
 from sc_rpi.models.config import Config
-from sc_rpi.utils.logging.ignore_loki_filter import IgnoreLokiFilter
 
 
 def configure_logging(config: Config) -> None:
@@ -25,7 +21,6 @@ def configure_logging(config: Config) -> None:
     level = config.log_level
 
     if config.env == "prod":
-        journal_handler = JournalHandler()
 
         log_format = "%(message)s"
         formatter = Formatter(log_format)
@@ -33,18 +28,20 @@ def configure_logging(config: Config) -> None:
         queue_handler = QueueHandler(queue)
         queue_handler.setFormatter(formatter)
 
-        loki_handler = LokiHandler(
-            url="http://localhost:3100/loki/api/v1/push",
-            tags={"application": "my-app"},
-            auth=("username", "password"),
-            version="1",
-        )
-        loki_handler.addFilter(IgnoreLokiFilter())
+        # TODO: CONTINUE
+        # TODO: add documentation about ruff (fix command, command to show errors: uv run ruff check or python -m ruff check, etc)
+        # TODO: link loki doc from the README.md to linux_dependencies.md
+        # TODO: also explain how to use loki for development in development.md
+        # TODO: explain in raspberry_pi.md that 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
 
-        listener = QueueListener(queue, loki_handler)
-        listener.start()
 
-        basicConfig(level=level, handlers=[queue_handler, journal_handler])
+        """loki = LokiLogger(
+            url="http://loki:3100/loki/api/v1/push",
+            labels={"app": "my-app"},
+            batch_size=100,
+            flush_interval=2
+        )"""
+        basicConfig(level=level, handlers=[])
         return
 
     stream_handler = StreamHandler()

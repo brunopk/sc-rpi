@@ -18,15 +18,6 @@ It also provides a simple MQTT-based API to send [commands](doc/commands.md) dir
 
   </br>
 
-<!-- Notes:
-64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki). -->
-
-Additional information:</br>
-- `uv` will create the virtual environment with the corresponding Python version automatically (for more information about this, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md)). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
-- Refer to [`doc/linux_dependencies.md`](doc/linux_dependencies.md) for more information about other not mandatory but useful software for Raspberry Pi OS.
-
-  </br>
-
 
 ## Installation
 
@@ -47,6 +38,7 @@ Additional information:</br>
 - For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md).
 - For more information about MQTT and Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
 - To install SC RPi as a Linux service refer to [`doc/systemd_configuration.md`](doc/systemd_configuration.md).
+- `uv` will create the virtual environment with the corresponding Python version automatically (for more information about this, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md)). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 
   </br>
 

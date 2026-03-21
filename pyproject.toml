@@ -3,40 +3,43 @@ name = "sc-rpi"
 version = "0.1.0"
 description = "A project to control W2812B led strips with Raspberry Pi"
 readme = "README.md"
-authors = [
-    { name = "Bruno Piaggio", email = "brunopiaggiok@gmail.com" }
-]
+authors = [{ name = "Bruno Piaggio", email = "brunopiaggiok@gmail.com" }]
 requires-python = "==3.9.*"
-
 dependencies = [
     "inflector==3.1.1",
     "toml==0.10.2",
     "paho-mqtt==2.1.0",
     "mashumaro==3.16",
     "pyaml==25.7.0",
-    "python-logging-loki==0.3.1"
+    "loki-console-logger-python==1.0.12"
 ]
-
 [dependency-groups]
 dev = [
     "ruff==0.11.13",
     "rpi-ws281x-mock==5.0.0",
-    "rpi-gpio-mock==0.7.1",
-    "systemd-python-mock==235"
+    "rpi-gpio-mock==0.7.1"
 ]
-
 rpi = [
     "rpi-ws281x==5.0.0",
     "RPi.GPIO==0.7.1",
-
 ]
-
-# TODO: REMOVE all imports of systemd.journal (just log to console)
-# TODO: REMOVE systemd-python-mock
 
 # Distribution names (i.e.: rpi-ws281x-mock, rpi-gpio-mock) MUST match with name defined in the corresponding TOML file of each library
 [tool.uv.sources]
 rpi-ws281x-mock = { path = "lib/rpi-ws281x-mock", editable = true }
 rpi-gpio-mock = { path = "lib/rpi-gpio-mock", editable = true }
-systemd-python-mock = { path = "lib/systemd-python-mock", editable = true }
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["sc_rpi"]
+package-dir = {"" = "src"}
+
+[tool.ruff]
+target-version = "py38"
+select = ["ALL"]
+line-length = 88
+
 

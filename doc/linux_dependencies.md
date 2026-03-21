@@ -10,10 +10,6 @@ All dependencies listed below are not mandatory but useful for different purpose
 
 **After installing Glances in the Raspberry Pi, install the [Glances add-on for Home Assistant](/doc/homeassistant.md#glances) to remotely visualize the metrics.**
 
-## libsystemd-dev
-
-libsystemd-dev used to send logs though the journal systemd service (particularly from a Python source code). It can be installed through `apt-get`.
-
 ## loki
 
 [Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture. **For SC RPi it's not necessary to install [Alloy](https://grafana.com/docs/alloy/latest/) nor other tools described in the official page, Loki is enough.**
@@ -75,10 +71,6 @@ Create a YAML file or verify it's already created (usually named `loki-local-con
 ### Configure Loki as a Linux Service
 
 Refer to [Setup Loki as a service in Linux.](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5).
-
-## python
-
-In case of not being able to install the correct Python version with `apt-get`, refer to [this](https://forums.raspberrypi.com/viewtopic.php?t=291158) thread in Raspberry forum to install it from sources.
 
 ## Links
 
