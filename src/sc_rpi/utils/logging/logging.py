@@ -33,6 +33,7 @@ def configure_logging(config: Config) -> None:
         # TODO: link loki doc from the README.md to linux_dependencies.md
         # TODO: also explain how to use loki for development in development.md
         # TODO: explain in raspberry_pi.md that 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
+        # TODO: summarize loki documentation
 
 
         """loki = LokiLogger(
