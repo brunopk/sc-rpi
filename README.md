@@ -37,6 +37,7 @@ It also provides a simple MQTT-based API to send [commands](doc/commands.md) dir
 Additional information:</br>
 - For more information about network configuration refer to [`/doc/network_configuration.md`](/doc/network_configuration.md).
 - For more information about MQTT and Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
+- Optionally install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
 - To install SC RPi as a Linux service refer to [`doc/systemd_configuration.md`](doc/systemd_configuration.md).
 - `uv` will create the virtual environment with the corresponding Python version automatically (for more information about this, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md)). For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md).
 
