@@ -4,7 +4,7 @@
 
 </br>
 
-It also provides a simple MQTT-based API to send [commands](doc/commands.md) directly, for example, using a MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
+It also provides a simple **MQTT-based API** to send [commands](doc/commands.md) directly, for example, using a MQTT client such as [MQTT Explorer](https://mqtt-explorer.com/).
 
 </br>
 
@@ -82,7 +82,9 @@ Optionally :
 
 
 Optionally :</br>
-Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
+- Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app in Home Assistant to debug MQTT messages.
+
+  </br>
 
 ## Documentation
 
