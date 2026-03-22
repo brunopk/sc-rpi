@@ -22,7 +22,7 @@ It also provides a simple **MQTT-based API** to send [commands](doc/commands.md)
 
 Optionally :
 - Install MQTT Explorer to debug MQTT messages, refer to the [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) section in [`/doc/homeassistant.md`](/doc/homeassistant.md#mqtt-explorer) for more information.
-- Install Glances app and the corresponding Glances integration to monitor resources in the Raspberry Pi, refer to the [glances](https://github.com/brunopk/sc-rpi/blob/feature/refact/doc/homeassistant.md#glances) section in [`/doc/homeassistant.md`](/doc/homeassistant.md) for more information.
+- Install Glances app and the corresponding integration to monitor resources in the Raspberry Pi, refer to the [glances](https://github.com/brunopk/sc-rpi/blob/feature/refact/doc/homeassistant.md#glances) section in [`/doc/homeassistant.md`](/doc/homeassistant.md) for more information.
 
 Additional information :
 - For more information about MQTT in Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
