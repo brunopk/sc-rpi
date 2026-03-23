@@ -29,12 +29,8 @@ def configure_logging(config: Config) -> None:
         queue_handler.setFormatter(formatter)
 
         # TODO: CONTINUE
-        # TODO: add documentation about ruff (fix command, command to show errors: uv run ruff check or python -m ruff check, etc)
-        # TODO: link loki doc from the README.md to linux_dependencies.md
-        # TODO: also explain how to use loki for development in development.md
+        # TODO: summarize documentation about Loki in linux_dependencies.md
         # TODO: explain in raspberry_pi.md that 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
-        # TODO: summarize loki documentation
-
 
         """loki = LokiLogger(
             url="http://loki:3100/loki/api/v1/push",

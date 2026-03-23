@@ -18,7 +18,7 @@ systemctl enable ssh.service
 
 ## Useful commands
 
-Transferring code with `rsync`
+**Transferring code with `rsync`**
 
 ```bash
 rsync --recursive \
@@ -33,19 +33,19 @@ rsync --recursive \
 
 For more information about `rsync` take a look at [this](https://gist.github.com/brunopk/37c9703b9bc82061d32303d99d29d9fb) Gist.
 
-Get system architecture:
+**Get system architecture**
 
 ```bash
 uname -m
 ```
 
-To get the installed Linux distribution:
+**Get the installed Linux distribution**
 
 ```bash
 cat /etc/os-release
 ```
 
-To backup and compress a disk :
+**Disk backup and compression**
 
 ```bash
 sudo dd if=/dev/diskX bs=4M status=progress | gzip > image.img.gz
