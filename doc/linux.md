@@ -150,8 +150,6 @@ sudo systemctl start NetworkManager
 
 **Common errors**
 
-**Soft blocked**
-
 If `nmcli` (`nmcli` command with no arguments) returns something like this :
 
 ```
