@@ -91,7 +91,7 @@ Optionally:
 - [`doc/commands.md`](/doc/commands.md): describes SC RPi commands
 - [`doc/development.md`](/doc/development.md): useful documentation for SC RPi development
 - [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
-- [`doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md): general Linux information useful for Raspberry Pi OS
+- [`doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md): general Linux documentation
 - [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
 
 ## Links
