@@ -35,7 +35,7 @@ As mentioned on the [README.md](/README.md), currently SC RPi is intended to be 
 systemctl status sc-rpi.service
 ```
 
-** To restartart the service :**
+**To restartart the service :**
 
 ```bash
 systemctl restart sc-rpi.service
@@ -47,7 +47,7 @@ If service configuration was changed, reload configuration before restarting :
 systemctl daemon-reload
 ```
 
-**Reading service logs : **
+**Reading service logs :**
 
 ```bash
 journalctl -u sc-rpi.service
@@ -72,9 +72,9 @@ There're many ways to configure network in Linux :
 
 </br>
 
-> **The preferred way to configure the network in Raspbian OS is using Network Manager.**
+**The preferred way to configure the network in Raspbian OS is using Network Manager.**
 
-To check to which device is the Raspberry connected:
+**To check to which device is the Raspberry connected :**
 
 ```bash
 ifconfig
@@ -100,7 +100,7 @@ wpa_cli -i wlan0 STATUS
 
 </br>
 
-> It may be necessary to run these commands with `sudo`.
+**It may be necessary to run these commands with `sudo`.**
 
 ### Using Network Manager
 
@@ -116,7 +116,7 @@ To discover WiFi networks (with or without `sudo`):
 nmcli device wifi list
 ```
 
-#### Using Network Manager with Raspbian GNU/Linux 11 (Bullseye)
+**Using Network Manager with Raspbian GNU/Linux 11 (Bullseye)**
 
 Install Network Manager (if not installed yet):
 
@@ -148,9 +148,9 @@ and start it:
 sudo systemctl start NetworkManager
 ```
 
-#### Common errors
+**Common errors**
 
-##### Soft blocked
+**Soft blocked**
 
 If `nmcli` (`nmcli` command with no arguments) returns something like this :
 
