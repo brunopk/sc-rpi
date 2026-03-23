@@ -250,9 +250,9 @@ Installing Loki with `apt-get` :
 **Additional information:**
 - Grafana Loki works only with Raspberry Pi OS 64 bt version.
 - Default Loki configuration file is stored in `/etc/loki/config.yml`.
-- To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname).
-- To visualize logs remotely, install Grafana and configure the corresponding Grafana Loki datasource in the Grafana instance running with Home Assistant (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
-- To install Loki from sources refer to [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) from Medium (Instead of using `gunzip` for uncompressing, use `unzip`).
+- To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace *raspberrypi.local* with the corresponding hostname).
+- To visualize logs remotely, install Grafana and configure the corresponding Grafana Loki datasource in Grafana.
+- To install Loki from sources refer to [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) in Medium. Instead of using `gunzip` for uncompressing, use `unzip`.
 
 ## Common issues in Raspberry Pi OS
 
