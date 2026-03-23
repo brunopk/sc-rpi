@@ -18,12 +18,11 @@ uv sync --only-group rpi
 
 To install development dependencies run `uv` like this:
 
-
 ```bash
 uv sync --only-group dev 
 ```
 
-The [rpi-ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project it's provided with a [mocked implementation](../lib/rpi-ws281x/) of this library, this is an example of some mocked libraries used in SC RPi. **All these mocked libraries are located in the [`/lib`](/lib) folder.**
+The [rpi-ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project it's provided with a [mocked implementation](../lib/rpi-ws281x/) of this library, this is an example of some mocked libraries used in SC RPi. **Mocked libraries are located in the [`/lib`](/lib) folder.**
 
 # Ruff
 

@@ -31,7 +31,7 @@ Additional information :
 
 ### Raspberry Pi
 
-1. [Upload the code to the Raspberry Pi](/doc/raspberry_pi.md#useful-commands)
+1. [Upload the code to the Raspberry Pi](/doc/linux_for_raspberry_pi_users.md#useful-commands)
 2. [Install Loki](/doc/linux_dependencies.md#loki)
 3. Install Python dependencies with `uv` :
 
@@ -51,10 +51,10 @@ Additional information :
 
 Optionally : 
 - Install [Glances](/doc/linux_dependencies.md#glances) to remotely monitor hardware resources.
-- Install SC RPi as a Linux service (refer to [`doc/systemd_configuration.md`](doc/systemd_configuration.md)).
+- Install SC RPi as a Linux service (refer to the [Systemd configuration](/doc/linux_for_raspberry_pi_users.md#systemd-configuration) section in [`/doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md)).
 
 Additional information :
-- For more information about wired and wireless network configuration in Linux refer to [`/doc/network_configuration.md`](/doc/network_configuration.md).
+- For more information about wired and wireless network configuration in Linux refer to the [Network configuration](/doc/linux_for_raspberry_pi_users.md#network-configuration) section in [`/doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md).
 - For more information about the uv package manager, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md).
 
 </br>
@@ -87,14 +87,12 @@ Optionally:
 
 ## Documentation
 
-- [`doc/circuit.md`](doc/circuit.md): how to build the circuit for SC RPi
-- [`doc/commands.md`](doc/commands.md): describes SC RPi commands
-- [`doc/development.md`](doc/development.md): useful documentation for SC RPi development
-- [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
-- [`doc/network_configuration.md`](doc/network_configuration.md) : network configuration in Raspberry Pi OS
+- [`doc/circuit.md`](/doc/circuit.md): how to build the circuit for SC RPi
+- [`doc/commands.md`](/doc/commands.md): describes SC RPi commands
+- [`doc/development.md`](/doc/development.md): useful documentation for SC RPi development
 - [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
-- [`/doc/raspberry_pi.md`](/doc/raspberry_pi.md): common issues and useful commands
-- [`doc/systemd_configuration.md`](doc/systemd_configuration.md): systemd configuration (Linux services)
+- [`doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md): general Linux information useful for Raspberry Pi OS
+- [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
 
 ## Links
 
@@ -102,7 +100,6 @@ Optionally:
 - [Building the circuit for SC RPI](doc/circuit.md)
 - [MQTT Explorer](https://mqtt-explorer.com/)
 - [MQTT protocol official site](https://mqtt.org/)
-- [rpi_ws281x library](https://github.com/rpi-ws281x/rpi-ws281x-python) (TODO: move this for development.md)
 - [Raspberry Pi OS](https://www.raspberrypi.com/software/operating-systems/)
 - [SC RPI commands](doc/commands.md)
 - [uv package manager (official site)](https://docs.astral.sh/uv/#highlights)

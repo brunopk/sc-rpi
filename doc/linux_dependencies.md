@@ -6,7 +6,7 @@ All dependencies listed below are not mandatory but useful for different purpose
 
 [Glances](https://nicolargo.github.io/glances/) is a cross-platform system monitoring tool written in Python. It can be installed through the Python `pip` package manager as described in the [Install](https://glances.readthedocs.io/en/latest/install.html) page of the official documentation, or through `apt-get`.
 
-> It's recommended to install it as a Linux service to start Glances automatically after booting the system. For more information about Linux services, refer to [`/doc/systemd_configuration.md`](/doc/systemd_configuration.md).
+> It's recommended to install it as a Linux service to start Glances automatically after booting the system. For more information about Linux services, refer to the [Systemd configuration](/doc/linux_for_rapsberry_pi_users#systemd-configuraiton) section in [`/doc/linux_for_rapsberry_pi_users.md`](/doc/linux_for_rapsberry_pi_users.md).
 
 **After installing Glances in the Raspberry Pi, install the [Glances add-on for Home Assistant](/doc/homeassistant.md#glances) to remotely visualize the metrics.**
 
