@@ -31,8 +31,8 @@ Additional information :
 
 ### Raspberry Pi
 
-1. [Upload the code to the Raspberry Pi](/doc/linux_for_raspberry_pi_users.md#useful-commands)
-2. [Install Loki](/doc/linux_dependencies.md#loki)
+1. [Upload the code to the Raspberry Pi](/doc/linux.md#useful-commands)
+2. [Install Loki](/doc/linux.md#loki)
 3. Install Python dependencies with `uv` :
 
     ```bash
@@ -50,11 +50,11 @@ Additional information :
     ```
 
 Optionally : 
-- Install [Glances](/doc/linux_dependencies.md#glances) to remotely monitor hardware resources.
-- Install SC RPi as a Linux service (refer to the [Systemd configuration](/doc/linux_for_raspberry_pi_users.md#systemd-configuration) section in [`/doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md)).
+- Install [Glances](/doc/linux.md#glances) to remotely monitor hardware resources.
+- Install SC RPi as a Linux service (refer to the [Systemd configuration](/doc/linux.md#systemd-configuration) section in [`/doc/linux.md`](/doc/linux.md)).
 
 Additional information :
-- For more information about wired and wireless network configuration in Linux refer to the [Network configuration](/doc/linux_for_raspberry_pi_users.md#network-configuration) section in [`/doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md).
+- For more information about wired and wireless network configuration in Linux refer to the [Network configuration](/doc/linux.md#network-configuration) section in [`/doc/linux.md`](/doc/linux.md).
 - For more information about the uv package manager, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md).
 
 </br>
@@ -80,7 +80,7 @@ Additional information :
 
 Optionally:
 
-- Install the whole Grafana stack refer to [Grafana Loki > Get Started > Quick Start > Loki Tutorial](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial) in the official documentation.
+- Install the whole Grafana stack locally with Docker (refer to the [Loki](/doc/development.md#loki) section in [`/doc/development.md`](/doc/development.md)).
 - Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app for Home Assistant to debug MQTT messages.
 
 </br>
@@ -91,8 +91,7 @@ Optionally:
 - [`doc/commands.md`](/doc/commands.md): describes SC RPi commands
 - [`doc/development.md`](/doc/development.md): useful documentation for SC RPi development
 - [`doc/homeassistant.md`](/doc/homeassistant.md): recommended add-ons, configurations and more for Home Assistant
-- [`doc/linux_for_raspberry_pi_users.md`](/doc/linux_for_raspberry_pi_users.md): general Linux documentation
-- [`doc/linux_dependencies.md`](/doc/linux_dependencies.md)
+- [`doc/linux.md`](/doc/linux.md): Linux documentation related to SC RPi
 
 ## Links
 

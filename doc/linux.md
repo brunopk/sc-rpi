@@ -210,6 +210,50 @@ network={
 }
 ```
 
+## Linux dependencies for SC RPi
+
+All dependencies listed below are not mandatory but useful for different purposes such as logging and monitoring.
+
+### Glances
+
+[Glances](https://nicolargo.github.io/glances/) is a cross-platform system monitoring tool written in Python. It can be installed through the Python `pip` package manager as described in the [Install](https://glances.readthedocs.io/en/latest/install.html) page of the official documentation, or through `apt-get`.
+
+> It's recommended to install it as a Linux service to start Glances automatically after booting the system. For more information about Linux services, refer to the [Systemd configuration](/doc/linux_for_rapsberry_pi_users#systemd-configuraiton) section in [`/doc/linux_for_rapsberry_pi_users.md`](/doc/linux_for_rapsberry_pi_users.md).
+
+**After installing Glances in the Raspberry Pi, install the [Glances add-on for Home Assistant](/doc/homeassistant.md#glances) to remotely visualize the metrics.**
+
+### Loki
+
+[Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture. **For SC RPi it's not necessary to install [Alloy](https://grafana.com/docs/alloy/latest/) nor other tools described in the official page, just Loki is enough.**
+
+Installing Loki with `apt-get` :
+
+1. Add GPG keys for official repos :
+
+    ```bash
+    mkdir -p /etc/apt/keyrings/
+    wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor > /etc/apt/keyrings/grafana.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee /etc/apt/sources.list.d/grafana.list
+    ```
+2. Update `apt-get` local registries :
+
+    ```bash
+    sudo apt-get update
+    ```
+
+3. Install `loki` package :
+  
+    ```bash
+    sudo apt-get install loki
+    ```
+
+**Additional information:**
+- Grafana Loki works only with Raspberry Pi OS 64 bt version.
+- Default Loki configuration file is stored in `/etc/loki/config.yml`.
+- To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace raspberrypi.local for the corresponding hostname).
+- To visualize logs remotely, install Grafana and configure the corresponding Grafana Loki datasource in the Grafana instance running with Home Assistant (refer to the [Grafana](/doc/homeassistant.md#grafana) section in [`/doc/homeassistant.md`](/doc/homeassistant.md)).
+- To install Loki from sources refer to [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5) from Medium (Instead of using `gunzip` for uncompressing, use `unzip`).
+
 ## Common issues in Raspberry Pi OS
 
 In case SSH is not working, check if `ssh.service` is correctly enabled :
@@ -264,5 +308,12 @@ sudo dd if=/dev/diskX bs=4M status=progress | gzip > image.img.gz
 # Links
 
 - [Connecting with wpa_cli](https://wiki.archlinux.org/title/Wpa_supplicant#Connecting_with_wpa_cli)
+- [Glances - Install](https://glances.readthedocs.io/en/latest/install.html)
+- [Grafana Alloy](https://grafana.com/docs/alloy/latest/)
+- [Grafana Loki](https://grafana.com/docs/loki/latest/)
+- [Grafana Loki - Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/)
+- [Grafana Loki - Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/)
 - [Query wpa_supplicant with which AP is it associated](https://unix.stackexchange.com/questions/454472/querry-wpa-supplicant-with-which-ap-is-it-associated).
+- [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5))
+- [Systemd journal access with python API](https://stackoverflow.com/questions/58753748/systemd-journal-access-with-python-api).
 - [What is Systemctl? An In-Depth Overview](https://www.liquidweb.com/kb/what-is-systemctl-an-in-depth-overview)

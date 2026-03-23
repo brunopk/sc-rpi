@@ -29,8 +29,6 @@ def configure_logging(config: Config) -> None:
         queue_handler.setFormatter(formatter)
 
         # TODO: CONTINUE
-        # TODO: summarize documentation about Loki in linux_dependencies.md
-        # TODO: explain in raspberry_pi.md that 64 bit version of Raspberry Pi OS is required for [Grafana Loki](doc/linux_dependencies.md#loki).
 
         """loki = LokiLogger(
             url="http://loki:3100/loki/api/v1/push",

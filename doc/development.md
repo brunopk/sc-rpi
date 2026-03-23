@@ -24,7 +24,7 @@ uv sync --only-group dev
 
 The [rpi-ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project it's provided with a [mocked implementation](../lib/rpi-ws281x/) of this library, this is an example of some mocked libraries used in SC RPi. **Mocked libraries are located in the [`/lib`](/lib) folder.**
 
-# Ruff
+## Ruff
 
 **To check linting rules in the current folder**
 
@@ -37,6 +37,13 @@ ruff check .
 ```bash
 ruff check file.py --fix
 ```
+
+## Loki
+
+Though is not recommended, as it is not really necessary, Loki can be installed locally with Docker following instructions in the [Loki tutorial](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/) of the official documentation.
+
+To install Loki with `apt-get` refer to the [Loki](/doc/linux.md#loki) section in [`/doc/linux.md`](/doc/linux.md).
+
 
 ## Testing
 
@@ -82,3 +89,5 @@ In order to run the application as a Python module :
 - [Paho documentation](https://eclipse.dev/paho/files/paho.mqtt.python/html/client.html)
 - [Python virtual environments](virtual_environments.md)
 - [uv package manager official site](https://docs.astral.sh)
+
+
