@@ -29,16 +29,13 @@ As mentioned on the [README.md](/README.md), currently SC RPi is intended to be 
    systemctl enable sc-rpi.service
    ```
 
-</br>
-</br>
-
-To check the server is correctly started :
+**To check the server is correctly started :**
 
 ```bash
 systemctl status sc-rpi.service
 ```
 
-### Restarting the service
+** To restartart the service :**
 
 ```bash
 systemctl restart sc-rpi.service
@@ -50,21 +47,21 @@ If service configuration was changed, reload configuration before restarting :
 systemctl daemon-reload
 ```
 
-### Logging
-
-Also logs can be obtained with the [journal command line interface](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs). For example, with this command :
+**Reading service logs : **
 
 ```bash
 journalctl -u sc-rpi.service
 ```
 
-something like this can be obtained :
+this command will return something like this :
 
 ```txt
 Feb 06 23:42:03 raspberrypi systemd[1]: Started sc-rpi server.
 Feb 06 23:42:04 raspberrypi <path to sc-rpi>/main.py[559]: sc-rpi server ready to listen new connections.
 Feb 06 23:42:04 raspberrypi systemd[1]: sc-rpi.service: Succeeded.
 ```
+
+For more more information about the `journalctl` command refer to [this](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs) link.
 
 ## Network configuration
 
@@ -313,6 +310,7 @@ sudo dd if=/dev/diskX bs=4M status=progress | gzip > image.img.gz
 - [Grafana Loki](https://grafana.com/docs/loki/latest/)
 - [Grafana Loki - Install Grafana Loki locally](https://grafana.com/docs/loki/latest/setup/install/local/)
 - [Grafana Loki - Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/)
+- [How To Use journalctl to View and Manipulate systemd Logs on Linux](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
 - [Query wpa_supplicant with which AP is it associated](https://unix.stackexchange.com/questions/454472/querry-wpa-supplicant-with-which-ap-is-it-associated).
 - [Setup Loki as a service in Linux](https://medium.com/@abdullah037b/setup-loki-as-a-service-in-linux-cdf114d8e1f5))
 - [Systemd journal access with python API](https://stackoverflow.com/questions/58753748/systemd-journal-access-with-python-api).
