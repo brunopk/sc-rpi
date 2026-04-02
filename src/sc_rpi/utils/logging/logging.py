@@ -46,6 +46,7 @@ def configure_logging(config: Config) -> None:
     if config.env == "prod":
 
         # TODO: CONTINUE implement logging with structlog
+        # TODO: invesigate how exceptions are sent to Loki (check if they use a special attribute or label)
 
         log_format = "%(name)s - %(message)s"
     elif config.env == "dev":
