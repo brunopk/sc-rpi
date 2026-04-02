@@ -4,14 +4,15 @@ version = "0.1.0"
 description = "A project to control W2812B led strips with Raspberry Pi"
 readme = "README.md"
 authors = [{ name = "Bruno Piaggio", email = "brunopiaggiok@gmail.com" }]
-requires-python = "==3.9.*"
+requires-python = "==3.11.*"
 dependencies = [
     "inflector==3.1.1",
     "toml==0.10.2",
     "paho-mqtt==2.1.0",
     "mashumaro==3.16",
     "pyaml==25.7.0",
-    "loki-console-logger-python==1.0.12"
+    "structlog==25.5.0",
+    "colorama==0.4.6",
 ]
 [dependency-groups]
 dev = [

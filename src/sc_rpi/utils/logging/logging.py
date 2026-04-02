@@ -1,12 +1,30 @@
 """Utility functions to set logging configurations."""
 
 import logging
-from logging import Formatter, StreamHandler, basicConfig
-from logging.handlers import QueueHandler
-from multiprocessing import Queue
+from logging import basicConfig
+
+import structlog
+from colorama import Fore, Style, init
+from structlog.dev import ConsoleRenderer
 
 from sc_rpi.models.config import Config
 
+init(autoreset=True)
+
+_LEVEL_COLORS = {
+    "debug": Fore.CYAN,
+    "info": Fore.GREEN,
+    "warning": Fore.YELLOW,
+    "error": Fore.RED,
+    "critical": Fore.MAGENTA,
+}
+
+def _level_formatter(_, value):
+    color = _LEVEL_COLORS.get(value, "")
+    return f"{color}[{value.upper()}]{Style.RESET_ALL}"
+
+def _logger_name_formatter(_, value):
+    return f"{value} : "
 
 def configure_logging(config: Config) -> None:
     """Configure the `logging` library.
@@ -19,34 +37,38 @@ def configure_logging(config: Config) -> None:
 
     """
     level = config.log_level
+    shared_processors = [
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.add_logger_name,
+        structlog.processors.TimeStamper(fmt="iso"),
+    ]
 
     if config.env == "prod":
 
-        log_format = "%(message)s"
-        formatter = Formatter(log_format)
-        queue = Queue(-1)
-        queue_handler = QueueHandler(queue)
-        queue_handler.setFormatter(formatter)
+        # TODO: CONTINUE implement logging with structlog
 
-        # TODO: CONTINUE
+        log_format = "%(name)s - %(message)s"
+    elif config.env == "dev":
+        # The "" column is for extra fields
+        # passed as extra arguments to info(), debug(), etc.
+        formatter = structlog.stdlib.ProcessorFormatter(
+            processor=ConsoleRenderer(
+                columns=[
+                    structlog.dev.Column("timestamp", formatter=lambda _, v: str(v)),
+                    structlog.dev.Column("level", formatter=_level_formatter),
+                    structlog.dev.Column("logger", formatter=_logger_name_formatter),
+                    structlog.dev.Column("event", formatter=lambda _, v: str(v)),
+                    structlog.dev.Column("", formatter=lambda _, v: str(v)),
+            ]),
+            foreign_pre_chain=shared_processors,
+        )
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+    else:
+        raise Exception(f"Unknown environment {config.env} use prod or dev")
 
-        """loki = LokiLogger(
-            url="http://loki:3100/loki/api/v1/push",
-            labels={"app": "my-app"},
-            batch_size=100,
-            flush_interval=2
-        )"""
-        basicConfig(level=level, handlers=[])
-        return
 
-    stream_handler = StreamHandler()
-    stream_handler.emit = _decorate_console_handler_emit(stream_handler.emit)
-
-    log_format = "%(asctime)s - %(name)s - %(levelname)s -- %(message)s"
-    formatter = Formatter(log_format)
-    stream_handler.setFormatter(formatter)
-
-    basicConfig(level=level, handlers=[stream_handler])
+    basicConfig(level=level, handlers=[handler])
 
 def collapse_multiline_str_into_one_line(long_message: str) -> str:
     """Collapse a multiline (defined between triple `"`) into a one-line string.
@@ -62,24 +84,4 @@ def collapse_multiline_str_into_one_line(long_message: str) -> str:
     """
     return " ".join(long_message.split())
 
-def _decorate_console_handler_emit(fn):
-    """Based on Stack Overflow post: \
-
-    https://stackoverflow.com/questions/20706338/color-logging-using-logging-module-in-python.
-
-    """
-    def new(*args):
-        level_no = args[0].levelno
-        if level_no >= logging.CRITICAL:
-            args[0].levelname = f"\x1b[1;31m{args[0].levelname}\x1b[0m"
-        elif level_no >= logging.ERROR:
-            args[0].levelname = f"\x1b[31m{args[0].levelname}\x1b[0m"
-        elif level_no >= logging.WARNING:
-            args[0].levelname = f"\x1b[33m{args[0].levelname}\x1b[0m"
-        elif level_no >= logging.INFO:
-            args[0].levelname = f"\x1b[32m{args[0].levelname}\x1b[0m"
-        elif level_no >= logging.DEBUG:
-            args[0].levelname = f"\x1b[35m{args[0].levelname}\x1b[0m"
-
-        return fn(*args)
-    return new
+__all__ = ["collapse_multiline_str_into_one_line", "configure_logging"]
