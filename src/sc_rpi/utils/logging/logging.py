@@ -2,6 +2,7 @@
 
 import logging
 from logging import basicConfig
+from logging.handlers import SysLogHandler
 
 import structlog
 from colorama import Fore, Style, init
@@ -41,14 +42,16 @@ def configure_logging(config: Config) -> None:
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.format_exc_info,
     ]
 
     if config.env == "prod":
-
-        # TODO: CONTINUE implement logging with structlog
-        # TODO: invesigate how exceptions are sent to Loki (check if they use a special attribute or label)
-
-        log_format = "%(name)s - %(message)s"
+        # TODO: test if this works with Loki
+        formatter = structlog.stdlib.ProcessorFormatter(
+            processor=structlog.processors.LogfmtRenderer(),
+            foreign_pre_chain = shared_processors,
+        )
+        handler = SysLogHandler(address="/dev/log")
     elif config.env == "dev":
         # The "" column is for extra fields
         # passed as extra arguments to info(), debug(), etc.
@@ -64,11 +67,10 @@ def configure_logging(config: Config) -> None:
             foreign_pre_chain=shared_processors,
         )
         handler = logging.StreamHandler()
-        handler.setFormatter(formatter)
     else:
         raise Exception(f"Unknown environment {config.env} use prod or dev")
 
-
+    handler.setFormatter(formatter)
     basicConfig(level=level, handlers=[handler])
 
 def collapse_multiline_str_into_one_line(long_message: str) -> str:
