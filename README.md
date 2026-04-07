@@ -4,8 +4,6 @@
 
 </br>
 
-Additional information :
-
 > For more information about how SC RPi integrates with Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
 
 ## Requirements
