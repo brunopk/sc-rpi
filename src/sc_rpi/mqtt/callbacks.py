@@ -12,7 +12,7 @@ from sc_rpi.utils.topic_utils import (
     build_ha_command_topic,
 )
 
-LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
@@ -50,12 +50,12 @@ def on_connect(
     if reason_code.is_failure:
         error_msg = f"Failed to connect: {reason_code}. "
         "loop_forever() will retry connection"
-        LOGGER.error(error_msg)
+        _LOGGER.error(error_msg)
     else:
         ha_command_topic = build_ha_command_topic()
-        LOGGER.info("Subscribing to %s", ha_command_topic)
+        _LOGGER.info("Subscribing to %s", ha_command_topic)
         client.subscribe(ha_command_topic)
 
-        LOGGER.info("Subscribing to %s", SC_RPI_COMMAND_TOPIC)
+        _LOGGER.info("Subscribing to %s", SC_RPI_COMMAND_TOPIC)
         client.subscribe(SC_RPI_COMMAND_TOPIC)
 

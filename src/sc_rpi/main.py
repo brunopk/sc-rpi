@@ -14,15 +14,15 @@ from sc_rpi.worker import Worker
 
 # TODO: implement connection verification as before (sending ping to the default gateway)
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 config = load_configurations()
 configure_logging(config)
 
 if config.env == "dev":
-    logger.info("Starting application (press CTRL+C to exit)")
+    _LOGGER.info("Starting application (press CTRL+C to exit)")
 else:
-    logger.info("Starting application")
+    _LOGGER.info("Starting application")
 
 client = Client(CallbackAPIVersion.VERSION2)
 worker = Worker(config, client)
@@ -36,7 +36,7 @@ client.username_pw_set(
 )
 
 
-logger.info("Connecting to MQTT broker on %s", config.mqtt_config.broker_config.host)
+_LOGGER.info("Connecting to MQTT broker on %s", config.mqtt_config.broker_config.host)
 client.connect(
     config.mqtt_config.broker_config.host,
     config.mqtt_config.broker_config.port,
@@ -48,7 +48,7 @@ worker.start()
 try:
     client.loop_forever()
 except Exception as ex:
-    logger.exception("Error", exc_info=ex)
+    _LOGGER.exception("Error", exc_info=ex)
 finally:
-    logger.info("Disconnecting from the MQTT broker")
+    _LOGGER.info("Disconnecting from the MQTT broker")
     client.disconnect()

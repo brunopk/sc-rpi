@@ -11,7 +11,7 @@ from sc_rpi.commands.base import Command, CommandResult
 if TYPE_CHECKING:
   from mashumaro.mixins.json import DataClassJSONMixin
 
-LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 def log_before_running() -> Callable[
     [Callable[[object], CommandResult]],
@@ -30,7 +30,7 @@ def log_before_running() -> Callable[
             **kwargs: any
         ) -> dict[str, DataClassJSONMixin | str]:
 
-            LOGGER.info("Executing %s command", self.command_name)
+            _LOGGER.info("Executing %s command", self.command_name)
             return run(self, *args, **kwargs)
 
         return _wrapped_run_func

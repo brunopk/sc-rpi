@@ -17,7 +17,7 @@ from sc_rpi.utils.logging.logging import collapse_multiline_str_into_one_line
 if TYPE_CHECKING:
     from sc_rpi.models.config import Config
 
-LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 # TODO: test what happend after removing this @dataclass (it should not be necessary)
 
@@ -38,13 +38,13 @@ class HardwareController:
 
         """
         # Creates sections from config
-        LOGGER.info("Initializing controller")
+        _LOGGER.info("Initializing controller")
 
         self._sections_controller = SectionsController(config)
 
         self._strip_length = config.strip_config.strip_length
 
-        LOGGER.info("Initializing PixelStrip instance")
+        _LOGGER.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
             config.strip_config.strip_length,
             config.strip_config.pin,
@@ -199,7 +199,7 @@ class HardwareController:
         if len(colors) == 0:
             warning_msg = """Nothing to render, probably sections were not defined
                 correctly or reset command was invoked"""
-            LOGGER.warning(collapse_multiline_str_into_one_line(warning_msg))
+            _LOGGER.warning(collapse_multiline_str_into_one_line(warning_msg))
         else:
             for i, c in enumerate(colors):
                 self._strip.setPixelColor(i, Color(c[0], c[1], c[2]))

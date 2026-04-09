@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from sc_rpi.models.config import Config
     from sc_rpi.models.config.strip_config import StripConfig
 
-LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 class SectionsController:
     """Used to control sections in the strip.
@@ -31,7 +31,7 @@ class SectionsController:
             config (Config): SC RPi configuration.
 
         """
-        LOGGER.info("Initializing controller")
+        _LOGGER.info("Initializing controller")
         self._strip_length = config.strip_config.strip_length
         self._config = config
         self._section_ids: list[str] = []
@@ -306,7 +306,7 @@ class SectionsController:
 
     def _init_sections(self, strip_config: StripConfig) -> None:
         for section in strip_config.sections:
-            LOGGER.info(
+            _LOGGER.info(
                 "Initializing controller, creating section %s from %d to %d",
                 section.id,
                 section.start,

@@ -17,7 +17,7 @@ from sc_rpi.enums.homeassistant.schema import Schema
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
-from sc_rpi.utils.mappings import map_exception_to_sc_rpi_result
+from sc_rpi.utils.mappings import map_exception
 from sc_rpi.utils.topic_utils import (
     SC_RPI_RESULT_TOPIC,
     build_ha_command_topic,
@@ -36,8 +36,7 @@ if TYPE_CHECKING:
     from sc_rpi.models.config import Config
     from sc_rpi.models.config.strip_config import Section
 
-# TODO: rename all logger to LOGGER
-LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 class Worker(Thread):
     """Collects messages and process them.
@@ -57,7 +56,7 @@ class Worker(Thread):
         """
         super().__init__(daemon=True, name="WorkerThread")
 
-        LOGGER.info("Initializing worker")
+        _LOGGER.info("Initializing worker")
 
         self._config = config
         self._client = client
@@ -81,7 +80,7 @@ class Worker(Thread):
             msg = self._message_queue.get()
             msg_decoded = msg.payload.decode()
 
-            LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
+            _LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
 
             """
             All commands, from Home Assistant or from user, are first converted to \
@@ -106,7 +105,7 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 else:
-                    LOGGER.warning("Message received on unexpected topic %s", msg.topic)
+                    _LOGGER.warning("Message received on unexpected topic %s", msg.topic)
                     continue
 
                 if sc_rpi_command is not None:
@@ -115,7 +114,7 @@ class Worker(Thread):
                     command_result = sc_rpi_command.run()
 
                     if len(command_result.keys()) == 0:
-                        LOGGER.warning(
+                        _LOGGER.warning(
                             "No topics to return result of %s command",
                             sc_rpi_command.command_name,
                         )
@@ -126,7 +125,7 @@ class Worker(Thread):
                                 if isinstance(command_result[topic_name], str)
                                 else command_result[topic_name].to_json()
                             )
-                            LOGGER.debug("Publishing result to %s topic", topic_name)
+                            _LOGGER.debug("Publishing result to %s topic", topic_name)
                             self._client.publish(topic_name, topic_payload)
 
             except Exception as ex:
@@ -159,7 +158,7 @@ class Worker(Thread):
             # TODO: add retain=True (this is just for testing)
             self._client.publish(discovery_topic, discovery_message.to_json())
 
-            LOGGER.info(
+            _LOGGER.info(
                 "Strip section from %d to %d published to Home Assistant as %s",
                 section.start,
                 section.end,
@@ -243,12 +242,12 @@ class Worker(Thread):
             else "Error executing command"
         )
         if isinstance(ex, ApiError):
-            LOGGER.warning(msg, exc_info=ex)
+            _LOGGER.warning(msg, exc_info=ex)
         else:
-            LOGGER.exception(msg, exc_info=ex)
+            _LOGGER.exception(msg, exc_info=ex)
 
         try:
-            sc_rpi_result = map_exception_to_sc_rpi_result(ex, sc_rpi_command)
+            sc_rpi_result = map_exception(ex, sc_rpi_command)
             self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
         except Exception as ex:
-            LOGGER.warning("Error sending result", exc_info=ex)
+            _LOGGER.warning("Error sending result", exc_info=ex)
