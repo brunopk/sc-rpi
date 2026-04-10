@@ -40,7 +40,14 @@ package-dir = {"" = "src"}
 
 [tool.ruff]
 target-version = "py38"
-select = ["ALL"]
 line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",  # PEP 257 says NO blank line before class definitions
+    "D213",  # PEP 257 says summary on first line
+    "COM812" # To avoid ruff format warnings
+]
 
 
