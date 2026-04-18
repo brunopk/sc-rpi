@@ -252,7 +252,7 @@ As described in its official documentation, Grafana Alloy is an open source tele
          ```
    2. Restart the service
    3. Open http://raspberrypi.local:12345 (replace *raspberrypi.local* with the corresponding hostname) 
-- The instructions to install Alloy described above were extracted from https://apt.grafana.com/. Refer also to the [Install](https://grafana.com/docs/alloy/latest/set-up/install/linux/#install) section for more information.
+- The instructions to install Alloy described above were extracted from https://apt.grafana.com/, Refer to the [Install](https://grafana.com/docs/alloy/latest/set-up/install/linux/#install) section of the official documentation for more information.
 
 
 
