@@ -182,11 +182,7 @@ network={
 }
 ```
 
-# Complementary software for SC RPi
-
-All dependencies listed below are not mandatory but useful for different purposes such as logging and monitoring.
-
-## Glances
+# Glances
 
 [Glances](https://nicolargo.github.io/glances/) is a cross-platform system monitoring tool written in Python. It can be installed through the Python `pip` package manager as described in the [Install](https://glances.readthedocs.io/en/latest/install.html) page of the official documentation, or through `apt-get`.
 
@@ -254,9 +250,7 @@ As described in its official documentation, Grafana Alloy is an open source tele
    3. Open http://raspberrypi.local:12345 (replace *raspberrypi.local* with the corresponding hostname) 
 - The instructions to install Alloy described above were extracted from https://apt.grafana.com/, Refer to the [Install](https://grafana.com/docs/alloy/latest/set-up/install/linux/#install) section of the official documentation for more information.
 
-
-
-## Loki
+# Loki
 
 [Grafana Loki](https://grafana.com/docs/loki/latest/), or sometimes abbreviated as Loki, is a logging tool. The [Quick start](https://grafana.com/docs/loki/latest/get-started/quick-start/quick-start/) explains very well the common Loki-Alloy-Grafana architecture. To install Loki with `apt-get` follow these steps : 
 
