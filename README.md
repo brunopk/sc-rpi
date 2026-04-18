@@ -6,6 +6,8 @@
 
 > For more information about how SC RPi integrates with Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
 
+</br>
+
 ## Requirements
 
 - Raspberry Pi 3 with Raspberry Pi OS 64 bit version.
@@ -24,13 +26,13 @@
 2. [Install and configure Grafana app](/doc/homeassistant.md#grafana)
 3. [Install and configure the MQTT integration](https://www.home-assistant.io/integrations/mqtt/)
 
-   </br>
+    </br>
 
 Optionally :
 - Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) to debug MQTT messages.
 - Install [Glances](/doc/homeassistant.md#glances) app and the corresponding integration for Home Assistant to remotely connect to the Raspberry Pi to monitor resources such as CPU and memory usage.
 
-  </br>
+    </br>
 
 Additional information :
 - For more information about MQTT in Home Assistant refer to [`/doc/homeassistant.md`](/doc/homeassistant.md).
@@ -48,17 +50,18 @@ Additional information :
     ```
 5. [Install SC RPi as a Linux service](/doc/linux.md#systemd-configuration)
 
+    </br>
 
 Optionally : 
 - Install [Glances](/doc/linux.md#glances) in order for Home Assistant to remotely get Raspberry Pi resources information.
 
-  </br>
+    </br>
 
 Additional information :
 - For more information about wired and wireless network configuration in Linux refer to the [Network configuration](/doc/linux.md#network-configuration) section in [`/doc/linux.md`](/doc/linux.md).
 - For more information about the uv package manager, refer to the [`uv`](/doc/development.md#uv) section in [`doc/development`](doc/development.md).
 
-  </br>
+    </br>
 
 ## Development
 
