@@ -283,8 +283,8 @@ As described in its official documentation, Grafana Alloy is an open source tele
 - Loki must be installed before Alloy
 
 **Additional information :**
-- The instructions to install Loki described above were extracted from https://apt.grafana.com/. Refer also to the [Install using APT or RPM package manager
-](https://grafana.com/docs/loki/latest/setup/install/local/#install-using-apt-or-rpm-package-manager) section for more information.
+- The instructions to install Loki described above were extracted from https://apt.grafana.com/. Refer to the [Install using APT or RPM package manager
+](https://grafana.com/docs/loki/latest/setup/install/local/#install-using-apt-or-rpm-package-manager) section of the official documentation for more information.
 - Grafana Loki works only with Raspberry Pi OS 64 bt version.
 - Default Loki configuration file is stored in `/etc/loki/config.yml`.
 - To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace *raspberrypi.local* with the corresponding hostname).
