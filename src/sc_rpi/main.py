@@ -13,6 +13,7 @@ from sc_rpi.utils.logging import configure_logging
 from sc_rpi.worker import Worker
 
 # TODO: implement connection verification as before (sending ping to the default gateway)
+# TODO: generate folder structure diagram with Claude
 
 _LOGGER = logging.getLogger(__name__)
 
