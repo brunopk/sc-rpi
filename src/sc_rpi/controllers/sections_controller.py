@@ -11,8 +11,7 @@ from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.section_internal_representation import SectionInternalRepresentation
 
 if TYPE_CHECKING:
-    from sc_rpi.models.config import Config
-    from sc_rpi.models.config.strip_config import StripConfig
+    from sc_rpi.models.config import Config, StripConfig
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ class SectionsController:
 
         """
         _LOGGER.info("Initializing controller")
-        self._strip_length = config.strip_config.strip_length
+        self._strip_length = config.strip.strip_length
         self._config = config
         self._section_ids: list[str] = []
         self._color_list: list[list[tuple[int, int, int]]] = []
@@ -41,7 +40,7 @@ class SectionsController:
         self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
         self._limits_by_id: dict[str, tuple[int, int]] = {}
         self._is_on_by_id: dict[str, bool] = {}
-        self._init_sections(config.strip_config)
+        self._init_sections(config.strip)
 
     def edit_section(
         self,

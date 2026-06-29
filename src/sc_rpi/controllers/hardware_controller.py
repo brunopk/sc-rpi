@@ -12,10 +12,10 @@ from sc_rpi.controllers.sections_controller import (
     SectionInternalRepresentation,
     SectionsController,
 )
-from sc_rpi.utils.logging.logging import collapse_multiline_str_into_one_line
+from sc_rpi.utils.logging import collapse_multiline_str_into_one_line
 
 if TYPE_CHECKING:
-    from sc_rpi.models.config import Config
+    from sc_rpi.config import Config
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 class HardwareController:
     """Provides an interface to control the strip (hardware).
 
-    This class is not thead-safe, it cannot be shared between different threads.
+    This class is not thread-safe, it cannot be shared between different threads.
     """
 
     def __init__(self, config: Config) -> None:
@@ -40,19 +40,18 @@ class HardwareController:
         # Creates sections from config
         _LOGGER.info("Initializing controller")
 
-        self._sections_controller = SectionsController(config)
-
-        self._strip_length = config.strip_config.strip_length
+        self._section_controller = SectionsController(config)
+        self._strip_length = config.strip.strip_length
 
         _LOGGER.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
-            config.strip_config.strip_length,
-            config.strip_config.pin,
-            config.strip_config.freq_hz,
-            config.strip_config.dma,
-            config.strip_config.invert,
-            config.strip_config.brightness,
-            config.strip_config.channel,
+            config.strip.strip_length,
+            config.strip.pin,
+            config.strip.freq_hz,
+            config.strip.dma,
+            config.strip.invert,
+            config.strip.brightness,
+            config.strip.channel,
         )
         self._strip.begin()
 
@@ -70,7 +69,7 @@ class HardwareController:
 
         """
         result = []
-        sections = self._sections_controller.list_sections()
+        sections = self._section_controller.list_sections()
         number_of_sections = len(sections)
         if number_of_sections > 0:
             result = [(0, 0, 0)] * sections[0].limits[0]
@@ -121,7 +120,7 @@ class HardwareController:
             ApiError:
 
         """
-        return self._sections_controller.edit_section(section_id, start, end, color)
+        return self._section_controller.edit_section(section_id, start, end, color)
 
     def get_section(self, section_id: str) -> SectionInternalRepresentation:
         """Obtain a section by ID.
@@ -136,7 +135,7 @@ class HardwareController:
             ApiError:
 
         """
-        return self._sections_controller.get_section(section_id)
+        return self._section_controller.get_section(section_id)
 
     def list_sections(self) -> list[SectionInternalRepresentation]:
         """Return all defined sections.
@@ -145,7 +144,7 @@ class HardwareController:
             list[Section]: All currently available sections in the strip.
 
         """
-        return self._sections_controller.list_sections()
+        return self._section_controller.list_sections()
 
     def new_section(
         self,
@@ -166,7 +165,7 @@ class HardwareController:
             ApiError:
 
         """
-        return self._sections_controller.new_section(
+        return self._section_controller.new_section(
             section_id,
             start,
             end,
@@ -179,19 +178,7 @@ class HardwareController:
 
         This will reset the whole controller to the state after instantiation.
         """
-        self._sections_controller.remove_all_sections()
-
-    def remove_sections(self, sections: list[str]) -> None:
-        """Remove one or more sections in the strip.
-
-        Args:
-            sections (list[str]): Sections to be removed (identified by their IDs)
-
-        Raises:
-            ApiError:
-
-        """
-        self._sections_controller.remove_sections(sections)
+        self._section_controller.remove_all_sections()
 
     def render(self) -> None:
         """Render the actual configuration on the hardware."""
@@ -205,6 +192,10 @@ class HardwareController:
                 self._strip.setPixelColor(i, Color(c[0], c[1], c[2]))
 
         self._strip.show()
+
+    def reset(self) -> None:
+        """Reset the state of the strip to sections defined in configurations."""
+        # TODO: CONTINUE
 
     def turn_section_on(
         self,

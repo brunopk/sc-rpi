@@ -1,8 +1,25 @@
-"""Contains the `StripConfig` class."""
+"""Contains LED strip configuration classes."""
 
 from dataclasses import dataclass
 
-from sc_rpi.models.config.strip_config.section import Section
+from sc_rpi.models import Color
+
+
+@dataclass
+class Section:
+  """Represents a section of leds in the strip."""
+
+  color: Color
+
+  end: int
+
+  id: str
+
+  is_on: bool
+
+  name: str
+
+  start: int
 
 
 @dataclass

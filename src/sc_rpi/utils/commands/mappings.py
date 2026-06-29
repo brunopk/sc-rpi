@@ -5,18 +5,10 @@ from __future__ import annotations
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
-from sc_rpi.commands.available.turn_section_off.turn_section_off_args import (
-    TurnSectionOffArgs,
-)
-from sc_rpi.commands.available.turn_section_off.turn_section_off_cmd import (
-    TurnSectionOffCmd,
-)
-from sc_rpi.commands.available.turn_section_on.turn_section_on_args import (
-    TurnSectionOnArgs,
-)
-from sc_rpi.commands.available.turn_section_on.turn_section_on_cmd import (
-    TurnSectionOnCmd,
-)
+from sc_rpi.commands.turn_section_off.args import TurnSectionOffArgs
+from sc_rpi.commands.turn_section_off.command import TurnSectionOffCmd
+from sc_rpi.commands.turn_section_on.args import TurnSectionOnArgs
+from sc_rpi.commands.turn_section_on.command import TurnSectionOnCmd
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant import State
 from sc_rpi.errors.api_error import ApiError
@@ -25,7 +17,7 @@ from sc_rpi.utils.topic_utils import get_object_id_from_ha_command_topic
 if TYPE_CHECKING:
     from sc_rpi.commands.base import Command
     from sc_rpi.controllers.hardware_controller import HardwareController
-    from sc_rpi.models.config.config import Config
+    from sc_rpi.models.config import Config
     from sc_rpi.models.homeassistant import HACommand
 
 def map_ha_command_to_sc_rpi_command(

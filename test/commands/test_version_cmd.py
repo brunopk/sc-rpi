@@ -3,7 +3,7 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.available.version.version_cmd import VersionCmd
+from sc_rpi.commands.version.command import VersionCmd
 from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
 from sc_rpi.utils.config import load_configurations

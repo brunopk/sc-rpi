@@ -7,7 +7,7 @@ import logging
 from paho.mqtt.client import Client
 from paho.mqtt.enums import CallbackAPIVersion
 
-from sc_rpi.mqtt import callbacks
+from sc_rpi.paho import callbacks
 from sc_rpi.utils.config import load_configurations
 from sc_rpi.utils.logging import configure_logging
 from sc_rpi.worker import Worker
@@ -31,17 +31,12 @@ client.on_message = callbacks.on_message
 client.on_connect = callbacks.on_connect
 client.user_data_set((config, worker))
 client.username_pw_set(
-    config.mqtt_config.broker_config.username,
-    config.mqtt_config.broker_config.password,
+    config.mqtt.broker_config.username,
+    config.mqtt.broker_config.password,
 )
 
-
-_LOGGER.info("Connecting to MQTT broker on %s", config.mqtt_config.broker_config.host)
-client.connect(
-    config.mqtt_config.broker_config.host,
-    config.mqtt_config.broker_config.port,
-    60,
-)
+_LOGGER.info("Connecting to MQTT broker on %s", config.mqtt.broker_config.host)
+client.connect(config.mqtt.broker_config.host, config.mqtt.broker_config.port,60)
 
 worker.start()
 

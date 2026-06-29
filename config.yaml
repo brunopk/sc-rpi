@@ -3,14 +3,14 @@ default_gateway: 192.168.0.1
 default_network_interface: en0
 status_led: 17
 connection_timeout: 0.25
-log_level: INFO
-mqtt_config:
+log_level: DEBUG
+mqtt:
     broker_config:
         host: homeassistant.local
         port: 1883
         username: test
         password: test
-strip_config:
+strip:
     brightness: 255
     channel: 0
     dma: 10
@@ -23,7 +23,17 @@ strip_config:
           id: ws2812b_strip_section_1
           start: 0
           end: 99
+          is_on: False
+          color:
+            r: 255
+            g: 255
+            b: 255
         - name: WS2812B Strip Section 2
           id: ws2812b_strip_section_2
           start: 100
-          end: 199
+          end: 99
+          is_on: False
+          color:
+            r: 255
+            g: 255
+            b: 255

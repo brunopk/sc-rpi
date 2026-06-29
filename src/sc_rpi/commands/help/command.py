@@ -36,7 +36,7 @@ class Help(Command[None]):
         payload = HelpResultPayload(sorted(command_names))
         result = HelpResult(
             HTTPStatus.ACCEPTED,
-            HelpCmd.command_name,
+            self.command_name,
             payload,
         )
 

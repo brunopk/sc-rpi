@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 def map_section_list(
     section_list: list[SectionInternalRepresentation],
 ) -> list[Section]:
-    """Convert a `Section` instances to `responses.Section`.
+    """Convert a `Section` instances to `results.Section` instances.
 
     Args:
         section_list (list[Section]): Section list. All entries in the section are

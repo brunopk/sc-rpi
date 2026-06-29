@@ -1,13 +1,12 @@
-"""Contains the Section class."""
+"""Contains the main Config class."""
 
 from dataclasses import dataclass
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.models.config.mqtt_config.mqtt_config import MQTTConfig
-from sc_rpi.models.config.strip_config.strip_config import StripConfig
+from sc_rpi.config.mqtt import MQTTConfig
+from sc_rpi.config.strip import StripConfig
 
-# TODO: move all the Config hierarchy to this module
 
 @dataclass
 class Config(DataClassJSONMixin):
@@ -26,8 +25,8 @@ class Config(DataClassJSONMixin):
 
   log_level: str
 
-  mqtt_config: MQTTConfig
+  mqtt: MQTTConfig
 
   status_led: int
 
-  strip_config: StripConfig
+  strip: StripConfig

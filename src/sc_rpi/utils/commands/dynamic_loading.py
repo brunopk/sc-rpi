@@ -13,12 +13,12 @@ def load_command_paths() -> list[Path]:
 
     """
     root_package_path = Path(__file__).parent.parent.parent
-    commands_package = root_package_path / "commands" / "available"
-    excluded_files = [(commands_package / "__pycache__").name]
+    commands_package = root_package_path / "commands"
+    excluded_files = {"__pycache__", "__init__.py", "base.py", "results.py", "args.py"}
     return [
         path
         for path in commands_package.iterdir()
-        if (commands_package / path).is_dir() and path.name not in excluded_files
+        if path.is_dir() and path.name not in excluded_files
     ]
 
 def load_command_names() -> list[str]:

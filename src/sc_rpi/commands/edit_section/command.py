@@ -5,9 +5,8 @@ from dataclasses import dataclass
 
 from sc_rpi.commands.base import Command, CommandResult
 from sc_rpi.commands.edit_section.args import EditSectionArgs
-from sc_rpi.enums.homeassistant.color_mode import ColorMode
-from sc_rpi.enums.homeassistant.state import State
-from sc_rpi.models.homeassistant.ha_state import HAState
+from sc_rpi.enums.homeassistant import ColorMode, State
+from sc_rpi.models.homeassistant import HAState
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.topic_utils import (

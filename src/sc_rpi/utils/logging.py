@@ -1,6 +1,7 @@
 """Utility functions to set logging configurations."""
 
 import logging
+import sys
 from logging import basicConfig
 from logging.handlers import SysLogHandler
 
@@ -8,7 +9,7 @@ import structlog
 from colorama import Fore, Style, init
 from structlog.dev import ConsoleRenderer
 
-from sc_rpi.models.config import Config
+from sc_rpi.config import Config
 
 init(autoreset=True)
 
@@ -66,7 +67,7 @@ def configure_logging(config: Config) -> None:
             ]),
             foreign_pre_chain=shared_processors,
         )
-        handler = logging.StreamHandler()
+        handler = logging.StreamHandler(sys.stdout)
     else:
         raise Exception(f"Unknown environment {config.env} use prod or dev")
 

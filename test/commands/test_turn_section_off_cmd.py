@@ -3,9 +3,7 @@
 import logging
 from unittest import TestCase
 
-from sc_rpi.commands.available.turn_section_off.turn_section_off_cmd import (
-    TurnSectionOffCmd,
-)
+from sc_rpi.commands.turn_section_off.command import TurnSectionOffCmd
 from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
 from sc_rpi.utils.config import load_configurations

@@ -7,8 +7,8 @@ from pathlib import Path
 import yaml
 from RPi import GPIO
 
+from sc_rpi.config import Config
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.models.config import Config
 
 """Load all configurations from `config.ini` file."""
 

@@ -7,8 +7,7 @@ from typing import Optional
 
 from mashumaro.mixins.json import DataClassJSONMixin
 
-from sc_rpi.enums.homeassistant.color_mode import ColorMode
-from sc_rpi.enums.homeassistant.schema import Schema
+from sc_rpi.enums.homeassistant import ColorMode, Schema
 
 # TODO: Investigate why rgb topic is not working (by the way state topic is being used so it's not an important issue)
 

@@ -2,17 +2,18 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 
-from sc_rpi.commands.available.turn_section_off.turn_section_off_args import (
-    TurnSectionOffArgs,
-)
 from sc_rpi.commands.base import Command, CommandResult
-from sc_rpi.enums.homeassistant.state import State
-from sc_rpi.models.homeassistant.ha_state import HAState
-from sc_rpi.utils.commands.decorators import log_call
-from sc_rpi.utils.commands.results import build_sc_rpi_status_result
+from sc_rpi.commands.turn_section_off.args import TurnSectionOffArgs
+from sc_rpi.enums.homeassistant import State
+from sc_rpi.models.homeassistant import HAState
+from sc_rpi.utils.commands.decorators import log_before_running
+from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC, build_ha_state_topic
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -23,7 +24,7 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
 
     command_name: str = "turn_section_off"
 
-    @log_call()
+    @log_before_running()
     def run(self) -> CommandResult:
         """Execute the command.
 
@@ -35,20 +36,23 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
 
         # TODO: test what happens if color and color mode is not sent to Home assistant
 
-        sc_rpi_result = build_sc_rpi_status_result(
+        section_id = self.command_args.section_id
+        section_to_be_turned_off = self._hw_controller.get_section(section_id)
+
+        ha_entity_state_topic = build_ha_state_topic(self.command_args.section_id)
+        ha_entity_state = HAState(State.OFF, brightness=0)
+
+        sc_rpi_result = build_status_result(
             self._hw_controller,
             self.command_name,
         )
-        ha_entity_state = HAState(State.OFF, brightness=0)
-        ha_entity_state_topic = build_ha_state_topic(self.command_args.section_id)
 
-        # TODO: move this comment to a .md file (documentation)
+        if section_to_be_turned_off.is_on:
+            _LOGGER.warning(
+                "Trying to turn section already off section (section_id={%s})",
+                section_id,
+            )
 
-        """
-        IMPORTANT: rendering strip should be the last thing before returning from the \
-            function to avoid rendering anything before any part of the code could \
-                raise an exception.
-        """
         self._hw_controller.render()
 
         return {

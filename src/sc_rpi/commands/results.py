@@ -9,11 +9,12 @@ from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
 from mashumaro.types import Discriminator
 
+# Required for mashumaro (do not move to type checking section)
+from sc_rpi.enums.error_code import ErrorCode
+from sc_rpi.models.color import Color
+
 if TYPE_CHECKING:
     from http import HTTPStatus
-
-    from sc_rpi.enums.error_code import ErrorCode
-    from sc_rpi.models.color import Color
 
 ResultPayload = TypeVar("ResultPayload")
 
@@ -61,7 +62,7 @@ class Result(Generic[ResultPayload], DataClassJSONMixin):
         self,
         status: HTTPStatus,
         command_name: str,
-        payload: Optional[Payload] = None,
+        payload: Optional[ResultPayload] = None,
         error: Optional[Error] = None,
     ) -> None:
         """Initialize the object.

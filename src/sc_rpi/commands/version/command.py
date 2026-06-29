@@ -9,13 +9,10 @@ from platform import python_version
 
 import toml
 
-from sc_rpi.commands.available.version.version_sc_rpi_result import VersionScRpiResult
-from sc_rpi.commands.available.version.version_sc_rpi_result_payload import (
-    VersionScRpiResultPayload,
-)
 from sc_rpi.commands.base import Command, CommandResult
+from sc_rpi.commands.version.result import VersionResult, VersionResultPayload
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.utils.commands.decorators import log_call
+from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
 
@@ -25,7 +22,7 @@ class VersionCmd(Command[None]):
 
     command_name: str = "version"
 
-    @log_call()
+    @log_before_running()
     def run(self) -> CommandResult:
         """Execute the command.
 
@@ -34,13 +31,13 @@ class VersionCmd(Command[None]):
 
         """
         try:
-            payload = VersionScRpiResultPayload(
+            payload = VersionResultPayload(
                 python_version(),
                 self._get_sc_rpi_version(),
             )
-            sc_rpi_result = VersionScRpiResult(
+            sc_rpi_result = VersionResult(
                 HTTPStatus.ACCEPTED,
-                VersionCmd.command_name,
+                self.command_name,
                 payload,
             )
         except FileNotFoundError as ex:

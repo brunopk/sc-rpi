@@ -12,10 +12,10 @@ from typing import TYPE_CHECKING
 from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums.error_code import ErrorCode
-from sc_rpi.enums.homeassistant.color_mode import ColorMode
-from sc_rpi.enums.homeassistant.schema import Schema
+from sc_rpi.enums.homeassistant import ColorMode, Schema, State
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage
+from sc_rpi.models import Color
+from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage, HAState
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
 from sc_rpi.utils.mappings import map_exception
 from sc_rpi.utils.topic_utils import (
@@ -29,21 +29,79 @@ from sc_rpi.utils.topic_utils import (
 
 # TODO: check why the applications seems to hang up after catching an exception when receiving a command (try sending two commands one after the other)
 # TODO: state (on/off) should be published when starting the application (test that state is correctly synchronized)
+# TODO: test forcing an error , verify this error is not raised: mashumaro.exceptions.UnresolvedTypeReferenceError: Class Error has unresolved type reference ErrorCode in some of its fields
+# TODO: detect where the command comes from (HA or user) and send result only for the corresponding topics (add this into a Gist)
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
 
-    from sc_rpi.models.config import Config
-    from sc_rpi.models.config.strip_config import Section
+    from sc_rpi.config import Config
+    from sc_rpi.models import SectionInternalRepresentation
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _parse_ha_cmd(cmd: str) -> HACommand:
+    """Parse a message from Home Assistant.
+
+    Args:
+        cmd (str): Command from Home Assistant (UTF-8 decoded).
+
+    Raises:
+        ApiError: Raises this error if there's any problem parsing the message, \
+            for example if some attribute don't have required format.
+
+    Returns:
+        HACommand:
+
+    """
+    try:
+        cmd_as_dict: dict = loads(cmd)
+        return HACommand.from_dict(cmd_as_dict)
+    except Exception as ex:
+        raise ApiError(
+            HTTPStatus.BAD_REQUEST,
+            ErrorCode.BAD_REQUEST,
+            "Invalid JSON",
+        ) from ex
+
+def _parse_sc_rpi_cmd(
+    cmd: str,
+    config: Config,
+    hw_controller: HardwareController,
+) -> Command:
+    """Parse a message from the user to SC RPi (command).
+
+    Args:
+        cmd (str): Command for SC RPi decoded (UTF-8).
+        config (Config): SC RPi configuration.
+        hw_controller (HardwareController): Used to interact with the hardware.
+
+
+    Raises:
+        ApiError: Raises this error if there's any problem parsing the message, for \
+         example if some attribute don't have required format.
+
+    Returns:
+        Command:
+
+    """
+    try:
+        cmd_as_dict: dict = loads(cmd)
+        return Command.from_dict_wrapper(cmd_as_dict, config, hw_controller)
+    except Exception as ex:
+        raise ApiError(
+            HTTPStatus.BAD_REQUEST,
+            ErrorCode.BAD_REQUEST,
+            "Invalid JSON",
+        ) from ex
 
 class Worker(Thread):
     """Collects messages and process them.
 
-    Collects messages in a internal queue (see `put_message` method) and process \
-        them in a dedicated thread. Current implementation uses **one** thread to \
-            process all messages.
+    Messages are collected from an internal queue (see `put_message` method) and process
+    the in a dedicated thread. Current implementation uses **one** thread to process all
+    messages.
     """
 
     def __init__(self, config: Config, client: Client) -> None:
@@ -61,7 +119,7 @@ class Worker(Thread):
         self._config = config
         self._client = client
         self._hw_controller = HardwareController(config)
-        self._message_queue : Queue[MQTTMessage] = Queue()
+        self._message_queue: Queue[MQTTMessage] = Queue()
 
     def put_message(self, message: MQTTMessage) -> None:
         """Put a message into a internal queue to be processed.
@@ -74,7 +132,7 @@ class Worker(Thread):
 
     def run(self) -> None:
         """Code to be executed in the new thread."""
-        self._publish_ha_entities(self._config.strip_config.sections)
+        self._publish_ha_entities(self._hw_controller.list_sections())
 
         while True:
             msg = self._message_queue.get()
@@ -91,7 +149,7 @@ class Worker(Thread):
                 sc_rpi_command = None
 
                 if matches_ha_command_topic(msg.topic):
-                    ha_command = self._parse_ha_cmd(msg_decoded)
+                    ha_command = _parse_ha_cmd(msg_decoded)
                     sc_rpi_command = map_ha_command_to_sc_rpi_command(
                         ha_command,
                         msg.topic,
@@ -99,13 +157,15 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 elif matches_sc_rpi_command_topic(msg.topic):
-                    sc_rpi_command = self._parse_sc_rpi_cmd(
+                    sc_rpi_command = _parse_sc_rpi_cmd(
                         msg_decoded,
                         self._config,
                         self._hw_controller,
                     )
                 else:
-                    _LOGGER.warning("Message received on unexpected topic %s", msg.topic)
+                    _LOGGER.warning(
+                        "Message received on unexpected topic %s", msg.topic
+                    )
                     continue
 
                 if sc_rpi_command is not None:
@@ -129,21 +189,29 @@ class Worker(Thread):
                             self._client.publish(topic_name, topic_payload)
 
             except Exception as ex:
-
                 self._handle_exception(sc_rpi_command, ex)
 
             self._message_queue.task_done()
 
-    def _publish_ha_entities(self, sections: list[Section]) -> None:
+    def _publish_ha_entities(
+        self, sections: list[SectionInternalRepresentation]
+    ) -> None:
         for section in sections:
             command_topic = build_ha_command_topic(section.id)
             state_topic = build_ha_state_topic(section.id)
+            discovery_topic = build_ha_discovery_topic(section.id)
 
             """
-            HA requires unique_id it to be unique to allow the entity to be managed \
-                through the UI
+            HA requires unique_id it to be unique to allow the entity to be managed
+            through the UI
             """
 
+            _LOGGER.info(
+                "Sending discovery message for section %s (start=%d, end=%d)",
+                section.id,
+                section.start,
+                section.end,
+            )
             discovery_message = HAMQTTDiscoveryMessage(
                 section.name,
                 brightness=True,
@@ -154,72 +222,20 @@ class Worker(Thread):
                 supported_color_modes=[ColorMode.RGB],
                 unique_id=section.id,
             )
-            discovery_topic = build_ha_discovery_topic(section.id)
             # TODO: add retain=True (this is just for testing)
             self._client.publish(discovery_topic, discovery_message.to_json())
 
-            _LOGGER.info(
-                "Strip section from %d to %d published to Home Assistant as %s",
-                section.start,
-                section.end,
-                section.id,
+            # TODO: line 232 and 237 should be in a helper function
+            _LOGGER.info("Sending state for section %s", section.id)
+            section_color = Color(
+                section.color_list[0][0],
+                section.color_list[0][1],
+                section.color_list[0][2],
             )
-
-    def _parse_ha_cmd(self, cmd: str) -> HACommand:
-        """Parse a message from Home Assistant.
-
-        Args:
-            cmd (str): Command from Home Assistant (UTF-8 decoded).
-
-        Raises:
-            ApiError: Raises this error if there's any problem parsing the message, \
-                for example if some attribute don't have required format.
-
-        Returns:
-            HACommand:
-
-        """
-        try:
-            cmd_as_dict: dict = loads(cmd)
-            return HACommand.from_dict(cmd_as_dict)
-        except Exception as ex:
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "Invalid JSON",
-            ) from ex
-
-    def _parse_sc_rpi_cmd(
-        self,
-        cmd: str,
-        config: Config,
-        hw_controller: HardwareController,
-    ) -> Command:
-        """Parse a message from the user to SC RPi (command).
-
-        Args:
-            cmd (str): Command for SC RPi decoded (UTF-8).
-            config (Config): SC RPi configuration. 
-            hw_controller (HardwareController): Used to interact with the hardware.
-
-
-        Raises:
-            ApiError: Raises this error if there's any problem parsing the message, \
-                for example if some attribute don't have required format.
-
-        Returns:
-            Command:
-
-        """
-        try:
-            cmd_as_dict: dict = loads(cmd)
-            return Command.from_dict_wrapper(cmd_as_dict, config, hw_controller)
-        except Exception as ex:
-            raise ApiError(
-                HTTPStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "Invalid JSON",
-            ) from ex
+            state = HAState(
+                State.ON if section.is_on else State.OFF, color=section_color
+            )
+            self._client.publish(state_topic, state.to_json())
 
     def _handle_exception(
         self,
