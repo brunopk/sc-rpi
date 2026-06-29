@@ -13,6 +13,8 @@ from sc_rpi.commands.get_config.result.strip import Section, StripConfig
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC
 
+# TODO: avoid duplicating models for configurations,this command should be able to return models in src.sc_rpi.config, maybe masking/hidding some configurations
+
 if TYPE_CHECKING:
     from sc_rpi.models.config import strip as strip_config
 

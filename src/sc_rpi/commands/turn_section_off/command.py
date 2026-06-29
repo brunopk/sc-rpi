@@ -49,7 +49,7 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
 
         if section_to_be_turned_off.is_on:
             _LOGGER.warning(
-                "Trying to turn section already off section (section_id={%s})",
+                "Trying to turn off an already off section (section_id={%s})",
                 section_id,
             )
 
