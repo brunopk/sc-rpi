@@ -9,12 +9,16 @@ from mashumaro.config import BaseConfig
 from mashumaro.mixins.json import DataClassJSONMixin
 from mashumaro.types import Discriminator
 
+# TODO: try moving this to the type-checking block
+
 from sc_rpi.config import Config
 from sc_rpi.controllers.hardware_controller import HardwareController
 
 CommandArgs = TypeVar("CommandArgs")
 
 CommandResult = dict[str, Union[DataClassJSONMixin, str]]
+
+# TODO: add the "Rendering strip should be the last thing ..." comment to the development.md
 
 @dataclass
 class Command(Generic[CommandArgs], DataClassJSONMixin):
@@ -46,7 +50,7 @@ class Command(Generic[CommandArgs], DataClassJSONMixin):
             instances in different threads.
     - **Use `from_dict_wrapper`** instead of `from_dict` to create `Command` instances \
         from a dictionary.
-    - **Do not use `to_dict`**, this method will method will expose private class \
+    - **Do not use `to_dict`**, this method will expose private class \
         attributes such as `_config`.
 
     Other considerations :
