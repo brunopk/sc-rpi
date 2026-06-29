@@ -72,7 +72,7 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
 
         if section_to_be_turned_on.is_on and previous_color == new_color:
             _LOGGER.info(
-                "Trying to turn already on section with the same color (section_id={%s})",
+                "Trying to turn on an already on section with the same color (section_id={%s})",
                 section_id,
             )
 
