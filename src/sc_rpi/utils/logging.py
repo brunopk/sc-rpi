@@ -11,6 +11,8 @@ from structlog.dev import ConsoleRenderer
 
 from sc_rpi.config import Config
 
+# TODO: create a set_config command to allow to change log level at least
+
 init(autoreset=True)
 
 _LEVEL_COLORS = {
