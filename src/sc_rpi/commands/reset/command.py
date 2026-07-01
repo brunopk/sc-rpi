@@ -10,7 +10,6 @@ from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.mappings import map_color_to_ha_format
 from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC, build_ha_state_topic
 
-# TODO: check if reset is resetting sections as configured in config.yaml
 
 @dataclass
 class Reset(Command[None]):
