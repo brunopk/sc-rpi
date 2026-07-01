@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import logging
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models.section_internal_representation import SectionInternalRepresentation
 
 if TYPE_CHECKING:
-    from sc_rpi.models.config import Config, StripConfig
+    from sc_rpi.config import Config
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,9 +30,8 @@ class SectionsController:
             config (Config): SC RPi configuration.
 
         """
-        _LOGGER.info("Initializing controller")
-        self._strip_length = config.strip.strip_length
         self._config = config
+        self._strip_length = self._config.strip.strip_length
         self._section_ids: list[str] = []
         self._color_list: list[list[tuple[int, int, int]]] = []
         self._limits: list[tuple[int, int]] = []
@@ -40,7 +39,8 @@ class SectionsController:
         self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
         self._limits_by_id: dict[str, tuple[int, int]] = {}
         self._is_on_by_id: dict[str, bool] = {}
-        self._init_sections(config.strip)
+
+        self._initialize_sections()
 
     def edit_section(
         self,
@@ -133,7 +133,7 @@ class SectionsController:
         section_id: str,
         start: int,
         end: int,
-        color: Optional[tuple[int, int, int]] = None,
+        color: tuple[int, int, int] | None = None,
         *_args: object,
         is_on: bool,
     ) -> SectionInternalRepresentation:
@@ -159,17 +159,12 @@ class SectionsController:
             else [(0, 0, 0)] * (end - start + 1)
         )
         self._insert_section(section_id, start, end, color_list, is_on=is_on)
-        return SectionInternalRepresentation(section_id, (start, end), color_list, is_on=is_on)
-
-    def remove_all_sections(self) -> None:
-        """Remove all sections."""
-        self._section_ids = []
-        self._color_list = []
-        self._limits = []
-        self._is_on = []
-        self._color_list_by_id = {}
-        self._limits_by_id = {}
-        self._is_on_by_id = {}
+        return SectionInternalRepresentation(
+            section_id,
+            (start, end),
+            color_list,
+            is_on=is_on
+        )
 
     def remove_sections(self, sections: list[str]) -> None:
         """Remove a set of sections.
@@ -197,6 +192,19 @@ class SectionsController:
                 ErrorCode.SECTION_NOT_FOUND,
                 message=f"section {invalid_section_id} is not defined",
             )
+
+    def reset_sections(self) -> None:
+        """Reset the state of the strip based on configurations."""
+        self._strip_length = self._config.strip.strip_length
+        self._section_ids: list[str] = []
+        self._color_list: list[list[tuple[int, int, int]]] = []
+        self._limits: list[tuple[int, int]] = []
+        self._is_on: list[bool] = []
+        self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
+        self._limits_by_id: dict[str, tuple[int, int]] = {}
+        self._is_on_by_id: dict[str, bool] = {}
+
+        self._initialize_sections()
 
     def turn_section_off(self, section_id: str) -> None:
         """Turn a section off.
@@ -303,10 +311,10 @@ class SectionsController:
         del self._limits_by_id[section_id]
         del self._is_on_by_id[section_id]
 
-    def _init_sections(self, strip_config: StripConfig) -> None:
-        for section in strip_config.sections:
+    def _initialize_sections(self) -> None:
+        for section in self._config.strip.sections:
             _LOGGER.info(
-                "Initializing controller, creating section %s from %d to %d",
+                "Creating section %s from %d to %d",
                 section.id,
                 section.start,
                 section.end,

@@ -63,9 +63,9 @@ def build_ha_state_topic(object_id: str) -> str:
    More information in [Home Assistant MQTT lights](https://www.home-assistant.io/integrations/light.mqtt).
 
   Args:
-      object_id (str): As described in HA documentation, the object \
-        ID is part of the topic may not match with entity ID, it's just used to \
-          structure other topics.
+      object_id (str): Use the entity ID. However, HA documentation explains that \
+        object ID is part of the topic may not match with entity ID, it's just used to \
+        structure other topics.
 
   Returns:
       str: The topic name.

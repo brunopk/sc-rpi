@@ -173,13 +173,6 @@ class HardwareController:
             is_on=True,
         )
 
-    def remove_all_sections(self) -> None:
-        """Remove all sections.
-
-        This will reset the whole controller to the state after instantiation.
-        """
-        self._section_controller.remove_all_sections()
-
     def render(self) -> None:
         """Render the actual configuration on the hardware."""
         colors = self.concatenate_sections()
@@ -194,8 +187,8 @@ class HardwareController:
         self._strip.show()
 
     def reset(self) -> None:
-        """Reset the state of the strip to sections defined in configurations."""
-        # TODO: CONTINUE
+        """Reset the state of the strip based on configurations."""
+        self._section_controller.reset_sections()
 
     def turn_section_on(
         self,
