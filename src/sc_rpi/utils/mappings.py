@@ -44,17 +44,14 @@ def map_section_list(
         for section in section_list
     ]
 
-# TODO: CONTINUE
-# TODO: CONTINUE return Color object
-
-def map_color_to_ha_format(color: tuple[int, int, int]) -> str:
+def map_color_to_ha_format(color: tuple[int, int, int]) -> Color:
     """Map a color to required format for RGB color state topic for Home Assistant.
 
     Args:
         color (tuple[int, int, int]): Color to be mapped (RBG)
 
     """
-    return str(color)[1:-1].replace(" ", "")
+    return Color(color[0], color[1], color[2])
 
 def map_exception(ex: Exception, command: Command | None) -> Result:
     """Map any exception to a `Result`.
