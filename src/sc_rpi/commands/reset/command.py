@@ -44,7 +44,7 @@ class Reset(Command[None]):
             ha_entity_state_topic = build_ha_state_topic(section.id)
             ha_entity_state = HAState(
                 State.ON,
-                brightness=self.command_args.brightness,
+                brightness=self._config.strip.default_section_brightness,
                 color=map_color_to_ha_format(section.color_list[0]),
                 color_mode=ColorMode.RGB,
             )

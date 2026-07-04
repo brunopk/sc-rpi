@@ -18,6 +18,7 @@ strip:
     invert: False
     pin: 18
     strip_length: 300
+    default_section_brightness: 100
     sections:
         - name: WS2812B Strip Section 1
           id: ws2812b_strip_section_1

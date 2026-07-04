@@ -5,6 +5,9 @@ from test.command_test import CommandTest
 
 # TODO: CONTINUE validate that commands returns a dictionary and each entry is an instance of ScRpiResult or HAState (this could be a helper function) if it is instance of sc_rpi result validate that the command name is the corresponding command name
 
+# TODO: CONTINUE
+# TODO: CONTINUE Fix this test
+
 class TestVersion(CommandTest):
     """Tests for `add_section` command."""
 

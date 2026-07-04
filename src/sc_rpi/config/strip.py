@@ -35,6 +35,8 @@ class StripConfig:
 
   channel: int
 
+  default_section_brightness: int
+
   dma: int
 
   freq_hz: int

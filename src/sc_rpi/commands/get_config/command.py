@@ -60,6 +60,7 @@ class GetConfig(Command[None]):
         strip_config = StripConfig(
             self._config.strip.brightness,
             self._config.strip.channel,
+            self._config.strip.default_section_brightness,
             self._config.strip.dma,
             self._config.strip.freq_hz,
             self._config.strip.invert,

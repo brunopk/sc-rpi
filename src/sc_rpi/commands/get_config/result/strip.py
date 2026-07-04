@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+
 @dataclass
 class Section:
     """Represents a section of leds in the strip."""
@@ -23,6 +24,8 @@ class StripConfig:
   brightness: int
 
   channel: int
+
+  default_section_brightness: int
 
   dma: int
 
