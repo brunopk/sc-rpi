@@ -1,25 +1,16 @@
 """Contains the `TestTurnSectionOn` class."""
 
 import logging
-from unittest import TestCase
 
-from sc_rpi.commands.turn_section_on.command import TurnSectionOnCmd
 from sc_rpi.commands.base import Command
-from sc_rpi.controllers import HardwareController
-from sc_rpi.utils.config import load_configurations
+from test.command_test import CommandTest
 
 # TODO: move all logging.basicConfig out of test case classes
 
 logging.basicConfig(level=logging.DEBUG)
 
-class TestTurnSectionOn(TestCase):
+class TestTurnSectionOn(CommandTest):
     """Tests `turn_section_on` command."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Set required configurations before running any test."""
-        cls.config = load_configurations()
-        cls.hw_controller = HardwareController(cls.config)
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""

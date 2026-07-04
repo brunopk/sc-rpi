@@ -1,28 +1,22 @@
 # Development
 
-## `uv`
+## Development dependencies
 
-`uv` is a Python package manager developed in Rust with many binaries distributions that can be easily installed on different operative systems. Among other features, `uv` provides a mechanism to have different dependencies for different environments.
-
-### Installing dependencies 
-
-```bash
-uv sync --only-group rpi
-```
-
-</br>
-
-**`uv sync` create the virtual environment automatically**. For more information about virtual environments refer to [`/doc/virtual_environments.md`](/doc/virtual_environments.md). **Use this command on the Raspberry Pi, not for development on other systems.**
-
-### Installing development dependencies
-
-To install development dependencies run `uv` like this:
+To install development dependencies run `uv` with the `--only-group` argument :
 
 ```bash
 uv sync --only-group dev 
 ```
 
 The [rpi-ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project it's provided with a [mocked implementation](../lib/rpi-ws281x/) of this library, this is an example of some mocked libraries used in SC RPi. **Mocked libraries are located in the [`/lib`](/lib) folder.**
+
+## Testing
+
+1. Create a virtual environment (venv) if it's not created yet.
+2. Activate the venv: `source <path of the venv>/bin/activate`.
+3. Invoke unittest: `python -m unittest discover`.
+
+> **Run tests from the root folder of the project.**
 
 ## Ruff
 
@@ -43,13 +37,6 @@ ruff check file.py --fix
 Though is not recommended, as it is not really necessary, Loki can be installed locally with Docker following instructions in the [Loki tutorial](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/) of the official documentation.
 
 To install Loki with `apt-get` refer to the [Loki](/doc/linux.md#loki) section in [`/doc/linux.md`](/doc/linux.md).
-
-
-## Testing
-
-1. Create a virtual environment (venv) if it's not created yet
-2. Activate the venv: `source <path of the venv>/bin/activate`
-3. Invoke unittest: `python -m unittest discover` (from the root folder)
 
 ## Visual Code
 

@@ -1,12 +1,10 @@
 """Contains the `TestHelp` class."""
 
-from unittest import TestCase
-
-from sc_rpi.commands import Help
 from sc_rpi.commands.base import Command
+from test.command_test import CommandTest
 
 
-class TestHelp(TestCase):
+class TestHelp(CommandTest):
     """Tests for `help` command."""
 
     def test_basic_invocation(self) -> None:

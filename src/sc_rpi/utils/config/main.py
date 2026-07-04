@@ -12,8 +12,11 @@ from sc_rpi.errors.api_error import ApiError
 
 """Load all configurations from `config.ini` file."""
 
-def load_configurations() -> Config:
-    """Load all configurations from `config.ini` file.
+def load_configurations(file: str = "config.yaml") -> Config:
+    """Load all configurations from `config.yaml` file.
+
+    Args:
+        file (str): Configuration file (loaded from the current working directory).
 
     Raises:
         ApiException:
@@ -23,7 +26,7 @@ def load_configurations() -> Config:
 
     """
     try:
-        with Path.open(Path("config.yaml")) as f:
+        with Path.open(Path(file)) as f:
             config_dict = yaml.load(f, Loader=yaml.SafeLoader)
             return Config.from_dict(config_dict)
     except KeyError as ex:
