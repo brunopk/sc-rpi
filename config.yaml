@@ -31,7 +31,7 @@ strip:
         - name: WS2812B Strip Section 2
           id: ws2812b_strip_section_2
           start: 100
-          end: 99
+          end: 299
           is_on: False
           color:
             r: 255
