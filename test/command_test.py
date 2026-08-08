@@ -10,7 +10,7 @@ from sc_rpi.utils.config import load_configurations
 class CommandTest(TestCase):
     """Used to test commands in sc_rpi.commands package.
 
-       Contains common initializations.
+    Contains common initializations.
     """
 
     @classmethod
