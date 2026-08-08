@@ -54,7 +54,7 @@ class VersionCmd(Command[None]):
         toml_path = Path("pyproject.toml")
         with toml_path.open() as file:
             toml_data = toml.load(file)
-            sc_rpi_version = toml_data["tool"]["poetry"]["version"]
+            sc_rpi_version = toml_data["project"]["version"]
 
         if sc_rpi_version is None:
             raise ApiError(message="Cannot obtain SC RPI version from .toml file")
