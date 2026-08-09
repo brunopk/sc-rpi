@@ -11,7 +11,7 @@ from sc_rpi.utils.config import load_configurations
 from sc_rpi.utils.topic_utils import matches_ha_state_topic, matches_sc_rpi_result_topic
 
 
-class CommandTest(TestCase):
+class CommandTestCase(TestCase):
     """Used to test commands in sc_rpi.commands package.
 
     Contains common initializations.
@@ -35,5 +35,3 @@ class CommandTest(TestCase):
                 self.assertIsInstance(value, Result)
             else:
                 raise KeyError(f"Unrecognized topic {topic}".format(topic=topic))
-
-__all__ = ["CommandTest"]

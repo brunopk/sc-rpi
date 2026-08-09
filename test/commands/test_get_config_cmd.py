@@ -1,10 +1,10 @@
 """Contains the `TestGetConfig` class."""
 
 from sc_rpi.commands.base import Command
-from test.command_test import CommandTest
+from test.command_test_case import CommandTestCase
 
 
-class TestGetConfig(CommandTest):
+class TestGetConfig(CommandTestCase):
     """Tests for `get_config` command."""
 
     def test_basic_invocation(self) -> None:

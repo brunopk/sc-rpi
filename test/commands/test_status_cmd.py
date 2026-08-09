@@ -1,10 +1,10 @@
 """Contains the `TestStatus` class."""
 
 from sc_rpi.commands.base import Command
-from test.command_test import CommandTest
+from test.command_test_case import CommandTestCase
 
 
-class TestStatus(CommandTest):
+class TestStatus(CommandTestCase):
     """Tests for `add_section` command."""
 
     def test_basic_invocation(self) -> None:

@@ -1,13 +1,13 @@
 """Contains the `TestEditSection` class."""
 
 from sc_rpi.commands.base import Command
-from test.command_test import CommandTest
+from test.command_test_case import CommandTestCase
 
 # TODO: add a test to set color
 
 # TODO: set log level to info for all tests
 
-class TestEditSection(CommandTest):
+class TestEditSection(CommandTestCase):
     """Tests for `edit_section` command."""
 
     def test_basic_invocation(self) -> None:
