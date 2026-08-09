@@ -226,7 +226,7 @@ class SectionsController:
         self._is_on_by_id[section_id] = False
         self._is_on.insert(index, False)
 
-    # TODO: CONTINUE add/modify test to see if turning section on with a color is working correctly
+    # TODO: add/modify test to see if turning section on with a color is working correctly, for example that it don't modify other sections
 
     def turn_section_on(
         self,

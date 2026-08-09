@@ -6,21 +6,20 @@ import re
 
 from sc_rpi.errors.api_error import ApiError
 
-""""
-This regexp SHOULD use the same prefix defined in HA_TOPIC_PREFIX.
-See also HA_TOPIC_PREFIX.
-"""
-HA_COMMAND_TOPIC_PATTERN = re.compile(r"^scrpi\/homeassistant\/([^\/#\x00]+)/command$")
-
 """
 Prefix used for special topics (for example state topic) set on the discovery message.
-It's the prefix for HA_COMMAND_TOPIC_PATTERN
 """
 HA_TOPIC_PREFIX = "scrpi/homeassistant"
 
 SC_RPI_COMMAND_TOPIC = "scrpi/command"
 
 SC_RPI_RESULT_TOPIC = "scrpi/result"
+
+HA_STATE_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/state$")
+
+# TODO: This regexp SHOULD use the same prefix defined in HA_TOPIC_PREFIX
+
+HA_COMMAND_TOPIC_REGEXP = re.compile(r"^scrpi\/homeassistant\/([^\/#\x00]+)/command$")
 
 def build_ha_discovery_topic(object_id: str) -> str:
   """Build Home Assistant entity discovery topic.
@@ -86,7 +85,23 @@ def matches_ha_command_topic(topic: str) -> bool:
         command topic.
 
   """
-  return HA_COMMAND_TOPIC_PATTERN.match(topic) is not None
+  return HA_COMMAND_TOPIC_REGEXP.match(topic) is not None
+
+def matches_ha_state_topic(topic: str) -> bool:
+  """Indicate whether the topic matches the Home Assistant state topic.
+
+    The state topic is defined in the  discovery message.
+    See also `build_ha_state_topic`.
+
+  Args:
+      topic (str): Topic to be tested.
+
+  Returns:
+      bool: Returns a boolean indicating whether the topic matches the Home Assistant \
+        state topic.
+
+  """
+  return HA_STATE_TOPIC_REGEXP.match(topic) is not None
 
 def matches_sc_rpi_command_topic(topic: str) -> bool:
   """Indicate whether the topic matches the SC RPi command topic \
@@ -103,6 +118,19 @@ def matches_sc_rpi_command_topic(topic: str) -> bool:
   """
   return topic == SC_RPI_COMMAND_TOPIC or topic == SC_RPI_COMMAND_TOPIC + "/"
 
+def matches_sc_rpi_result_topic(topic: str) -> bool:
+  """Indicate whether the topic matches the SC RPi result topic \
+
+  Args:
+      topic (str): Topic to be tested.
+
+  Returns:
+      bool: Returns a boolean indicating whether the topic matches the SC RPi result \
+        topic.
+
+  """
+  return topic == SC_RPI_RESULT_TOPIC or topic == SC_RPI_RESULT_TOPIC + "/"
+
 def get_object_id_from_ha_command_topic(topic: str) -> str:
   """Extract object ID from topic.
 
@@ -118,7 +146,7 @@ def get_object_id_from_ha_command_topic(topic: str) -> str:
       str: Extracted object ID
 
   """
-  match = HA_COMMAND_TOPIC_PATTERN.match(topic)
+  match = HA_COMMAND_TOPIC_REGEXP.match(topic)
   if match is None:
     raise ApiError(message=f"Cannot extract object_id from topic {topic}")
   return match.groups()[0]

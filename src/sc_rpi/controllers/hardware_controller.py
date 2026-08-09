@@ -208,7 +208,7 @@ class HardwareController:
         """
         self._section_controller.turn_section_on(section_id, color)
 
-    # TODO: CONTINUE test turning section off (check that all sections remains unchanged)
+    # TODO: test turning section off (check that all sections remains unchanged)
 
     def turn_section_off(self, section_id: str) -> None:
         """Turn off a section off the strip.
