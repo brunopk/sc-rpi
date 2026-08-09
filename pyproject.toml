@@ -1,0 +1,53 @@
+[project]
+name = "sc-rpi"
+version = "0.1.0"
+description = "A project to control W2812B led strips with Raspberry Pi"
+readme = "README.md"
+authors = [{ name = "Bruno Piaggio", email = "brunopiaggiok@gmail.com" }]
+requires-python = "==3.11.*"
+dependencies = [
+    "inflector==3.1.1",
+    "toml==0.10.2",
+    "paho-mqtt==2.1.0",
+    "mashumaro==3.16",
+    "pyaml==25.7.0",
+    "structlog==25.5.0",
+    "colorama==0.4.6",
+]
+[dependency-groups]
+dev = [
+    "ruff==0.11.13",
+    "rpi-ws281x-mock==5.0.0",
+    "rpi-gpio-mock==0.7.1"
+]
+rpi = [
+    "rpi-ws281x==5.0.0",
+    "RPi.GPIO==0.7.1",
+]
+
+# Distribution names (i.e.: rpi-ws281x-mock, rpi-gpio-mock) MUST match with name defined in the corresponding TOML file of each library
+[tool.uv.sources]
+rpi-ws281x-mock = { path = "lib/rpi-ws281x-mock", editable = true }
+rpi-gpio-mock = { path = "lib/rpi-gpio-mock", editable = true }
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["sc_rpi"]
+package-dir = {"" = "src"}
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",  # PEP 257 says NO blank line before class definitions
+    "D213",  # PEP 257 says summary on first line
+    "COM812" # To avoid ruff format warnings
+]
+
+
