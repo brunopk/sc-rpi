@@ -48,6 +48,12 @@ def configure_logging(config: Config) -> None:
         structlog.processors.format_exc_info,
     ]
 
+    """
+    Although not strictly necessary, SysLogHandler allows journald to preserve log
+    severity as syslog priority, enabling journalctl to colorize log levels
+    accordingly. Logs are sent via a Unix domain socket.
+    """
+
     if config.env == "prod":
         # TODO: test if this works with Loki
         formatter = structlog.stdlib.ProcessorFormatter(
