@@ -284,6 +284,12 @@ As described in its official documentation, Grafana Alloy is an open source tele
 - To check Loki is working correctly open http://raspberrypi.local:3100/ready or http://raspberrypi.local/metrics (replace *raspberrypi.local* with the corresponding hostname).
 - To visualize logs remotely, install Grafana and configure the corresponding Grafana Loki datasource in Grafana.
 
+## Grafana
+
+**Default port for Grafana:** 3000
+
+To see logs navigate to *Drilldown* in the left menu.
+
 # Common issues in Raspberry Pi OS
 
 In case SSH is not working, check if `ssh.service` is correctly enabled :
