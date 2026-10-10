@@ -10,14 +10,6 @@ uv sync --only-group dev
 
 The [rpi-ws281x](http://github.com/richardghirst/rpi_ws281x) which is the library used to control the strip, only works on the Raspberry which means its necessary to mock its method sin order to be run on any other system like macOS. So for this reason this project it's provided with a [mocked implementation](../lib/rpi-ws281x/) of this library, this is an example of some mocked libraries used in SC RPi. **Mocked libraries are located in the [`/lib`](/lib) folder.**
 
-## Testing
-
-1. Create a virtual environment (venv) if it's not created yet.
-2. Activate the venv: `source <path of the venv>/bin/activate`.
-3. Invoke unittest: `python -m unittest discover`.
-
-> **Run tests from the root folder of the project.**
-
 ## Ruff
 
 **To check linting rules in the current folder**

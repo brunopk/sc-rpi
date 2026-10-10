@@ -17,7 +17,6 @@
 
   </br>
 
-
 ## Installation
 
 ### Home Assistant
@@ -40,7 +39,7 @@ Additional information :
 
     </br>
 
-### Raspberry Pi
+### Installation in the Raspberry Pi
 
 1. [Install and configure Alloy](/doc/linux.md#alloy)
 2. [Install and configure Loki](/doc/linux.md#loki)
@@ -51,6 +50,7 @@ Additional information :
     uv sync --group rpi
     ```
 5. [Install SC RPi as a Linux service](/doc/linux.md#systemd-configuration)
+6. [Configure SC RPi](#configuration)
 
     </br>
 
@@ -66,21 +66,28 @@ Additional information :
 
     </br>
 
+## Configuration
+
+To configure SC RPi edit the corresponding YML file :
+
+- [`config.yaml`](config.yaml): For production and [development](#development)
+- [`config_test.yaml`](config_test.yaml): For [unit testing](#testing)
+
 ## Development
 
 1. [Install and configure the Mosquitto app for Home Assistant](/doc/homeassistant.md#mosquitto-broker).
 2. Install development dependencies with `uv`:
-   
+
    ```bash
    uv sync --group dev
    ```
 4. Activate the virtual environment :
-   
+
    ```bash
    source .venv/bin/activate
    ```
 6. Run the application :
-   
+
    ```bash
    python -m sc_rpi.main
    ```
@@ -91,6 +98,16 @@ Optionally:
 - Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app for Home Assistant to debug MQTT messages.
 
   </br>
+
+## Testing
+
+1. Create a virtual environment (venv) if it's not created yet.
+2. Activate the venv: `source <path of the venv>/bin/activate`.
+3. Invoke unittest: `python -m unittest discover`.
+
+  </br>  
+
+> **Run tests from the root folder of the project.**
 
 ## Documentation
 
