@@ -13,6 +13,7 @@ dependencies = [
     "pyaml==25.7.0",
     "structlog==25.5.0",
     "colorama==0.4.6",
+    "rich>=15.0.0",
 ]
 [dependency-groups]
 dev = [
@@ -47,7 +48,8 @@ select = ["ALL"]
 ignore = [
     "D203",  # PEP 257 says NO blank line before class definitions
     "D213",  # PEP 257 says summary on first line
-    "COM812" # To avoid ruff format warnings
+    "COM812"
+    "G004"
 ]
 
 

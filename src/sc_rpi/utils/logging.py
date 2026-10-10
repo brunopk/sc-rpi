@@ -1,9 +1,6 @@
 """Utility functions to set logging configurations."""
 
-import logging
-import sys
-from logging import basicConfig
-from logging.handlers import SysLogHandler
+from logging import StreamHandler, basicConfig
 
 import structlog
 from colorama import Fore, Style, init
@@ -45,40 +42,47 @@ def configure_logging(config: Config) -> None:
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.format_exc_info,
     ]
 
-    """
-    Although not strictly necessary, SysLogHandler allows journald to preserve log
-    severity as syslog priority, enabling journalctl to colorize log levels
-    accordingly. Logs are sent via a Unix domain socket.
-    """
-
     if config.env == "prod":
-        # TODO: test if this works with Loki
         formatter = structlog.stdlib.ProcessorFormatter(
-            processor=structlog.processors.LogfmtRenderer(),
+            processors=[
+                structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+                structlog.processors.format_exc_info,
+                structlog.processors.LogfmtRenderer(),
+            ],
             foreign_pre_chain = shared_processors,
         )
-        handler = SysLogHandler(address="/dev/log")
     elif config.env == "dev":
         # The "" column is for extra fields
         # passed as extra arguments to info(), debug(), etc.
         formatter = structlog.stdlib.ProcessorFormatter(
-            processor=ConsoleRenderer(
-                columns=[
-                    structlog.dev.Column("timestamp", formatter=lambda _, v: str(v)),
-                    structlog.dev.Column("level", formatter=_level_formatter),
-                    structlog.dev.Column("logger", formatter=_logger_name_formatter),
-                    structlog.dev.Column("event", formatter=lambda _, v: str(v)),
-                    structlog.dev.Column("", formatter=lambda _, v: str(v)),
-            ]),
+            processors=[
+                structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+                ConsoleRenderer(
+                    columns=[
+                        structlog.dev.Column("timestamp", formatter=lambda _, v: str(v)),
+                        structlog.dev.Column("level", formatter=_level_formatter),
+                        structlog.dev.Column("logger", formatter=_logger_name_formatter),
+                        structlog.dev.Column("event", formatter=lambda _, v: str(v)),
+                        structlog.dev.Column("", formatter=lambda _, v: str(v)),
+                ]),
+            ],
             foreign_pre_chain=shared_processors,
         )
-        handler = logging.StreamHandler(sys.stdout)
     else:
         raise Exception(f"Unknown environment {config.env} use prod or dev")
 
+    structlog.configure(
+        processors=[
+            *shared_processors,
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+    handler = StreamHandler()
     handler.setFormatter(formatter)
     basicConfig(level=level, handlers=[handler])
 

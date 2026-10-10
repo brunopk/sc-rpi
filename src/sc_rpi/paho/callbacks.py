@@ -5,8 +5,6 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from paho.mqtt.client import MQTTMessage
-
 from sc_rpi.utils.topic_utils import (
     SC_RPI_COMMAND_TOPIC,
     build_ha_command_topic,
