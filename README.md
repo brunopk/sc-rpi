@@ -97,9 +97,11 @@ Optionally:
 - Install the whole Grafana stack locally with Docker (refer to the [Loki](/doc/development.md#loki) section in [`/doc/development.md`](/doc/development.md)).
 - Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app for Home Assistant to debug MQTT messages.
 
+</br>
+
 > For a comprehensive development guide including architecture, commands, testing, and linting, see [`CLAUDE.md`](CLAUDE.md).
 
-  </br>
+</br>
 
 ## OpenSpec
 
@@ -132,8 +134,6 @@ To update OpenSpec skills :
    ```
 
    </br>
-
-</br>
 
 > For more information about how to install OpenSpec refer to the [Quick Start](https://github.com/Fission-AI/openspec#quick-start) of the official documentation.
 
