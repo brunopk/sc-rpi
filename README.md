@@ -133,10 +133,9 @@ To update OpenSpec skills :
 
    </br>
 
-Additional information :
-- For more information about how to install OpenSpec refer to the [Quick Start](https://github.com/Fission-AI/openspec#quick-start) of the official documentation.
+</br>
 
-  </br>
+> For more information about how to install OpenSpec refer to the [Quick Start](https://github.com/Fission-AI/openspec#quick-start) of the official documentation.
 
 ## Testing
 
