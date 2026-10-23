@@ -144,7 +144,7 @@ Additional information :
 2. Activate the venv: `source <path of the venv>/bin/activate`.
 3. Invoke unittest: `python -m unittest discover`.
 
-  </br>  
+   </br>  
 
 > **Run tests from the root folder of the project.**
 
