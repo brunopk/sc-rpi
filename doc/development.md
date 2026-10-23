@@ -24,12 +24,6 @@ ruff check .
 ruff check file.py --fix
 ```
 
-## Loki
-
-Though is not recommended, as it is not really necessary, Loki can be installed locally with Docker following instructions in the [Loki tutorial](https://grafana.com/docs/loki/latest/get-started/quick-start/tutorial/) of the official documentation.
-
-To install Loki with `apt-get` refer to the [Loki](/doc/linux.md#loki) section in [`/doc/linux.md`](/doc/linux.md).
-
 ## Visual Code
 
 ### Running Python applications with Visual Code
