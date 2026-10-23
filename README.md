@@ -147,7 +147,7 @@ To update OpenSpec skills :
 
    </br>  
 
-> **Run tests from the root folder of the project.**
+> Run tests from the root folder of the project.
 
 <br>
 
