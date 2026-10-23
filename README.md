@@ -19,7 +19,7 @@
 
 ## Installation
 
-### Home Assistant
+**Home Assistant**
 
 1. [Install and configure the Mosquitto app](/doc/homeassistant.md#mosquitto-broker)
 2. [Install and configure Grafana app](/doc/homeassistant.md#grafana)
@@ -39,7 +39,7 @@ Additional information :
 
     </br>
 
-### Installation in the Raspberry Pi
+**Raspberry Pi**
 
 1. [Install and configure Alloy](/doc/linux.md#alloy)
 2. [Install and configure Loki](/doc/linux.md#loki)
@@ -98,6 +98,43 @@ Optionally:
 - Install [MQTT Explorer](/doc/homeassistant.md#mqtt-explorer) app for Home Assistant to debug MQTT messages.
 
 > For a comprehensive development guide including architecture, commands, testing, and linting, see [`CLAUDE.md`](CLAUDE.md).
+
+  </br>
+
+## OpenSpec
+
+To use [OpenSpec](https://github.com/Fission-AI/OpenSpec/) :
+
+1. Install `@fission-ai/openspec@latest` globally with `npm` :
+
+   ```bash
+   npm install -g @fission-ai/openspec@latest
+   ```
+2. Install the OpenSpec skills in `.claude` directory :
+
+   ```bash
+   openspec init
+   ```
+
+   </br>
+
+To update OpenSpec skills :
+
+1. Update the `@fission-ai/openspec` module :
+
+   ```bash
+   npm install -g @fission-ai/openspec@latest
+   ```
+2. And then refresh the generated skills :
+
+   ```bash
+   openspec update
+   ```
+
+   </br>
+
+Additional information :
+- For more information about how to install OpenSpec refer to the [Quick Start](https://github.com/Fission-AI/openspec#quick-start) of the official documentation.
 
   </br>
 
