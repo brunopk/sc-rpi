@@ -30,7 +30,7 @@ The `reset` command SHALL accept an optional `config_name`. When omitted, it SHA
 - **THEN** that section is off after loading
 
 ### Requirement: Reset updates Home Assistant entities
-The `reset` command SHALL publish a state for every section to its Home Assistant state topic, using the section's color and the configured default section brightness, with an ON or OFF state matching the section's `is_on` value.
+The Home Assistant discovery message of every section SHALL include an availability topic. The `reset` command SHALL mark unavailable (publish `offline` to the availability topic, without deleting the entity) the current Home Assistant entities, SHALL mark the loaded sections' entities available, and SHALL publish a state for every loaded section to its Home Assistant state topic, using the section's color and the configured default section brightness, with an ON or OFF state matching the section's `is_on` value.
 
 #### Scenario: Entities refreshed
 - **WHEN** a `reset` command is received
@@ -39,3 +39,7 @@ The `reset` command SHALL publish a state for every section to its Home Assistan
 #### Scenario: Section configured off
 - **WHEN** a loaded config has a section with `is_on` false
 - **THEN** its Home Assistant entity reports OFF
+
+#### Scenario: Previous entities unpublished
+- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `reset` command without `config_name` loads a default config with `section_1`
+- **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `section_1` is published and marked available

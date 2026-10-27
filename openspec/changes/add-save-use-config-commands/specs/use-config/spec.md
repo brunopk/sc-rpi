@@ -7,11 +7,15 @@ Lets users switch the running strip to a previously saved named configuration ov
 ## ADDED Requirements
 
 ### Requirement: Apply a saved configuration immediately
-The system SHALL provide a `use_config` command that requires a `config_name` argument, loads the saved config from `config/<config_name>.yaml`, and applies it immediately: sections are rebuilt from the config (ranges, colors, on/off state), the strip is re-rendered, and the Home Assistant entities are updated to match. A successful status result SHALL be published to the result topic, with `command_name` `use_config` and a `payload` listing the resulting sections (id, start, end, color, is_on). The result SHALL be identical to a `reset` result for the same `config_name`, except that `command_name` is `use_config`.
+The system SHALL provide a `use_config` command that requires a `config_name` argument, loads the saved config from `config/<config_name>.yaml`, and applies it immediately: sections are rebuilt from the config (ranges, colors, on/off state), the strip is re-rendered, and the Home Assistant entities are updated to match: the current entities are marked unavailable (published `offline` to their availability topic, not deleted), and entities for the loaded sections are published with their color and on/off state and marked available. A successful status result SHALL be published to the result topic, with `command_name` `use_config` and a `payload` listing the resulting sections (id, start, end, color, is_on). The result SHALL be identical to a `reset` result for the same `config_name`, except that `command_name` is `use_config`.
 
 #### Scenario: Switch to a saved config
 - **WHEN** a `use_config` command is received with `config_name` `night` and `night` exists
 - **THEN** the strip shows the sections of `night` with their saved colors and on/off states, and Home Assistant state topics reflect them
+
+#### Scenario: Previous entities unpublished
+- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `use_config` command loads `night`, which has `night_section_1`
+- **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `night_section_1` is published and marked available
 
 #### Scenario: Same result as reset
 - **WHEN** a `use_config` command and a `reset` command with the same `config_name` both succeed
