@@ -10,12 +10,14 @@ switch between them over MQTT without editing files on the Pi or restarting the 
 ## What Changes
 
 - Add a `save_config` command. It requires a `config_name` in the request body and writes
-  the current in-memory configuration, including the live section state, to that file in
-  `config/`.
+  the current in-memory configuration, including the live section state, to
+  `config/<config_name>.yaml`. It never overwrites: an existing name is rejected with a 409
+  `CONFIG_ALREADY_EXISTS`. It doesn't touch the strip, and its result includes the saved
+  configuration (same structure as `get_config`, password obfuscated).
 - Add a `use_config` command with a **required** `config_name` field. It loads that file
   from the config directory into memory immediately: it rebuilds sections and strip state,
-  re-renders the strip, and refreshes the Home Assistant entities. The choice is **not**
-  persisted across restarts (the app still boots from `config/default.yaml`).
+  re-renders the strip, and refreshes the Home Assistant entities. It doesn't modify any
+  config file, so the app still boots from `config/default.yaml`.
 - Extend the `reset` command with an **optional** `config_name` field: when omitted, it
   loads `config/default.yaml`; when present, it behaves like `use_config` with that name.
 - Extend the `get_config` command with an **optional** `config_name` field: when present,

@@ -3,23 +3,27 @@
 ## MODIFIED Requirements
 
 ### Requirement: Reset rebuilds sections from configuration
-The `reset` command SHALL accept an optional `config_name`. When omitted, it SHALL load `config/default.yaml` and apply it exactly as `use_config` would. When present, it SHALL behave like `use_config` with that name, including the same validation and errors. Applying a config rebuilds the strip's sections from it (using each section's configured `color` and `is_on`), re-renders the strip, and publishes a successful status result listing the resulting sections to the result topic.
+The `reset` command SHALL accept an optional `config_name`. When omitted, it SHALL load `config/default.yaml` and apply it exactly as `use_config` would. When present, it SHALL behave like `use_config` with that name, including the same validation and errors. Applying a config rebuilds the strip's sections from it (using each section's configured `color` and `is_on`), re-renders the strip, and publishes a successful status result listing the resulting sections to the result topic. The result SHALL be identical to a `use_config` result, except that `command_name` is `reset`. This holds whether or not `config_name` is given.
 
 #### Scenario: Reset after edits
 - **WHEN** sections have been edited or turned off and a `reset` command is received
-- **THEN** the sections match the configured section definitions and a successful result is published
+- **THEN** the sections match the configured section definitions and the result has `status` 202, `command_name` `reset`, and `payload.sections` listing those sections
 
 #### Scenario: Reset without a name
 - **WHEN** a `reset` command is received without `config_name`
-- **THEN** the strip state matches `config/default.yaml` and a successful result is published
+- **THEN** the strip state matches `config/default.yaml` and the result has `status` 202, `command_name` `reset`, and `payload.sections` listing those sections
 
 #### Scenario: Reset with a saved config
 - **WHEN** a `reset` command is received with `config_name` `party` and `party` exists
 - **THEN** the strip state matches the `party` config
 
+#### Scenario: Result matches use_config
+- **WHEN** a `reset` command with `config_name` `party` and a `use_config` command with `config_name` `party` both succeed
+- **THEN** their results are identical except for `command_name`
+
 #### Scenario: Reset with an unknown name
 - **WHEN** a `reset` command is received with a `config_name` that has no saved config
-- **THEN** an error result is published and the strip state is unchanged
+- **THEN** an error result with `status` 404 and code `CONFIG_NOT_FOUND` is published and the strip state is unchanged
 
 #### Scenario: Section configured off
 - **WHEN** a loaded config has a section with `is_on` false

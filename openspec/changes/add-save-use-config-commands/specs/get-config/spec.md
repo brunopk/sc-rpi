@@ -3,15 +3,19 @@
 ## ADDED Requirements
 
 ### Requirement: Get a saved configuration
-The `get_config` command SHALL accept an optional `config_name` and, when present, return that saved config's contents without loading it or changing the strip. Name validation and unknown-name errors SHALL match `use_config`.
+The `get_config` command SHALL accept an optional `config_name` and, when present, return that saved config's contents without loading it or changing the strip. Name validation and errors (`INVALID_CONFIG_NAME`, `CONFIG_NOT_FOUND`, `INVALID_CONFIG`) SHALL match `use_config`.
 
 #### Scenario: Read a saved config
 - **WHEN** a `get_config` command is received with `config_name` `party` and `party` exists
 - **THEN** the result payload contains the `party` configuration and the strip is unchanged
 
+#### Scenario: Read back after save
+- **WHEN** a `save_config` command with `config_name` `X` succeeds and a `get_config` command with `config_name` `X` is then received
+- **THEN** the `get_config` result contains the same configuration that was saved, matching the `save_config` result payload's configuration
+
 #### Scenario: Unknown name
 - **WHEN** a `get_config` command is received with a `config_name` that has no saved config
-- **THEN** an error result is published
+- **THEN** an error result with `status` 404 and code `CONFIG_NOT_FOUND` is published
 
 ## MODIFIED Requirements
 
