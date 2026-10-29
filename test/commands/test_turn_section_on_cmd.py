@@ -3,13 +3,13 @@
 import logging
 
 from sc_rpi.commands.base import Command
-from test.command_test_case import CommandTestCase
+from test.command_test import CommandTest
 
 # TODO: move all logging.basicConfig out of test case classes
 
 logging.basicConfig(level=logging.DEBUG)
 
-class TestTurnSectionOn(CommandTestCase):
+class TestTurnSectionOn(CommandTest):
     """Tests `turn_section_on` command."""
 
     def test_basic_invocation(self) -> None:
@@ -30,4 +30,5 @@ class TestTurnSectionOn(CommandTestCase):
             self.__class__.hw_controller,
         )
         command.validate()
-        command.run()
+        result = command.run()
+        self.assert_valid_command_result(result, expected_command_name="turn_section_on")

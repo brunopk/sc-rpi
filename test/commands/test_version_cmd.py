@@ -1,12 +1,10 @@
 """Contains the `TestVersion` class."""
 
 from sc_rpi.commands.base import Command
-from test.command_test_case import CommandTestCase
+from test.command_test import CommandTest
 
-# TODO: CONTINUE validate that commands returns a dictionary and each entry is an instance of ScRpiResult or HAState (this could be a helper function) if it is instance of sc_rpi result validate that the command name is the corresponding command name
-
-class TestVersion(CommandTestCase):
-    """Tests for `add_section` command."""
+class TestVersion(CommandTest):
+    """Tests for `version` command."""
 
     def test_basic_invocation(self) -> None:
         """Basic test case."""
@@ -18,4 +16,5 @@ class TestVersion(CommandTestCase):
             self.__class__.hw_controller,
         )
         command.validate()
-        command.run()
+        result = command.run()
+        self.assert_valid_command_result(result, expected_command_name="version")

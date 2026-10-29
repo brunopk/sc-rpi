@@ -1,10 +1,10 @@
 """Contains the `TestTurnSectionOff` class."""
 
 from sc_rpi.commands.base import Command
-from test.command_test_case import CommandTestCase
+from test.command_test import CommandTest
 
 
-class TestTurnSectionOff(CommandTestCase):
+class TestTurnSectionOff(CommandTest):
     """Tests `turn_section_off` command."""
 
     def test_basic_invocation(self) -> None:
@@ -25,4 +25,5 @@ class TestTurnSectionOff(CommandTestCase):
             self.__class__.hw_controller,
         )
         command.validate()
-        command.run()
+        result = command.run()
+        self.assert_valid_command_result(result, expected_command_name="turn_section_off")
