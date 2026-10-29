@@ -48,7 +48,7 @@ select = ["ALL"]
 ignore = [
     "D203",  # PEP 257 says NO blank line before class definitions
     "D213",  # PEP 257 says summary on first line
-    "COM812"
+    "COM812",
     "G004"
 ]
 
