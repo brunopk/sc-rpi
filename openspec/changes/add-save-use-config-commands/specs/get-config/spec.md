@@ -13,6 +13,10 @@ The `get_config` command SHALL accept an optional `config_name` and, when presen
 - **WHEN** a `save_config` command with `config_name` `X` succeeds and a `get_config` command with `config_name` `X` is then received
 - **THEN** the `get_config` result contains the same configuration that was saved, matching the `save_config` result payload's configuration
 
+#### Scenario: Description returned
+- **WHEN** a `get_config` command is received with `config_name` `party` and `party` was saved with the description `Friday lights`
+- **THEN** the result contains the description `Friday lights`
+
 #### Scenario: Unknown name
 - **WHEN** a `get_config` command is received with a `config_name` that has no saved config
 - **THEN** an error result with `status` 404 and code `CONFIG_NOT_FOUND` is published
@@ -20,7 +24,7 @@ The `get_config` command SHALL accept an optional `config_name` and, when presen
 ## MODIFIED Requirements
 
 ### Requirement: Return running configuration
-The `get_config` command SHALL, when `config_name` is omitted, return the running configuration (general settings, strip settings, and each section's id, name, start, end, `color` and `is_on`) in a successful result on the result topic, without changing the strip.
+The `get_config` command SHALL, when `config_name` is omitted, return the running configuration (general settings, strip settings, the `description`, and each section's id, name, start, end, `color` and `is_on`) in a successful result on the SC RPi result topic, without changing the strip.
 
 #### Scenario: Get configuration
 - **WHEN** a `get_config` command is received without `config_name`

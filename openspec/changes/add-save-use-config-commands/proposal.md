@@ -13,9 +13,9 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   the current in-memory configuration, including the live section state, to
   `config/<config_name>.yaml`. It never overwrites: an existing name is rejected with a 409
   `CONFIG_ALREADY_EXISTS`. It gives sections the id `<config_name>_section_<n>` (names are
-  kept), in the saved file and in the running strip, so each config has its own Home
-  Assistant entities. Current entities are marked unavailable (not deleted) and the new ones published as available. Ranges, colors and
-  on/off state are untouched. Its result includes the saved configuration (same structure
+  kept) in the saved file only, so each config has its own Home Assistant entities once
+  loaded. It doesn't change the running strip or publish anything to Home Assistant. Its
+  result includes the saved configuration (same structure
   as `get_config`, password obfuscated).
 - Add a `use_config` command with a **required** `config_name` field. It loads that file
   from the config directory into memory immediately: it rebuilds sections and strip state,
@@ -28,6 +28,9 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   it returns that saved file's configuration without loading it. The result also gains
   `color` and `is_on` per section. MQTT settings are included, with the password
   obfuscated.
+- Add an optional `description` (text) to configs. `save_config` accepts it as an optional
+  argument and writes it to the saved file; `get_config` results include it. A config with
+  no description reports an empty one.
 - Users give a config name, never a path, so no path traversal over MQTT is possible. The
   name `default` is reserved: `save_config` rejects it so the boot file cannot be
   overwritten.
@@ -47,7 +50,8 @@ but `use_config` and `reset` don't apply them.
 ### New Capabilities
 
 - `save-config`: the `save_config` command. It requires a `config_name` in the request
-  body and saves the current configuration under that name.
+  body and accepts an optional `description`. It saves the current configuration under
+  that name.
 - `use-config`: the `use_config` command. It requires a `config_name` in the request body.
   Loads that saved config and applies it to the strip and the Home Assistant entities.
 
@@ -56,18 +60,21 @@ but `use_config` and `reset` don't apply them.
 - `reset`: now loads `config/default.yaml`, or the saved config given in the optional
   `config_name` field.
 - `get_config`: now accepts an optional `config_name` field to read a saved config, and
-  returns `color` and `is_on` per section and the MQTT settings with the password
-  obfuscated.
+  returns `color` and `is_on` per section, the `description`, and the MQTT settings with
+  the password obfuscated.
 
 ## Impact
 
 - Behavior change at startup: configured section `color`/`is_on` are now applied instead
   of ignored.
+- Config file format: files gain an optional `description` field. Existing files without
+  it remain valid.
 - Existing deployments must move `config.yaml` to `config/default.yaml`; docs that
   mention `config.yaml` need updating.
 - Home Assistant: discovery messages gain an availability topic, so entities can be marked
-  unavailable. `save_config` changes section ids, so existing automations, dashboards and
-  history that reference the old entities stop working. This must be documented in
+  unavailable. Loading a saved config (`use_config`, or `reset` with a name) changes
+  section ids to that config's ids, so entities, automations and history tied to the old
+  ids stop working. This must be documented in
   `doc/homeassistant.md` (entities, availability, id change) and in `doc/commands.md`
   (`save_config`, `use_config`, and the changed `reset` and `get_config`, including
   arguments, results and the new error codes).

@@ -7,7 +7,7 @@ Lets users persist the current strip configuration, including live section state
 ## ADDED Requirements
 
 ### Requirement: Save current configuration under a name
-The system SHALL provide a `save_config` command that requires a `config_name` argument and writes the current in-memory configuration, including each section's range, color and on/off state, to the file `config/<config_name>.yaml` (the `.yaml` extension is appended by the system and SHALL NOT be part of `config_name`). If a saved config with that name already exists, the command SHALL be rejected with `status` 409 and error code `CONFIG_ALREADY_EXISTS`, and the existing file SHALL remain unchanged. The command SHALL NOT change any section's range, color or on/off state, and SHALL NOT re-render the strip. On success the result published to the result topic SHALL have `status` 202, `command_name` `save_config`, and a `payload` containing the saved `config_name` and the saved configuration in the same structure a `get_config` result returns, including the obfuscated MQTT password (the real password SHALL NOT appear in the result).
+The system SHALL provide a `save_config` command that requires a `config_name` argument and accepts an optional `description` (text), and writes the current in-memory configuration, including the description and each section's range, color and on/off state, to the file `config/<config_name>.yaml` (the `.yaml` extension is appended by the system and SHALL NOT be part of `config_name`). If a saved config with that name already exists, the command SHALL be rejected with `status` 409 and error code `CONFIG_ALREADY_EXISTS`, and the existing file SHALL remain unchanged. The command SHALL NOT change any section's range, color or on/off state, and SHALL NOT re-render the strip. On success the result published to the SC RPi result topic SHALL have `status` 202, `command_name` `save_config`, and a `payload` containing the saved `config_name` and the saved configuration in the same structure a `get_config` result returns, including the obfuscated MQTT password (the real password SHALL NOT appear in the result).
 
 #### Scenario: Save a new config
 - **WHEN** a `save_config` command is received with `config_name` `party`
@@ -33,31 +33,39 @@ The system SHALL provide a `save_config` command that requires a `config_name` a
 - **WHEN** a config is saved while a section is off with color `[0, 255, 0]` and later read back
 - **THEN** that section is reported as off with color `[0, 255, 0]`
 
+#### Scenario: Description saved
+- **WHEN** a `save_config` command is received with `config_name` `party` and `description` `Friday lights`
+- **THEN** the saved file and the result's saved configuration contain the description `Friday lights`
+
+#### Scenario: Description omitted
+- **WHEN** a `save_config` command is received without `description`
+- **THEN** the command succeeds and the saved configuration has an empty description
+
 ### Requirement: Saved sections get config-specific ids
-The `save_config` command SHALL give each section, ordered by `start`, the id `<config_name>_section_<n>`, where `n` is the section's 1-based position. Section names SHALL be kept as they are. These generated ids SHALL be written to the saved file and SHALL replace the ids of the running sections, so the running strip matches the saved config. Home Assistant SHALL then be updated: the current entities are marked unavailable (published `offline` to their availability topic, not deleted) and entities for the new ids are published with each section's current color and on/off state and marked available.
+The `save_config` command SHALL give each section in the saved file, ordered by `start`, the id `<config_name>_section_<n>`, where `n` is the section's 1-based position. Section names SHALL be kept as they are. The running sections keep their current ids and no Home Assistant entity is published or changed; the saved ids take effect when the config is loaded with `use_config` or `reset`.
 
 #### Scenario: Ids are prefixed and names kept
 - **WHEN** a `save_config` command is received with `config_name` `party` and the strip has two sections named `Desk` and `Shelf`
 - **THEN** the saved sections have ids `party_section_1` and `party_section_2` and names `Desk` and `Shelf`
 
-#### Scenario: Running sections adopt the new ids
-- **WHEN** a `save_config` command with `config_name` `party` succeeds
-- **THEN** the running sections have the ids `party_section_1`, `party_section_2`, ..., and a `get_config` without `config_name` returns the same sections as the `save_config` result
-
-#### Scenario: Home Assistant entities replaced
+#### Scenario: Running sections keep their ids
 - **WHEN** a `save_config` command with `config_name` `party` succeeds and the running sections were `section_1` and `section_2`
-- **THEN** the entities for `section_1` and `section_2` are marked unavailable and not deleted, and the entities for `party_section_1` and `party_section_2` are published with the sections' current color and on/off state and marked available
+- **THEN** the running sections are still `section_1` and `section_2`
+
+#### Scenario: Home Assistant untouched
+- **WHEN** a `save_config` command succeeds
+- **THEN** no message is published to any Home Assistant topic
 
 #### Scenario: Saving again under another name
 - **WHEN** the running sections are `party_section_1` and `party_section_2` and a `save_config` command with `config_name` `night` succeeds
-- **THEN** the saved and running section ids are `night_section_1` and `night_section_2`, with no `party_` prefix
+- **THEN** the saved section ids are `night_section_1` and `night_section_2`, with no `party_` prefix
 
 ### Requirement: Reserved name `default`
 The system SHALL reject `save_config` when `config_name` is `default` with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the boot config SHALL remain unchanged.
 
 #### Scenario: Save as default
 - **WHEN** a `save_config` command is received with `config_name` `default`
-- **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published to the result topic and no file is written
+- **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published to the SC RPi result topic and no file is written
 
 ### Requirement: Config names are names, not paths
 The system SHALL accept only plain names for `config_name` (letters, digits, `-` and `_`) and SHALL reject any value that could refer to a location outside the `config/` directory, such as values containing path separators or `..`, with `status` 400 and error code `INVALID_CONFIG_NAME`. A missing `config_name` SHALL be rejected with `status` 400 and error code `MISSING_CONFIG_NAME`.
