@@ -10,7 +10,7 @@ Commands are received from Home Assistant or directly from an MQTT client librar
 Home Assistant requires to define one command topic for each entity. **Additionally, there some specific topics to interact with SC RPi directly:**
 
 - **SC RPi command topic: `scrpi/command`**
-- **Result topic: `scrpi/result`**
+- **SC RPi result topic: `scrpi/result`**
 
 Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). The result topic is for both, successful and failed SC RPi command execution results. Commands sent through the SC RPi command topic have the same format:
 
@@ -57,7 +57,7 @@ An example of a failed command result is this:
 - `payload` and `error` are JSON objects.
 - `status` is an integer that adheres to the same semantics as in HTTP.
 - `code` is the error code (string).
-- Successful command results will have a `payload` field.
+- Successful SC RPi results will have a `payload` field.
 - Failed command messages will have an `error` field (instead of `payload`).
 
 ## `edit_section`

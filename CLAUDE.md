@@ -53,10 +53,15 @@ the full list):
 - Build instances via `Command.from_dict_wrapper(data, config, hw_controller)`, never
   `from_dict`/`to_dict` directly — those would miss/leak the private `_config` and
   `_hw_controller` attributes.
-- `run()` returns a `CommandResult` — a dict mapping **MQTT topic name -> payload**
-  (either a `DataClassJSONMixin` or a raw string). The caller (`Worker`) publishes one
-  message per topic in the dict; this is how a single command can update both the SC RPi
-  result topic and a Home Assistant state topic in one go.
+- `run()` returns a `CommandResult`:
+  - It is a dict mapping **MQTT topic name -> payload** (the payload may be a
+    `DataClassJSONMixin` or a raw string).
+  - The caller (`Worker`) publishes one message per topic in the dict.
+  - Each kind of topic carries a different payload:
+    - SC RPi result topic: the command's status result (`status`, `command_name`,
+      `payload`), intended for SC RPi users.
+    - Home Assistant topics: only HA-format messages (such as state), never the SC RPi
+      result.
 - Rendering the physical strip (`hw_controller.render()`) must be the last call in `run()`
   so nothing is pushed to the hardware before validation/logic has had a chance to raise.
 - Keep `Command` subclasses stateless beyond their dataclass fields. Do not cache or
