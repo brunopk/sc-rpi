@@ -3,22 +3,22 @@
 ## MODIFIED Requirements
 
 ### Requirement: Reset rebuilds sections from configuration
-The `reset` command SHALL accept an optional `config_name`. When omitted, it SHALL load `config/default.yaml` and apply it exactly as `use_config` would. When present, it SHALL behave like `use_config` with that name, including the same validation and errors. Applying a config rebuilds the strip's sections from it (using each section's configured `color` and `is_on`), re-renders the strip, and publishes a successful status result listing the resulting sections to the SC RPi result topic.
+The `reset` command SHALL accept an optional `name`. When omitted, it SHALL load `config/default.yaml` and apply it exactly as `use_config` would. When present, it SHALL behave like `use_config` with that name, including the same validation and errors. Applying a config rebuilds the strip's sections from it (using each section's configured `color` and `is_on`), re-renders the strip, and publishes a successful status result listing the resulting sections to the SC RPi result topic.
 
 #### Scenario: Reset after edits
 - **WHEN** sections have been edited or turned off and a `reset` command is received
 - **THEN** the sections match the configured section definitions and the result has `status` 202, `command_name` `reset`, and `payload.sections` listing those sections
 
 #### Scenario: Reset without a name
-- **WHEN** a `reset` command is received without `config_name`
+- **WHEN** a `reset` command is received without `name`
 - **THEN** the strip state matches `config/default.yaml` and the result has `status` 202, `command_name` `reset`, and `payload.sections` listing those sections
 
 #### Scenario: Reset with a saved config
-- **WHEN** a `reset` command is received with `config_name` `party` and `party` exists
+- **WHEN** a `reset` command is received with `name` `party` and `party` exists
 - **THEN** the strip state matches the `party` config
 
 #### Scenario: Reset with an unknown name
-- **WHEN** a `reset` command is received with a `config_name` that has no saved config
+- **WHEN** a `reset` command is received with a `name` that has no saved config
 - **THEN** an error result with `status` 404 and code `CONFIG_NOT_FOUND` is published and the strip state is unchanged
 
 #### Scenario: Section configured off
@@ -37,5 +37,5 @@ The Home Assistant discovery message of every section SHALL include an availabil
 - **THEN** its Home Assistant entity reports OFF
 
 #### Scenario: Previous entities unpublished
-- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `reset` command without `config_name` loads a default config with `section_1`
+- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `reset` command without `name` loads a default config with `section_1`
 - **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `section_1` is published and marked available

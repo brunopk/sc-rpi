@@ -30,3 +30,10 @@ schema: spec-driven
 #     archive:
 #       guidance:
 #         - Summarize the archive outcome before finishing
+
+rules:
+  proposal: &style
+    - Write in impersonal prose; do not use "we" or "you".
+  specs: *style
+  design: *style
+  tasks: *style
