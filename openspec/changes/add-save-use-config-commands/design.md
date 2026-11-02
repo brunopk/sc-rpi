@@ -143,7 +143,7 @@ A helper `apply_named_config(cmd, name)` (in `utils/commands/`) runs these steps
 
 ### 6. Home Assistant messages for an apply
 
-Result dict order for an apply:
+When `use_config` or `reset` applies a config, `apply_named_config` returns the Home Assistant messages in this order, so each entity exists and is available before its state arrives:    
 
 1. `offline` for each section that was running before the apply and whose id is not in
    the loaded config.
@@ -163,7 +163,9 @@ messages.
   ids are unchanged, so no `offline` message is sent for them. A topic can appear only
   once in the result dict, and skipping it avoids relying on insertion order to let
   `online` win.
-- Boot also publishes `online`.
+- At startup the boot sections go through the same message sequence as an apply, minus
+  the `offline` step: discovery, `online`, then state. `build_ha_refresh_messages` serves
+  both cases, with no previous sections at startup.
 - Alternative: delete old entities with an empty retained discovery payload. Rejected by
   the proposal (history and UI customization would be lost).
 - Availability is plain online/offline per entity; no MQTT Last Will and Testament is added.
