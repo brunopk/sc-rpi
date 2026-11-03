@@ -47,8 +47,10 @@ New module with `validate_name`, `path_for(name)`, `load(name)` and `save(name, 
 - Name check uses `re.fullmatch(r"[A-Za-z0-9_-]{1,64}", name)`. Only that alphabet is
   accepted, so no separators, dots or `..` can reach the filesystem and no path
   resolution or prefix comparison is needed.
-- `default` is reserved case-insensitively (macOS and Windows filesystems are
-  case-insensitive, so `Default` would otherwise hit `default.yaml`).
+- `default` is reserved case-insensitively for saving only (macOS and Windows filesystems
+  are case-insensitive, so `Default` would otherwise hit `default.yaml`). `validate_name`
+  checks the alphabet and length; `save` additionally rejects the reserved name. Loading
+  `default` is allowed.
 - Alternative: accept paths and sandbox them with `resolve()` + `is_relative_to`.
   Rejected: larger attack surface for no user benefit.
 
@@ -105,23 +107,35 @@ Details:
 - Alternative: put the description on `SectionsController`. Rejected: it is not section
   state.
 
-### 4. Apply = build on the side, then replace in place
+### 4. Apply = build on the side, render, then replace in place
 
 `HardwareController.apply_config(loaded: Config)` runs these steps:
 
-1. Call `SectionsController.replace_sections(...)` with the loaded config's sections.
-2. Inside it, build the new section lists in local variables, validated against the
-   **running** `strip_length` (hardware settings are not reapplied).
-3. Only if the build succeeded, replace the controller's internal state with the new
-   lists.
+1. Build the new sections in local variables from the loaded config's sections, validated
+   against the **running** `strip_length` (hardware settings are not reapplied).
+2. Render the strip from the built sections, without touching the controller's state.
+3. Only if the build and the render succeeded, replace the controller's internal state
+   with the built sections.
 4. Replace the description.
 
 - If the build fails (for example overlapping sections, or a section beyond
   `strip_length`), nothing was modified. The `ApiError` is reported as `INVALID_CONFIG`
   (500).
+- If the render fails, the controller state was never touched, so sections, description
+  and the error result agree: nothing changed.
+- Step 3 is a plain in-memory assignment, so no failure is possible after the strip
+  has been rendered.
 - A file that cannot be parsed fails earlier, in `store.load`, with the same code.
 - This removes the need for the rollback TODO in `reset`: state is replaced only after the
-  build succeeded, so a failure leaves nothing to roll back.
+  build and the render succeeded, so a failure leaves nothing to roll back.
+- The build must reject every kind of overlap, including sections that share a boundary
+  LED or enclose another section (for example, with an existing section at LEDs 10-20,
+  a new section at 20-30 shares LED 20, and one at 5-25 encloses it). Today's check in
+  `SectionsController` does not cover all of them, and a bad saved file must not be
+  accepted as valid.
+- Alternative: replace the state first and restore the previous state if the render
+  fails. Rejected: it needs a copy of all section state and the restore can fail too,
+  which brings back the rollback problem.
 - The `SectionsController` instance is created once and never replaced. Commands run on
   one worker thread, so no locking is needed.
 - Alternative: build a new `SectionsController` and swap the instance. Rejected: every
@@ -146,17 +160,19 @@ A helper `apply_named_config(cmd, name)` (in `utils/commands/`) runs these steps
 When `use_config` or `reset` applies a config, `apply_named_config` returns the Home Assistant messages in this order, so each entity exists and is available before its state arrives:    
 
 1. `offline` for each section that was running before the apply and whose id is not in
-   the loaded config.
-2. Discovery for each new section.
-3. `online`.
+   the loaded config, published to that section's availability topic.
+2. Discovery for each loaded section, including its availability topic.
+3. `online` for each loaded section, published to that section's availability topic.
 4. State for each loaded section: ON or OFF (from `is_on`), color and brightness
    (`default_section_brightness`).
 
 `build_ha_refresh_messages(previous_sections, new_sections, brightness)` in
 `utils/homeassistant.py` returns the Home Assistant messages (topic → payload) in the
 order above. `apply_named_config` reads the previous sections before applying the config.
-It then builds the command result: the SC RPi result entry first, followed by these
-messages. The `Worker` publishes the dict in insertion order, so no other code orders
+`new_sections` are the live sections read from `hw_controller` after `apply_config`
+succeeds, so the Home Assistant messages and the result payload describe what was
+rendered. `apply_named_config` then builds the command result: the SC RPi result entry
+first, followed by these messages. The `Worker` publishes the dict in insertion order, so no other code orders
 messages.
 
 - When the same config is applied again (for example `reset` after edits), its section
@@ -165,9 +181,18 @@ messages.
   `online` win.
 - At startup the boot sections go through the same message sequence as an apply, minus
   the `offline` step: discovery, `online`, then state. `build_ha_refresh_messages` serves
-  both cases, with no previous sections at startup.
+  both cases, with no previous sections at startup. `Worker` calls it and publishes the
+  returned dict in order, replacing `_publish_ha_entities`. No SC RPi result entry is
+  involved.
 - Alternative: delete old entities with an empty retained discovery payload. Rejected by
   the proposal (history and UI customization would be lost).
+- Each entity has its own availability topic,
+  `scrpi/homeassistant/<object_id>/availability`, set in its discovery message
+  (`availability_topic`). The payloads are the plain strings `online` and `offline`, which
+  are Home Assistant's defaults.
+- Availability messages are not retained, like the other messages today (discovery retain
+  is an existing TODO). Making them retained would need a retain flag in the command
+  result and the `Worker`, so it is out of scope.
 - Availability is plain online/offline per entity; no MQTT Last Will and Testament is added.
 
 ### 7. Result payload is the `Config` model
@@ -209,6 +234,16 @@ codes and statuses are defined in the specs.
 - [Commands could read the boot section list (`config.strip.sections`), which does not
   reflect edits] → live sections must come from `hw_controller`; add a test that edits a
   section and then checks the `get_config` result.
+- [The existing overlap check in `SectionsController` misses boundary and enclosing
+  overlaps (with an existing section at LEDs 10-20, a new one at 20-30 shares LED 20
+  and one at 5-25 encloses it), so `INVALID_CONFIG` would not trigger for them] → the build in decision 4
+  must use a check that covers all overlaps; covered by an apply test with each kind
+  of overlap.
 - [Storing the real `is_on` in the ordered list may expose related bugs in
   `turn_section_off`, which also updates that list] → fix them together; covered by the
   turn on/off command tests and a new save/load round-trip test.
+
+## Migration Plan
+
+- Commit the existing `config.yaml` as `config/default.example.yaml` and git-ignore
+  `config/`, so credentials stay out of git. A fresh clone copies the example.
