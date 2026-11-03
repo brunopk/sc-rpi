@@ -83,12 +83,15 @@ becomes the place to get and replace the configuration:
 - `Config` stays the immutable boot configuration, passed to commands as today. It gains
   an optional `description: str = ""`, so existing files without it remain valid.
 - `HardwareController` keeps creating `SectionsController` and delegating to it.
-- It gains two methods:
+- It gains three methods:
   - `get_current_config() -> Config`: the boot `Config` with `strip.sections` and
     `description` taken from the live state at the time of the call. Changes made by
     earlier commands (`edit_section`, `turn_section_off`, `use_config`) are included.
     `get_config` and `save_config` both use it.
-  - `apply_config(loaded: Config)`: replaces the sections and the description (see
+  - `prepare_config(loaded: Config) -> list[SectionInternalRepresentation]`: validates
+    and builds the new sections without changing any state (see decision 4).
+  - `apply_prepared(sections: list[SectionInternalRepresentation], description: str)`:
+    renders the prepared sections and then replaces the sections and the description (see
     decision 4).
 
 Details:
@@ -107,24 +110,42 @@ Details:
 - Alternative: put the description on `SectionsController`. Rejected: it is not section
   state.
 
-### 4. Apply = build on the side, render, then replace in place
+### 4. Apply is split: `prepare_config` builds without side effects, `apply_prepared` renders and replaces the state
 
-`HardwareController.apply_config(loaded: Config)` runs these steps:
+Applying a config takes two `HardwareController` calls, so the command can do everything
+that may fail before the strip is touched:
 
-1. Build the new sections in local variables from the loaded config's sections, validated
-   against the **running** `strip_length` (hardware settings are not reapplied).
-2. Render the strip from the built sections, without touching the controller's state.
-3. Only if the build and the render succeeded, replace the controller's internal state
-   with the built sections.
-4. Replace the description.
+1. `prepare_config(loaded)` builds the new sections in local variables from the loaded
+   config's sections, validated against the **running** `strip_length` (hardware settings
+   are not reapplied). It returns the built sections, the same type `list_sections()`
+   returns, and changes no state.
+2. The caller builds the command result and the Home Assistant messages from the prepared
+   sections.
+3. `apply_prepared(sections, description)` takes the prepared sections and the loaded
+   config's description (a plain string that needs no building). It renders the strip from
+   the sections, without touching the controller's state. Only if the render raised no
+   exception, it replaces the controller's internal sections and the description.
 
+- Two patterns coexist, one per kind of command:
+  - `edit_section`, `turn_section_on` and `turn_section_off` keep their pattern: change
+    the live state, build the result, call `hw_controller.render()` last. They are not
+    modified.
+  - `use_config` and `reset` use `prepare_config` and `apply_prepared`, because they
+    replace all sections and must leave nothing changed on failure.
+  - The docstrings of `UseConfig` and `Reset` explain why they use `prepare_config` and
+    `apply_prepared`, so the choice is visible in the code where it is made.
+- `apply_prepared` is the last call in `run()`, in place of the `hw_controller.render()`
+  call that other commands make, so the rule that rendering comes last still holds.
+- A render that "succeeds" means `setPixelColor` and `show()` raised no exception. The
+  controller cannot check what the LEDs show.
 - If the build fails (for example overlapping sections, or a section beyond
   `strip_length`), nothing was modified. The `ApiError` is reported as `INVALID_CONFIG`
   (500).
+- If building the result or the Home Assistant messages fails, the strip was not touched.
 - If the render fails, the controller state was never touched, so sections, description
   and the error result agree: nothing changed.
-- Step 3 is a plain in-memory assignment, so no failure is possible after the strip
-  has been rendered.
+- The replacement in step 3 is a plain in-memory assignment, so no failure is possible
+  after the strip has been rendered.
 - A file that cannot be parsed fails earlier, in `store.load`, with the same code.
 - This removes the need for the rollback TODO in `reset`: state is replaced only after the
   build and the render succeeded, so a failure leaves nothing to roll back.
@@ -143,21 +164,42 @@ Details:
 
 ### 5. Shared apply logic for `use_config` and `reset`
 
-A helper `apply_named_config(cmd, name)` (in `utils/commands/`) runs these steps:
+A helper `apply_named_config(hw_controller, command_name, config_name, brightness)` (in
+`utils/commands/`) runs these steps:
 
 1. Validate the name.
 2. `load` the config (`sc_rpi/utils/config/store.py`).
-3. `hw_controller.apply_config(...)`.
-4. Build the result topics.
+3. Read the sections currently running from `hw_controller`.
+4. `hw_controller.prepare_config(loaded)`, with the `Config` loaded in step 2. It builds
+   the new sections and description from it.
+5. Build the result dict: the SC RPi result entry first, then the Home Assistant messages
+   from `build_ha_refresh_messages` (decision 6), called with the sections read in step 3,
+   the prepared sections and the brightness.
+6. `hw_controller.apply_prepared(sections, loaded.description)`, the last step: it renders the prepared sections
+   on the strip and then replaces the controller's state. The commands return the result
+   right after, so nothing that can fail runs once the strip has changed.
 
-- `UseConfig` and `Reset` call it; `Reset` passes `"default"` when `name` is
-  absent.
-- The result is `build_status_result(...)` with the caller's `command_name`, so results
-  are identical except for the name.
+- `UseConfig` and `Reset` call it, passing their hardware controller, their
+  `command_name` and the default section brightness from their config; `Reset` passes
+  `"default"` as `config_name` when the `reset` command omits the config name.
+- The helper takes these values as arguments instead of the command, so it does not
+  depend on the private attributes of `Command` and can be tested without a command
+  instance.
+- The SC RPi result entry is `build_status_result(...)` with the given `command_name`, so
+  results are identical except for the name.
+- The Home Assistant messages use the prepared sections, which are the ones
+  `apply_prepared` renders, so the messages and the result payload describe what was
+  rendered.
+- The `Worker` publishes the dict in insertion order, so the helper puts the entries in
+  the order wanted and no other code orders messages.
 
-### 6. Home Assistant messages for an apply
+### 6. Home Assistant entity refresh
 
-When `use_config` or `reset` applies a config, `apply_named_config` returns the Home Assistant messages in this order, so each entity exists and is available before its state arrives:    
+`build_ha_refresh_messages(previous_sections, new_sections, brightness)` in
+`utils/homeassistant.py` returns the Home Assistant messages (topic → payload) for
+replacing the published entities. `previous_sections` are the sections published before
+and `new_sections` the ones to publish. The messages are in this order, so each entity
+exists and is available before its state arrives:
 
 1. `offline` for each section that was running before the apply and whose id is not in
    the loaded config, published to that section's availability topic.
@@ -165,15 +207,6 @@ When `use_config` or `reset` applies a config, `apply_named_config` returns the 
 3. `online` for each loaded section, published to that section's availability topic.
 4. State for each loaded section: ON or OFF (from `is_on`), color and brightness
    (`default_section_brightness`).
-
-`build_ha_refresh_messages(previous_sections, new_sections, brightness)` in
-`utils/homeassistant.py` returns the Home Assistant messages (topic → payload) in the
-order above. `apply_named_config` reads the previous sections before applying the config.
-`new_sections` are the live sections read from `hw_controller` after `apply_config`
-succeeds, so the Home Assistant messages and the result payload describe what was
-rendered. `apply_named_config` then builds the command result: the SC RPi result entry
-first, followed by these messages. The `Worker` publishes the dict in insertion order, so no other code orders
-messages.
 
 - When the same config is applied again (for example `reset` after edits), its section
   ids are unchanged, so no `offline` message is sent for them. A topic can appear only
