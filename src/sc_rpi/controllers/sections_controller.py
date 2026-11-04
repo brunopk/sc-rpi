@@ -36,9 +36,11 @@ class SectionsController:
         self._color_list: list[list[tuple[int, int, int]]] = []
         self._limits: list[tuple[int, int]] = []
         self._is_on: list[bool] = []
+        self._names: list[str] = []
         self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
         self._limits_by_id: dict[str, tuple[int, int]] = {}
         self._is_on_by_id: dict[str, bool] = {}
+        self._name_by_id: dict[str, str] = {}
 
         self._initialize_sections()
 
@@ -70,6 +72,7 @@ class SectionsController:
             ) from ex
 
         is_on = self._is_on_by_id[section_id]
+        name = self._name_by_id[section_id]
         new_start = start if start is not None else self._limits_by_id[section_id][0]
         new_end = end if end is not None else self._limits_by_id[section_id][1]
         if color is not None:
@@ -82,9 +85,11 @@ class SectionsController:
         del self._color_list[index]
         del self._limits[index]
         del self._is_on[index]
+        del self._names[index]
         del self._color_list_by_id[section_id]
         del self._limits_by_id[section_id]
         del self._is_on_by_id[section_id]
+        del self._name_by_id[section_id]
 
         self._insert_section(
             section_id,
@@ -92,6 +97,7 @@ class SectionsController:
             new_end,
             new_color_list,
             is_on=is_on,
+            name=name,
         )
 
     def get_section(self, section_id: str) -> SectionInternalRepresentation:
@@ -114,6 +120,7 @@ class SectionsController:
             self._limits_by_id[section_id],
             self._color_list_by_id[section_id],
             self._is_on_by_id[section_id],
+            self._name_by_id[section_id],
         )
 
     def list_sections(self) -> list[SectionInternalRepresentation]:
@@ -124,6 +131,7 @@ class SectionsController:
                 self._limits[i],
                 self._color_list[i],
                 is_on=self._is_on[i],
+                name=self._names[i],
             )
             for i in range(len(self._limits))
         ]
@@ -136,6 +144,7 @@ class SectionsController:
         color: tuple[int, int, int] | None = None,
         *_args: object,
         is_on: bool,
+        name: str | None = None,
     ) -> SectionInternalRepresentation:
         """Define a new section.
 
@@ -145,6 +154,7 @@ class SectionsController:
             end (int): End position.
             color (tuple[int, int, int] | None, optional): Color (RGB). Defaults to None
             is_on (bool): Indicates if the section is turned on/off
+            name (str | None, optional): Human readable name. Defaults to the id.
 
         Raises:
             ApiError:
@@ -158,12 +168,21 @@ class SectionsController:
             if color is not None
             else [(0, 0, 0)] * (end - start + 1)
         )
-        self._insert_section(section_id, start, end, color_list, is_on=is_on)
+        section_name = name if name is not None else section_id
+        self._insert_section(
+            section_id,
+            start,
+            end,
+            color_list,
+            is_on=is_on,
+            name=section_name,
+        )
         return SectionInternalRepresentation(
             section_id,
             (start, end),
             color_list,
-            is_on=is_on
+            is_on=is_on,
+            name=section_name,
         )
 
     def remove_sections(self, sections: list[str]) -> None:
@@ -200,9 +219,11 @@ class SectionsController:
         self._color_list: list[list[tuple[int, int, int]]] = []
         self._limits: list[tuple[int, int]] = []
         self._is_on: list[bool] = []
+        self._names: list[str] = []
         self._color_list_by_id: dict[str, list[tuple[int, int, int]]] = {}
         self._limits_by_id: dict[str, tuple[int, int]] = {}
         self._is_on_by_id: dict[str, bool] = {}
+        self._name_by_id: dict[str, str] = {}
 
         self._initialize_sections()
 
@@ -224,7 +245,7 @@ class SectionsController:
 
         index = self._section_ids.index(section_id)
         self._is_on_by_id[section_id] = False
-        self._is_on.insert(index, False)
+        self._is_on[index] = False
 
     # TODO: add/modify test to see if turning section on with a color is working correctly, for example that it don't modify other sections
 
@@ -272,32 +293,32 @@ class SectionsController:
         color_list: list[tuple[int, int, int]],
         *_arg: str,
         is_on: bool,
+        name: str = "",
     ) -> None:
-        index = None
         if end < start or start < 0 or end >= self._strip_length:
             raise ApiError(
                 HTTPStatus.BAD_REQUEST,
                 ErrorCode.BAD_REQUEST,
                 "end < start or start < 0 or end >= strip_length",
             )
-        for i, v in enumerate(self._limits):
-            if v[0] < start < v[1] or v[0] < end < v[1]:
+        # Ranges are inclusive, so sharing a single led is also an overlap
+        for existing_start, existing_end in self._limits:
+            if start <= existing_end and existing_start <= end:
                 raise ApiError(HTTPStatus.CONFLICT, ErrorCode.SECTION_OVERLAPPING)
-            if i < len(self._limits) - 1:
-                if self._limits[i][0] < start and end < self._limits[i + 1][0]:
-                    index = i + 1
-                    break
-            elif index is None:
-                index = i + 1 if start > self._limits[i][1] else i
-        index = 0 if index is None else index
 
-        self._is_on.insert(index, True)
+        # Counts how many sections start before the new one, which is its position in
+        # the lists (they are sorted by start).
+        index = sum(1 for existing_start, _ in self._limits if existing_start < start)
+
+        self._is_on.insert(index, is_on)
         self._section_ids.insert(index, section_id)
+        self._names.insert(index, name)
         self._color_list.insert(index, color_list)
         self._color_list_by_id[section_id] = color_list
         self._limits.insert(index, (start, end))
         self._limits_by_id[section_id] = (start, end)
         self._is_on_by_id[section_id] = is_on
+        self._name_by_id[section_id] = name
 
     def _remove_section(self, section_id: str) -> None:
         section_limits = self._limits_by_id[section_id]
@@ -307,9 +328,11 @@ class SectionsController:
         del self._color_list[index]
         del self._limits[index]
         del self._is_on[index]
+        del self._names[index]
         del self._color_list_by_id[section_id]
         del self._limits_by_id[section_id]
         del self._is_on_by_id[section_id]
+        del self._name_by_id[section_id]
 
     def _initialize_sections(self) -> None:
         for section in self._config.strip.sections:
@@ -323,5 +346,7 @@ class SectionsController:
                 section.id,
                 section.start,
                 section.end,
-                is_on=False,
+                (section.color.r, section.color.g, section.color.b),
+                is_on=section.is_on,
+                name=section.name,
             )

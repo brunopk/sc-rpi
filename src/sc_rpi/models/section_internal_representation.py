@@ -19,3 +19,5 @@ class SectionInternalRepresentation:
     color_list: list[tuple[int, int, int]]
 
     is_on: bool
+
+    name: str = ""

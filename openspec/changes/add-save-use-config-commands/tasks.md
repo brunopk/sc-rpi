@@ -2,10 +2,10 @@
 
 ## 1. Section state fixes
 
-- [ ] 1.1 Make `SectionsController._insert_section` store the given `is_on` in the ordered `_is_on` list and make `turn_section_off` assign instead of insert; verify with `test/controllers` tests that turn a section off and on and then check that `list_sections()` and `get_section()` agree and no other section changes.
-- [ ] 1.2 Replace the overlap check in `_insert_section` with a strict inclusive-range check (`new_start <= existing_end and existing_start <= new_end`); verify with controller tests for a shared boundary LED (10-20 then 20-30 and 5-10), an identical range (10-20) and an enclosing range (5-25), all raising `SECTION_OVERLAPPING`, while adjacent non-overlapping ranges (10-20 then 21-30) are still accepted.
-- [ ] 1.3 Store each section's `name` in `SectionsController` and add `name` to `SectionInternalRepresentation`, returned by `get_section` and `list_sections`; verify with a controller test that names from the config are returned.
-- [ ] 1.4 Apply each configured section's `color` and `is_on` in `_initialize_sections` instead of hardcoding `is_on=False`; verify with a controller test using a config with an off section and a green section.
+- [x] 1.1 Make `SectionsController._insert_section` store the given `is_on` in the ordered `_is_on` list and make `turn_section_off` assign instead of insert; verify with `test/controllers` tests that turn a section off and on and then check that `list_sections()` and `get_section()` agree and no other section changes.
+- [x] 1.2 Replace the overlap check in `_insert_section` with a strict inclusive-range check (`new_start <= existing_end and existing_start <= new_end`); verify with controller tests for a shared boundary LED (10-20 then 20-30 and 5-10), an identical range (10-20) and an enclosing range (5-25), all raising `SECTION_OVERLAPPING`, while adjacent non-overlapping ranges (10-20 then 21-30) are still accepted.
+- [x] 1.3 Store each section's `name` in `SectionsController` and add `name` to `SectionInternalRepresentation`, returned by `get_section` and `list_sections`; verify with a controller test that names from the config are returned.
+- [x] 1.4 Apply each configured section's `color` and `is_on` in `_initialize_sections` instead of hardcoding `is_on=False`; verify with a controller test using a config with an off section and a green section.
 
 ## 2. Config model, error codes and secret masking
 
