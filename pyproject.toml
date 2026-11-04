@@ -49,7 +49,8 @@ ignore = [
     "D203",  # PEP 257 says NO blank line before class definitions
     "D213",  # PEP 257 says summary on first line
     "COM812",
-    "G004"
+    "G004",
+    "PT",  # pytest style rules; this project uses unittest
 ]
 
 
