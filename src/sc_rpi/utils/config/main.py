@@ -2,37 +2,43 @@
 
 from __future__ import annotations
 
+from http import HTTPStatus
 from pathlib import Path
 
 import yaml
 from RPi import GPIO
 
 from sc_rpi.config import Config
+from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 
-"""Load all configurations from `config.ini` file."""
 
-def load_configurations(file: str = "config.yaml") -> Config:
-    """Load all configurations from `config.yaml` file.
+def load_configurations(file: str | Path = "config.yaml") -> Config:
+    """Load all configurations from a YAML file.
+
+    Boot and `sc_rpi.utils.config.store.load` both use this function, so a config is
+    parsed the same way everywhere.
 
     Args:
-        file (str): Configuration file (loaded from the current working directory).
+        file (str | Path): Configuration file (relative paths are resolved from the \
+            current working directory).
 
     Raises:
-        ApiException:
+        ApiError: With code `INVALID_CONFIG` if the file cannot be read or parsed.
 
     Returns:
         Config: Return a `Config` instance with loaded configurations.
 
     """
     try:
-        with Path.open(Path(file)) as f:
+        with Path(file).open() as f:
             config_dict = yaml.load(f, Loader=yaml.SafeLoader)
             return Config.from_dict(config_dict)
-    except KeyError as ex:
-        raise ApiError from ex
     except Exception as ex:
-        raise ApiError from ex
+        raise ApiError(
+            HTTPStatus.INTERNAL_SERVER_ERROR,
+            ErrorCode.INVALID_CONFIG,
+        ) from ex
 
 def configure_status_led(config: Config):
     """Configure status led."""

@@ -9,9 +9,9 @@
 
 ## 2. Config model, error codes and secret masking
 
-- [ ] 2.1 Add `description: str = ""` to `Config` and verify that loading `config_test.yaml` (no description) still works and a file with a description keeps it.
-- [ ] 2.2 Add the error codes `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME`, `INVALID_CONFIG_NAME`, `MISSING_CONFIG_NAME`, `CONFIG_NOT_FOUND` and `INVALID_CONFIG` to `ErrorCode`; verify that `map_exception` turns an `ApiError` with each code into a result with the status given in the specs.
-- [ ] 2.3 Implement `mask_secrets(config) -> Config` returning a copy with the MQTT password replaced by a placeholder; verify with a unit test that the password is masked, the MQTT username and every other value are unchanged, and the original `Config` is not modified.
+- [x] 2.1 Add `description: str = ""` to `Config` and verify that loading `config_test.yaml` (no description) still works and a file with a description keeps it.
+- [x] 2.2 Add the error codes `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME`, `INVALID_CONFIG_NAME`, `MISSING_CONFIG_NAME`, `CONFIG_NOT_FOUND` and `INVALID_CONFIG` to `ErrorCode`; verify that `map_exception` turns an `ApiError` with each code into a result with the status given in the specs.
+- [x] 2.3 Implement `mask_secrets(config) -> Config` returning a copy with the MQTT password replaced by a placeholder; verify with a unit test that the password is masked, the MQTT username and every other value are unchanged, and the original `Config` is not modified.
 
 ## 3. Config store
 

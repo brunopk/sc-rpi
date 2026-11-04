@@ -30,3 +30,5 @@ class Config(DataClassJSONMixin):
   status_led: int
 
   strip: StripConfig
+
+  description: str = ""
