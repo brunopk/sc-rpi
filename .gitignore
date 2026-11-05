@@ -13,3 +13,7 @@ src/sc_rpi.egg-info
 *.whl
 *.lock
 *.log
+
+# Saved configs hold MQTT credentials: keep only the example in git
+config/*
+!config/default.example.yaml

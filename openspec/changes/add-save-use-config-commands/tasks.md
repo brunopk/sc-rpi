@@ -15,9 +15,9 @@
 
 ## 3. Config store
 
-- [ ] 3.1 Create `sc_rpi/utils/config/store.py` with `validate_name` (alphabet `[A-Za-z0-9_-]`, 1 to 64 characters, `MISSING_CONFIG_NAME` for a missing name, `INVALID_CONFIG_NAME` otherwise), `path_for` and `load`; verify with unit tests for `../secret`, names with `/`, `.`, empty and over-long values, a valid name, loading a missing name (`CONFIG_NOT_FOUND`) and loading an unparsable file (`INVALID_CONFIG`).
-- [ ] 3.2 Implement `save(name, config)` with a temporary file of mode `0600` in `config/`, `os.link` to the final name and removal of the temporary name; reject `default` case-insensitively with `RESERVED_CONFIG_NAME` in `save` only, and map `FileExistsError` to `CONFIG_ALREADY_EXISTS`; verify with unit tests for a new name, an existing name (file unchanged), `default` and `Default` (rejected on save, allowed on load), file mode `0600`, and no temporary file left after success or failure.
-- [ ] 3.3 Verify that a config written by `save` and read by `load` is equal to the original, including section color, `is_on` and `description`.
+- [x] 3.1 Create `sc_rpi/utils/config/store.py` with `validate_name` (alphabet `[A-Za-z0-9_-]`, 1 to 64 characters, `MISSING_CONFIG_NAME` for a missing name, `INVALID_CONFIG_NAME` otherwise), `path_for` and `load`; verify with unit tests for `../secret`, names with `/`, `.`, empty and over-long values, a valid name, loading a missing name (`CONFIG_NOT_FOUND`) and loading an unparsable file (`INVALID_CONFIG`).
+- [x] 3.2 Implement `save(name, config)` with a temporary file of mode `0600` in `config/`, `os.link` to the final name and removal of the temporary name; reject `default` case-insensitively with `RESERVED_CONFIG_NAME` in `save` only, and map `FileExistsError` to `CONFIG_ALREADY_EXISTS`; verify with unit tests for a new name, an existing name (file unchanged), `default` and `Default` (rejected on save, allowed on load), file mode `0600`, and no temporary file left after success or failure.
+- [x] 3.3 Verify that a config written by `save` and read by `load` is equal to the original, including section color, `is_on` and `description`.
 
 ## 4. Boot config location
 

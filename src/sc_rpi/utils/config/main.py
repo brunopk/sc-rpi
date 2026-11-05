@@ -13,7 +13,7 @@ from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 
 
-def load_configurations(file: str | Path = "config.yaml") -> Config:
+def load_configurations(file: str | Path = "config/default.yaml") -> Config:
     """Load all configurations from a YAML file.
 
     Boot and `sc_rpi.utils.config.store.load` both use this function, so a config is
