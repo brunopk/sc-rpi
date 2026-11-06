@@ -107,6 +107,17 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
 - Class members are ordered: `__init__`, then public methods, then private methods
   (`_name`) at the end. Within each group, methods are sorted alphabetically. A comment
   placed directly above a method stays with it when sorting.
+- The same ordering applies to test classes: `setUp`/`tearDown` first, then the `test_*`
+  methods, then private helper methods (`_name`) at the end, each group sorted
+  alphabetically. Helper methods that are not tests start with an underscore.
+- `test/` mirrors `src/sc_rpi/` (`commands/`, `config/`, `controllers/`, `utils/`), with
+  `test_*.py` files (`test_<name>_cmd.py` for commands). Shared test bases live at the
+  root of `test/` and are not collected as tests:
+  - `command_test.py` (`CommandTest`): loads `config_test.yaml` and builds a
+    `HardwareController`; use it for commands that do not touch `config/`.
+  - `config_dir_test.py` (`ConfigDirTest`): runs each test in a temporary working
+    directory with an empty `config/`; use it for anything that reads or writes saved
+    configs, so tests never touch the real `config/`.
 - Module-level private helpers (`_name`) go above the class that uses them, as in
   `worker.py` and `controllers/hardware_controller.py`.
 

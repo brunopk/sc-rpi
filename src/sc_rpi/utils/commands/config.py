@@ -24,9 +24,6 @@ def apply_named_config(
 ) -> CommandResult:
     """Apply the saved config `config_name` all-or-nothing and build the result.
 
-    Steps: validate the name, load the config, read the running sections, prepare the
-    new sections (no state change), build the result (SC RPi status first, then the
-    Home Assistant messages) and, as the last step, apply the prepared sections.
     Nothing that can fail runs once the strip has changed.
 
     Args:

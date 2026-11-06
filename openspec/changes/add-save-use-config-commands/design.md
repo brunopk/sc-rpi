@@ -132,8 +132,9 @@ that may fail before the strip is touched:
     modified.
   - `use_config` and `reset` use `prepare_config` and `apply_prepared`, because they
     replace all sections and must leave nothing changed on failure.
-  - The docstrings of `UseConfig` and `Reset` explain why they use `prepare_config` and
-    `apply_prepared`, so the choice is visible in the code where it is made.
+  - A comment inside `run()` of `UseConfig` and `Reset` explains why they use
+    `prepare_config` and `apply_prepared`, so the choice is visible in the code where it
+    is made.
 - `apply_prepared` is the last call in `run()`, in place of the `hw_controller.render()`
   call that other commands make, so the rule that rendering comes last still holds.
 - A render that "succeeds" means `setPixelColor` and `show()` raised no exception. The

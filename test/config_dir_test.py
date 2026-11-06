@@ -1,4 +1,4 @@
-"""Contains `NamedConfigTest`, a base for tests of commands that apply saved configs."""
+"""Contains `ConfigDirTest`, a base for tests that need a temporary `config/`."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ import tempfile
 from dataclasses import replace
 from pathlib import Path
 from unittest import TestCase
+
+import yaml
 
 from sc_rpi.config.strip import Section
 from sc_rpi.controllers.hardware_controller import HardwareController
@@ -28,7 +30,7 @@ def make_section(
     )
 
 
-class NamedConfigTest(TestCase):
+class ConfigDirTest(TestCase):
     """Runs in an empty temporary working directory with a `config/` folder."""
 
     def setUp(self) -> None:
@@ -45,17 +47,15 @@ class NamedConfigTest(TestCase):
         os.chdir(self._old_cwd)
         self._tmp.cleanup()
 
-    def save_config(
+    def _files(self) -> dict[str, bytes]:
+        """Return the content of every file in `config/`."""
+        return {p.name: p.read_bytes() for p in Path("config").iterdir()}
+
+    def _save_config(
         self, name: str, sections: list[Section], description: str = "",
     ) -> None:
         """Write `config/<name>.yaml` with the given sections."""
         strip = replace(self.config.strip, sections=sections)
         config = replace(self.config, strip=strip, description=description)
         path = store.CONFIG_DIR / f"{name}.yaml"
-        import yaml
-
         path.write_text(yaml.safe_dump(config.to_dict(), sort_keys=False))
-
-    def files(self) -> dict[str, bytes]:
-        """Return the content of every file in `config/`."""
-        return {p.name: p.read_bytes() for p in Path("config").iterdir()}

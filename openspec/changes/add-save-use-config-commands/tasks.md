@@ -106,7 +106,7 @@
   - The result keys and their order match the specs
   - The payload lists each section's id, start, end, color and `is_on`
   - A failure while building the result leaves the controller and the strip unchanged
-- [x] 7.2 Add the `use_config` command (`commands/use_config/` with `args.py` and `command.py`, `name` required), with a class docstring explaining why it uses `prepare_config` and `apply_prepared` instead of mutate-then-render.
+- [x] 7.2 Add the `use_config` command (`commands/use_config/` with `args.py` and `command.py`, `name` required), with a comment inside `run()` explaining why it uses `prepare_config` and `apply_prepared` instead of mutate-then-render.
   Verify with `test/commands/test_use_config_cmd.py` for:
   - Switching configs
   - Description loaded
@@ -115,7 +115,7 @@
   - `INVALID_CONFIG` (unreadable file and a section beyond the strip length) with state unchanged
   - No file changed in `config/`
   - MQTT settings not applied
-- [x] 7.3 Make `Reset` accept an optional `name` and call `apply_named_config` with `"default"` when omitted, removing the rollback TODO and documenting in the class docstring why it uses `prepare_config` and `apply_prepared`.
+- [x] 7.3 Make `Reset` accept an optional `name` and call `apply_named_config` with `"default"` when omitted, removing the rollback TODO and documenting in a comment inside `run()` why it uses `prepare_config` and `apply_prepared`.
   Verify by updating `test/commands/test_reset_cmd.py` for:
   - Reset without a name
   - Reset with a saved name

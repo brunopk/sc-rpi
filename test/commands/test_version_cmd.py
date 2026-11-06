@@ -3,6 +3,7 @@
 from sc_rpi.commands.base import Command
 from test.command_test import CommandTest
 
+
 class TestVersion(CommandTest):
     """Tests for `version` command."""
 
