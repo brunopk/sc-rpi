@@ -40,8 +40,11 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   contain MQTT credentials. Only the committed example `config/default.example.yaml` is
   kept in git, so a fresh clone has a file to copy to `config/default.yaml`.
 - **BREAKING**: the `get_config` payload now uses the `Config` structure, the same one as
-  the saved files (keys `mqtt` and `strip` instead of `mqtt_config` and `strip_config`),
-  replacing the separate result models.
+  the saved files (keys `mqtt` and `strip` instead of `mqtt_config` and `strip_config`,
+  and `mqtt.broker` instead of `mqtt.broker_config`), replacing the separate result
+  models.
+- The config key `mqtt.broker_config` is renamed to `mqtt.broker` in the config files,
+  the `Config` model and the `get_config` payload.
 - The boot config moves from `config.yaml` to `config/default.yaml`. All configs live in
   a fixed `config/` directory, resolved from the working directory (not configurable).
 

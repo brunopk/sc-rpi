@@ -12,6 +12,7 @@
 - [x] 2.1 Add `description: str = ""` to `Config` and verify that loading `config_test.yaml` (no description) still works and a file with a description keeps it.
 - [x] 2.2 Add the error codes `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME`, `INVALID_CONFIG_NAME`, `MISSING_CONFIG_NAME`, `CONFIG_NOT_FOUND` and `INVALID_CONFIG` to `ErrorCode`; verify that `map_exception` turns an `ApiError` with each code into a result with the status given in the specs.
 - [x] 2.3 Implement `mask_secrets(config) -> Config` returning a copy with the MQTT password replaced by a placeholder; verify with a unit test that the password is masked, the MQTT username and every other value are unchanged, and the original `Config` is not modified.
+- [x] 2.4 Rename `mqtt.broker_config` to `mqtt.broker` in the `Config` model, `config_test.yaml`, `config/default.example.yaml`, the code that reads it and `doc/configurations.md`; verify with `grep -rn broker_config` (no matches outside `openspec/`) and that the config, masking and store tests pass.
 
 ## 3. Config store
 
@@ -47,9 +48,11 @@
 
 ## 8. `get_config`
 
-- [ ] 8.1 Return `mask_secrets(hw_controller.get_current_config())` as the `get_config` payload and delete the separate result models under `commands/get_config/result/`; verify by updating `test/commands/test_get_config_cmd.py` for `mqtt` and `strip` keys, `color` and `is_on` per section, `description`, broker host and port, the masked password, and a result reflecting an earlier `edit_section`.
-- [ ] 8.2 Add the optional `name` argument that returns the masked saved config through `store.load` without applying it; verify with tests for an existing name, `CONFIG_NOT_FOUND`, `INVALID_CONFIG_NAME` and an unchanged strip.
-- [ ] 8.3 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`; verify that the documented example matches the test output.
+- [ ] 8.1 Make `get_config` return `mask_secrets(hw_controller.get_current_config())` as its payload and delete the separate result models under `commands/get_config/result/`; verify with `grep -rn "get_config.result" src test` (no matches) and `ruff check src/sc_rpi/commands/get_config`.
+- [ ] 8.2 Update `test/commands/test_get_config_cmd.py` for the new payload; verify it checks the `mqtt` and `strip` keys, `mqtt.broker` host and port, the masked password, `color` and `is_on` per section, `description`, and that after an `edit_section` the result shows the edited section (not the boot values).
+- [ ] 8.3 Add the optional `name` argument to `get_config`: when present, return the masked config saved under that name (loaded with `store.load`) without applying it; verify with `ruff check src/sc_rpi/commands/get_config` and that the command calls neither `prepare_config` nor `apply_prepared`.
+- [ ] 8.4 Add tests for `get_config` with `name` in `test/commands/test_get_config_cmd.py`; verify they cover an existing name (config returned, password masked), `CONFIG_NOT_FOUND`, `INVALID_CONFIG_NAME` and an unchanged strip and running sections.
+- [ ] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`; verify that the documented example matches the test output.
 
 ## 9. `save_config`
 

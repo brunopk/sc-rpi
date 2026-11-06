@@ -243,9 +243,9 @@ This resolves the TODO in `commands/get_config/command.py` about duplicated conf
   was saved.
 - `save_config`'s payload nests the configuration: `{"name": ..., "config": <Config>}`,
   so `payload.config` equals the `get_config` payload.
-- **BREAKING** for `get_config` consumers: payload keys follow `Config` (`mqtt`, `strip`,
-  `mqtt.broker_config`) instead of `mqtt_config`, `strip_config`. Recorded in the
-  proposal and in `doc/commands.md`.
+- **BREAKING** for `get_config` consumers: payload keys follow the `Config` model.
+  `mqtt_config` becomes `mqtt` (and the `broker_config` inside it becomes `broker`), and
+  `strip_config` becomes `strip`. Recorded in the proposal and in `doc/commands.md`.
 - Alternative: keep the old keys with mashumaro aliases. Rejected: it keeps a mapping
   layer and leaves the duplication TODO half resolved.
 

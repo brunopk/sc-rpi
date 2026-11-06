@@ -69,11 +69,11 @@ class GetConfig(Command[None]):
             sections,
         )
 
-        mqtt_broker_config = BrokerConfig(
-            self._config.mqtt.broker_config.host,
-            self._config.mqtt.broker_config.port,
+        mqtt_broker = BrokerConfig(
+            self._config.mqtt.broker.host,
+            self._config.mqtt.broker.port,
         )
-        mqtt_config = MQTTConfig(mqtt_broker_config)
+        mqtt_config = MQTTConfig(mqtt_broker)
 
         payload = GetConfigResultPayload(
             self._config.connection_timeout,

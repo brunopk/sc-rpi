@@ -15,10 +15,10 @@ class TestMaskSecrets(TestCase):
 
         masked = mask_secrets(config)
 
-        self.assertEqual(SECRET_PLACEHOLDER, masked.mqtt.broker_config.password)
-        self.assertEqual("test", masked.mqtt.broker_config.username)
-        self.assertEqual(config.mqtt.broker_config.host, masked.mqtt.broker_config.host)
-        self.assertEqual(config.mqtt.broker_config.port, masked.mqtt.broker_config.port)
+        self.assertEqual(SECRET_PLACEHOLDER, masked.mqtt.broker.password)
+        self.assertEqual("test", masked.mqtt.broker.username)
+        self.assertEqual(config.mqtt.broker.host, masked.mqtt.broker.host)
+        self.assertEqual(config.mqtt.broker.port, masked.mqtt.broker.port)
         self.assertEqual(config.strip, masked.strip)
         self.assertEqual(config.description, masked.description)
         self.assertEqual(config.env, masked.env)
@@ -26,7 +26,7 @@ class TestMaskSecrets(TestCase):
     def test_original_is_not_modified(self) -> None:
         """The given config keeps its real password."""
         config = load_configurations("config_test.yaml")
-        original_password = config.mqtt.broker_config.password
+        original_password = config.mqtt.broker.password
         mask_secrets(config)
-        self.assertEqual(original_password, config.mqtt.broker_config.password)
+        self.assertEqual(original_password, config.mqtt.broker.password)
         self.assertNotEqual(SECRET_PLACEHOLDER, original_password)

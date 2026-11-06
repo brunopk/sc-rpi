@@ -35,7 +35,7 @@ Any `get_config` result SHALL have the structure of a saved configuration file (
 
 #### Scenario: Broker settings
 - **WHEN** a `get_config` command is executed
-- **THEN** the result contains the MQTT broker host and port
+- **THEN** the result contains the MQTT broker host and port under `mqtt.broker`
 
 #### Scenario: Non-secret values returned
 - **WHEN** a `get_config` command is executed

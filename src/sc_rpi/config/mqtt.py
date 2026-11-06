@@ -20,4 +20,4 @@ class BrokerConfig:
 class MQTTConfig:
   """Contains MQTT configuration such as broker configuration."""
 
-  broker_config: BrokerConfig
+  broker: BrokerConfig

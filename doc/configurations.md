@@ -23,7 +23,7 @@ SC RPi reads YAML files from the `config/` directory, resolved from the working 
 - `status_led`: GPIO pin of the status LED (BCM mode)
 - `log_level`: `DEBUG`, `INFO`, `WARNING`, `ERROR` or `CRITICAL`
 - `mqtt`:
-  - `broker_config`:
+  - `broker`:
     - `host`: MQTT broker address
     - `port`: MQTT broker port
     - `username`: MQTT username

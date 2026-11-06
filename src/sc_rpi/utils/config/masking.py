@@ -25,6 +25,6 @@ def mask_secrets(config: Config) -> Config:
         Config: A copy of the configuration without secret values.
 
     """
-    broker_config = replace(config.mqtt.broker_config, password=SECRET_PLACEHOLDER)
-    mqtt = replace(config.mqtt, broker_config=broker_config)
+    broker = replace(config.mqtt.broker, password=SECRET_PLACEHOLDER)
+    mqtt = replace(config.mqtt, broker=broker)
     return replace(config, mqtt=mqtt)

@@ -34,12 +34,12 @@ try:
     client.on_connect = callbacks.on_connect
     client.user_data_set((config, worker))
     client.username_pw_set(
-        config.mqtt.broker_config.username,
-        config.mqtt.broker_config.password,
+        config.mqtt.broker.username,
+        config.mqtt.broker.password,
     )
 
-    logger.info(f"Connecting to MQTT broker on {config.mqtt.broker_config.host}")
-    client.connect(config.mqtt.broker_config.host, config.mqtt.broker_config.port,60)
+    logger.info(f"Connecting to MQTT broker on {config.mqtt.broker.host}")
+    client.connect(config.mqtt.broker.host, config.mqtt.broker.port,60)
 
     worker.start()
 
