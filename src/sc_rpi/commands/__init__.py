@@ -13,6 +13,7 @@ from sc_rpi.commands.reset.command import Reset
 from sc_rpi.commands.status.command import StatusCmd
 from sc_rpi.commands.turn_section_off.command import TurnSectionOffCmd
 from sc_rpi.commands.turn_section_on.command import TurnSectionOnCmd
+from sc_rpi.commands.use_config.command import UseConfig
 from sc_rpi.commands.version.command import VersionCmd
 
 __all__ = [
@@ -24,5 +25,6 @@ __all__ = [
     "StatusCmd",
     "TurnSectionOffCmd",
     "TurnSectionOnCmd",
+    "UseConfig",
     "VersionCmd",
 ]

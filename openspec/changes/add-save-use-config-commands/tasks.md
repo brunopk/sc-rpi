@@ -101,12 +101,12 @@
 
 ## 7. `use_config` and `reset` (using the new `apply_named_config` helper for both)
 
-- [ ] 7.1 Implement `apply_named_config(hw_controller, command_name, config_name, brightness)` in `utils/commands/` following decisions 5 and 6: validate the name, load, read previous sections, `prepare_config`, build the result from the previous and prepared sections with the SC RPi status entry first and the Home Assistant messages after, and call `apply_prepared` as the last step.
+- [x] 7.1 Implement `apply_named_config(hw_controller, command_name, config_name, brightness)` in `utils/commands/` following decisions 5 and 6: validate the name, load, read previous sections, `prepare_config`, build the result from the previous and prepared sections with the SC RPi status entry first and the Home Assistant messages after, and call `apply_prepared` as the last step.
   Verify with a unit test, built without a command instance, that:
   - The result keys and their order match the specs
   - The payload lists each section's id, start, end, color and `is_on`
   - A failure while building the result leaves the controller and the strip unchanged
-- [ ] 7.2 Add the `use_config` command (`commands/use_config/` with `args.py` and `command.py`, `name` required), with a class docstring explaining why it uses `prepare_config` and `apply_prepared` instead of mutate-then-render.
+- [x] 7.2 Add the `use_config` command (`commands/use_config/` with `args.py` and `command.py`, `name` required), with a class docstring explaining why it uses `prepare_config` and `apply_prepared` instead of mutate-then-render.
   Verify with `test/commands/test_use_config_cmd.py` for:
   - Switching configs
   - Description loaded
@@ -115,7 +115,7 @@
   - `INVALID_CONFIG` (unreadable file and a section beyond the strip length) with state unchanged
   - No file changed in `config/`
   - MQTT settings not applied
-- [ ] 7.3 Make `Reset` accept an optional `name` and call `apply_named_config` with `"default"` when omitted, removing the rollback TODO and documenting in the class docstring why it uses `prepare_config` and `apply_prepared`.
+- [x] 7.3 Make `Reset` accept an optional `name` and call `apply_named_config` with `"default"` when omitted, removing the rollback TODO and documenting in the class docstring why it uses `prepare_config` and `apply_prepared`.
   Verify by updating `test/commands/test_reset_cmd.py` for:
   - Reset without a name
   - Reset with a saved name
@@ -123,7 +123,7 @@
   - A section configured off
   - Previous entities marked unavailable
   - Results identical to `use_config` except for `command_name`
-- [ ] 7.4 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`.
+- [x] 7.4 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`.
   Verify that each documented example matches the output of the corresponding test.
 
 ## 8. `get_config`

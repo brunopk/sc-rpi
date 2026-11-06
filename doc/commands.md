@@ -239,7 +239,11 @@ Returns:
 
 ## `reset`
 
-Remove all sections.
+Apply `config/default.yaml` (the boot configuration), or the saved configuration `name` when given. It works like [`use_config`](#use_config) (same validation, errors and Home Assistant updates), so edits and sections turned off are discarded.
+
+Arguments:
+
+- `name` (optional): name of a saved configuration. Defaults to `default`.
 
 ### Example
 
@@ -249,17 +253,27 @@ Remove all sections.
 }
 ```
 
-Returns:
+Returns (for a default configuration with one section):
 
 ```json
 {
-  "status": 201,
+  "status": 202,
   "command_name": "reset",
   "payload": {
-    "sections": []
+    "sections": [
+      {
+        "id": "section_1",
+        "start": 0,
+        "end": 99,
+        "color": { "r": 0, "g": 255, "b": 0 },
+        "is_on": true
+      }
+    ]
   }
 }
 ```
+
+Errors: see [`use_config`](#use_config) (only applicable when `name` is given, except `INVALID_CONFIG`, which also applies to `default`).
 
 ## `status`
 
@@ -412,6 +426,54 @@ Returns:
   }
 }
 ```
+
+## `use_config`
+
+Apply the saved configuration `config/<name>.yaml` immediately. Sections (ranges, colors, on/off state) and the description are replaced and the strip is re-rendered. Hardware (strip) and MQTT settings of the loaded file are **not** applied, and no file in `config/` is modified.
+
+The previous Home Assistant entities are marked unavailable (`offline`, not deleted) and entities for the loaded sections are published and marked available. The result is identical to `reset` with the same `name`, except for `command_name`.
+
+Arguments:
+
+- `name` (required): name of a saved configuration (letters, digits, `-` and `_`, 1 to 64 characters).
+
+### Example
+
+```json
+{
+  "command_name": "use_config",
+  "command_args": { "name": "night" }
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 202,
+  "command_name": "use_config",
+  "payload": {
+    "sections": [
+      {
+        "id": "night_1",
+        "start": 0,
+        "end": 9,
+        "color": { "r": 0, "g": 255, "b": 0 },
+        "is_on": false
+      }
+    ]
+  }
+}
+```
+
+Errors (the strip is left unchanged):
+
+| `status` | `code`                | When                                                                 |
+| -------- | --------------------- | -------------------------------------------------------------------- |
+| 400      | `MISSING_CONFIG_NAME` | `name` is missing                                                    |
+| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_`           |
+| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name                                 |
+| 500      | `INVALID_CONFIG`      | the file cannot be parsed, or a section overlaps or exceeds the strip |
 
 ## `version`
 
