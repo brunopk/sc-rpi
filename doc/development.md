@@ -24,6 +24,10 @@ ruff check .
 ruff check file.py --fix
 ```
 
+## Code conventions
+
+Some conventions, such as the order of the members of a class, are not enforced by Ruff. They are described in the [Code conventions](../CLAUDE.md#code-conventions) section of [`CLAUDE.md`](../CLAUDE.md).
+
 ## Visual Code
 
 ### Running Python applications with Visual Code

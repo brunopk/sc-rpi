@@ -212,6 +212,27 @@ class SectionsController:
                 message=f"section {invalid_section_id} is not defined",
             )
 
+    def replace_sections(self, sections: list[SectionInternalRepresentation]) -> None:
+        """Replace all sections with already validated ones.
+
+        It only assigns values, so it cannot fail half way. The sections must come from
+        a successful build (see `HardwareController.prepare_config`).
+
+        Args:
+            sections (list[SectionInternalRepresentation]): New sections, ordered by
+                their start limit.
+
+        """
+        self._section_ids = [s.id for s in sections]
+        self._color_list = [list(s.color_list) for s in sections]
+        self._limits = [s.limits for s in sections]
+        self._is_on = [s.is_on for s in sections]
+        self._names = [s.name for s in sections]
+        self._color_list_by_id = dict(zip(self._section_ids, self._color_list))
+        self._limits_by_id = dict(zip(self._section_ids, self._limits))
+        self._is_on_by_id = dict(zip(self._section_ids, self._is_on))
+        self._name_by_id = dict(zip(self._section_ids, self._names))
+
     def reset_sections(self) -> None:
         """Reset the state of the strip based on configurations."""
         self._strip_length = self._config.strip.strip_length
@@ -285,6 +306,23 @@ class SectionsController:
                 self._is_on[section_index] = True
                 self._is_on_by_id[section_id] = True
 
+    def _initialize_sections(self) -> None:
+        for section in self._config.strip.sections:
+            _LOGGER.info(
+                "Creating section %s from %d to %d",
+                section.id,
+                section.start,
+                section.end,
+            )
+            self.new_section(
+                section.id,
+                section.start,
+                section.end,
+                (section.color.r, section.color.g, section.color.b),
+                is_on=section.is_on,
+                name=section.name,
+            )
+
     def _insert_section(
         self,
         section_id: str,
@@ -333,20 +371,3 @@ class SectionsController:
         del self._limits_by_id[section_id]
         del self._is_on_by_id[section_id]
         del self._name_by_id[section_id]
-
-    def _initialize_sections(self) -> None:
-        for section in self._config.strip.sections:
-            _LOGGER.info(
-                "Creating section %s from %d to %d",
-                section.id,
-                section.start,
-                section.end,
-            )
-            self.new_section(
-                section.id,
-                section.start,
-                section.end,
-                (section.color.r, section.color.g, section.color.b),
-                is_on=section.is_on,
-                name=section.name,
-            )

@@ -102,6 +102,14 @@ TODOs in `main.py`/`worker.py`) — new code in `main.py` and anything touching 
 should prefer `structlog.get_logger(__name__)`, but most existing modules still use
 `logging.getLogger(__name__)`.
 
+## Code conventions
+
+- Class members are ordered: `__init__`, then public methods, then private methods
+  (`_name`) at the end. Within each group, methods are sorted alphabetically. A comment
+  placed directly above a method stays with it when sorting.
+- Module-level private helpers (`_name`) go above the class that uses them, as in
+  `worker.py` and `controllers/hardware_controller.py`.
+
 ## Documentation map
 
 - `doc/commands.md` — wire format for every MQTT command and its result/error shape.
