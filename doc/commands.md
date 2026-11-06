@@ -179,36 +179,78 @@ Returns:
 
 ## `get_config`
 
-Returns configuration parameters of SC RPI.
+Returns a configuration, with the same structure as a saved configuration file. Without `name` it returns the **running** configuration: the boot settings with the current sections (including edits, sections turned off and a loaded `use_config`) and description. With `name` it returns the saved configuration `config/<name>.yaml` without applying it; the strip and the running sections are not changed.
+
+Secret values (currently the MQTT password) are replaced by `********`. Every other value is returned as it is.
+
+Arguments:
+
+- `name` (optional): name of a saved configuration.
+
+> **Breaking change:** the payload keys now follow the configuration file: `mqtt_config` is `mqtt` (and its `broker_config` is `broker`), and `strip_config` is `strip`. Sections now include `color` and `is_on`, and the payload includes `description`.
 
 ### Example
 
 ```json
 {
-  "command_name": "get_config"
+  "command_name": "get_config",
+  "command_args": { "name": "party" }
 }
 ```
 
-Returns:
-  
+Returns (shortened to one section):
+
 ```json
 {
-  "status": 201,
+  "status": 202,
   "command_name": "get_config",
   "payload": {
     "connection_timeout": 0.25,
     "default_gateway": "192.168.0.1",
     "default_network_interface": "en0",
     "env": "dev",
-    "host": "0.0.0.0",
-    "strip_config": {
+    "log_level": "DEBUG",
+    "mqtt": {
+      "broker": {
+        "host": "homeassistant.local",
+        "password": "********",
+        "port": 1883,
+        "username": "test"
+      }
+    },
+    "status_led": 17,
+    "strip": {
+      "brightness": 255,
+      "channel": 0,
+      "default_section_brightness": 100,
+      "dma": 10,
+      "freq_hz": 800000,
       "invert": false,
       "pin": 18,
-      "strip_length": 300
-    }
+      "strip_length": 300,
+      "sections": [
+        {
+          "color": { "r": 0, "g": 255, "b": 0 },
+          "end": 9,
+          "id": "p1",
+          "is_on": true,
+          "name": "P1",
+          "start": 0
+        }
+      ]
+    },
+    "description": "Friday lights"
   }
 }
 ```
+
+Errors (only when `name` is given):
+
+| `status` | `code`                | When                                           |
+| -------- | --------------------- | ---------------------------------------------- |
+| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_` |
+| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name           |
+| 500      | `INVALID_CONFIG`      | the file cannot be parsed                      |
 
 ## `help`
 

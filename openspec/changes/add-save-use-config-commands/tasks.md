@@ -128,11 +128,11 @@
 
 ## 8. `get_config`
 
-- [ ] 8.1 Make `get_config` return `mask_secrets(hw_controller.get_current_config())` as its payload, and delete the separate result models under `commands/get_config/result/`.
+- [x] 8.1 Make `get_config` return `mask_secrets(hw_controller.get_current_config())` as its payload, and delete the separate result models under `commands/get_config/result/`.
   Verify that:
   - `grep -rn "get_config.result" src test` returns no matches
   - `ruff check src/sc_rpi/commands/get_config` passes
-- [ ] 8.2 Update `test/commands/test_get_config_cmd.py` for the new payload.
+- [x] 8.2 Update `test/commands/test_get_config_cmd.py` for the new payload.
   Verify that it checks:
   - The `mqtt` and `strip` keys
   - `mqtt.broker` host and port
@@ -140,17 +140,17 @@
   - `color` and `is_on` per section
   - `description`
   - That after an `edit_section` the result shows the edited section (not the boot values)
-- [ ] 8.3 Add the optional `name` argument to `get_config`: when present, return the masked config saved under that name (loaded with `store.load`) without applying it.
+- [x] 8.3 Add the optional `name` argument to `get_config`: when present, return the masked config saved under that name (loaded with `store.load`) without applying it.
   Verify that:
   - `ruff check src/sc_rpi/commands/get_config` passes
   - The command calls neither `prepare_config` nor `apply_prepared`
-- [ ] 8.4 Add tests for `get_config` with `name` in `test/commands/test_get_config_cmd.py`.
+- [x] 8.4 Add tests for `get_config` with `name` in `test/commands/test_get_config_cmd.py`.
   Verify that they cover:
   - An existing name (config returned, password masked)
   - `CONFIG_NOT_FOUND`
   - `INVALID_CONFIG_NAME`
   - An unchanged strip and running sections
-- [ ] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`.
+- [x] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`.
   Verify that the documented example matches the test output.
 
 ## 9. `save_config`

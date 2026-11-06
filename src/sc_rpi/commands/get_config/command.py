@@ -1,47 +1,52 @@
-"""Contains the `GetConfigCommand` class."""
+"""Contains the `GetConfig` class."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import TYPE_CHECKING
 
 from sc_rpi.commands.base import Command, CommandResult
-from sc_rpi.commands.get_config.result import GetConfigResult, GetConfigResultPayload
-from sc_rpi.commands.get_config.result.mqtt import BrokerConfig, MQTTConfig
-from sc_rpi.commands.get_config.result.strip import Section, StripConfig
+from sc_rpi.commands.get_config.args import GetConfigArgs
+from sc_rpi.commands.results import Result
+
+# Required for mashumaro (do not move to type checking section)
+from sc_rpi.config import Config
 from sc_rpi.utils.commands.decorators import log_before_running
+from sc_rpi.utils.config import store
+from sc_rpi.utils.config.masking import mask_secrets
 from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC
-
-# TODO: avoid duplicating models for configurations,this command should be able to return models in src.sc_rpi.config, maybe masking/hidding some configurations
-
-if TYPE_CHECKING:
-    from sc_rpi.models.config import strip as strip_config
-
-
-def _map_sections(sections: list[strip_config.Section]) -> list[Section]:
-    return [
-        Section(
-            section.end,
-            section.id,
-            section.name,
-            section.start,
-        )
-        for section in sections
-    ]
 
 
 @dataclass
-class GetConfig(Command[None]):
+class GetConfigResult(Result[Config]):
+    """Contains a configuration (secret values masked)."""
+
+    payload: Config
+
+    def __init__(
+        self,
+        status_code: HTTPStatus,
+        command_name: str,
+        payload: Config,
+    ) -> None:
+        """Initialize the object.
+
+        Args:
+            status_code (HTTPStatus): Status code (same status codes used in HTTP).
+            command_name (str): Name of the command that returned the response.
+            payload (Config): The configuration, with secret values masked.
+
+        """
+        super().__init__(status_code, command_name, payload, None)
+
+
+@dataclass
+class GetConfig(Command[GetConfigArgs]):
     """`get_config` command."""
 
+    command_args: GetConfigArgs | None = None
+
     command_name: str = "get_config"
-
-    def validate(self) -> None:
-        """Validate the arguments.
-
-        This method should be invoked before executing the command
-        """
 
     @log_before_running()
     def run(self) -> CommandResult:
@@ -51,42 +56,16 @@ class GetConfig(Command[None]):
             Response: Contains the result of the execution
 
         """
-        sc_rpi_result = self._map_config()
-        return {SC_RPI_RESULT_TOPIC: sc_rpi_result}
-
-    def _map_config(self) -> GetConfigResult:
-        """Map the domain config to an instance of `GetConfigResult`."""
-        sections = _map_sections(self._config.strip.sections)
-        strip_config = StripConfig(
-            self._config.strip.brightness,
-            self._config.strip.channel,
-            self._config.strip.default_section_brightness,
-            self._config.strip.dma,
-            self._config.strip.freq_hz,
-            self._config.strip.invert,
-            self._config.strip.pin,
-            self._config.strip.strip_length,
-            sections,
+        name = self.command_args.name if self.command_args is not None else None
+        config = (
+            self._hw_controller.get_current_config()
+            if name is None
+            else store.load(name)
         )
-
-        mqtt_broker = BrokerConfig(
-            self._config.mqtt.broker.host,
-            self._config.mqtt.broker.port,
-        )
-        mqtt_config = MQTTConfig(mqtt_broker)
-
-        payload = GetConfigResultPayload(
-            self._config.connection_timeout,
-            self._config.default_gateway,
-            self._config.default_network_interface,
-            self._config.env,
-            self._config.log_level,
-            mqtt_config,
-            self._config.status_led,
-            strip_config,
-        )
-        return GetConfigResult(
-            HTTPStatus.ACCEPTED,
-            self.command_name,
-            payload,
-        )
+        return {
+            SC_RPI_RESULT_TOPIC: GetConfigResult(
+                HTTPStatus.ACCEPTED,
+                self.command_name,
+                mask_secrets(config),
+            ),
+        }
