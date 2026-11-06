@@ -35,10 +35,10 @@
 
 ## 6. Home Assistant availability and refresh messages
 
-- [ ] 6.1 Add `build_ha_availability_topic` to `utils/topic_utils.py` and the optional `availability_topic` field to `HAMQTTDiscoveryMessage`; verify with unit tests for the topic `scrpi/homeassistant/<object_id>/availability` and for the discovery JSON containing `availability_topic`.
-- [ ] 6.2 Create `utils/homeassistant.py` with `build_ha_refresh_messages(previous_sections, new_sections, brightness)` returning the messages in the order `offline`, discovery, `online`, state; verify with unit tests for the order, no `offline` for ids present in both lists, no previous sections, and ON/OFF, color and brightness in each state.
-- [ ] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order and remove `_publish_ha_entities`; verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each boot section.
-- [ ] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config; verify that the documented topic matches `build_ha_availability_topic`.
+- [x] 6.1 Add `build_ha_availability_topic` to `utils/topic_utils.py` and the optional `availability_topic` field to `HAMQTTDiscoveryMessage`; verify with unit tests for the topic `scrpi/homeassistant/<object_id>/availability` and for the discovery JSON containing `availability_topic`.
+- [x] 6.2 Create `utils/homeassistant.py` with `build_ha_refresh_messages(previous_sections, new_sections, brightness)` returning the messages in the order `offline`, discovery, `online`, state; verify with unit tests for the order, no `offline` for ids present in both lists, no previous sections, and ON/OFF, color and brightness in each state.
+- [x] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order and remove `_publish_ha_entities`; verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each boot section.
+- [x] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config; verify that the documented topic matches `build_ha_availability_topic`.
 
 ## 7. Shared apply, `use_config` and `reset`
 

@@ -21,6 +21,20 @@ HA_STATE_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/state$")
 
 HA_COMMAND_TOPIC_REGEXP = re.compile(r"^scrpi\/homeassistant\/([^\/#\x00]+)/command$")
 
+def build_ha_availability_topic(object_id: str) -> str:
+  """Build the topic where the availability (`online`/`offline`) of an entity is sent.
+
+  It is set in the discovery message (`availability_topic`).
+
+  Args:
+      object_id (str): Object ID of the entity (the section id).
+
+  Returns:
+      str: The topic name.
+
+  """
+  return f"{HA_TOPIC_PREFIX}/{object_id}/availability"
+
 def build_ha_discovery_topic(object_id: str) -> str:
   """Build Home Assistant entity discovery topic.
 

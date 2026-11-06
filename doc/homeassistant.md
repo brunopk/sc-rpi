@@ -8,6 +8,31 @@ SC RPi integrates with Home Assistant by creating [`light`](https://www.home-ass
 
 > In Home Assistant jargon, there are different *platforms* for devices, such as `light`, `sensor`, and many others. SC RPi generates and provides `light` entities.
 
+### Entities and availability
+
+Each section of the strip is one `light` entity. Its id (the object id) is the section id, for example `section_1`.
+
+Every entity has its own availability topic, set in its discovery message (`availability_topic`):
+
+```text
+scrpi/homeassistant/<section id>/availability
+```
+
+The payloads are the plain strings `online` and `offline` (Home Assistant's defaults). They are not retained.
+
+At startup, and each time a config is applied (`use_config`, or `reset`), SC RPi publishes, in this order:
+
+1. `offline` for each entity that was running and whose section id is not in the applied config. The entity is only marked unavailable, it is **not** deleted, so its history and UI customization are kept.
+2. The discovery message of each section of the applied config (including `availability_topic`).
+3. `online` for each section of the applied config.
+4. The state of each section (ON/OFF, color and brightness).
+
+At startup there are no previous entities, so there are no `offline` messages.
+
+#### Section ids change when loading another config
+
+Saved configs get their own section ids (`<name>_section_<n>`, see `save_config` in [commands.md](commands.md)). Loading another config therefore replaces the running section ids: entities, automations and history tied to the old ids stop working (the old entities stay as unavailable) and new entities appear for the loaded ids. Applying the same config again (for example `reset` after edits) keeps the ids and sends no `offline` message.
+
 ## Required apps
 
 ### Mosquitto broker

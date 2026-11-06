@@ -12,17 +12,13 @@ from typing import TYPE_CHECKING
 from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
 from sc_rpi.enums.error_code import ErrorCode
-from sc_rpi.enums.homeassistant import ColorMode, Schema, State
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.models import Color
-from sc_rpi.models.homeassistant import HACommand, HAMQTTDiscoveryMessage, HAState
+from sc_rpi.models.homeassistant import HACommand
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
+from sc_rpi.utils.homeassistant import build_ha_refresh_messages
 from sc_rpi.utils.mappings import map_exception
 from sc_rpi.utils.topic_utils import (
     SC_RPI_RESULT_TOPIC,
-    build_ha_command_topic,
-    build_ha_discovery_topic,
-    build_ha_state_topic,
     matches_ha_command_topic,
     matches_sc_rpi_command_topic,
 )
@@ -35,8 +31,8 @@ from sc_rpi.utils.topic_utils import (
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
 
+    from sc_rpi.commands.base import CommandResult
     from sc_rpi.config import Config
-    from sc_rpi.models import SectionInternalRepresentation
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -132,7 +128,15 @@ class Worker(Thread):
 
     def run(self) -> None:
         """Code to be executed in the new thread."""
-        self._publish_ha_entities(self._hw_controller.list_sections())
+        # Boot sections go through the same sequence as an applied config (without
+        # `offline` messages, as there are no previous sections)
+        self._publish_messages(
+            build_ha_refresh_messages(
+                [],
+                self._hw_controller.list_sections(),
+                self._config.strip.default_section_brightness,
+            )
+        )
 
         while True:
             msg = self._message_queue.get()
@@ -179,63 +183,12 @@ class Worker(Thread):
                             sc_rpi_command.command_name,
                         )
                     else:
-                        for topic_name in command_result:
-                            topic_payload = (
-                                command_result[topic_name]
-                                if isinstance(command_result[topic_name], str)
-                                else command_result[topic_name].to_json()
-                            )
-                            _LOGGER.debug("Publishing result to %s topic", topic_name)
-                            self._client.publish(topic_name, topic_payload)
+                        self._publish_messages(command_result)
 
             except Exception as ex:
                 self._handle_exception(sc_rpi_command, ex)
 
             self._message_queue.task_done()
-
-    def _publish_ha_entities(
-        self, sections: list[SectionInternalRepresentation]
-    ) -> None:
-        for section in sections:
-            command_topic = build_ha_command_topic(section.id)
-            state_topic = build_ha_state_topic(section.id)
-            discovery_topic = build_ha_discovery_topic(section.id)
-
-            """
-            HA requires unique_id it to be unique to allow the entity to be managed
-            through the UI
-            """
-
-            _LOGGER.info(
-                "Sending discovery message for section %s (start=%d, end=%d)",
-                section.id,
-                section.start,
-                section.end,
-            )
-            discovery_message = HAMQTTDiscoveryMessage(
-                section.name,
-                brightness=True,
-                command_topic=command_topic,
-                object_id=section.id,
-                schema=Schema.JSON,
-                state_topic=state_topic,
-                supported_color_modes=[ColorMode.RGB],
-                unique_id=section.id,
-            )
-            # TODO: add retain=True (this is just for testing)
-            self._client.publish(discovery_topic, discovery_message.to_json())
-
-            # TODO: line 232 and 237 should be in a helper function
-            _LOGGER.info("Sending state for section %s", section.id)
-            section_color = Color(
-                section.color_list[0][0],
-                section.color_list[0][1],
-                section.color_list[0][2],
-            )
-            state = HAState(
-                State.ON if section.is_on else State.OFF, color=section_color
-            )
-            self._client.publish(state_topic, state.to_json())
 
     def _handle_exception(
         self,
@@ -267,3 +220,15 @@ class Worker(Thread):
             self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
         except Exception as ex:
             _LOGGER.warning("Error sending result", exc_info=ex)
+
+    def _publish_messages(self, messages: CommandResult) -> None:
+        """Publish one message per topic, in the order of the dict.
+
+        Args:
+            messages (CommandResult): Topic -> payload (a string or a model).
+
+        """
+        for topic_name, payload in messages.items():
+            topic_payload = payload if isinstance(payload, str) else payload.to_json()
+            _LOGGER.debug("Publishing result to %s topic", topic_name)
+            self._client.publish(topic_name, topic_payload)

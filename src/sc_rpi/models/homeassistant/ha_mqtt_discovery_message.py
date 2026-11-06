@@ -50,6 +50,8 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     unique_id: str
 
+    availability_topic: Optional[str] = None
+
     rgb: Optional[bool] = None
 
     rgb_state_topic: Optional[str] = None
