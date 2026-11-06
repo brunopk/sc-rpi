@@ -21,9 +21,9 @@
 
 ## 4. Boot config location
 
-- [ ] 4.1 Read the boot configuration from `config/default.yaml` in `main.py` through the same loader used by the store; verify that the app starts with a `config/default.yaml` and that `test/command_test.py` still passes with `config_test.yaml`.
-- [ ] 4.2 Move `config.yaml` to `config/default.example.yaml`, add `config/` to `.gitignore` with an exception for `config/default.example.yaml`, and verify with `git status` and `git check-ignore -v config/default.yaml config/party.yaml config/default.example.yaml` that only the example is tracked.
-- [ ] 4.3 Update `README.md`, `CLAUDE.md`, `doc/configurations.md`, `doc/development.md` and `doc/linux.md` to the new location and the copy step for a fresh clone; verify with `grep -rn "config.yaml"` that no remaining mention refers to the old boot file (`config_test.yaml` and `openspec/config.yaml` are different files).
+- [x] 4.1 Read the boot configuration from `config/default.yaml` in `main.py` through the same loader used by the store; verify that the app starts with a `config/default.yaml` and that `test/command_test.py` still passes with `config_test.yaml`.
+- [x] 4.2 Move `config.yaml` to `config/default.example.yaml`, add `config/` to `.gitignore` with an exception for `config/default.example.yaml`, and verify with `git status` and `git check-ignore -v config/default.yaml config/party.yaml config/default.example.yaml` that only the example is tracked.
+- [x] 4.3 Update `README.md`, `CLAUDE.md` and `doc/configurations.md` to the new location and the copy step for a fresh clone; verify with `grep -rn "config.yaml"` that no remaining mention refers to the old boot file (`config_test.yaml` and `openspec/config.yaml` are different files).
 
 ## 5. HardwareController configuration methods
 

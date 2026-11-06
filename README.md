@@ -68,9 +68,13 @@ Additional information :
 
 ## Configuration
 
-To configure SC RPi edit the corresponding YML file :
+Copy configuration from the example and edit it (see [`doc/configurations.md`](doc/configurations.md)):
 
-- [`config.yaml`](config.yaml): For production and [development](#development)
+```bash
+cp config/default.example.yaml config/default.yaml
+```
+
+- `config/default.yaml`: For production and [development](#development)
 - [`config_test.yaml`](config_test.yaml): For [unit testing](#testing)
 
 ## Development

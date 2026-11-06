@@ -16,7 +16,7 @@ hardware in response.
 uv sync --group dev          # development (uses mocked GPIO/ws281x libs from /lib)
 uv sync --group rpi          # on an actual Raspberry Pi (real hardware libs)
 
-# Run the app (reads config.yaml from CWD)
+# Run the app
 source .venv/bin/activate
 python -m sc_rpi.main
 
@@ -87,8 +87,10 @@ the full list):
 ### Config and models
 
 `Config` and friends (`src/sc_rpi/config/`) are mashumaro dataclasses loaded from YAML
-(`config.yaml` for normal use, `config_test.yaml` for tests) via
-`utils/config/main.load_configurations`. Home Assistant wire-format types
+(`config/default.yaml` for normal use, `config_test.yaml` for tests) via
+`utils/config/main.load_configurations`. `config/` is git-ignored (it holds MQTT
+credentials) except `config/default.example.yaml`: on a fresh clone run
+`cp config/default.example.yaml config/default.yaml`. Home Assistant wire-format types
 (`HACommand`, `HAState`, `HAMQTTDiscoveryMessage`) live under `models/homeassistant/` and
 are kept separate from SC RPi's own command/result models (`commands/results.py`,
 `models/section_internal_representation.py`).
