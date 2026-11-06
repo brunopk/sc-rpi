@@ -36,4 +36,12 @@ rules:
     - Write in impersonal prose; do not use "we" or "you".
   specs: *style
   design: *style
-  tasks: *style
+  tasks:
+    - Write in impersonal prose; do not use "we" or "you".
+    - Write each task as one checkbox line that says what to build, then a nested
+      "Verify with:" list with one bullet per check (a test case, a command and its
+      expected result, or a delivered artifact).
+    - Keep verification out of the checkbox line; put every check in the nested list,
+      one check per bullet.
+    - Start each bullet with a capital letter (or with a backticked identifier), wrap
+      commands and identifiers in backticks and keep each bullet to one line.
