@@ -17,7 +17,7 @@ from sc_rpi.models.homeassistant import HACommand
 from sc_rpi.utils.commands.mappings import map_ha_command_to_sc_rpi_command
 from sc_rpi.utils.homeassistant import build_ha_refresh_messages
 from sc_rpi.utils.mappings import map_exception
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     SC_RPI_RESULT_TOPIC,
     matches_ha_command_topic,
     matches_sc_rpi_command_topic,

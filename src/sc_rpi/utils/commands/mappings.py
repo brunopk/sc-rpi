@@ -12,7 +12,7 @@ from sc_rpi.commands.turn_section_on.command import TurnSectionOnCmd
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.enums.homeassistant import State
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.utils.topic_utils import get_object_id_from_ha_command_topic
+from sc_rpi.utils.topics import get_object_id_from_ha_command_topic
 
 if TYPE_CHECKING:
     from sc_rpi.commands.base import Command

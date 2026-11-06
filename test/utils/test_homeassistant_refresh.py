@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from sc_rpi.models import SectionInternalRepresentation
 from sc_rpi.utils.homeassistant import build_ha_refresh_messages
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     build_ha_availability_topic,
     build_ha_discovery_topic,
     build_ha_state_topic,

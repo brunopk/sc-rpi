@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     SC_RPI_COMMAND_TOPIC,
     build_ha_command_topic,
 )

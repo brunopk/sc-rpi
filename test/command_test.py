@@ -13,7 +13,7 @@ from sc_rpi.commands.results import Result
 from sc_rpi.controllers.hardware_controller import HardwareController
 from sc_rpi.models.homeassistant import HAState
 from sc_rpi.utils.config import load_configurations
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     matches_ha_state_topic,
     matches_sc_rpi_result_topic,
 )

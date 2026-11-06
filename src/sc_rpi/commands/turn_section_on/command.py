@@ -12,7 +12,7 @@ from sc_rpi.models.color import Color
 from sc_rpi.models.homeassistant import HAState
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.commands.results import build_status_result
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     SC_RPI_RESULT_TOPIC,
     build_ha_state_topic,
 )

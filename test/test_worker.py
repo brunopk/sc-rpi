@@ -5,7 +5,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 from sc_rpi.utils.config import load_configurations
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     build_ha_availability_topic,
     build_ha_discovery_topic,
     build_ha_state_topic,

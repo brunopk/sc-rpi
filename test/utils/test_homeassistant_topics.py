@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from sc_rpi.enums.homeassistant import ColorMode, Schema
 from sc_rpi.models.homeassistant import HAMQTTDiscoveryMessage
-from sc_rpi.utils.topic_utils import build_ha_availability_topic
+from sc_rpi.utils.topics import build_ha_availability_topic
 
 
 class TestAvailability(TestCase):

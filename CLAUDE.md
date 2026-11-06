@@ -79,7 +79,7 @@ the full list):
    onto the `Worker`'s internal queue (`worker.put_message`).
 3. `Worker.run()` (single dedicated thread, `src/sc_rpi/worker.py`) pulls messages off the
    queue, decides whether the topic matches an HA command topic or the SC RPi command
-   topic (`utils/topic_utils.py`), parses the JSON into a `Command` (via HA mapping or
+   topic (`utils/topics.py`), parses the JSON into a `Command` (via HA mapping or
    directly), calls `validate()` then `run()`, and publishes each topic/payload pair from
    the result. Exceptions (including `ApiError`) are caught and translated into an error
    result published to the SC RPi result topic via `utils/mappings.map_exception`.

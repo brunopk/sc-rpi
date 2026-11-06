@@ -12,7 +12,7 @@ Home Assistant requires to define one command topic for each entity. **Additiona
 - **SC RPi command topic: `scrpi/command`**
 - **SC RPi result topic: `scrpi/result`**
 
-Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topic_utils.py`](/src/sc_rpi/utils/topic_utils.py)). The result topic is for both, successful and failed SC RPi command execution results. Commands sent through the SC RPi command topic have the same format:
+Note that there's **one** command topic for all sections in the strip (see [`/src/sc_rpi/utils/topics.py`](/src/sc_rpi/utils/topics.py)). The result topic is for both, successful and failed SC RPi command execution results. Commands sent through the SC RPi command topic have the same format:
 
 ```json
 {

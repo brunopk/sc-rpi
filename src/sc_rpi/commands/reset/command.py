@@ -8,7 +8,7 @@ from sc_rpi.models.homeassistant import HAState
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.mappings import map_color_to_ha_format
-from sc_rpi.utils.topic_utils import SC_RPI_RESULT_TOPIC, build_ha_state_topic
+from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC, build_ha_state_topic
 
 # TODO: investigate a mechanism to rollback changes for example, in this command if something fails after invoking reset() but before render(), strip state should be rollbacked
 # TODO: create a test for this

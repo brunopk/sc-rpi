@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from sc_rpi.enums.homeassistant import ColorMode, Schema, State
 from sc_rpi.models import Color
 from sc_rpi.models.homeassistant import HAMQTTDiscoveryMessage, HAState
-from sc_rpi.utils.topic_utils import (
+from sc_rpi.utils.topics import (
     build_ha_availability_topic,
     build_ha_command_topic,
     build_ha_discovery_topic,
@@ -33,16 +33,36 @@ def build_ha_refresh_messages(
 ) -> dict[str, DataClassJSONMixin | str]:
     """Build the messages that replace the published entities with `new_sections`.
 
-    The dict is in publishing order (the `Worker` publishes it in insertion order), so
-    each entity exists and is available before its state arrives:
+    The dict's insertion order is the order in which the messages must be published
+    (Python dicts keep insertion order), so each entity exists and is available before
+    its state arrives:
 
-    1. `offline` for each previous section whose id is not in `new_sections`.
-    2. Discovery for each new section (including its availability topic).
-    3. `online` for each new section.
-    4. State for each new section (ON/OFF, color and brightness).
+          1. `offline` for each previous section whose id is not in `new_sections`.
+          2. Discovery for each new section (including its availability topic).
+          3. `online` for each new section.
+          4. State for each new section (ON/OFF, color and brightness).
+
+    ------------------------------------------------------------------------------------
 
     A section present in both lists gets no `offline` message, as a topic can appear
-    only once in the dict and `online` must win.
+    only once in the dict and `online` must win. Without this rule (previous
+    `[kept, old]`, new `[kept]`, `offline` sent for all previous sections)::
+
+        messages["kept/availability"] = "offline"
+        messages["old/availability"] = "offline"
+        messages["kept/discovery"] = <discovery>
+        messages["kept/availability"] = "online"  # keeps its first position
+        messages["kept/state"] = <state>
+
+    The dict ends in this order::
+
+        kept/availability: online  (before the discovery)
+        old/availability: offline
+        kept/discovery
+        kept/state
+
+    So the `offline` of `kept` is lost and `online` is published before the discovery
+    message.
 
     Args:
         previous_sections (list[SectionInternalRepresentation]): Sections published
