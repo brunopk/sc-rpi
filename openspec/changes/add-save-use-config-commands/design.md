@@ -110,7 +110,7 @@ Details:
 - Alternative: put the description on `SectionsController`. Rejected: it is not section
   state.
 
-### 4. Apply is split: `prepare_config` builds without side effects, `apply_prepared` renders and replaces the state
+### 4. Apply a config in two steps: `prepare_config`, then `apply_prepared`
 
 Applying a config takes two `HardwareController` calls, so the command can do everything
 that may fail before the strip is touched:
@@ -162,7 +162,7 @@ that may fail before the strip is touched:
 - Alternative: build a new `SectionsController` and swap the instance. Rejected: every
   holder would have to avoid keeping a reference to it.
 
-### 5. Shared apply logic for `use_config` and `reset`
+### 5. One helper for `use_config` and `reset`: `apply_named_config`
 
 A helper `apply_named_config(hw_controller, command_name, config_name, brightness)` (in
 `utils/commands/`) runs these steps:

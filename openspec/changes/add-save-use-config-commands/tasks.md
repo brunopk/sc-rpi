@@ -63,7 +63,7 @@
 - [x] 4.3 Update `README.md`, `CLAUDE.md` and `doc/configurations.md` to the new location and the copy step for a fresh clone.
   Verify with `grep -rn "config.yaml"` that no remaining mention refers to the old boot file (`config_test.yaml` and `openspec/config.yaml` are different files).
 
-## 5. HardwareController configuration methods
+## 5. HardwareController: prepare, apply and read the config (`prepare_config`, `apply_prepared`, `get_current_config`)
 
 - [x] 5.1 Extract the concatenation and the strip writing of `concatenate_sections` and `render` into private helpers `_concatenate_sections(sections, strip_length)` and `_render(colors)`, keeping both public methods unchanged.
   Verify that:
@@ -99,7 +99,7 @@
 - [x] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config.
   Verify that the documented topic matches `build_ha_availability_topic`.
 
-## 7. Shared apply, `use_config` and `reset`
+## 7. `use_config` and `reset` (using the new `apply_named_config` helper for both)
 
 - [ ] 7.1 Implement `apply_named_config(hw_controller, command_name, config_name, brightness)` in `utils/commands/` following decisions 5 and 6: validate the name, load, read previous sections, `prepare_config`, build the result from the previous and prepared sections with the SC RPi status entry first and the Home Assistant messages after, and call `apply_prepared` as the last step.
   Verify with a unit test, built without a command instance, that:
