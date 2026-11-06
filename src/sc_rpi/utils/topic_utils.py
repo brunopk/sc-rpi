@@ -17,9 +17,7 @@ SC_RPI_RESULT_TOPIC = "scrpi/result"
 
 HA_STATE_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/state$")
 
-# TODO: This regexp SHOULD use the same prefix defined in HA_TOPIC_PREFIX
-
-HA_COMMAND_TOPIC_REGEXP = re.compile(r"^scrpi\/homeassistant\/([^\/#\x00]+)/command$")
+HA_COMMAND_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/command$")
 
 def build_ha_availability_topic(object_id: str) -> str:
   """Build the topic where the availability (`online`/`offline`) of an entity is sent.
