@@ -16,7 +16,7 @@ class TestGetConfig(ConfigDirTest):
     """Tests for `get_config` command."""
 
     def test_after_edit_section_shows_edited_section(self) -> None:
-        """The running config is returned, not the boot values."""
+        """The running config is returned, not the initial values."""
         section_id = self.config.strip.sections[0].id
         self.hw_controller.edit_section(section_id, None, None, (1, 2, 3))
         payload = self._get_payload()
@@ -77,6 +77,14 @@ class TestGetConfig(ConfigDirTest):
         self.assertEqual("Friday lights", data["description"])
         self.assertEqual(["p1"], [s["id"] for s in data["strip"]["sections"]])
         self.assertEqual(SECRET_PLACEHOLDER, data["mqtt"]["broker"]["password"])
+
+    def test_no_file_changed(self) -> None:
+        """`get_config`, with or without a name, does not touch `config/`."""
+        self._save_config("party", [make_section("p1", 0, 9)])
+        before = self._files()
+        self._run()
+        self._run({"name": "party"})
+        self.assertEqual(before, self._files())
 
     def test_unknown_name(self) -> None:
         """An unknown name gives CONFIG_NOT_FOUND."""

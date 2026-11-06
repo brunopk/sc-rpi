@@ -39,3 +39,12 @@ The Home Assistant discovery message of every section SHALL include an availabil
 #### Scenario: Previous entities unpublished
 - **WHEN** the running sections are `party_section_1` and `party_section_2` and a `reset` command without `name` loads a default config with `section_1`
 - **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `section_1` is published and marked available
+
+## ADDED Requirements
+
+### Requirement: No config files modified
+The `reset` command SHALL NOT create, modify or delete any config file, including `config/default.yaml`; it only reads the config it applies.
+
+#### Scenario: No files changed
+- **WHEN** a `reset` command is executed, with or without `name`
+- **THEN** no file in `config/` is created, modified or deleted

@@ -3,7 +3,7 @@
 ## Why
 
 SC RPi's strip state (section ranges, colors, on/off) lives only in memory and is lost on
-restart; the only persisted source is the hand-edited boot config, which nothing in the
+restart; the only persisted source is the hand-edited initial config, which nothing in the
 app ever writes. Users want to keep several named setups (e.g. `party`, `night`) and
 switch between them over MQTT without editing files on the Pi or restarting the service.
 
@@ -32,7 +32,7 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   argument and writes it to the saved file; `get_config` results include it. A config with
   no description reports an empty one.
 - Users give a config name, never a path, so no path traversal over MQTT is possible. The
-  name `default` is reserved: `save_config` rejects it so the boot file cannot be
+  name `default` is reserved: `save_config` rejects it so the initial file cannot be
   overwritten.
 - Saved configs keep each section's color and on/off state. Today these values in config
   files are ignored, so a saved file would not round-trip.
@@ -45,7 +45,7 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   models.
 - The config key `mqtt.broker_config` is renamed to `mqtt.broker` in the config files,
   the `Config` model and the `get_config` payload.
-- The boot config moves from `config.yaml` to `config/default.yaml`. All configs live in
+- The initial config moves from `config.yaml` to `config/default.yaml`. All configs live in
   a fixed `config/` directory, resolved from the working directory (not configurable).
 
 Not changing: hardware-level strip settings and MQTT settings. Saved configs include them,

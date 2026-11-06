@@ -63,11 +63,15 @@ The `save_config` command SHALL give each section in the saved file, ordered by 
 - **THEN** the saved section ids are `night_section_1` and `night_section_2`, with no `party_` prefix
 
 ### Requirement: Reserved name `default`
-The system SHALL reject `save_config` when `name` is `default` with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the boot config SHALL remain unchanged.
+The system SHALL reject `save_config` when `name` is `default` with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the initial config SHALL remain unchanged. The name `default` SHALL be compared case-insensitively.
 
 #### Scenario: Save as default
 - **WHEN** a `save_config` command is received with `name` `default`
 - **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published to the SC RPi result topic and no file is written
+
+#### Scenario: Default in another letter case
+- **WHEN** a `save_config` command is received with `name` `Default` or `DEFAULT`
+- **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published and no file is written (the reserved name is compared case-insensitively, as macOS and Windows file systems are case-insensitive)
 
 ### Requirement: Config names are names, not paths
 The system SHALL accept only plain names for `name` (letters, digits, `-` and `_`) and SHALL reject any value that could refer to a location outside the `config/` directory, such as values containing path separators or `..`, with `status` 400 and error code `INVALID_CONFIG_NAME`. A missing `name` SHALL be rejected with `status` 400 and error code `MISSING_CONFIG_NAME`.

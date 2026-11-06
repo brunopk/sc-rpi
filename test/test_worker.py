@@ -17,7 +17,7 @@ class TestWorkerStartup(TestCase):
     """Tests for what the worker publishes when it starts."""
 
     def test_startup_publishes_discovery_online_and_state(self) -> None:
-        """Each boot section gets discovery, `online` and state, in that order."""
+        """Each initial section gets discovery, `online` and state, in that order."""
         config = load_configurations("config_test.yaml")
         client = MagicMock()
         worker = Worker(config, client)

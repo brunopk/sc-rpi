@@ -80,11 +80,11 @@ with `FileExistsError` when the target exists instead of replacing it.
 Commands already receive `hw_controller` to read and change the live strip state. It also
 becomes the place to get and replace the configuration:
 
-- `Config` stays the immutable boot configuration, passed to commands as today. It gains
+- `Config` stays the immutable initial configuration, passed to commands as today. It gains
   an optional `description: str = ""`, so existing files without it remain valid.
 - `HardwareController` keeps creating `SectionsController` and delegating to it.
 - It gains three methods:
-  - `get_current_config() -> Config`: the boot `Config` with `strip.sections` and
+  - `get_current_config() -> Config`: the initial `Config` with `strip.sections` and
     `description` taken from the live state at the time of the call. Changes made by
     earlier commands (`edit_section`, `turn_section_off`, `use_config`) are included.
     `get_config` and `save_config` both use it.
@@ -102,7 +102,7 @@ Details:
   - `SectionsController` stores the name of each section, taken from the config.
   - `SectionInternalRepresentation` gains a `name` field, set by `SectionsController`
     when it returns sections.
-- Commands read live sections from `hw_controller`, never from the boot
+- Commands read live sections from `hw_controller`, never from the initial
   `config.strip.sections` (see Risks).
 - Alternative: a `RunningConfig` class replacing `Config` in commands. Rejected for now:
   it needs new wiring in every command, and both it and `HardwareController` would
@@ -213,7 +213,7 @@ exists and is available before its state arrives:
   ids are unchanged, so no `offline` message is sent for them. A topic can appear only
   once in the result dict, and skipping it avoids relying on insertion order to let
   `online` win.
-- At startup the boot sections go through the same message sequence as an apply, minus
+- At startup the initial sections go through the same message sequence as an apply, minus
   the `offline` step: discovery, `online`, then state. `build_ha_refresh_messages` serves
   both cases, with no previous sections at startup. `Worker` calls it and publishes the
   returned dict in order, replacing `_publish_ha_entities`. No SC RPi result entry is
@@ -265,7 +265,7 @@ codes and statuses are defined in the specs.
   the running strip; mismatches fail as `INVALID_CONFIG` with state unchanged.
 - [HA offline/online messages are not retained or reliable over reconnects] → acceptable
   for now; the next apply or boot re-publishes.
-- [Commands could read the boot section list (`config.strip.sections`), which does not
+- [Commands could read the initial section list (`config.strip.sections`), which does not
   reflect edits] → live sections must come from `hw_controller`; add a test that edits a
   section and then checks the `get_config` result.
 - [The existing overlap check in `SectionsController` misses boundary and enclosing

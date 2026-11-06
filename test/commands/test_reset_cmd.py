@@ -43,6 +43,15 @@ class TestReset(ConfigDirTest):
             {k: v.to_dict() if hasattr(v, "to_dict") else v for k, v in use.items()},
         )
 
+    def test_no_file_changed(self) -> None:
+        """Reset, with or without a name, does not touch `config/`."""
+        self._save_config("default", [make_section("d1", 0, 9)])
+        self._save_config("party", [make_section("p1", 0, 9)])
+        before = self._files()
+        self._run_cmd("reset")
+        self._run_cmd("reset", {"name": "party"})
+        self.assertEqual(before, self._files())
+
     def test_previous_entities_unavailable(self) -> None:
         """Previous entities are marked offline."""
         self._save_config("default", [make_section("d1", 0, 9)])

@@ -26,7 +26,7 @@ CONFIG_DIR = Path("config")
 """Directory with all configs, resolved from the current working directory."""
 
 DEFAULT_NAME = "default"
-"""Name of the boot config (`config/default.yaml`)."""
+"""Name of the initial config (`config/default.yaml`)."""
 
 _NAME_PATTERN = re.compile(r"[A-Za-z0-9_-]{1,64}")
 

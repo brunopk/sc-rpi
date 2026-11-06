@@ -128,7 +128,7 @@ class Worker(Thread):
 
     def run(self) -> None:
         """Code to be executed in the new thread."""
-        # Boot sections go through the same sequence as an applied config (without
+        # Initial sections go through the same sequence as an applied config (without
         # `offline` messages, as there are no previous sections)
         self._publish_messages(
             build_ha_refresh_messages(

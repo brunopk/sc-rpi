@@ -104,11 +104,18 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
 
 ## Code conventions
 
+### Code
+
 - Class members are ordered: `__init__`, then public methods, then private methods
   (`_name`) at the end. Within each group, methods are sorted alphabetically. A comment
   placed directly above a method stays with it when sorting.
-- The same ordering applies to test classes: `setUp`/`tearDown` first, then the `test_*`
-  methods, then private helper methods (`_name`) at the end, each group sorted
+- Module-level private helpers (`_name`) go above the class that uses them, as in
+  `worker.py` and `controllers/hardware_controller.py`.
+
+### Tests
+
+- The same member ordering applies to test classes: `setUp`/`tearDown` first, then the
+  `test_*` methods, then private helper methods (`_name`) at the end, each group sorted
   alphabetically. Helper methods that are not tests start with an underscore.
 - `test/` mirrors `src/sc_rpi/` (`commands/`, `config/`, `controllers/`, `utils/`), with
   `test_*.py` files (`test_<name>_cmd.py` for commands). Shared test bases live at the
@@ -118,8 +125,14 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   - `config_dir_test.py` (`ConfigDirTest`): runs each test in a temporary working
     directory with an empty `config/`; use it for anything that reads or writes saved
     configs, so tests never touch the real `config/`.
-- Module-level private helpers (`_name`) go above the class that uses them, as in
-  `worker.py` and `controllers/hardware_controller.py`.
+
+### Documentation
+
+- Terminology for configurations (code, docs and specs): the **initial configuration**
+  is `config/default.yaml`, the `Config` loaded at startup; the **running
+  configuration** is the live state (`HardwareController.get_current_config()`), which
+  changes with commands; a **saved configuration** is `config/<name>.yaml`. Do not call
+  the initial configuration "boot config".
 
 ## Documentation map
 

@@ -21,6 +21,13 @@ The `get_config` command SHALL accept an optional `name` and, when present, retu
 - **WHEN** a `get_config` command is received with a `name` that has no saved config
 - **THEN** an error result with `status` 404 and code `CONFIG_NOT_FOUND` is published
 
+### Requirement: No config files modified
+The `get_config` command SHALL NOT create, modify or delete any config file; it only reads the saved config named by `name`.
+
+#### Scenario: No files changed
+- **WHEN** a `get_config` command is executed, with or without `name`
+- **THEN** no file in `config/` is created, modified or deleted
+
 ## MODIFIED Requirements
 
 ### Requirement: Return running configuration

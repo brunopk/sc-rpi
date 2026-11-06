@@ -174,13 +174,13 @@ class HardwareController:
         return self._section_controller.edit_section(section_id, start, end, color)
 
     def get_current_config(self) -> Config:
-        """Return the boot configuration with the live sections and description.
+        """Return the initial configuration with the live sections and description.
 
         Changes made by earlier commands (`edit_section`, `turn_section_off`,
         `use_config`...) are included.
 
         Returns:
-            Config: A new `Config`; the boot `Config` is not modified.
+            Config: A new `Config`; the initial `Config` is not modified.
 
         """
         sections = [

@@ -26,7 +26,7 @@ class TestGettingCurrentConfig(TestCase):
         return next(s for s in current.strip.sections if s.id == _FIRST_ID)
 
     def test_matches_boot_config_at_start(self) -> None:
-        """Before any change the current config equals the boot config."""
+        """Before any change the current config equals the initial config."""
         self.assertEqual(self.config, self.controller.get_current_config())
 
     def test_includes_edit_section(self) -> None:
@@ -73,7 +73,7 @@ class TestGettingCurrentConfig(TestCase):
         self.assertEqual("Friday lights", current.description)
 
     def test_boot_config_is_not_modified(self) -> None:
-        """Reading the current config never changes the boot `Config`."""
+        """Reading the current config never changes the initial `Config`."""
         before = load_configurations("config_test.yaml")
         self.controller.edit_section(_FIRST_ID, color=(1, 2, 3))
 

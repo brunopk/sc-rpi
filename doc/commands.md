@@ -179,15 +179,11 @@ Returns:
 
 ## `get_config`
 
-Returns a configuration, with the same structure as a saved configuration file. Without `name` it returns the **running** configuration: the boot settings with the current sections (including edits, sections turned off and a loaded `use_config`) and description. With `name` it returns the saved configuration `config/<name>.yaml` without applying it; the strip and the running sections are not changed.
-
-Secret values (currently the MQTT password) are replaced by `********`. Every other value is returned as it is.
+Returns a configuration, with the same structure as a saved configuration file. Without `name` it returns the **running** configuration: the initial settings with the current sections (including edits, sections turned off and a loaded `use_config`) and description. With `name` it returns the saved configuration `config/<name>.yaml` without applying it; the strip and the running sections are not changed.
 
 Arguments:
 
 - `name` (optional): name of a saved configuration.
-
-> **Breaking change:** the payload keys now follow the configuration file: `mqtt_config` is `mqtt` (and its `broker_config` is `broker`), and `strip_config` is `strip`. Sections now include `color` and `is_on`, and the payload includes `description`.
 
 ### Example
 
@@ -246,11 +242,11 @@ Returns (shortened to one section):
 
 Errors (only when `name` is given):
 
-| `status` | `code`                | When                                           |
-| -------- | --------------------- | ---------------------------------------------- |
+| `status` | `code`                | When                                                       |
+|----------|-----------------------|------------------------------------------------------------|
 | 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_` |
-| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name           |
-| 500      | `INVALID_CONFIG`      | the file cannot be parsed                      |
+| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name                       |
+| 500      | `INVALID_CONFIG`      | the file cannot be parsed                                  |
 
 ## `help`
 
@@ -281,7 +277,7 @@ Returns:
 
 ## `reset`
 
-Apply `config/default.yaml` (the boot configuration), or the saved configuration `name` when given. It works like [`use_config`](#use_config) (same validation, errors and Home Assistant updates), so edits and sections turned off are discarded.
+Apply `config/default.yaml` (the initial configuration), or the saved configuration `name` when given. It works like [`use_config`](#use_config) (same validation, errors and Home Assistant updates), so edits and sections turned off are discarded.
 
 Arguments:
 

@@ -52,16 +52,16 @@
   - No temporary file left after success or failure
 - [x] 3.3 Verify that a config written by `save` and read by `load` is equal to the original, including section color, `is_on` and `description`.
 
-## 4. Boot config location
+## 4. Initial config location
 
-- [x] 4.1 Read the boot configuration from `config/default.yaml` in `main.py` through the same loader used by the store.
+- [x] 4.1 Read the initial configuration from `config/default.yaml` in `main.py` through the same loader used by the store.
   Verify that:
   - The app starts with a `config/default.yaml`
   - `test/command_test.py` still passes with `config_test.yaml`
 - [x] 4.2 Move `config.yaml` to `config/default.example.yaml`, and add `config/` to `.gitignore` with an exception for `config/default.example.yaml`.
   Verify with `git status` and `git check-ignore -v config/default.yaml config/party.yaml config/default.example.yaml` that only the example is tracked.
 - [x] 4.3 Update `README.md`, `CLAUDE.md` and `doc/configurations.md` to the new location and the copy step for a fresh clone.
-  Verify with `grep -rn "config.yaml"` that no remaining mention refers to the old boot file (`config_test.yaml` and `openspec/config.yaml` are different files).
+  Verify with `grep -rn "config.yaml"` that no remaining mention refers to the old initial file (`config_test.yaml` and `openspec/config.yaml` are different files).
 
 ## 5. HardwareController: prepare, apply and read the config (`prepare_config`, `apply_prepared`, `get_current_config`)
 
@@ -79,7 +79,7 @@
   - A prepared valid config replaces sections and description after `apply_prepared`
   - An overlapping config and a section beyond `strip_length` raise `INVALID_CONFIG` from `prepare_config` with state unchanged
   - A failing `render` makes `apply_prepared` raise and leaves sections and description unchanged
-- [x] 5.4 Add `HardwareController.get_current_config()` returning the boot `Config` with live sections and description.
+- [x] 5.4 Add `HardwareController.get_current_config()` returning the initial `Config` with live sections and description.
   Verify with a test that an `edit_section`, a `turn_section_off` and an applied config all show up in the returned `Config`.
 
 ## 6. Home Assistant availability and refresh messages
@@ -95,7 +95,7 @@
   - No previous sections
   - ON/OFF, color and brightness in each state
 - [x] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order, and remove `_publish_ha_entities`.
-  Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each boot section.
+  Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each initial section.
 - [x] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config.
   Verify that the documented topic matches `build_ha_availability_topic`.
 
@@ -123,6 +123,7 @@
   - A section configured off
   - Previous entities marked unavailable
   - Results identical to `use_config` except for `command_name`
+  - No file changed in `config/` (with and without a name)
 - [x] 7.4 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`.
   Verify that each documented example matches the output of the corresponding test.
 
@@ -139,7 +140,7 @@
   - The masked password
   - `color` and `is_on` per section
   - `description`
-  - That after an `edit_section` the result shows the edited section (not the boot values)
+  - That after an `edit_section` the result shows the edited section (not the initial values)
 - [x] 8.3 Add the optional `name` argument to `get_config`: when present, return the masked config saved under that name (loaded with `store.load`) without applying it.
   Verify that:
   - `ruff check src/sc_rpi/commands/get_config` passes
@@ -150,6 +151,7 @@
   - `CONFIG_NOT_FOUND`
   - `INVALID_CONFIG_NAME`
   - An unchanged strip and running sections
+  - No file changed in `config/`
 - [x] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`.
   Verify that the documented example matches the test output.
 
@@ -164,11 +166,11 @@
   - No Home Assistant message
   - Description saved and omitted
   - Masked password in the result while the file keeps the real one
-  - `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME`, `INVALID_CONFIG_NAME` and `MISSING_CONFIG_NAME`
+  - `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME` (including `Default` and `DEFAULT`, with `default.yaml` unchanged), `INVALID_CONFIG_NAME` and `MISSING_CONFIG_NAME`
 - [ ] 9.2 Verify the round trips:
   - A section that is off with color `[0, 255, 0]` is reported as off and green after `save_config` then `get_config` with the same name
   - The `get_config` result equals the `save_config` result's `config`
-- [ ] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`.
+- [ ] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`, including that `default` is reserved and that an existing saved configuration is never overwritten (as in `doc/configurations.md`).
   Verify that the documented example matches the test output.
 
 ## 10. Integration checks

@@ -2,7 +2,7 @@
 
 SC RPi reads YAML files from the `config/` directory, resolved from the working directory.
 
-- `config/default.yaml`: the boot configuration, read at startup. It is git-ignored because it contains MQTT credentials.
+- `config/default.yaml`: the initial configuration, read at startup. It is git-ignored because it contains MQTT credentials.
 - `config/default.example.yaml`: committed example. On a fresh clone copy it:
 
   ```bash
@@ -12,6 +12,14 @@ SC RPi reads YAML files from the `config/` directory, resolved from the working 
 
 - `config/<name>.yaml`: saved configurations, also git-ignored.
 - [`config_test.yaml`](../config_test.yaml) (repository root): used by unit tests.
+
+## Files are never overwritten
+
+No command overwrites a file in `config/`:
+
+- `default.yaml` (the initial configuration) is only changed by editing it by hand. `save_config` rejects the name `default` (in any letter case, as macOS and Windows file systems are case-insensitive) with `RESERVED_CONFIG_NAME`, and `reset` and `use_config` only read it.
+- `save_config` never replaces an existing saved configuration: a name already in use is rejected with `CONFIG_ALREADY_EXISTS`. To replace a saved configuration, delete or rename its file by hand.
+- `use_config`, `reset` and `get_config` only read files.
 
 ## Properties
 
