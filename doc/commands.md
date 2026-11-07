@@ -389,7 +389,7 @@ Returns (shortened to one section; `config` has the same structure as the [`get_
 Errors (nothing is changed and no file is written):
 
 | `status` | `code`                  | When                                                       |
-| -------- | ----------------------- | ---------------------------------------------------------- |
+|----------|-------------------------|------------------------------------------------------------|
 | 400      | `MISSING_CONFIG_NAME`   | `name` is missing                                          |
 | 400      | `INVALID_CONFIG_NAME`   | `name` has characters other than letters, digits, `-`, `_` |
 | 400      | `RESERVED_CONFIG_NAME`  | `name` is `default` (in any letter case)                   |
