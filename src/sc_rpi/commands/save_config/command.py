@@ -45,8 +45,7 @@ class SaveConfigResult(Result[SaveConfigPayload]):
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            payload (SaveConfigPayload): Contains name and config with masked
-                secrets.
+            payload (SaveConfigPayload): Contains name and config with masked secrets.
 
         """
         super().__init__(status_code, command_name, payload, None)
@@ -108,6 +107,7 @@ class SaveConfig(Command[SaveConfigArgs]):
 
         # Return the result with the masked config
         masked_config = mask_secrets(new_config)
+
         return {
             SC_RPI_RESULT_TOPIC: SaveConfigResult(
                 HTTPStatus.ACCEPTED,

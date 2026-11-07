@@ -315,9 +315,13 @@ Errors: see [`use_config`](#use_config) (only applicable when `name` is given, e
 
 ## `save_config`
 
-Save the current strip configuration (sections, colors, on/off state) and description under a name for later restoration. The name becomes part of the file name (`config/<name>.yaml`). The running sections keep their current ids; when the configuration is loaded with `use_config` or `reset`, the sections will have ids `<name>_section_<n>` (ordered by `start` position). The strip is not modified, and no Home Assistant entities are published or changed.
+Save the running configuration (sections with their range, color and on/off state, plus the description) as `config/<name>.yaml`, so it can be loaded later with [`use_config`](#use_config) or [`reset`](#reset). The `.yaml` extension is added by SC RPi and is not part of `name`.
 
-The `default` name is reserved and cannot be used for saving (case-insensitive); it refers to `config/default.yaml`.
+- An existing saved configuration is **never overwritten**: saving with a name that is already taken fails with `CONFIG_ALREADY_EXISTS` and the file is left unchanged.
+- `default` is reserved (compared case-insensitively, so `Default` and `DEFAULT` are rejected too) and the initial configuration `config/default.yaml` is never modified.
+- In the saved file, sections are ordered by `start` and get the ids `<name>_section_<n>` (`n` starting at 1). Section names are kept. The **running** sections keep their current ids; the saved ids take effect when the configuration is loaded with `use_config` or `reset`.
+- The saved file keeps the real MQTT password (it must be a valid configuration); the result shows it masked.
+- The strip is not re-rendered, no section changes and no Home Assistant message is published.
 
 Arguments:
 
@@ -333,7 +337,7 @@ Arguments:
 }
 ```
 
-Returns:
+Returns (shortened to one section; `config` has the same structure as the [`get_config`](#get_config) payload):
 
 ```json
 {
@@ -382,14 +386,14 @@ Returns:
 }
 ```
 
-Errors (the file is only written if all validation passes):
+Errors (nothing is changed and no file is written):
 
-| `status` | `code`                | When                                                                 |
-| -------- | --------------------- | -------------------------------------------------------------------- |
-| 400      | `MISSING_CONFIG_NAME` | `name` is missing or empty                                           |
-| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_`           |
-| 400      | `RESERVED_CONFIG_NAME` | `name` is `default` (case-insensitive)                               |
-| 409      | `CONFIG_ALREADY_EXISTS` | a configuration with that name already exists                        |
+| `status` | `code`                  | When                                                       |
+| -------- | ----------------------- | ---------------------------------------------------------- |
+| 400      | `MISSING_CONFIG_NAME`   | `name` is missing                                          |
+| 400      | `INVALID_CONFIG_NAME`   | `name` has characters other than letters, digits, `-`, `_` |
+| 400      | `RESERVED_CONFIG_NAME`  | `name` is `default` (in any letter case)                   |
+| 409      | `CONFIG_ALREADY_EXISTS` | a saved configuration with that name already exists        |
 
 ## `status`
 
@@ -571,7 +575,7 @@ Returns:
   "payload": {
     "sections": [
       {
-        "id": "night_1",
+        "id": "night_section_1",
         "start": 0,
         "end": 9,
         "color": { "r": 0, "g": 255, "b": 0 },
