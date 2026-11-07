@@ -10,11 +10,14 @@ from sc_rpi.commands.edit_section.command import EditSection
 from sc_rpi.commands.get_config.command import GetConfig
 from sc_rpi.commands.help.command import Help
 from sc_rpi.commands.reset.command import Reset
+from sc_rpi.commands.save_config.command import SaveConfig
 from sc_rpi.commands.status.command import StatusCmd
 from sc_rpi.commands.turn_section_off.command import TurnSectionOffCmd
 from sc_rpi.commands.turn_section_on.command import TurnSectionOnCmd
 from sc_rpi.commands.use_config.command import UseConfig
 from sc_rpi.commands.version.command import VersionCmd
+
+# TODO: rename VersionCmd to Version, StatusCmd to Status, TurnSectionOffCmd to TurnSectionOff, TurnSectionOnCmd to TurnSectionOn
 
 __all__ = [
     "Command",
@@ -22,6 +25,7 @@ __all__ = [
     "GetConfig",
     "Help",
     "Reset",
+    "SaveConfig",
     "StatusCmd",
     "TurnSectionOffCmd",
     "TurnSectionOnCmd",

@@ -157,7 +157,7 @@
 
 ## 9. `save_config`
 
-- [ ] 9.1 Add the `save_config` command (`commands/save_config/`, `name` required, `description` optional) that builds the file's `Config` from `get_current_config()`, rewrites section ids to `<name>_section_<n>` ordered by `start` on that copy, saves it through `store.save` and returns `{"name", "config"}` with masked secrets and no Home Assistant entries.
+- [x] 9.1 Add the `save_config` command (`commands/save_config/`, `name` required, `description` optional) that builds the file's `Config` from `get_current_config()`, rewrites section ids to `<name>_section_<n>` ordered by `start` on that copy, saves it through `store.save` and returns `{"name", "config"}` with masked secrets and no Home Assistant entries.
   Verify with `test/commands/test_save_config_cmd.py` for:
   - A new save
   - Ids prefixed and names kept
@@ -167,10 +167,10 @@
   - Description saved and omitted
   - Masked password in the result while the file keeps the real one
   - `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME` (including `Default` and `DEFAULT`, with `default.yaml` unchanged), `INVALID_CONFIG_NAME` and `MISSING_CONFIG_NAME`
-- [ ] 9.2 Verify the round trips:
+- [x] 9.2 Verify the round trips:
   - A section that is off with color `[0, 255, 0]` is reported as off and green after `save_config` then `get_config` with the same name
   - The `get_config` result equals the `save_config` result's `config`
-- [ ] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`, including that `default` is reserved and that an existing saved configuration is never overwritten (as in `doc/configurations.md`).
+- [x] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`, including that `default` is reserved and that an existing saved configuration is never overwritten (as in `doc/configurations.md`).
   Verify that the documented example matches the test output.
 
 ## 10. Integration checks

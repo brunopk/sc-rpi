@@ -313,6 +313,84 @@ Returns (for a default configuration with one section):
 
 Errors: see [`use_config`](#use_config) (only applicable when `name` is given, except `INVALID_CONFIG`, which also applies to `default`).
 
+## `save_config`
+
+Save the current strip configuration (sections, colors, on/off state) and description under a name for later restoration. The name becomes part of the file name (`config/<name>.yaml`). The running sections keep their current ids; when the configuration is loaded with `use_config` or `reset`, the sections will have ids `<name>_section_<n>` (ordered by `start` position). The strip is not modified, and no Home Assistant entities are published or changed.
+
+The `default` name is reserved and cannot be used for saving (case-insensitive); it refers to `config/default.yaml`.
+
+Arguments:
+
+- `name` (required): name for the saved configuration (letters, digits, `-` and `_`, 1 to 64 characters).
+- `description` (optional): a text description of the configuration (default: empty string).
+
+### Example
+
+```json
+{
+  "command_name": "save_config",
+  "command_args": { "name": "party", "description": "Friday night lights" }
+}
+```
+
+Returns:
+
+```json
+{
+  "status": 202,
+  "command_name": "save_config",
+  "payload": {
+    "name": "party",
+    "config": {
+      "connection_timeout": 0.25,
+      "default_gateway": "192.168.0.1",
+      "default_network_interface": "en0",
+      "env": "dev",
+      "log_level": "DEBUG",
+      "mqtt": {
+        "broker": {
+          "host": "homeassistant.local",
+          "password": "********",
+          "port": 1883,
+          "username": "test"
+        }
+      },
+      "status_led": 17,
+      "strip": {
+        "brightness": 255,
+        "channel": 0,
+        "default_section_brightness": 100,
+        "dma": 10,
+        "freq_hz": 800000,
+        "invert": false,
+        "pin": 18,
+        "strip_length": 300,
+        "sections": [
+          {
+            "color": { "r": 0, "g": 255, "b": 0 },
+            "end": 9,
+            "id": "party_section_1",
+            "is_on": true,
+            "name": "Desk",
+            "start": 0
+          }
+        ]
+      },
+      "description": "Friday night lights"
+    }
+  }
+}
+```
+
+Errors (the file is only written if all validation passes):
+
+| `status` | `code`                | When                                                                 |
+| -------- | --------------------- | -------------------------------------------------------------------- |
+| 400      | `MISSING_CONFIG_NAME` | `name` is missing or empty                                           |
+| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_`           |
+| 400      | `RESERVED_CONFIG_NAME` | `name` is `default` (case-insensitive)                               |
+| 409      | `CONFIG_ALREADY_EXISTS` | a configuration with that name already exists                        |
+
 ## `status`
 
 Return information of the current status of SC RPI.
