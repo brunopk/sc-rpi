@@ -265,9 +265,10 @@ codes and statuses are defined in the specs.
   the running strip; mismatches fail as `INVALID_CONFIG` with state unchanged.
 - [HA offline/online messages are not retained or reliable over reconnects] → acceptable
   for now; the next apply or boot re-publishes.
-- [Commands could read the initial section list (`config.strip.sections`), which does not
-  reflect edits] → live sections must come from `hw_controller`; add a test that edits a
-  section and then checks the `get_config` result.
+- [Results built from the initial config instead of the live state] → results must come
+  from `hw_controller` (`list_sections()` or `get_current_config()`), never from
+  `config.strip.sections`; live state tests check this for every command whose result
+  includes sections.
 - [The existing overlap check in `SectionsController` misses boundary and enclosing
   overlaps (with an existing section at LEDs 10-20, a new one at 20-30 shares LED 20
   and one at 5-25 encloses it), so `INVALID_CONFIG` would not trigger for them] → the build in decision 4

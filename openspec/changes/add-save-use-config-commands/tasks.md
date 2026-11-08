@@ -179,3 +179,21 @@
 - [ ] 10.2 Verify that:
   - `help` lists `save_config` and `use_config`
   - `doc/commands.md` and `doc/homeassistant.md` cover every new or changed command and error code from the specs
+- [ ] 10.3 Add live state tests (see Risks in `design.md`) for `turn_section_on`, `turn_section_off` and `edit_section`.
+  Verify with, for each command:
+  - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
+  - The command runs on section A
+  - The result shows the command's change for A and the live values for B, never the tampered ones
+- [ ] 10.4 Add live state tests for `status`, `get_config` and `save_config`, which change nothing themselves.
+  Verify with, for each command:
+  - Section A is changed by an earlier command, such as `edit_section`
+  - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
+  - The command runs
+  - The result shows the change for A and the live values for B, never the tampered ones
+
+## 11. Project guidelines
+
+- [ ] 11.1 Update `CLAUDE.md`.
+  Verify with:
+  - The "Command pattern" section states that results must be built from `hw_controller` (`list_sections()` or `get_current_config()`), never from `config.strip.sections`
+  - The "Tests" section requires a live state test (as described in 10.3 and 10.4) for every command whose result includes sections
