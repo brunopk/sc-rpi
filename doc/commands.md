@@ -319,7 +319,7 @@ Save the running configuration (sections with their range, color and on/off stat
 
 - An existing saved configuration is **never overwritten**: saving with a name that is already taken fails with `CONFIG_ALREADY_EXISTS` and the file is left unchanged.
 - `default` is reserved (compared case-insensitively, so `Default` and `DEFAULT` are rejected too) and the initial configuration `config/default.yaml` is never modified.
-- In the saved file, sections are ordered by `start` and get the ids `<name>_section_<n>` (`n` starting at 1). Section names are kept. The **running** sections keep their current ids; the saved ids take effect when the configuration is loaded with `use_config` or `reset`.
+- Sections are saved with the ids and names they have, ordered by `start`.
 - The saved file keeps the real MQTT password (it must be a valid configuration); the result shows it masked.
 - The strip is not re-rendered, no section changes and no Home Assistant message is published.
 
@@ -373,7 +373,7 @@ Returns (shortened to one section; `config` has the same structure as the [`get_
           {
             "color": { "r": 0, "g": 255, "b": 0 },
             "end": 9,
-            "id": "party_section_1",
+            "id": "desk",
             "is_on": true,
             "name": "Desk",
             "start": 0

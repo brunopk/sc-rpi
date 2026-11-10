@@ -96,7 +96,7 @@
   - ON/OFF, color and brightness in each state
 - [x] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order, and remove `_publish_ha_entities`.
   Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each initial section.
-- [x] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config.
+- [x] 6.4 Update `doc/homeassistant.md` for availability and the `offline` and `online` messages.
   Check that the documented topic matches `build_ha_availability_topic`.
 
 ## 7. `use_config` and `reset` (using the new `apply_named_config` helper for both)
@@ -157,12 +157,11 @@
 
 ## 9. `save_config`
 
-- [x] 9.1 Add the `save_config` command (`commands/save_config/`, `name` required, `description` optional) that builds the file's `Config` from `get_current_config()`, rewrites section ids to `<name>_section_<n>` ordered by `start` on that copy, saves it through `store.save` and returns `{"name", "config"}` with masked secrets and no Home Assistant entries.
+- [x] 9.1 Add the `save_config` command (`commands/save_config/`, `name` required, `description` optional) that builds the file's `Config` from `get_current_config()` (sections keep their ids and names), saves it through `store.save` and returns `{"name", "config"}` with masked secrets and no Home Assistant entries.
   Verify with `test/commands/test_save_config_cmd.py` for:
   - A new save
-  - Ids prefixed and names kept
-  - Saving again under another name (no `party_` prefix)
-  - Running sections keeping their ids
+  - Ids and names kept
+  - Strip and running sections unchanged
   - No Home Assistant message
   - Description saved and omitted
   - Masked password in the result while the file keeps the real one

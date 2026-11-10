@@ -258,9 +258,6 @@ codes and statuses are defined in the specs.
 ## Risks / Trade-offs
 
 - [Secrets in `config/`] → git-ignore the directory, create saved files with `0600`.
-- [Loading a different config replaces the running section ids, orphaning Home Assistant
-  entities and automations tied to the old ids] → documented; the old entities are only
-  marked unavailable, not deleted.
 - [Saved config's strip length differs from hardware] → sections are validated against
   the running strip; mismatches fail as `INVALID_CONFIG` with state unchanged.
 - [HA offline/online messages are not retained or reliable over reconnects] → acceptable

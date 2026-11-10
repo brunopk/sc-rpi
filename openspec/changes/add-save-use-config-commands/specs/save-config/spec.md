@@ -43,24 +43,16 @@ Example result payload shape: `{"name": "party", "config": {...}}`.
 - **WHEN** a `save_config` command is received without `description`
 - **THEN** the command succeeds and the saved configuration has an empty description
 
-### Requirement: Saved sections get config-specific ids
-The `save_config` command SHALL give each section in the saved file, ordered by `start`, the id `<name>_section_<n>`, where `n` is the section's 1-based position. Section names SHALL be kept as they are. The running sections keep their current ids and no Home Assistant entity is published or changed; the saved ids take effect when the config is loaded with `use_config` or `reset`.
+### Requirement: Saved sections keep their ids and names
+The `save_config` command SHALL save each section with the id and name it has in the running config, ordered by `start`. No Home Assistant entity is published or changed.
 
-#### Scenario: Ids are prefixed and names kept
-- **WHEN** a `save_config` command is received with `name` `party` and the strip has two sections named `Desk` and `Shelf`
-- **THEN** the saved sections have ids `party_section_1` and `party_section_2` and names `Desk` and `Shelf`
-
-#### Scenario: Running sections keep their ids
-- **WHEN** a `save_config` command with `name` `party` succeeds and the running sections were `section_1` and `section_2`
-- **THEN** the running sections are still `section_1` and `section_2`
+#### Scenario: Ids and names kept
+- **WHEN** a `save_config` command is received with `name` `party` and the strip has two sections with ids `desk` and `shelf` and names `Desk` and `Shelf`
+- **THEN** the saved sections have ids `desk` and `shelf` and names `Desk` and `Shelf`
 
 #### Scenario: Home Assistant untouched
 - **WHEN** a `save_config` command succeeds
 - **THEN** no message is published to any Home Assistant topic
-
-#### Scenario: Saving again under another name
-- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `save_config` command with `name` `night` succeeds
-- **THEN** the saved section ids are `night_section_1` and `night_section_2`, with no `party_` prefix
 
 ### Requirement: Reserved name `default`
 The system SHALL reject `save_config` when `name` is `default` with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the initial config SHALL remain unchanged. The name `default` SHALL be compared case-insensitively.

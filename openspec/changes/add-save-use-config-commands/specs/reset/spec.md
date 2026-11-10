@@ -36,9 +36,9 @@ The Home Assistant discovery message of every section SHALL include an availabil
 - **WHEN** a loaded config has a section with `is_on` false
 - **THEN** its Home Assistant entity reports OFF
 
-#### Scenario: Previous entities unpublished
-- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `reset` command without `name` loads a default config with `section_1`
-- **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `section_1` is published and marked available
+#### Scenario: Previous entities marked unavailable
+- **WHEN** the running sections are `desk` and `shelf` and a `reset` command without `name` loads a default config with `lamp`
+- **THEN** the entities for `desk` and `shelf` are marked unavailable and not deleted, and the entity for `lamp` is published and marked available
 
 ## ADDED Requirements
 

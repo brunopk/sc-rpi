@@ -75,38 +75,17 @@ class SaveConfig(Command[SaveConfigArgs]):
         # Validate the name (raises ApiError on failure)
         store.validate_name(name)
 
-        # Get the current config
-        current_config = self._hw_controller.get_current_config()
-
-        # Create a new config with updated section ids and description
-        # Sort sections by start position and assign new ids
-        sorted_sections = sorted(
-            current_config.strip.sections,
-            key=lambda s: s.start,
-        )
-        new_sections = [
-            replace(
-                section,
-                id=f"{name}_section_{i + 1}",
-            )
-            for i, section in enumerate(sorted_sections)
-        ]
-
-        # Build the new config with updated sections and description
-        new_config = replace(
-            current_config,
-            strip=replace(
-                current_config.strip,
-                sections=new_sections,
-            ),
+        # Sections keep their ids and names (and are already ordered by start)
+        config = replace(
+            self._hw_controller.get_current_config(),
             description=description,
         )
 
         # Save the config (raises ApiError on failure)
-        store.save(name, new_config)
+        store.save(name, config)
 
         # Return the result with the masked config
-        masked_config = mask_secrets(new_config)
+        masked_config = mask_secrets(config)
 
         return {
             SC_RPI_RESULT_TOPIC: SaveConfigResult(

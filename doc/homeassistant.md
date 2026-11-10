@@ -29,10 +29,6 @@ At startup, and each time a config is applied (`use_config`, or `reset`), SC RPi
 
 At startup there are no previous entities, so there are no `offline` messages.
 
-#### Section ids change when loading another config
-
-Saved configs get their own section ids (`<name>_section_<n>`, see `save_config` in [commands.md](commands.md)). Loading another config therefore replaces the running section ids: entities, automations and history tied to the old ids stop working (the old entities stay as unavailable) and new entities appear for the loaded ids. Applying the same config again (for example `reset` after edits) keeps the ids and sends no `offline` message.
-
 ## Required apps
 
 ### Mosquitto broker

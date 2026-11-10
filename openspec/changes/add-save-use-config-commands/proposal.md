@@ -12,11 +12,9 @@ switch between them over MQTT without editing files on the Pi or restarting the 
 - Add a `save_config` command. It requires a `name` in the request body and writes
   the current in-memory configuration, including the live section state, to
   `config/<name>.yaml`. It never overwrites: an existing name is rejected with a 409
-  `CONFIG_ALREADY_EXISTS`. It gives sections the id `<name>_section_<n>` (names are
-  kept) in the saved file only, so each config has its own Home Assistant entities once
-  loaded. It doesn't change the running strip or publish anything to Home Assistant. Its
-  result includes the saved configuration (same structure
-  as `get_config`, secrets obfuscated).
+  `CONFIG_ALREADY_EXISTS`. It keeps each section's id and name. It doesn't change the
+  running strip or publish anything to Home Assistant. Its result includes the saved
+  configuration (same structure as `get_config`, secrets obfuscated).
 - Add a `use_config` command with a **required** `name` field. It loads that file
   from the config directory into memory immediately: it rebuilds sections and strip state,
   re-renders the strip, and refreshes the Home Assistant entities. Current entities are
@@ -78,10 +76,8 @@ but `use_config` and `reset` don't apply them.
 - The repository's `config.yaml` becomes the committed example
   `config/default.example.yaml`; docs that mention `config.yaml` need updating.
 - Home Assistant: discovery messages gain an availability topic, so entities can be marked
-  unavailable. Loading a saved config (`use_config`, or `reset` with a name) changes
-  section ids to that config's ids, so entities, automations and history tied to the old
-  ids stop working. This must be documented in
-  `doc/homeassistant.md` (entities, availability, id change) and in `doc/commands.md`
+  unavailable. This must be documented in
+  `doc/homeassistant.md` (entities, availability) and in `doc/commands.md`
   (`save_config`, `use_config`, and the changed `reset` and `get_config`, including
   arguments, results and the new error codes).
 - Security: new file read/write driven by MQTT input; names only, never paths.

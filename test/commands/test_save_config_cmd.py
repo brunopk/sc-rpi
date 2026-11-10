@@ -25,7 +25,7 @@ class TestSaveConfig(ConfigDirTest):
         self.assertEqual(ErrorCode.CONFIG_ALREADY_EXISTS, ctx.exception.code)
 
     def test_basic_save(self) -> None:
-        """Save the running config with new ids and return it masked."""
+        """Save the running config and return it masked."""
         result = self._run({"name": "party"})
         payload = result[SC_RPI_RESULT_TOPIC].payload
         self.assertEqual("party", payload.name)
@@ -50,15 +50,15 @@ class TestSaveConfig(ConfigDirTest):
         payload = result[SC_RPI_RESULT_TOPIC].payload
         self.assertEqual("Friday lights", payload.config.description)
 
-    def test_ids_prefixed_and_ordered(self) -> None:
-        """Section ids are rewritten as <name>_section_<n> ordered by start."""
-        # Turn off then edit the second section to change its range
-        sections = self.config.strip.sections
-        self.hw_controller.edit_section(sections[1].id, 100, 199, None)
-        self.hw_controller.edit_section(sections[0].id, 0, 99, None)
+    def test_ids_and_names_kept(self) -> None:
+        """Sections are saved with the ids and names they have, ordered by start."""
+        expected = [(s.id, s.name) for s in self.config.strip.sections]
         payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
-        ids = [s.id for s in payload.config.strip.sections]
-        self.assertEqual(["party_section_1", "party_section_2"], ids)
+        self.assertEqual(
+            expected, [(s.id, s.name) for s in payload.config.strip.sections],
+        )
+        saved = store.load("party")
+        self.assertEqual(expected, [(s.id, s.name) for s in saved.strip.sections])
 
     def test_invalid_name(self) -> None:
         """A path-like name gives INVALID_CONFIG_NAME."""
@@ -71,17 +71,6 @@ class TestSaveConfig(ConfigDirTest):
         with self.assertRaises(ApiError) as ctx:
             self._run({"name": None})
         self.assertEqual(ErrorCode.MISSING_CONFIG_NAME, ctx.exception.code)
-
-    def test_names_preserved(self) -> None:
-        """Section names are kept as they are."""
-        # Edit the second section's name
-        self.hw_controller.edit_section(
-            self.config.strip.sections[1].id, None, None, None,
-        )
-        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
-        names = [s.name for s in payload.config.strip.sections]
-        # Default names are the section ids in uppercase
-        self.assertTrue(any(n for n in names))
 
     def test_no_home_assistant_message(self) -> None:
         """No Home Assistant topic is published."""
@@ -104,12 +93,10 @@ class TestSaveConfig(ConfigDirTest):
         A is the section changed earlier by `edit_section`; B is a section not modified.
         """
         self.tamper_initial_config()
-        a_id, b_id = (s.id for s in self.config.strip.sections[:2])
+        a_id = self.config.strip.sections[0].id
         self.hw_controller.edit_section(a_id, None, None, (4, 5, 6))
         payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
-        # Saved ids are rewritten as `party_section_<n>`, so map them back
-        saved_sections = payload.config.strip.sections
-        result_sections = dict(zip((a_id, b_id), saved_sections, strict=True))
+        result_sections = {s.id: s for s in payload.config.strip.sections}
         self.assertEqual(Color(4, 5, 6), result_sections[a_id].color)
         self.assert_other_sections_unchanged(result_sections, {a_id})
 

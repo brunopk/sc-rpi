@@ -17,9 +17,9 @@ The system SHALL provide a `use_config` command that requires a `name` argument,
 - **WHEN** a `use_config` command is received with `name` `party` and `party` has the description `Friday lights`
 - **THEN** a `get_config` command without `name` returns the description `Friday lights`
 
-#### Scenario: Previous entities unpublished
-- **WHEN** the running sections are `party_section_1` and `party_section_2` and a `use_config` command loads `night`, which has `night_section_1`
-- **THEN** the entities for the `party_` sections are marked unavailable and not deleted, and the entity for `night_section_1` gets a discovery message (including its availability topic) and is marked available
+#### Scenario: Previous entities marked unavailable
+- **WHEN** the running sections are `desk` and `shelf` and a `use_config` command loads `night`, which has `night_lamp`
+- **THEN** the entities for `desk` and `shelf` are marked unavailable and not deleted, and the entity for `night_lamp` gets a discovery message (including its availability topic) and is marked available
 
 #### Scenario: Same result as reset
 - **WHEN** a `use_config` command and a `reset` command with the same `name` both succeed
