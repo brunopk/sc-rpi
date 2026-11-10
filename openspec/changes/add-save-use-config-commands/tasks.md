@@ -93,9 +93,9 @@
 
 ## 6. Home Assistant availability and refresh messages
 
-- [x] 6.1 Add `SC_RPI_STATUS_TOPIC` (`scrpi/status`) and `build_ha_availability_topic` to `utils/topics.py`, and the optional `availability` (list of `{topic}`) and `availability_mode` fields to `HAMQTTDiscoveryMessage`.
+- [x] 6.1 Add `SC_RPI_AVAILABILITY_TOPIC` (`scrpi/availability`) and `build_ha_availability_topic` to `utils/topics.py`, and the optional `availability` (list of `{topic}`) and `availability_mode` fields to `HAMQTTDiscoveryMessage`.
   Verify with unit tests for:
-  - The topics `scrpi/status` and `scrpi/homeassistant/<object_id>/availability`
+  - The topics `scrpi/availability` and `scrpi/homeassistant/<object_id>/availability`
   - The discovery JSON containing `availability_mode` `all` and both topics, global first
 - [x] 6.2 Create `utils/homeassistant.py` with `build_ha_refresh_messages(previous_sections, new_sections, brightness)` returning the messages in the order `offline`, discovery (with the cross availability), `online`, state.
   Verify with unit tests for:
@@ -108,7 +108,7 @@
   Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability list, `online` and state for each initial section.
 - [x] 6.4 Publish the global availability, always retained, using the Paho client directly: `main.py` sets the LWT (`offline`) before `connect` and publishes `offline` (waiting for it) before `disconnect()`; `on_connect` publishes `online` on success, before subscribing.
   Verify with tests using a mocked client that:
-  - `will_set` is called before `connect` with `scrpi/status`, `offline` and `retain=True`
+  - `will_set` is called before `connect` with `scrpi/availability`, `offline` and `retain=True`
   - `on_connect` publishes `online` retained on success and nothing on failure
   - The shutdown `offline` is published before `disconnect`
 - [x] 6.5 Update `doc/homeassistant.md` for the global topic, the cross availability, the LWT, birth and shutdown messages, the per-entity `offline` and `online` messages, and which topics are retained.

@@ -8,7 +8,7 @@ from sc_rpi.enums.homeassistant import ColorMode, Schema, State
 from sc_rpi.models import Color
 from sc_rpi.models.homeassistant import HAAvailability, HAMQTTDiscoveryMessage, HAState
 from sc_rpi.utils.topics import (
-    SC_RPI_STATUS_TOPIC,
+    SC_RPI_AVAILABILITY_TOPIC,
     build_ha_availability_topic,
     build_ha_command_topic,
     build_ha_discovery_topic,
@@ -88,7 +88,7 @@ def build_ha_refresh_messages(
         messages[build_ha_discovery_topic(section.id)] = HAMQTTDiscoveryMessage(
             section.name,
             availability=[
-                HAAvailability(SC_RPI_STATUS_TOPIC),
+                HAAvailability(SC_RPI_AVAILABILITY_TOPIC),
                 HAAvailability(build_ha_availability_topic(section.id)),
             ],
             availability_mode="all",

@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from sc_rpi.enums.homeassistant import ColorMode, Schema
 from sc_rpi.models.homeassistant import HAAvailability, HAMQTTDiscoveryMessage
-from sc_rpi.utils.topics import SC_RPI_STATUS_TOPIC, build_ha_availability_topic
+from sc_rpi.utils.topics import SC_RPI_AVAILABILITY_TOPIC, build_ha_availability_topic
 
 
 class TestAvailability(TestCase):
@@ -30,7 +30,7 @@ class TestAvailability(TestCase):
             supported_color_modes=[ColorMode.RGB],
             unique_id="section_1",
             availability=[
-                HAAvailability(SC_RPI_STATUS_TOPIC),
+                HAAvailability(SC_RPI_AVAILABILITY_TOPIC),
                 HAAvailability(build_ha_availability_topic("section_1")),
             ],
             availability_mode="all",
@@ -39,7 +39,7 @@ class TestAvailability(TestCase):
         self.assertEqual("all", data["availability_mode"])
         self.assertEqual(
             [
-                {"topic": "scrpi/status"},
+                {"topic": "scrpi/availability"},
                 {"topic": "scrpi/homeassistant/section_1/availability"},
             ],
             data["availability"],
@@ -62,4 +62,4 @@ class TestAvailability(TestCase):
 
     def test_status_topic(self) -> None:
         """The global topic has the documented value."""
-        self.assertEqual("scrpi/status", SC_RPI_STATUS_TOPIC)
+        self.assertEqual("scrpi/availability", SC_RPI_AVAILABILITY_TOPIC)

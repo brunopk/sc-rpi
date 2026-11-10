@@ -56,7 +56,7 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   it is rejected with 400 `MISSING_CONFIG_NAME`.
 - The config key `mqtt.broker_config` is renamed to `mqtt.broker` in the config files,
   the `Config` model and the `get_config` payload.
-- Add a global, retained availability topic for SC RPi (`scrpi/status`, with LWT, birth
+- Add a global, retained availability topic for SC RPi (`scrpi/availability`, with LWT, birth
   and shutdown messages). Every Home Assistant entity declares it together with its own
   availability topic, so all entities become unavailable if SC RPi goes offline.
 - The initial config moves from `config.yaml` to `config/default.yaml`. All configs live in

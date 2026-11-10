@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import logging
 import structlog
-
 from paho.mqtt.client import Client
 from paho.mqtt.enums import CallbackAPIVersion
 
 from sc_rpi.paho import callbacks
-from sc_rpi.paho.availability import publish_offline, set_last_will
+from sc_rpi.paho.availability import publish_availability, set_last_will
 from sc_rpi.utils.config import load_configurations
 from sc_rpi.utils.logging import configure_logging
 from sc_rpi.worker import Worker
@@ -51,5 +49,5 @@ except Exception:
     logger.exception("Error")
 finally:
     logger.info("Disconnecting from the MQTT broker")
-    publish_offline(client)
+    publish_availability(client, available=False, wait=True)
     client.disconnect()

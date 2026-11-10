@@ -15,7 +15,7 @@ Each section of the strip is one `light` entity. Its id (the object id) is the s
 SC RPi has a global availability topic, and every entity also has its own:
 
 ```text
-scrpi/status
+scrpi/availability
 scrpi/homeassistant/<section id>/availability
 ```
 
@@ -26,12 +26,12 @@ The discovery message of each entity declares both topics with `availability_mod
 ```json
 "availability_mode": "all",
 "availability": [
-  {"topic": "scrpi/status"},
+  {"topic": "scrpi/availability"},
   {"topic": "scrpi/homeassistant/<section id>/availability"}
 ]
 ```
 
-#### Global topic (`scrpi/status`)
+#### Global topic (`scrpi/availability`)
 
 It is always **retained**, so Home Assistant knows the current value even if it starts after SC RPi. All entities become unavailable when it is `offline`.
 

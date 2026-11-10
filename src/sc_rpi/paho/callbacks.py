@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from sc_rpi.paho.availability import publish_online
+from sc_rpi.paho.availability import publish_availability
 from sc_rpi.utils.topics import (
     SC_RPI_COMMAND_TOPIC,
     build_ha_command_topic,
@@ -51,7 +51,7 @@ def on_connect(
         "loop_forever() will retry connection"
         _LOGGER.error(error_msg)
     else:
-        publish_online(client)
+        publish_availability(client, available=True)
 
         ha_command_topic = build_ha_command_topic()
         _LOGGER.info("Subscribing to %s", ha_command_topic)

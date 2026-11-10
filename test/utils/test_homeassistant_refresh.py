@@ -55,7 +55,7 @@ class TestBuildHaRefreshMessages(TestCase):
         self.assertEqual("all", data["availability_mode"])
         self.assertEqual(
             [
-                {"topic": "scrpi/status"},
+                {"topic": "scrpi/availability"},
                 {"topic": build_ha_availability_topic("a")},
             ],
             data["availability"],

@@ -252,14 +252,14 @@ exists and is available before its state arrives:
   (discovery retain is an existing TODO). Making them retained would need a retain flag in
   the command result and the `Worker`, so it is out of scope.
 - The discovery message declares cross availability: `availability_mode: "all"` and
-  `availability`, a list of `{"topic": ...}` with the global topic `scrpi/status` first and
+  `availability`, a list of `{"topic": ...}` with the global topic `scrpi/availability` first and
   the entity topic second. `availability_topic` is not used (Home Assistant does not
   allow both). `HAMQTTDiscoveryMessage` has the fields `availability` and
   `availability_mode`.
 
 ### 6b. Global availability topic (LWT, birth, shutdown)
 
-`SC_RPI_STATUS_TOPIC = "scrpi/status"` in `utils/topics.py` is one topic for the whole app.
+`SC_RPI_AVAILABILITY_TOPIC = "scrpi/availability"` in `utils/topics.py` is one topic for the whole app.
 It is retained, so Home Assistant learns the current state even if it starts after SC RPi.
 
 - **LWT** (`main.py`, before `connect`): `offline`, retained. The broker publishes it

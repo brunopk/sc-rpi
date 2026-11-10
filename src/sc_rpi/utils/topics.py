@@ -6,16 +6,15 @@ import re
 
 from sc_rpi.errors.api_error import ApiError
 
-"""
-Prefix used for special topics (for example state topic) set on the discovery message.
-"""
 HA_TOPIC_PREFIX = "scrpi/homeassistant"
+""" Prefix used for special topics (for example state topic) set on the discovery
+message. """
 
 SC_RPI_COMMAND_TOPIC = "scrpi/command"
 
 SC_RPI_RESULT_TOPIC = "scrpi/result"
 
-SC_RPI_STATUS_TOPIC = "scrpi/status"
+SC_RPI_AVAILABILITY_TOPIC = "scrpi/availability"
 """Topic with the availability (`online`/`offline`) of the whole SC RPi application."""
 
 HA_STATE_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/state$")
@@ -25,7 +24,8 @@ HA_COMMAND_TOPIC_REGEXP = re.compile(rf"^{HA_TOPIC_PREFIX}/([^/#\x00]+)/command$
 def build_ha_availability_topic(object_id: str) -> str:
   """Build the topic where the availability (`online`/`offline`) of an entity is sent.
 
-  It is listed, with `SC_RPI_STATUS_TOPIC`, in the discovery message (`availability`).
+  It is listed, with `SC_RPI_AVAILABILITY_TOPIC`, in the discovery message
+  (`availability`).
 
   Args:
       object_id (str): Object ID of the entity (the section id).

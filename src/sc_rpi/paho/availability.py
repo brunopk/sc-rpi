@@ -1,4 +1,4 @@
-"""Publish the global availability of SC RPi (`SC_RPI_STATUS_TOPIC`).
+"""Publish the global availability of SC RPi (`SC_RPI_AVAILABILITY_TOPIC`).
 
 All messages are retained, so Home Assistant gets the current value even if it starts
 after them.
@@ -10,7 +10,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from sc_rpi.utils.homeassistant import AVAILABLE, UNAVAILABLE
-from sc_rpi.utils.topics import SC_RPI_STATUS_TOPIC
+from sc_rpi.utils.topics import SC_RPI_AVAILABILITY_TOPIC
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client
@@ -20,32 +20,31 @@ _LOGGER = logging.getLogger(__name__)
 _PUBLISH_TIMEOUT_SECONDS = 2
 
 
-def publish_offline(client: Client) -> None:
-    """Publish `offline`, and wait for it, before a controlled disconnect.
+def publish_availability(
+    client: Client, *, available: bool, wait: bool = False
+) -> None:
+    """Publish `online` or `offline` (retained) on the global availability topic.
 
-    A clean disconnect makes the broker discard the last will, so it has to be sent
-    explicitly. A failure is logged and not raised, so the disconnect still happens.
+    Use `available=True` after each successful connection (birth message). Use
+    `available=False` with `wait=True` before a controlled disconnect: a clean
+    disconnect makes the broker discard the last will, so `offline` has to be sent
+    explicitly. Do not wait inside callbacks (it would block the network loop).
 
-    Args:
-        client (Client): MQTT client.
-
-    """
-    try:
-        client.publish(SC_RPI_STATUS_TOPIC, UNAVAILABLE, retain=True).wait_for_publish(
-            _PUBLISH_TIMEOUT_SECONDS
-        )
-    except (RuntimeError, ValueError):
-        _LOGGER.exception("Could not publish %s", UNAVAILABLE)
-
-
-def publish_online(client: Client) -> None:
-    """Publish `online` (birth message). Call it after each successful connection.
+    A failure while waiting is logged and not raised, so the disconnect still happens.
 
     Args:
         client (Client): MQTT client.
+        available (bool): `True` publishes `online`, `False` publishes `offline`.
+        wait (bool): Wait until the message is published (up to a timeout).
 
     """
-    client.publish(SC_RPI_STATUS_TOPIC, AVAILABLE, retain=True)
+    payload = AVAILABLE if available else UNAVAILABLE
+    info = client.publish(SC_RPI_AVAILABILITY_TOPIC, payload, retain=True)
+    if wait:
+        try:
+            info.wait_for_publish(_PUBLISH_TIMEOUT_SECONDS)
+        except (RuntimeError, ValueError):
+            _LOGGER.exception("Could not publish %s", payload)
 
 
 def set_last_will(client: Client) -> None:
@@ -57,4 +56,4 @@ def set_last_will(client: Client) -> None:
         client (Client): MQTT client.
 
     """
-    client.will_set(SC_RPI_STATUS_TOPIC, UNAVAILABLE, retain=True)
+    client.will_set(SC_RPI_AVAILABILITY_TOPIC, UNAVAILABLE, retain=True)
