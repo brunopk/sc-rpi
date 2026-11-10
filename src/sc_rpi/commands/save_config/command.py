@@ -59,9 +59,9 @@ class SaveConfig(Command[SaveConfigArgs]):
         args = self.command_args if self.command_args is not None else SaveConfigArgs()
 
         # An omitted name means the active configuration, as if it had been given.
-        name = (
-            self._hw_controller.active_configuration if args.name is None else args.name
-        )
+        name = args.name
+        if name is None:
+            name = self._hw_controller.get_active_configuration()
 
         # Sections keep their ids and names (and are already ordered by start)
         config = replace(

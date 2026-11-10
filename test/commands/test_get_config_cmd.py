@@ -67,7 +67,7 @@ class TestGetConfig(ConfigDirTest):
         apply.assert_not_called()
         render.assert_not_called()
         self.assertEqual(before, self.hw_controller.list_sections())
-        self.assertEqual("default", self.hw_controller.active_configuration)
+        self.assertEqual("default", self.hw_controller.get_active_configuration())
 
     def test_saved_config_is_returned_masked(self) -> None:
         """A saved config is returned with its description and masked password."""

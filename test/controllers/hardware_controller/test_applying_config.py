@@ -43,7 +43,7 @@ class TestApplyingConfig(TestCase):
 
     def test_active_configuration_is_default_at_startup(self) -> None:
         """A new controller (a restart) reports `default` as active."""
-        self.assertEqual("default", self.controller.active_configuration)
+        self.assertEqual("default", self.controller.get_active_configuration())
 
     def test_apply_sets_active_configuration(self) -> None:
         """`apply_prepared` makes the given name the active configuration."""
@@ -52,7 +52,7 @@ class TestApplyingConfig(TestCase):
 
         self.controller.apply_prepared(prepared, loaded.description, "party")
 
-        self.assertEqual("party", self.controller.active_configuration)
+        self.assertEqual("party", self.controller.get_active_configuration())
 
     def test_prepare_leaves_controller_unchanged(self) -> None:
         """Preparing a config builds sections but changes no state."""
@@ -118,4 +118,4 @@ class TestApplyingConfig(TestCase):
 
         self.assertEqual(before, self.controller.list_sections())
         self.assertEqual(self.config.description, self.controller._description)  # noqa: SLF001
-        self.assertEqual("default", self.controller.active_configuration)
+        self.assertEqual("default", self.controller.get_active_configuration())

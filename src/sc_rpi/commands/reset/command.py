@@ -40,6 +40,6 @@ class Reset(Command[ResetArgs]):
         return apply_named_config(
             self._hw_controller,
             self.command_name,
-            self._hw_controller.active_configuration if name is None else name,
+            self._hw_controller.get_active_configuration() if name is None else name,
             self._config.strip.default_section_brightness,
         )

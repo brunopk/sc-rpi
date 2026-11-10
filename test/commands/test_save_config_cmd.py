@@ -82,7 +82,7 @@ class TestSaveConfig(ConfigDirTest):
         self.assertEqual(202, result.status)
         saved = store.load("night")
         self.assertEqual(Color(1, 2, 3), saved.strip.sections[0].color)
-        self.assertEqual("night", self.hw_controller.active_configuration)
+        self.assertEqual("night", self.hw_controller.get_active_configuration())
 
     def test_name_omitted_without_overwrite(self) -> None:
         """An omitted name without `overwrite` gives CONFIG_ALREADY_EXISTS."""
@@ -97,7 +97,7 @@ class TestSaveConfig(ConfigDirTest):
         """Saving never changes the active configuration."""
         self._activate("night")
         self._run({"name": "party"})
-        self.assertEqual("night", self.hw_controller.active_configuration)
+        self.assertEqual("night", self.hw_controller.get_active_configuration())
 
     def test_no_home_assistant_message(self) -> None:
         """No Home Assistant topic is published."""
@@ -205,7 +205,7 @@ class TestSaveConfig(ConfigDirTest):
         """Save a config with section `n1` as `name` and make it the active one."""
         self._save_config(name, [make_section("n1", 0, 9)])
         self.run_command("use_config", {"name": name})
-        self.assertEqual(name, self.hw_controller.active_configuration)
+        self.assertEqual(name, self.hw_controller.get_active_configuration())
 
     def _assert_code(self, code: ErrorCode, args: dict | None) -> None:
         """Assert that the command raises `code`."""

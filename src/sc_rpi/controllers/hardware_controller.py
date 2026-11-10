@@ -94,14 +94,8 @@ class HardwareController:
         self._config = config
         self._section_controller = SectionsController(config)
         self._strip_length = config.strip.strip_length
-        # Plain configuration metadata (one string each), not section state
         self._description = config.description
-        self.active_configuration = DEFAULT_NAME
-        """Name of the config last loaded by `use_config` or a named `reset`.
-
-        It lives in memory only (`default` after a restart), and `apply_prepared` is
-        the only method that changes it, so it changes only after a successful apply.
-        """
+        self._active_configuration = DEFAULT_NAME
 
         _LOGGER.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
@@ -137,7 +131,7 @@ class HardwareController:
         self._render(_concatenate_sections(sections, self._strip_length))
         self._section_controller.replace_sections(sections)
         self._description = description
-        self.active_configuration = active_configuration
+        self._active_configuration = active_configuration
 
     def concatenate_sections(self) -> list[tuple]:
         """Concatenates all sections in one list.
@@ -182,6 +176,14 @@ class HardwareController:
 
         """
         return self._section_controller.edit_section(section_id, start, end, color)
+
+    def get_active_configuration(self) -> str:
+        """Return the name of the active configuration.
+
+        It is the name of the config last loaded by `use_config` or a named `reset`
+        (`default` after startup), and the one `reset` without a name reloads.
+        """
+        return self._active_configuration
 
     def get_current_config(self) -> Config:
         """Return the initial configuration with the live sections and description.

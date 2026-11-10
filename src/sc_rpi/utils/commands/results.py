@@ -28,7 +28,7 @@ def build_status_result(
     sections = hw_controller.list_sections()
     status_result_payload = StatusResultPayload(
         map_section_list(sections),
-        hw_controller.active_configuration,
+        hw_controller.get_active_configuration(),
         hw_controller.get_description(),
     )
     return StatusResult(HTTPStatus.ACCEPTED, command_name, status_result_payload)

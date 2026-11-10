@@ -76,7 +76,7 @@ complete file, never a partial one.
 - The reserved name check runs before and regardless of `overwrite`, so `default.yaml`
   can never be replaced.
 - `SaveConfig` resolves the name before calling `store.save`: the given `name`, or
-  `hw_controller.active_configuration` when `name` is omitted. From there it is the same
+  `hw_controller.get_active_configuration()` when `name` is omitted. From there it is the same
   flow as a given name, so the reserved check, the `overwrite` rule and name validation
   apply unchanged. While `default` is active (startup), omitting `name` always fails with
   `RESERVED_CONFIG_NAME`. `save_config` still does not change the active configuration.
@@ -96,7 +96,7 @@ becomes the place to get and replace the configuration:
 - `Config` stays the immutable initial configuration, passed to commands as today. It gains
   an optional `description: str = ""`, so existing files without it remain valid.
 - `HardwareController` keeps creating `SectionsController` and delegating to it.
-- It gains three methods and one attribute:
+- It gains four methods:
   - `get_current_config() -> Config`: the initial `Config` with `strip.sections` and
     `description` taken from the live state at the time of the call. Changes made by
     earlier commands (`edit_section`, `turn_section_off`, `use_config`) are included.
@@ -106,9 +106,10 @@ becomes the place to get and replace the configuration:
   - `apply_prepared(sections: list[SectionInternalRepresentation], description: str,
     active_configuration: str)`: renders the prepared sections and then replaces the
     sections, the description and the active configuration (see decision 4).
-  - `active_configuration: str`: the name of the config last loaded by `use_config` or a
-    named `reset`. It starts as `"default"`, lives in memory only (a restart goes back to
-    `"default"`), and only `apply_prepared` changes it, so it changes only when the
+  - `get_active_configuration() -> str`: the name of the config last loaded by
+    `use_config` or a named `reset`. It is kept in a private `_active_configuration`
+    that starts as `"default"`, lives in memory only (a restart goes back to
+    `"default"`) and is changed only by `apply_prepared`, so it changes only when the
     whole apply succeeded. `save_config` does not change it.
 
 Details:
@@ -202,7 +203,7 @@ A helper `apply_named_config(hw_controller, command_name, config_name, brightnes
 
 - `UseConfig` and `Reset` call it, passing their hardware controller, their
   `command_name` and the default section brightness from their config; `Reset` passes
-  `hw_controller.active_configuration` as `config_name` when the `reset` command omits
+  `hw_controller.get_active_configuration()` as `config_name` when the `reset` command omits
   the config name. Reloading the active config sets the same name again.
 - If the active configuration's file is missing or invalid, `store.load` fails with
   `CONFIG_NOT_FOUND` or `INVALID_CONFIG` before anything is changed, so `reset` without

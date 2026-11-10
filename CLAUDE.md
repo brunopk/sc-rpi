@@ -114,6 +114,9 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   placed directly above a method stays with it when sorting.
 - Module-level private helpers (`_name`) go above the class that uses them, as in
   `worker.py` and `controllers/hardware_controller.py`.
+- Keep instance state private: store it in `_name` attributes and read it through
+  `get_<name>()` methods. Only the fields of dataclasses that are
+  plain data (`Command` subclasses, config models, results) are public.
 
 ### Tests
 
@@ -138,10 +141,15 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   `test_result_ignores_initial_config` test in its own `test_<name>_cmd.py` (not
   `get_config`, which only reads saved files):
   - Call `CommandTest.tamper_initial_config()` first. It replaces the values of every
-    section in the initial configuration (`hw_controller._config`).
+    section in the initial configuration (`hw_controller._config`) and checks that the
+    replaced values differ from the live ones.
+  - Change section A, so the live state differs from the initial configuration: the
+    command under test does it if it changes sections, otherwise an earlier command
+    does, such as `edit_section`.
   - Run the command.
-  - Check with `assert_other_sections_unchanged` that every section the test did not
-    change shows the same values as `hw_controller`, never the replaced ones.
+  - Check that the result shows the change for A, and with
+    `assert_other_sections_unchanged` that every section the test did not change (B)
+    shows the same values as `hw_controller`, never the replaced ones.
 
 ### Documentation
 

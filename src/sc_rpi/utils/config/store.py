@@ -107,6 +107,8 @@ def save(name: str, config: Config, *, overwrite: bool = False) -> None:
         with os.fdopen(fd, "w") as f:
             yaml.safe_dump(config.to_dict(), f, sort_keys=False)
         if overwrite:
+            # Renames the temporary file to the final name: the existing file (if any)
+            # is discarded and the temporary name no longer exists afterwards.
             tmp.replace(target)
         else:
             try:
