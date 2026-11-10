@@ -1,11 +1,13 @@
 """Tests for `Worker` startup."""
 
+import json
 import time
 from unittest import TestCase
 from unittest.mock import MagicMock
 
 from sc_rpi.utils.config import load_configurations
 from sc_rpi.utils.topics import (
+    SC_RPI_STATUS_TOPIC,
     build_ha_availability_topic,
     build_ha_discovery_topic,
     build_ha_state_topic,
@@ -40,7 +42,11 @@ class TestWorkerStartup(TestCase):
         )
         for section in sections:
             self.assertEqual("online", payloads[build_ha_availability_topic(section.id)])
-            self.assertIn(
-                build_ha_availability_topic(section.id),
-                payloads[build_ha_discovery_topic(section.id)],
+            discovery = json.loads(payloads[build_ha_discovery_topic(section.id)])
+            self.assertEqual(
+                [
+                    {"topic": SC_RPI_STATUS_TOPIC},
+                    {"topic": build_ha_availability_topic(section.id)},
+                ],
+                discovery["availability"],
             )

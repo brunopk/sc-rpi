@@ -9,6 +9,7 @@ from paho.mqtt.client import Client
 from paho.mqtt.enums import CallbackAPIVersion
 
 from sc_rpi.paho import callbacks
+from sc_rpi.paho.availability import publish_offline, set_last_will
 from sc_rpi.utils.config import load_configurations
 from sc_rpi.utils.logging import configure_logging
 from sc_rpi.worker import Worker
@@ -38,6 +39,8 @@ try:
         config.mqtt.broker.password,
     )
 
+    set_last_will(client)
+
     logger.info(f"Connecting to MQTT broker on {config.mqtt.broker.host}")
     client.connect(config.mqtt.broker.host, config.mqtt.broker.port,60)
 
@@ -48,4 +51,5 @@ except Exception:
     logger.exception("Error")
 finally:
     logger.info("Disconnecting from the MQTT broker")
+    publish_offline(client)
     client.disconnect()

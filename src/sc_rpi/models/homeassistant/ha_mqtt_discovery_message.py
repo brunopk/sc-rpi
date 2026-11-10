@@ -12,6 +12,13 @@ from sc_rpi.enums.homeassistant import ColorMode, Schema
 # TODO: Investigate why rgb topic is not working (by the way state topic is being used so it's not an important issue)
 
 @dataclass
+class HAAvailability(DataClassJSONMixin):
+    """Item of the `availability` list of a discovery message."""
+
+    topic: str
+
+
+@dataclass
 class HAMQTTDiscoveryMessage(DataClassJSONMixin):
     """Used for the Home Assistant entity discovery process.
 
@@ -50,7 +57,9 @@ class HAMQTTDiscoveryMessage(DataClassJSONMixin):
 
     unique_id: str
 
-    availability_topic: Optional[str] = None
+    availability: Optional[list[HAAvailability]] = None
+
+    availability_mode: Optional[str] = None
 
     rgb: Optional[bool] = None
 

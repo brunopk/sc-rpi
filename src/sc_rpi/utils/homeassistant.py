@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING
 
 from sc_rpi.enums.homeassistant import ColorMode, Schema, State
 from sc_rpi.models import Color
-from sc_rpi.models.homeassistant import HAMQTTDiscoveryMessage, HAState
+from sc_rpi.models.homeassistant import HAAvailability, HAMQTTDiscoveryMessage, HAState
 from sc_rpi.utils.topics import (
+    SC_RPI_STATUS_TOPIC,
     build_ha_availability_topic,
     build_ha_command_topic,
     build_ha_discovery_topic,
@@ -38,7 +39,7 @@ def build_ha_refresh_messages(
     its state arrives:
 
           1. `offline` for each previous section whose id is not in `new_sections`.
-          2. Discovery for each new section (including its availability topic).
+          2. Discovery for each new section (with the cross availability).
           3. `online` for each new section.
           4. State for each new section (ON/OFF, color and brightness).
 
@@ -86,7 +87,11 @@ def build_ha_refresh_messages(
         # TODO: add retain=True (this is just for testing)
         messages[build_ha_discovery_topic(section.id)] = HAMQTTDiscoveryMessage(
             section.name,
-            availability_topic=build_ha_availability_topic(section.id),
+            availability=[
+                HAAvailability(SC_RPI_STATUS_TOPIC),
+                HAAvailability(build_ha_availability_topic(section.id)),
+            ],
+            availability_mode="all",
             brightness=True,
             command_topic=build_ha_command_topic(section.id),
             object_id=section.id,

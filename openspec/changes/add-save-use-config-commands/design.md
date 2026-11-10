@@ -15,7 +15,7 @@ Current state that shapes the approach:
 - `get_config` currently maps `config.strip.sections`, which does not reflect live edits.
 - Home Assistant entities are published only at boot, by `Worker._publish_ha_entities`
   (private to the worker). `reset` publishes only states. Discovery messages have no
-  availability topic.
+  availability topic, and the MQTT client has no Last Will and no birth message.
 - Commands run only on the worker thread. `run()` returns `{topic: payload}` and the
   worker publishes the entries in dict (insertion) order.
 - `reset` has a TODO about rollback: it mutates state before anything can fail.
@@ -229,7 +229,7 @@ exists and is available before its state arrives:
 
 1. `offline` for each section that was running before the apply and whose id is not in
    the loaded config, published to that section's availability topic.
-2. Discovery for each loaded section, including its availability topic.
+2. Discovery for each loaded section, including its availability list.
 3. `online` for each loaded section, published to that section's availability topic.
 4. State for each loaded section: ON or OFF (from `is_on`), color and brightness
    (`default_section_brightness`).
@@ -246,13 +246,37 @@ exists and is available before its state arrives:
 - Alternative: delete old entities with an empty retained discovery payload. Rejected by
   the proposal (history and UI customization would be lost).
 - Each entity has its own availability topic,
-  `scrpi/homeassistant/<object_id>/availability`, set in its discovery message
-  (`availability_topic`). The payloads are the plain strings `online` and `offline`, which
-  are Home Assistant's defaults.
-- Availability messages are not retained, like the other messages today (discovery retain
-  is an existing TODO). Making them retained would need a retain flag in the command
-  result and the `Worker`, so it is out of scope.
-- Availability is plain online/offline per entity; no MQTT Last Will and Testament is added.
+  `scrpi/homeassistant/<object_id>/availability`. The payloads are the plain strings
+  `online` and `offline`, which are Home Assistant's defaults.
+- Per-entity availability messages are not retained, like the other messages today
+  (discovery retain is an existing TODO). Making them retained would need a retain flag in
+  the command result and the `Worker`, so it is out of scope.
+- The discovery message declares cross availability: `availability_mode: "all"` and
+  `availability`, a list of `{"topic": ...}` with the global topic `scrpi/status` first and
+  the entity topic second. `availability_topic` is not used (Home Assistant does not
+  allow both). `HAMQTTDiscoveryMessage` has the fields `availability` and
+  `availability_mode`.
+
+### 6b. Global availability topic (LWT, birth, shutdown)
+
+`SC_RPI_STATUS_TOPIC = "scrpi/status"` in `utils/topics.py` is one topic for the whole app.
+It is retained, so Home Assistant learns the current state even if it starts after SC RPi.
+
+- **LWT** (`main.py`, before `connect`): `offline`, retained. The broker publishes it
+  when the connection drops without a DISCONNECT (crash, network failure, SIGTERM).
+  Retained so Home Assistant, even if it starts later, sees `offline` and not a stale
+  `online`.
+- **Birth** (`on_connect`): `online`, retained, on every connection, so it also
+  runs after a reconnect. It replaces the retained `offline` and is sent before the
+  entity refresh. Retained so Home Assistant, even if it starts later, sees `online`.
+- **Shutdown** (`finally` in `main.py`): `offline`, retained, sent and awaited before
+  `disconnect()`. A clean disconnect makes the broker discard the LWT, so without this
+  message `online` would stay. Retained for the same reason as the LWT.
+- The LWT, birth and shutdown messages use the Paho client directly, not `CommandResult`: they are not
+  tied to a command, so no retain flag is added to `CommandResult` or `Worker`.
+- The payloads reuse `AVAILABLE`/`UNAVAILABLE` from `utils/homeassistant.py`.
+- Alternative: use only per-entity LWTs. Rejected: MQTT allows one LWT per connection, and
+  the entities change at runtime.
 
 ### 7. Result payload is the `Config` model
 

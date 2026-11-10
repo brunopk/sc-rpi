@@ -93,20 +93,26 @@
 
 ## 6. Home Assistant availability and refresh messages
 
-- [x] 6.1 Add `build_ha_availability_topic` to `utils/topics.py` and the optional `availability_topic` field to `HAMQTTDiscoveryMessage`.
+- [x] 6.1 Add `SC_RPI_STATUS_TOPIC` (`scrpi/status`) and `build_ha_availability_topic` to `utils/topics.py`, and the optional `availability` (list of `{topic}`) and `availability_mode` fields to `HAMQTTDiscoveryMessage`.
   Verify with unit tests for:
-  - The topic `scrpi/homeassistant/<object_id>/availability`
-  - The discovery JSON containing `availability_topic`
-- [x] 6.2 Create `utils/homeassistant.py` with `build_ha_refresh_messages(previous_sections, new_sections, brightness)` returning the messages in the order `offline`, discovery, `online`, state.
+  - The topics `scrpi/status` and `scrpi/homeassistant/<object_id>/availability`
+  - The discovery JSON containing `availability_mode` `all` and both topics, global first
+- [x] 6.2 Create `utils/homeassistant.py` with `build_ha_refresh_messages(previous_sections, new_sections, brightness)` returning the messages in the order `offline`, discovery (with the cross availability), `online`, state.
   Verify with unit tests for:
   - The order
+  - The availability list and mode in each discovery message
   - No `offline` for ids present in both lists
   - No previous sections
   - ON/OFF, color and brightness in each state
 - [x] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order, and remove `_publish_ha_entities`.
-  Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each initial section.
-- [x] 6.4 Update `doc/homeassistant.md` for availability and the `offline` and `online` messages.
-  Check that the documented topic matches `build_ha_availability_topic`.
+  Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability list, `online` and state for each initial section.
+- [x] 6.4 Publish the global availability, always retained, using the Paho client directly: `main.py` sets the LWT (`offline`) before `connect` and publishes `offline` (waiting for it) before `disconnect()`; `on_connect` publishes `online` on success, before subscribing.
+  Verify with tests using a mocked client that:
+  - `will_set` is called before `connect` with `scrpi/status`, `offline` and `retain=True`
+  - `on_connect` publishes `online` retained on success and nothing on failure
+  - The shutdown `offline` is published before `disconnect`
+- [x] 6.5 Update `doc/homeassistant.md` for the global topic, the cross availability, the LWT, birth and shutdown messages, the per-entity `offline` and `online` messages, and which topics are retained.
+  Check that the documented topics match `topics.py`.
 
 ## 7. `use_config` and `reset` (using the `apply_named_config` helper for both)
 

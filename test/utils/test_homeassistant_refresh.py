@@ -48,6 +48,20 @@ class TestBuildHaRefreshMessages(TestCase):
         self.assertEqual("offline", messages[build_ha_availability_topic("old")])
         self.assertEqual("online", messages[build_ha_availability_topic("a")])
 
+    def test_discovery_has_cross_availability(self) -> None:
+        """Each discovery declares mode `all` and the global and entity topics."""
+        messages = build_ha_refresh_messages([], [_section("a")], 100)
+        data = json.loads(messages[build_ha_discovery_topic("a")].to_json())
+        self.assertEqual("all", data["availability_mode"])
+        self.assertEqual(
+            [
+                {"topic": "scrpi/status"},
+                {"topic": build_ha_availability_topic("a")},
+            ],
+            data["availability"],
+        )
+        self.assertNotIn("availability_topic", data)
+
     def test_no_offline_for_ids_in_both_lists(self) -> None:
         """A kept section is only marked online."""
         messages = build_ha_refresh_messages(
@@ -77,9 +91,6 @@ class TestBuildHaRefreshMessages(TestCase):
             list(messages),
         )
         discovery = json.loads(messages[build_ha_discovery_topic("a")].to_json())
-        self.assertEqual(
-            build_ha_availability_topic("a"), discovery["availability_topic"]
-        )
         self.assertEqual("A", discovery["name"])
 
     def test_state_has_on_off_color_and_brightness(self) -> None:

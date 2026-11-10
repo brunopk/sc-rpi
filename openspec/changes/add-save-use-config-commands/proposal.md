@@ -56,6 +56,9 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   it is rejected with 400 `MISSING_CONFIG_NAME`.
 - The config key `mqtt.broker_config` is renamed to `mqtt.broker` in the config files,
   the `Config` model and the `get_config` payload.
+- Add a global, retained availability topic for SC RPi (`scrpi/status`, with LWT, birth
+  and shutdown messages). Every Home Assistant entity declares it together with its own
+  availability topic, so all entities become unavailable if SC RPi goes offline.
 - The initial config moves from `config.yaml` to `config/default.yaml`. All configs live in
   a fixed `config/` directory, resolved from the working directory (not configurable).
 
@@ -71,6 +74,8 @@ but `use_config` and `reset` don't apply them.
   It saves the current configuration under that name.
 - `use-config`: the `use_config` command. It requires a `name` in the request body.
   Loads that saved config and applies it to the strip and the Home Assistant entities.
+- `ha-availability`: the global availability topic and the cross availability of every
+  entity.
 
 ### Modified Capabilities
 
@@ -91,8 +96,8 @@ but `use_config` and `reset` don't apply them.
   it remain valid.
 - The repository's `config.yaml` becomes the committed example
   `config/default.example.yaml`; docs that mention `config.yaml` need updating.
-- Home Assistant: discovery messages gain an availability topic, so entities can be marked
-  unavailable. This must be documented in
+- Home Assistant: discovery messages declare the cross availability, and `main.py` and
+  `on_connect` publish the LWT, birth and shutdown messages. This must be documented in
   `doc/homeassistant.md` (entities, availability) and in `doc/commands.md`
   (`save_config`, `use_config`, and the changed `reset`, `get_config` and `status`,
   including arguments, results and the new error codes).

@@ -42,11 +42,11 @@ The `reset` command SHALL accept an optional `name`. When omitted, it SHALL load
 - **THEN** that section is off after loading
 
 ### Requirement: Reset updates Home Assistant entities
-The Home Assistant discovery message of every section SHALL include an availability topic. The `reset` command SHALL mark unavailable (publish `offline` to the availability topic, without deleting the entity) the current Home Assistant entities, SHALL publish a discovery message (including the availability topic) for every loaded section, SHALL mark the loaded sections' entities available, and SHALL publish a state for every loaded section to its Home Assistant state topic, using the section's color and the configured default section brightness, with an ON or OFF state matching the section's `is_on` value.
+The Home Assistant discovery message of every section SHALL include the cross availability list (see the `ha-availability` capability). The `reset` command SHALL mark unavailable (publish `offline` to the availability topic, without deleting the entity) the current Home Assistant entities, SHALL publish a discovery message (including the availability list) for every loaded section, SHALL mark the loaded sections' entities available, and SHALL publish a state for every loaded section to its Home Assistant state topic, using the section's color and the configured default section brightness, with an ON or OFF state matching the section's `is_on` value.
 
 #### Scenario: Entities refreshed
 - **WHEN** a `reset` command is received
-- **THEN** each loaded section's discovery message (including its availability topic) is published, and each section's Home Assistant state topic receives a state matching the section's color and on/off state
+- **THEN** each loaded section's discovery message (including its availability list) is published, and each section's Home Assistant state topic receives a state matching the section's color and on/off state
 
 #### Scenario: Section configured off
 - **WHEN** a loaded config has a section with `is_on` false

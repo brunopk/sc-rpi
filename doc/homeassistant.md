@@ -12,18 +12,41 @@ SC RPi integrates with Home Assistant by creating [`light`](https://www.home-ass
 
 Each section of the strip is one `light` entity. Its id (the object id) is the section id, for example `section_1`.
 
-Every entity has its own availability topic, set in its discovery message (`availability_topic`):
+SC RPi has a global availability topic, and every entity also has its own:
 
 ```text
+scrpi/status
 scrpi/homeassistant/<section id>/availability
 ```
 
-The payloads are the plain strings `online` and `offline` (Home Assistant's defaults). They are not retained.
+The payloads are the plain strings `online` and `offline` (Home Assistant's defaults).
+
+The discovery message of each entity declares both topics with `availability_mode: "all"`, so the entity is available only when **both** are `online`:
+
+```json
+"availability_mode": "all",
+"availability": [
+  {"topic": "scrpi/status"},
+  {"topic": "scrpi/homeassistant/<section id>/availability"}
+]
+```
+
+#### Global topic (`scrpi/status`)
+
+It is always **retained**, so Home Assistant knows the current value even if it starts after SC RPi. All entities become unavailable when it is `offline`.
+
+- Last Will and Testament (LWT): `offline`, set before connecting. The broker publishes it if SC RPi dies or loses the connection abruptly.
+- Birth: `online`, published after each connection (also after a reconnection).
+- Shutdown: `offline`, published before disconnecting. A clean disconnect makes the broker discard the LWT, so without this message `online` would stay.
+
+#### Entity topic (`scrpi/homeassistant/<section id>/availability`)
+
+It is **not retained**. It marks one entity as available or unavailable, as described below.
 
 At startup, and each time a config is applied (`use_config`, or `reset`), SC RPi publishes, in this order:
 
 1. `offline` for each entity that was running and whose section id is not in the applied config. The entity is only marked unavailable, it is **not** deleted, so its history and UI customization are kept.
-2. The discovery message of each section of the applied config (including `availability_topic`).
+2. The discovery message of each section of the applied config (including the `availability` list).
 3. `online` for each section of the applied config.
 4. The state of each section (ON/OFF, color and brightness).
 

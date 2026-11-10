@@ -33,7 +33,7 @@ On success the loaded `name` becomes the active configuration, kept in memory on
 
 #### Scenario: Previous entities marked unavailable
 - **WHEN** the running sections are `desk` and `shelf` and a `use_config` command loads `night`, which has `night_lamp`
-- **THEN** the entities for `desk` and `shelf` are marked unavailable and not deleted, and the entity for `night_lamp` gets a discovery message (including its availability topic) and is marked available
+- **THEN** the entities for `desk` and `shelf` are marked unavailable and not deleted, and the entity for `night_lamp` gets a discovery message (including its availability list) and is marked available
 
 #### Scenario: Result matches status
 - **WHEN** a `use_config` command succeeds
