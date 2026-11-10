@@ -7,6 +7,7 @@ from unittest.mock import patch
 from sc_rpi.commands.base import Command
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
+from sc_rpi.models import Color
 from sc_rpi.utils.config.masking import SECRET_PLACEHOLDER
 from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC
 from test.config_dir_test import ConfigDirTest, make_section
@@ -85,6 +86,16 @@ class TestGetConfig(ConfigDirTest):
         self._run()
         self._run({"name": "party"})
         self.assertEqual(before, self._files())
+
+    def test_result_ignores_initial_config(self) -> None:
+        """The result shows the earlier change for A and the running values for B."""
+        self.tamper_initial_config()
+        a_id = self.config.strip.sections[0].id
+        self.hw_controller.edit_section(a_id, None, None, (4, 5, 6))
+        payload = self.run_command("get_config")[SC_RPI_RESULT_TOPIC].payload
+        sections = {s.id: s for s in payload.strip.sections}
+        self.assertEqual(Color(4, 5, 6), sections[a_id].color)
+        self.assert_other_sections_unchanged(sections, {a_id})
 
     def test_unknown_name(self) -> None:
         """An unknown name gives CONFIG_NOT_FOUND."""

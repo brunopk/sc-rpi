@@ -12,7 +12,7 @@ from sc_rpi.commands.results import Result
 from sc_rpi.commands.save_config.args import SaveConfigArgs
 
 # Required for mashumaro (do not move to type checking section)
-from sc_rpi.config import Config
+from sc_rpi.config import Config  # noqa: TC001
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.config import store
 from sc_rpi.utils.config.masking import mask_secrets

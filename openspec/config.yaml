@@ -43,5 +43,10 @@ rules:
       expected result, or a delivered artifact).
     - Keep verification out of the checkbox line; put every check in the nested list,
       one check per bullet.
+    - Use "Verify with:" (or "Verify that:") only when a check is run: a test, a command
+      or an observable behavior. For tasks that only edit documentation or guidelines
+      (no code), use "Check that:" and list what the text must state or match (for
+      example, that a documented example matches the real output); do not use "Verify
+      with".
     - Start each bullet with a capital letter (or with a backticked identifier), wrap
       commands and identifiers in backticks and keep each bullet to one line.

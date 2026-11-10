@@ -1,28 +1,21 @@
 """Tests for src/controllers/hardware_controller.py."""
 
-import logging
 from random import randint
 from unittest import TestCase
 
-from sc_rpi.controllers import HardwareController
 from sc_rpi.errors.api_error import ApiError
-from sc_rpi.utils.config.main import load_configurations
+from test.controllers.hardware_controller.empty_controller import (
+    empty_hardware_controller,
+)
 
 # TODO: validate section's id are not repeated
 
 class TestCreatingSections(TestCase):
     """Tests for src/controllers/hardware_controller.py."""
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Set required configurations before running any test."""
-        config = load_configurations()
-        logging.basicConfig(level=None)
-        cls.controller = HardwareController(config=config)
-
     def setUp(self) -> None:
-        """Set required configurations before running each test case."""
-        self.controller.remove_all_sections()
+        """Start each test case with a controller without sections."""
+        self.controller = empty_hardware_controller()
 
     def test_wrong_indexes(self) -> None:
         """Test case test_wrong_indexes."""

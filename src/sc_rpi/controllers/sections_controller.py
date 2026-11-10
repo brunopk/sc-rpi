@@ -185,33 +185,6 @@ class SectionsController:
             name=section_name,
         )
 
-    def remove_sections(self, sections: list[str]) -> None:
-        """Remove a set of sections.
-
-        Args:
-            sections (list[str]): Identifiers of the sections to be removed.
-
-        Raises:
-            ApiError:
-
-        """
-        # test if all sections are defined
-        invalid_section_id = None
-        for section_id in sections:
-            if section_id not in self._limits_by_id:
-                invalid_section_id = section_id
-                break
-        # remove sections (if all sections are defined)
-        if invalid_section_id is None:
-            for section_id in sections:
-                self._remove_section(section_id)
-        else:
-            raise ApiError(
-                HTTPStatus.NOT_FOUND,
-                ErrorCode.SECTION_NOT_FOUND,
-                message=f"section {invalid_section_id} is not defined",
-            )
-
     def replace_sections(self, sections: list[SectionInternalRepresentation]) -> None:
         """Replace all sections with already validated ones.
 
@@ -357,17 +330,3 @@ class SectionsController:
         self._limits_by_id[section_id] = (start, end)
         self._is_on_by_id[section_id] = is_on
         self._name_by_id[section_id] = name
-
-    def _remove_section(self, section_id: str) -> None:
-        section_limits = self._limits_by_id[section_id]
-        index = self._limits.index(section_limits)
-
-        del self._section_ids[index]
-        del self._color_list[index]
-        del self._limits[index]
-        del self._is_on[index]
-        del self._names[index]
-        del self._color_list_by_id[section_id]
-        del self._limits_by_id[section_id]
-        del self._is_on_by_id[section_id]
-        del self._name_by_id[section_id]

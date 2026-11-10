@@ -6,14 +6,13 @@ import os
 import tempfile
 from dataclasses import replace
 from pathlib import Path
-from unittest import TestCase
 
 import yaml
 
 from sc_rpi.config.strip import Section
-from sc_rpi.controllers.hardware_controller import HardwareController
 from sc_rpi.models import Color
-from sc_rpi.utils.config import load_configurations, store
+from sc_rpi.utils.config import store
+from test.command_test import CommandTest
 
 
 def make_section(
@@ -30,13 +29,12 @@ def make_section(
     )
 
 
-class ConfigDirTest(TestCase):
+class ConfigDirTest(CommandTest):
     """Runs in an empty temporary working directory with a `config/` folder."""
 
     def setUp(self) -> None:
         """Load the test config, then move to a temporary directory."""
-        self.config = load_configurations("config_test.yaml")
-        self.hw_controller = HardwareController(self.config)
+        super().setUp()
         self._old_cwd = Path.cwd()
         self._tmp = tempfile.TemporaryDirectory()
         os.chdir(self._tmp.name)

@@ -62,6 +62,9 @@ the full list):
       `payload`), intended for SC RPi users.
     - Home Assistant topics: only HA-format messages (such as state), never the SC RPi
       result.
+- Results must be built from `hw_controller` (`list_sections()` or
+  `get_current_config()`), never from `config.strip.sections`: `config` is the initial
+  configuration and does not reflect live changes.
 - Rendering the physical strip (`hw_controller.render()`) must be the last call in `run()`
   so nothing is pushed to the hardware before validation/logic has had a chance to raise.
 - Keep `Command` subclasses stateless beyond their dataclass fields. Do not cache or
@@ -120,11 +123,18 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
 - `test/` mirrors `src/sc_rpi/` (`commands/`, `config/`, `controllers/`, `utils/`), with
   `test_*.py` files (`test_<name>_cmd.py` for commands). Shared test bases live at the
   root of `test/` and are not collected as tests:
-  - `command_test.py` (`CommandTest`): loads `config_test.yaml` and builds a
-    `HardwareController`; use it for commands that do not touch `config/`.
-  - `config_dir_test.py` (`ConfigDirTest`): runs each test in a temporary working
-    directory with an empty `config/`; use it for anything that reads or writes saved
-    configs, so tests never touch the real `config/`.
+  - `command_test.py` (`CommandTest`): loads `config_test.yaml` and builds a fresh
+    `HardwareController` for every test (so a test can change it freely); use it for
+    commands that do not touch `config/`.
+  - `config_dir_test.py` (`ConfigDirTest`): extends `CommandTest` and runs each test in a
+    temporary working directory with an empty `config/`; use it for anything that reads
+    or writes saved configs, so tests never touch the real `config/`.
+- Every command whose result includes sections needs a `test_result_ignores_initial_config`
+  test in its own `test_<name>_cmd.py`. `CommandTest.tamper_initial_config()` saves the
+  running values of all sections and tampers with the initial configuration
+  (`hw_controller._config`). Run the command, then check with
+  `assert_other_sections_unchanged` that every section the test did not change still
+  shows its running values, never the tampered ones.
 
 ### Documentation
 

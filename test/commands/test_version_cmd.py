@@ -13,8 +13,8 @@ class TestVersion(CommandTest):
             {
                 "command_name": "version",
             },
-            self.__class__.config,
-            self.__class__.hw_controller,
+            self.config,
+            self.hw_controller,
         )
         command.validate()
         result = command.run()

@@ -9,7 +9,7 @@ class TestTurnSectionOff(CommandTest):
 
     def test_basic_invocation(self) -> None:
         """Test case test_basic_invocation."""
-        new_section = self.__class__.hw_controller.new_section(
+        new_section = self.hw_controller.new_section(
             "s",
             200,
             299,
@@ -21,9 +21,19 @@ class TestTurnSectionOff(CommandTest):
                 "command_name": "turn_section_off",
                 "command_args": {"section_id": new_section.id},
             },
-            self.__class__.config,
-            self.__class__.hw_controller,
+            self.config,
+            self.hw_controller,
         )
         command.validate()
         result = command.run()
         self.assert_valid_command_result(result, expected_command_name="turn_section_off")
+
+    def test_result_ignores_initial_config(self) -> None:
+        """The result shows A off and the running values for the others."""
+        self.tamper_initial_config()
+        a_id = self.config.strip.sections[0].id
+        self.hw_controller.turn_section_on(a_id, (4, 5, 6))
+        result = self.run_command("turn_section_off", {"section_id": a_id})
+        sections = self.get_result_sections(result)
+        self.assertFalse(sections[a_id].is_on)
+        self.assert_other_sections_unchanged(sections, {a_id})

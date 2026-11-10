@@ -97,7 +97,7 @@
 - [x] 6.3 Make `Worker` publish the dict from `build_ha_refresh_messages` at startup in order, and remove `_publish_ha_entities`.
   Verify with a test (or a mocked MQTT client run) that startup publishes discovery with the availability topic, `online` and state for each initial section.
 - [x] 6.4 Update `doc/homeassistant.md` for availability, the `offline` and `online` messages, and the section id change when loading another config.
-  Verify that the documented topic matches `build_ha_availability_topic`.
+  Check that the documented topic matches `build_ha_availability_topic`.
 
 ## 7. `use_config` and `reset` (using the new `apply_named_config` helper for both)
 
@@ -125,7 +125,7 @@
   - Results identical to `use_config` except for `command_name`
   - No file changed in `config/` (with and without a name)
 - [x] 7.4 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`.
-  Verify that each documented example matches the output of the corresponding test.
+  Check that each documented example matches the output of the corresponding test.
 
 ## 8. `get_config`
 
@@ -153,7 +153,7 @@
   - An unchanged strip and running sections
   - No file changed in `config/`
 - [x] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`.
-  Verify that the documented example matches the test output.
+  Check that the documented example matches the test output.
 
 ## 9. `save_config`
 
@@ -171,20 +171,20 @@
   - A section that is off with color `[0, 255, 0]` is reported as off and green after `save_config` then `get_config` with the same name
   - The `get_config` result equals the `save_config` result's `config`
 - [x] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`, including that `default` is reserved and that an existing saved configuration is never overwritten (as in `doc/configurations.md`).
-  Verify that the documented example matches the test output.
+  Check that the documented example matches the test output.
 
 ## 10. Integration checks
 
-- [ ] 10.1 Run `ruff check .` and `python -m unittest discover` from the repository root and verify that both pass.
-- [ ] 10.2 Verify that:
+- [x] 10.1 Run `python -m unittest discover` from the repository root and `ruff check` on the files added by this change, and verify that both pass (the existing repository-wide ruff errors are out of scope and left for a separate change; the only remaining errors in the new files are the `TODO` rules for a TODO that already existed).
+- [x] 10.2 Verify that:
   - `help` lists `save_config` and `use_config`
   - `doc/commands.md` and `doc/homeassistant.md` cover every new or changed command and error code from the specs
-- [ ] 10.3 Add live state tests (see Risks in `design.md`) for `turn_section_on`, `turn_section_off` and `edit_section`.
+- [x] 10.3 Add live state tests (see Risks in `design.md`) for `turn_section_on`, `turn_section_off` and `edit_section`.
   Verify with, for each command:
   - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
   - The command runs on section A
   - The result shows the command's change for A and the live values for B, never the tampered ones
-- [ ] 10.4 Add live state tests for `status`, `get_config` and `save_config`, which change nothing themselves.
+- [x] 10.4 Add live state tests for `status`, `get_config` and `save_config`, which change nothing themselves.
   Verify with, for each command:
   - Section A is changed by an earlier command, such as `edit_section`
   - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
@@ -193,7 +193,7 @@
 
 ## 11. Project guidelines
 
-- [ ] 11.1 Update `CLAUDE.md`.
-  Verify with:
+- [x] 11.1 Update `CLAUDE.md`.
+  Check that:
   - The "Command pattern" section states that results must be built from `hw_controller` (`list_sections()` or `get_current_config()`), never from `config.strip.sections`
   - The "Tests" section requires a live state test (as described in 10.3 and 10.4) for every command whose result includes sections

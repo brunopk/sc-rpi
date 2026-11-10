@@ -1,5 +1,7 @@
 """Tests for `build_ha_refresh_messages`."""
 
+from __future__ import annotations
+
 import json
 from unittest import TestCase
 
