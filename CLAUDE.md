@@ -121,8 +121,10 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   `test_*` methods, then private helper methods (`_name`) at the end, each group sorted
   alphabetically. Helper methods that are not tests start with an underscore.
 - `test/` mirrors `src/sc_rpi/` (`commands/`, `config/`, `controllers/`, `utils/`), with
-  `test_*.py` files (`test_<name>_cmd.py` for commands). Shared test bases live at the
-  root of `test/` and are not collected as tests:
+  `test_*.py` files (`test_<name>_cmd.py` for commands). Tests that do not belong to a
+  single source package (they cross several, or cover a top-level module such as
+  `worker.py`) go in `test/other/`. Shared test bases live at the root of `test/` and
+  are not collected as tests:
   - `command_test.py` (`CommandTest`): loads `config_test.yaml` and builds a fresh
     `HardwareController` for every test (so a test can change it freely); use it for
     commands that do not touch `config/`.
