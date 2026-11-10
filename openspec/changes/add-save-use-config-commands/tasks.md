@@ -30,7 +30,9 @@
   - The password is masked
   - The MQTT username and every other value are unchanged
   - The original `Config` is not modified
-- [x] 2.4 Rename `mqtt.broker_config` to `mqtt.broker` in the `Config` model, `config_test.yaml`, `config/default.example.yaml`, the code that reads it and `doc/configurations.md`.
+- [x] 2.4 Test `mask_secrets` for every secret field, not only the MQTT password.
+  Verify with a unit test that fills each field in the secret list with a distinctive value and checks that none of those values appears anywhere in the masked output, so adding a secret to the list is enough to mask it in `get_config` and `save_config`.
+- [x] 2.5 Rename `mqtt.broker_config` to `mqtt.broker` in the `Config` model, `config_test.yaml`, `config/default.example.yaml`, the code that reads it and `doc/configurations.md`.
   Verify that:
   - `grep -rn broker_config` has no matches outside `openspec/`
   - The config, masking and store tests pass
@@ -50,7 +52,14 @@
   - `default` and `Default` (rejected on save, allowed on load)
   - File mode `0600`
   - No temporary file left after success or failure
-- [x] 3.3 Verify that a config written by `save` and read by `load` is equal to the original, including section color, `is_on` and `description`.
+- [x] 3.3 Add `overwrite: bool = False` to `store.save`: with `True`, give the temporary file its final name with `os.replace` instead of `os.link`; the reserved name check stays first and applies in both modes.
+  Verify with unit tests for:
+  - Overwriting an existing name (new content, mode `0600`)
+  - `overwrite=False` on an existing name (`CONFIG_ALREADY_EXISTS`, file unchanged)
+  - `overwrite=True` on a new name
+  - `default` and `Default` with `overwrite=True` (`RESERVED_CONFIG_NAME`, `default.yaml` unchanged)
+  - No temporary file left after success or failure
+- [x] 3.4 Verify that a config written by `save` and read by `load` is equal to the original, including section color, `is_on` and `description`.
 
 ## 4. Initial config location
 
@@ -63,7 +72,7 @@
 - [x] 4.3 Update `README.md`, `CLAUDE.md` and `doc/configurations.md` to the new location and the copy step for a fresh clone.
   Verify with `grep -rn "config.yaml"` that no remaining mention refers to the old initial file (`config_test.yaml` and `openspec/config.yaml` are different files).
 
-## 5. HardwareController: prepare, apply and read the config (`prepare_config`, `apply_prepared`, `get_current_config`)
+## 5. HardwareController and status result
 
 - [x] 5.1 Extract the concatenation and the strip writing of `concatenate_sections` and `render` into private helpers `_concatenate_sections(sections, strip_length)` and `_render(colors)`, keeping both public methods unchanged.
   Verify that:
@@ -79,8 +88,18 @@
   - A prepared valid config replaces sections and description after `apply_prepared`
   - An overlapping config and a section beyond `strip_length` raise `INVALID_CONFIG` from `prepare_config` with state unchanged
   - A failing `render` makes `apply_prepared` raise and leaves sections and description unchanged
-- [x] 5.4 Add `HardwareController.get_current_config()` returning the initial `Config` with live sections and description.
+- [x] 5.4 Add `HardwareController.get_current_config()` returning the initial `Config` with live sections and description. Only `save_config` uses it.
   Verify with a test that an `edit_section`, a `turn_section_off` and an applied config all show up in the returned `Config`.
+- [x] 5.5 Add `active_configuration: str` (initial value `"default"`) to `HardwareController` and a third argument, `active_configuration`, to `apply_prepared`, which replaces it together with the sections and the description after a successful render.
+  Verify with controller tests that:
+  - A new `HardwareController` (a restart) reports `default`
+  - `apply_prepared` sets the given name
+  - A failing `render` leaves the active name unchanged
+- [x] 5.6 Add `active_configuration` and `description` to `StatusResultPayload`, filled by `build_status_result` from `hw_controller`.
+  Verify that:
+  - The `status` result reports `default` and an empty description at startup
+  - It reports the loaded name and description after `use_config`
+  - Existing tests that compare full result payloads still pass
 
 ## 6. Home Assistant availability and refresh messages
 
@@ -122,42 +141,37 @@
   - Reset with an unknown name
   - A section configured off
   - Previous entities marked unavailable
-  - Results identical to `use_config` except for `command_name`
   - No file changed in `config/` (with and without a name)
-- [x] 7.4 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`.
+- [x] 7.4 Make both commands maintain the active configuration: `apply_named_config` passes `config_name` to `apply_prepared`, and `Reset` passes `hw_controller.active_configuration` instead of `"default"` when `name` is omitted.
+  Verify with command tests for:
+  - `use_config` and `reset` with a name make that name active
+  - A failed load (`CONFIG_NOT_FOUND`, `INVALID_CONFIG`, a render failure) leaves the active name unchanged
+  - `reset` without a name after `use_config night` and some edits restores `night`
+  - `reset` without a name when the active file is missing or invalid fails, with the state and the active name unchanged
+  - `use_config` and `reset` results have the same `payload` as a `status` command received right after
+- [x] 7.5 Document `use_config` and the changed `reset`, with arguments, results and error codes, in `doc/commands.md`, including that the active configuration is not persisted and starts as `default` (also in `doc/configurations.md`).
   Check that each documented example matches the output of the corresponding test.
 
 ## 8. `get_config`
 
-- [x] 8.1 Make `get_config` return `mask_secrets(hw_controller.get_current_config())` as its payload, and delete the separate result models under `commands/get_config/result/`.
+- [x] 8.1 Make `get_config` return a masked `Config` as its payload (`mask_secrets`), and delete the separate result models under `commands/get_config/result/`.
   Verify that:
   - `grep -rn "get_config.result" src test` returns no matches
   - `ruff check src/sc_rpi/commands/get_config` passes
-- [x] 8.2 Update `test/commands/test_get_config_cmd.py` for the new payload.
-  Verify that it checks:
-  - The `mqtt` and `strip` keys
-  - `mqtt.broker` host and port
+- [x] 8.2 Make `name` required in `get_config`: it always returns `mask_secrets(store.load(name))` without applying it, and a missing `name` fails with 400 `MISSING_CONFIG_NAME`. Remove the running-configuration form and its tests (including the `edit_section` check and its `test_result_ignores_initial_config`).
+  Verify with `test/commands/test_get_config_cmd.py` that it checks:
+  - The `mqtt` and `strip` keys, `mqtt.broker` host and port, `color` and `is_on` per section, and `description`
   - The masked password
-  - `color` and `is_on` per section
-  - `description`
-  - That after an `edit_section` the result shows the edited section (not the initial values)
-- [x] 8.3 Add the optional `name` argument to `get_config`: when present, return the masked config saved under that name (loaded with `store.load`) without applying it.
-  Verify that:
-  - `ruff check src/sc_rpi/commands/get_config` passes
+  - `CONFIG_NOT_FOUND`, `INVALID_CONFIG_NAME` and `MISSING_CONFIG_NAME`
+  - An unchanged strip and running sections, and no file changed in `config/`
   - The command calls neither `prepare_config` nor `apply_prepared`
-- [x] 8.4 Add tests for `get_config` with `name` in `test/commands/test_get_config_cmd.py`.
-  Verify that they cover:
-  - An existing name (config returned, password masked)
-  - `CONFIG_NOT_FOUND`
-  - `INVALID_CONFIG_NAME`
-  - An unchanged strip and running sections
-  - No file changed in `config/`
-- [x] 8.5 Document the new `get_config` argument and the breaking payload keys in `doc/commands.md`.
+  - `get_current_config()` is used only by `save_config`
+- [x] 8.3 Document `get_config` with its required `name`, the 400 for a missing one and the breaking payload keys in `doc/commands.md`.
   Check that the documented example matches the test output.
 
 ## 9. `save_config`
 
-- [x] 9.1 Add the `save_config` command (`commands/save_config/`, `name` required, `description` optional) that builds the file's `Config` from `get_current_config()` (sections keep their ids and names), saves it through `store.save` and returns `{"name", "config"}` with masked secrets and no Home Assistant entries.
+- [x] 9.1 Add the `save_config` command (`commands/save_config/`, `description` optional) that builds the file's `Config` from `get_current_config()` (sections keep their ids and names), saves it through `store.save` and returns the result with masked secrets and no Home Assistant entries.
   Verify with `test/commands/test_save_config_cmd.py` for:
   - A new save
   - Ids and names kept
@@ -165,34 +179,49 @@
   - No Home Assistant message
   - Description saved and omitted
   - Masked password in the result while the file keeps the real one
-  - `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME` (including `Default` and `DEFAULT`, with `default.yaml` unchanged), `INVALID_CONFIG_NAME` and `MISSING_CONFIG_NAME`
-- [x] 9.2 Verify the round trips:
-  - A section that is off with color `[0, 255, 0]` is reported as off and green after `save_config` then `get_config` with the same name
-  - The `get_config` result equals the `save_config` result's `config`
-- [x] 9.3 Document `save_config`, its arguments, result and error codes in `doc/commands.md`, including that `default` is reserved and that an existing saved configuration is never overwritten (as in `doc/configurations.md`).
-  Check that the documented example matches the test output.
+  - `CONFIG_ALREADY_EXISTS`, `RESERVED_CONFIG_NAME` (including `Default` and `DEFAULT`, with `default.yaml` unchanged) and `INVALID_CONFIG_NAME`
+- [x] 9.2 Make the `save_config` payload the masked `Config` it saved, exactly the same as the `get_config` payload for that configuration.
+  Verify with `test/commands/test_save_config_cmd.py` that:
+  - The payload has the `Config` structure (`mqtt`, `strip`, `description`)
+  - The `get_config` result payload for the same name equals the `save_config` result payload
+- [x] 9.3 Add the optional boolean `overwrite` (default `False`) to the `save_config` args and pass it to `store.save`.
+  Verify with `test/commands/test_save_config_cmd.py` for:
+  - Overwrite of an existing name (status 202, file updated, strip and Home Assistant untouched)
+  - `overwrite` false or omitted on an existing name (`CONFIG_ALREADY_EXISTS`)
+  - `overwrite` true with `default` (`RESERVED_CONFIG_NAME`)
+- [x] 9.4 Make `name` optional in `save_config`: when omitted, use `hw_controller.active_configuration` and continue as if it had been given (so `overwrite`, the reserved name check and name validation apply unchanged). `save_config` never changes the active configuration.
+  Verify with `test/commands/test_save_config_cmd.py` for:
+  - Name omitted with `overwrite` true (the active file is updated, the active name is unchanged, status 202)
+  - Name omitted with `overwrite` false or omitted (`CONFIG_ALREADY_EXISTS`, file unchanged)
+  - Name omitted while `default` is active, with and without `overwrite` (`RESERVED_CONFIG_NAME`, `default.yaml` unchanged)
+  - A named save does not change the active name
+- [x] 9.5 Verify the round trip: a section that is off with color `[0, 255, 0]` is reported as off and green after `save_config` then `get_config` with the same name.
+- [x] 9.6 Document `save_config` in `doc/commands.md` (the optional `name` and its three omitted-name cases, `overwrite`, the flat result, error codes, and that `default` is reserved), and `overwrite` in `doc/configurations.md`, replacing the statement that an existing saved configuration is never overwritten.
+  Check that each documented example matches the test output.
 
 ## 10. Integration checks
 
-- [x] 10.1 Run `python -m unittest discover` from the repository root and `ruff check` on the files added by this change, and verify that both pass (the existing repository-wide ruff errors are out of scope and left for a separate change; the only remaining errors in the new files are the `TODO` rules for a TODO that already existed).
-- [x] 10.2 Verify that:
-  - `help` lists `save_config` and `use_config`
-  - `doc/commands.md` and `doc/homeassistant.md` cover every new or changed command and error code from the specs
-- [x] 10.3 Add live state tests (see Risks in `design.md`) for `turn_section_on`, `turn_section_off` and `edit_section`.
+- [x] 10.1 Add `test_result_ignores_initial_config` tests (see Risks in `design.md`) for `turn_section_on`, `turn_section_off` and `edit_section`.
   Verify with, for each command:
   - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
   - The command runs on section A
   - The result shows the command's change for A and the live values for B, never the tampered ones
-- [x] 10.4 Add live state tests for `status`, `get_config` and `save_config`, which change nothing themselves.
+- [x] 10.2 Add `test_result_ignores_initial_config` tests for `status` and `save_config`.
   Verify with, for each command:
   - Section A is changed by an earlier command, such as `edit_section`
   - The initial configuration (`hw_controller._config`) of section B is tampered with, and the tampered value differs from the live one
   - The command runs
   - The result shows the change for A and the live values for B, never the tampered ones
+  - The `status` result also reports `active_configuration` and `description`
+- [x] 10.3 Verify that:
+  - `help` lists `save_config` and `use_config`
+  - `doc/commands.md` and `doc/homeassistant.md` cover every new or changed command and error code from the specs
+- [x] 10.4 Run `python -m unittest discover` from the repository root and `ruff check` on the files added or changed by this change, and verify that both pass (the existing repository-wide ruff errors are out of scope and left for a separate change; the only remaining errors in the new files are the `TODO` rules for a TODO that already existed).
 
 ## 11. Project guidelines
 
 - [x] 11.1 Update `CLAUDE.md`.
   Check that:
   - The "Command pattern" section states that results must be built from `hw_controller` (`list_sections()` or `get_current_config()`), never from `config.strip.sections`
-  - The "Tests" section requires a live state test (as described in 10.3 and 10.4) for every command whose result includes sections
+  - The "Tests" section requires a `test_result_ignores_initial_config` test (as described in 10.1 and 10.2) for every command whose result includes sections
+- [x] 11.2 Update the `CLAUDE.md` terminology with the **active configuration** (the name `reset` reloads, `default` at startup, in memory only), and make sure its test guidance no longer asks for a `test_result_ignores_initial_config` test for `get_config`.

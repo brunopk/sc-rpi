@@ -134,8 +134,9 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   - `hardware_controller_test.py` (`HardwareControllerTest`): builds a fresh
     `HardwareController` without sections for every test; use it for tests of the
     controller itself (`test/controllers/`).
-- Every command whose result includes sections needs a
-  `test_result_ignores_initial_config` test in its own `test_<name>_cmd.py`:
+- Every command whose result shows the running sections needs a
+  `test_result_ignores_initial_config` test in its own `test_<name>_cmd.py` (not
+  `get_config`, which only reads saved files):
   - Call `CommandTest.tamper_initial_config()` first. It replaces the values of every
     section in the initial configuration (`hw_controller._config`).
   - Run the command.
@@ -147,8 +148,11 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
 - Terminology for configurations (code, docs and specs): the **initial configuration**
   is `config/default.yaml`, the `Config` loaded at startup; the **running
   configuration** is the live state (`HardwareController.get_current_config()`), which
-  changes with commands; a **saved configuration** is `config/<name>.yaml`. Do not call
-  the initial configuration "boot config".
+  changes with commands; a **saved configuration** is `config/<name>.yaml`; the
+  **active configuration** is the name of the configuration last loaded by `use_config`
+  or a named `reset` (`default` at startup, in memory only), which `reset` without a
+  name reloads and `save_config` without a name saves to. Do not call the initial
+  configuration "boot config".
 
 ## Documentation map
 

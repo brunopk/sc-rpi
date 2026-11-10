@@ -7,6 +7,7 @@ import stat
 import tempfile
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import patch
 
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
@@ -122,3 +123,58 @@ class TestConfigStore(TestCase):
         """An invalid name writes no file."""
         self.assert_code(ErrorCode.INVALID_CONFIG_NAME, store.save, "../x", self.config)
         self.assertEqual([], self.listing())
+
+    def test_save_overwrite_existing(self) -> None:
+        """With `overwrite`, an existing file gets the new content and mode 0600."""
+        store.save("party", self.config)
+        self.config.description = "other"
+
+        store.save("party", self.config, overwrite=True)
+
+        self.assertEqual("other", store.load("party").description)
+        mode = stat.S_IMODE(Path("config/party.yaml").stat().st_mode)
+        self.assertEqual(0o600, mode)
+        self.assertEqual(["party.yaml"], self.listing())
+
+    def test_save_overwrite_false_keeps_file(self) -> None:
+        """`overwrite=False` on an existing name fails and keeps the file."""
+        store.save("party", self.config)
+        before = Path("config/party.yaml").read_bytes()
+        self.config.description = "other"
+
+        self.assert_code(
+            ErrorCode.CONFIG_ALREADY_EXISTS, store.save, "party", self.config,
+        )
+
+        self.assertEqual(before, Path("config/party.yaml").read_bytes())
+
+    def test_save_overwrite_new_name(self) -> None:
+        """With `overwrite`, a new name is saved as usual."""
+        store.save("party", self.config, overwrite=True)
+        self.assertEqual(self.config, store.load("party"))
+        self.assertEqual(["party.yaml"], self.listing())
+
+    def test_save_overwrite_reserved_name(self) -> None:
+        """`default` is rejected even with `overwrite`, and the file is unchanged."""
+        source = self._old_cwd / "config_test.yaml"
+        Path("config/default.yaml").write_text(source.read_text())
+        before = Path("config/default.yaml").read_bytes()
+        for name in ["default", "Default"]:
+            with self.subTest(name=name):
+                with self.assertRaises(ApiError) as ctx:
+                    store.save(name, self.config, overwrite=True)
+                self.assertEqual(ErrorCode.RESERVED_CONFIG_NAME, ctx.exception.code)
+        self.assertEqual(before, Path("config/default.yaml").read_bytes())
+        self.assertEqual(["default.yaml"], self.listing())
+
+    def test_save_overwrite_leaves_no_temp_file_on_failure(self) -> None:
+        """A failure while writing leaves the old file and no temporary file."""
+        store.save("party", self.config)
+        before = Path("config/party.yaml").read_bytes()
+        with (
+            patch("pathlib.Path.replace", side_effect=OSError("x")),
+            self.assertRaises(OSError),
+        ):
+            store.save("party", self.config, overwrite=True)
+        self.assertEqual(before, Path("config/party.yaml").read_bytes())
+        self.assertEqual(["party.yaml"], self.listing())

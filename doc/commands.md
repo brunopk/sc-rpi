@@ -179,11 +179,13 @@ Returns:
 
 ## `get_config`
 
-Returns a configuration, with the same structure as a saved configuration file. Without `name` it returns the **running** configuration: the initial settings with the current sections (including edits, sections turned off and a loaded `use_config`) and description. With `name` it returns the saved configuration `config/<name>.yaml` without applying it; the strip and the running sections are not changed.
+Returns the saved configuration `config/<name>.yaml`, with the same structure as the file, without applying it: the strip and the running sections are not changed and no file is modified. Secret values (e.g. MQTT password) are replaced by `********`.
+
+To see the running state of the strip, use [`status`](#status).
 
 Arguments:
 
-- `name` (optional): name of a saved configuration.
+- `name` (required): name of a saved configuration (letters, digits, `-` and `_`, 1 to 64 characters).
 
 ### Example
 
@@ -240,10 +242,11 @@ Returns (shortened to one section):
 }
 ```
 
-Errors (only when `name` is given):
+Errors:
 
 | `status` | `code`                | When                                                       |
 |----------|-----------------------|------------------------------------------------------------|
+| 400      | `MISSING_CONFIG_NAME` | `name` is missing                                          |
 | 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_` |
 | 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name                       |
 | 500      | `INVALID_CONFIG`      | the file cannot be parsed                                  |
@@ -277,11 +280,13 @@ Returns:
 
 ## `reset`
 
-Apply `config/default.yaml` (the initial configuration), or the saved configuration `name` when given. It works like [`use_config`](#use_config) (same validation, errors and Home Assistant updates), so edits and sections turned off are discarded.
+Reload the **active configuration** (the one last loaded by `use_config` or a `reset` with a `name`; `default`, that is `config/default.yaml`, until one is loaded), or apply the saved configuration `name` when given. It works like [`use_config`](#use_config) (same validation, errors and Home Assistant updates), so edits and sections turned off are discarded. A `reset` with a `name` makes that name the active configuration.
+
+The result has the same `payload` as [`status`](#status) right after the command.
 
 Arguments:
 
-- `name` (optional): name of a saved configuration. Defaults to `default`.
+- `name` (optional): name of a saved configuration. Defaults to the active configuration.
 
 ### Example
 
@@ -306,27 +311,32 @@ Returns (for a default configuration with one section):
         "color": { "r": 0, "g": 255, "b": 0 },
         "is_on": true
       }
-    ]
+    ],
+    "active_configuration": "default",
+    "description": ""
   }
 }
 ```
 
-Errors: see [`use_config`](#use_config) (only applicable when `name` is given, except `INVALID_CONFIG`, which also applies to `default`).
+Errors: see [`use_config`](#use_config) (`MISSING_CONFIG_NAME` does not apply). Without `name`, `CONFIG_NOT_FOUND` and `INVALID_CONFIG` refer to the active configuration's file (for example if it was deleted or edited by hand); the strip, the sections and the active configuration are left unchanged.
 
 ## `save_config`
 
 Save the running configuration (sections with their range, color and on/off state, plus the description) as `config/<name>.yaml`, so it can be loaded later with [`use_config`](#use_config) or [`reset`](#reset). The `.yaml` extension is added by SC RPi and is not part of `name`.
 
-- An existing saved configuration is **never overwritten**: saving with a name that is already taken fails with `CONFIG_ALREADY_EXISTS` and the file is left unchanged.
-- `default` is reserved (compared case-insensitively, so `Default` and `DEFAULT` are rejected too) and the initial configuration `config/default.yaml` is never modified.
+- An existing saved configuration is only replaced when `overwrite` is `true`; otherwise saving with a name that is already taken fails with `CONFIG_ALREADY_EXISTS` and the file is left unchanged. The replacement is atomic: the file holds either the old or the new complete content.
+- When `name` is omitted, the **active configuration's** name is used, as if it had been given. Saving your edits back to the active configuration therefore needs `overwrite` `true`, and it is rejected with `RESERVED_CONFIG_NAME` while `default` is active (for example right after startup).
+- `default` is reserved (compared case-insensitively, so `Default` and `DEFAULT` are rejected too, even with `overwrite`) and the initial configuration `config/default.yaml` is never modified.
+- The active configuration is not changed by `save_config`.
 - Sections are saved with the ids and names they have, ordered by `start`.
 - The saved file keeps the real MQTT password (it must be a valid configuration); the result shows it masked.
 - The strip is not re-rendered, no section changes and no Home Assistant message is published.
 
 Arguments:
 
-- `name` (required): name for the saved configuration (letters, digits, `-` and `_`, 1 to 64 characters).
+- `name` (optional): name for the saved configuration (letters, digits, `-` and `_`, 1 to 64 characters). Defaults to the active configuration's name.
 - `description` (optional): a text description of the configuration (default: empty string).
+- `overwrite` (optional): `true` to replace an existing saved configuration (default: `false`).
 
 ### Example
 
@@ -337,67 +347,63 @@ Arguments:
 }
 ```
 
-Returns (shortened to one section; `config` has the same structure as the [`get_config`](#get_config) payload):
+Returns (shortened to one section). The `payload` is the saved configuration, exactly the same as the [`get_config`](#get_config) payload for that name:
 
 ```json
 {
   "status": 202,
   "command_name": "save_config",
   "payload": {
-    "name": "party",
-    "config": {
-      "connection_timeout": 0.25,
-      "default_gateway": "192.168.0.1",
-      "default_network_interface": "en0",
-      "env": "dev",
-      "log_level": "DEBUG",
-      "mqtt": {
-        "broker": {
-          "host": "homeassistant.local",
-          "password": "********",
-          "port": 1883,
-          "username": "test"
+    "connection_timeout": 0.25,
+    "default_gateway": "192.168.0.1",
+    "default_network_interface": "en0",
+    "env": "dev",
+    "log_level": "DEBUG",
+    "mqtt": {
+      "broker": {
+        "host": "homeassistant.local",
+        "password": "********",
+        "port": 1883,
+        "username": "test"
+      }
+    },
+    "status_led": 17,
+    "strip": {
+      "brightness": 255,
+      "channel": 0,
+      "default_section_brightness": 100,
+      "dma": 10,
+      "freq_hz": 800000,
+      "invert": false,
+      "pin": 18,
+      "strip_length": 300,
+      "sections": [
+        {
+          "color": { "r": 0, "g": 255, "b": 0 },
+          "end": 9,
+          "id": "desk",
+          "is_on": true,
+          "name": "Desk",
+          "start": 0
         }
-      },
-      "status_led": 17,
-      "strip": {
-        "brightness": 255,
-        "channel": 0,
-        "default_section_brightness": 100,
-        "dma": 10,
-        "freq_hz": 800000,
-        "invert": false,
-        "pin": 18,
-        "strip_length": 300,
-        "sections": [
-          {
-            "color": { "r": 0, "g": 255, "b": 0 },
-            "end": 9,
-            "id": "desk",
-            "is_on": true,
-            "name": "Desk",
-            "start": 0
-          }
-        ]
-      },
-      "description": "Friday night lights"
-    }
+      ]
+    },
+    "description": "Friday night lights"
   }
 }
 ```
 
 Errors (nothing is changed and no file is written):
 
-| `status` | `code`                  | When                                                       |
-|----------|-------------------------|------------------------------------------------------------|
-| 400      | `MISSING_CONFIG_NAME`   | `name` is missing                                          |
-| 400      | `INVALID_CONFIG_NAME`   | `name` has characters other than letters, digits, `-`, `_` |
-| 400      | `RESERVED_CONFIG_NAME`  | `name` is `default` (in any letter case)                   |
-| 409      | `CONFIG_ALREADY_EXISTS` | a saved configuration with that name already exists        |
+| `status` | `code`                  | When                                                                                              |
+|----------|-------------------------|---------------------------------------------------------------------------------------------------|
+| 400      | `INVALID_CONFIG_NAME`   | `name` has characters other than letters, digits, `-`, `_`                                        |
+| 400      | `RESERVED_CONFIG_NAME`  | the name used (given, or the active one) is `default` (in any letter case), also with `overwrite` |
+| 409      | `CONFIG_ALREADY_EXISTS` | a saved configuration with that name already exists and `overwrite` is not `true`                 |
 
 ## `status`
 
-Return information of the current status of SC RPI.
+Return information of the current status of SC RPI: the running sections, the name of the **active configuration** (the one [`reset`](#reset) without a `name` reloads; `default` after startup) and the running description. The active configuration is kept in memory only, so after a restart it is `default` again.
 
 ### Example
   
@@ -420,7 +426,9 @@ Returns:
         "end": 299,
         "color": "#00ff00",
         "is_on": true
-    }]
+    }],
+    "active_configuration": "default",
+    "description": ""
   }
 }
 ```
@@ -551,7 +559,9 @@ Returns:
 
 Apply the saved configuration `config/<name>.yaml` immediately. Sections (ranges, colors, on/off state) and the description are replaced and the strip is re-rendered. Hardware (strip) and MQTT settings of the loaded file are **not** applied, and no file in `config/` is modified.
 
-The previous Home Assistant entities are marked unavailable (`offline`, not deleted) and entities for the loaded sections are published and marked available. The result is identical to `reset` with the same `name`, except for `command_name`.
+The previous Home Assistant entities are marked unavailable (`offline`, not deleted) and entities for the loaded sections are published and marked available.
+
+On success `name` becomes the **active configuration** (the one [`reset`](#reset) without a `name` reloads); on failure it is unchanged. It is kept in memory only, so after a restart it is `default` again.
 
 Arguments:
 
@@ -581,18 +591,20 @@ Returns:
         "color": { "r": 0, "g": 255, "b": 0 },
         "is_on": false
       }
-    ]
+    ],
+    "active_configuration": "night",
+    "description": ""
   }
 }
 ```
 
 Errors (the strip is left unchanged):
 
-| `status` | `code`                | When                                                                 |
-| -------- | --------------------- | -------------------------------------------------------------------- |
-| 400      | `MISSING_CONFIG_NAME` | `name` is missing                                                    |
-| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_`           |
-| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name                                 |
+| `status` | `code`                | When                                                                  |
+|----------|-----------------------|-----------------------------------------------------------------------|
+| 400      | `MISSING_CONFIG_NAME` | `name` is missing                                                     |
+| 400      | `INVALID_CONFIG_NAME` | `name` has characters other than letters, digits, `-`, `_`            |
+| 404      | `CONFIG_NOT_FOUND`    | no saved configuration has that name                                  |
 | 500      | `INVALID_CONFIG`      | the file cannot be parsed, or a section overlaps or exceeds the strip |
 
 ## `version`

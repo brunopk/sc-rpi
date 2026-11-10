@@ -7,7 +7,21 @@ Lets users switch the running strip to a previously saved named configuration ov
 ## ADDED Requirements
 
 ### Requirement: Apply a saved configuration immediately
-The system SHALL provide a `use_config` command that requires a `name` argument, loads the saved config from `config/<name>.yaml`, and applies it immediately: sections are rebuilt from the config (ranges, colors, on/off state), the running description is replaced by the config's description, the strip is re-rendered, and the Home Assistant entities are updated to match: the current entities are marked unavailable (published `offline` to their availability topic, not deleted), and entities for the loaded sections are published (a discovery message including the availability topic, then a state with their color and on/off state) and marked available. A successful status result SHALL be published to the SC RPi result topic, with `command_name` `use_config` and a `payload` listing the resulting sections (id, start, end, color, is_on). The result SHALL be identical to a `reset` result for the same `name`, except that `command_name` is `use_config`.
+The system SHALL provide a `use_config` command with a required `name`. It SHALL load `config/<name>.yaml` and apply it immediately: rebuild the sections (ranges, colors, on/off state), replace the running description, re-render the strip and update the Home Assistant entities.
+
+On success the loaded `name` becomes the active configuration, kept in memory only (`default` after a restart). On failure nothing changes, including the active configuration.
+
+#### Scenario: Loaded config becomes active
+- **WHEN** a `use_config` command with `name` `night` succeeds
+- **THEN** a `status` command reports `night` as the active configuration
+
+#### Scenario: Failed load keeps the active configuration
+- **WHEN** the active configuration is `night` and a `use_config` command fails (for example `CONFIG_NOT_FOUND`)
+- **THEN** the active configuration is still `night`
+
+#### Scenario: Active configuration after restart
+- **WHEN** the service restarts after a `use_config` command with `name` `night`
+- **THEN** the active configuration is `default` and the strip is built from `config/default.yaml`
 
 #### Scenario: Switch to a saved config
 - **WHEN** a `use_config` command is received with `name` `night` and `night` exists
@@ -15,19 +29,15 @@ The system SHALL provide a `use_config` command that requires a `name` argument,
 
 #### Scenario: Description loaded
 - **WHEN** a `use_config` command is received with `name` `party` and `party` has the description `Friday lights`
-- **THEN** a `get_config` command without `name` returns the description `Friday lights`
+- **THEN** the running description becomes `Friday lights`
 
 #### Scenario: Previous entities marked unavailable
 - **WHEN** the running sections are `desk` and `shelf` and a `use_config` command loads `night`, which has `night_lamp`
 - **THEN** the entities for `desk` and `shelf` are marked unavailable and not deleted, and the entity for `night_lamp` gets a discovery message (including its availability topic) and is marked available
 
-#### Scenario: Same result as reset
-- **WHEN** a `use_config` command and a `reset` command with the same `name` both succeed
-- **THEN** their results are identical except for `command_name`
-
-#### Scenario: Result lists the loaded sections
+#### Scenario: Result matches status
 - **WHEN** a `use_config` command succeeds
-- **THEN** the result has `status` 202, `command_name` `use_config`, and `payload.sections` with every loaded section's id, start, end, color and is_on
+- **THEN** the result has `status` 202 and `command_name` `use_config`, and its `payload` is identical to the `payload` of a `status` command received right after
 
 ### Requirement: No config files modified
 The `use_config` command SHALL NOT create, modify or delete any config file; applying a config affects only the running state.

@@ -13,13 +13,15 @@ SC RPi reads YAML files from the `config/` directory, resolved from the working 
 - `config/<name>.yaml`: saved configurations, also git-ignored.
 - [`config_test.yaml`](../config_test.yaml) (repository root): used by unit tests.
 
-## Files are never overwritten
+## Files are only replaced on request
 
-No command overwrites a file in `config/`:
-
-- `default.yaml` (the initial configuration) is only changed by editing it by hand. `save_config` rejects the name `default` (in any letter case, as macOS and Windows file systems are case-insensitive) with `RESERVED_CONFIG_NAME`, and `reset` and `use_config` only read it.
-- `save_config` never replaces an existing saved configuration: a name already in use is rejected with `CONFIG_ALREADY_EXISTS`. To replace a saved configuration, delete or rename its file by hand.
+- `default.yaml` (the initial configuration) is only changed by editing it by hand. `save_config` rejects the name `default` (in any letter case, as macOS and Windows file systems are case-insensitive) with `RESERVED_CONFIG_NAME`, even with `overwrite`, and `reset` and `use_config` only read it.
+- `save_config` replaces an existing saved configuration only when its `overwrite` argument is `true`; otherwise a name already in use is rejected with `CONFIG_ALREADY_EXISTS`. The replacement is atomic (the file holds the old or the new complete content, never a partial one) and the new file has mode `0600`.
 - `use_config`, `reset` and `get_config` only read files.
+
+## Active configuration
+
+The **active configuration** is the name of the configuration last loaded by `use_config` or by `reset` with a `name`. It is `default` after startup, is kept in memory only (a restart goes back to `default`, which is the file the service boots from) and is reported by the `status` command. `reset` without a name reloads it, and `save_config` without a name saves to it (which needs `overwrite` `true`, and is rejected while `default` is active).
 
 ## Properties
 

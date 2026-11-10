@@ -9,8 +9,8 @@ from dataclasses import dataclass
 class GetConfigArgs:
     """`get_config` command arguments.
 
-    `name` is validated when the config is loaded (an invalid name is reported as
-    `INVALID_CONFIG_NAME`).
+    `name` is required, but it is validated when the config is loaded (a missing name
+    is reported as `MISSING_CONFIG_NAME` and an invalid one as `INVALID_CONFIG_NAME`).
     """
 
     name: str | None = None

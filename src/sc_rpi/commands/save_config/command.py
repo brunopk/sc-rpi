@@ -5,14 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from http import HTTPStatus
 
-from mashumaro.mixins.json import DataClassJSONMixin
-
 from sc_rpi.commands.base import Command, CommandResult
 from sc_rpi.commands.results import Result
 from sc_rpi.commands.save_config.args import SaveConfigArgs
 
 # Required for mashumaro (do not move to type checking section)
-from sc_rpi.config import Config  # noqa: TC001
+from sc_rpi.config import Config
 from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.config import store
 from sc_rpi.utils.config.masking import mask_secrets
@@ -20,32 +18,23 @@ from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC
 
 
 @dataclass
-class SaveConfigPayload(DataClassJSONMixin):
-    """Contains the saved config name and configuration (secret values masked)."""
+class SaveConfigResult(Result[Config]):
+    """Contains the saved configuration (secret values masked)."""
 
-    name: str
-
-    config: Config
-
-
-@dataclass
-class SaveConfigResult(Result[SaveConfigPayload]):
-    """Contains the saved config name and configuration (secret values masked)."""
-
-    payload: SaveConfigPayload
+    payload: Config
 
     def __init__(
         self,
         status_code: HTTPStatus,
         command_name: str,
-        payload: SaveConfigPayload,
+        payload: Config,
     ) -> None:
         """Initialize the object.
 
         Args:
             status_code (HTTPStatus): Status code (same status codes used in HTTP).
             command_name (str): Name of the command that returned the response.
-            payload (SaveConfigPayload): Contains name and config with masked secrets.
+            payload (Config): The saved configuration, with secret values masked.
 
         """
         super().__init__(status_code, command_name, payload, None)
@@ -53,7 +42,7 @@ class SaveConfigResult(Result[SaveConfigPayload]):
 
 @dataclass
 class SaveConfig(Command[SaveConfigArgs]):
-    """`save_config` command: save the current configuration under a name."""
+    """`save_config` command: save the running configuration under a name."""
 
     command_args: SaveConfigArgs | None = None
 
@@ -67,30 +56,26 @@ class SaveConfig(Command[SaveConfigArgs]):
             Response: Contains the result of the execution
 
         """
-        name = self.command_args.name if self.command_args is not None else None
-        description = (
-            self.command_args.description if self.command_args is not None else ""
-        )
+        args = self.command_args if self.command_args is not None else SaveConfigArgs()
 
-        # Validate the name (raises ApiError on failure)
-        store.validate_name(name)
+        # An omitted name means the active configuration, as if it had been given.
+        name = (
+            self._hw_controller.active_configuration if args.name is None else args.name
+        )
 
         # Sections keep their ids and names (and are already ordered by start)
         config = replace(
             self._hw_controller.get_current_config(),
-            description=description,
+            description=args.description,
         )
 
-        # Save the config (raises ApiError on failure)
-        store.save(name, config)
-
-        # Return the result with the masked config
-        masked_config = mask_secrets(config)
+        # Validates the name and saves the file (raises ApiError on failure)
+        store.save(store.validate_name(name), config, overwrite=args.overwrite)
 
         return {
             SC_RPI_RESULT_TOPIC: SaveConfigResult(
                 HTTPStatus.ACCEPTED,
                 self.command_name,
-                SaveConfigPayload(name=name, config=masked_config),
+                mask_secrets(config),
             ),
         }

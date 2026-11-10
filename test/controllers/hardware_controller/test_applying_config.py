@@ -41,6 +41,19 @@ class TestApplyingConfig(TestCase):
         strip = replace(self.config.strip, sections=sections)
         return replace(self.config, strip=strip, description=description)
 
+    def test_active_configuration_is_default_at_startup(self) -> None:
+        """A new controller (a restart) reports `default` as active."""
+        self.assertEqual("default", self.controller.active_configuration)
+
+    def test_apply_sets_active_configuration(self) -> None:
+        """`apply_prepared` makes the given name the active configuration."""
+        loaded = self._loaded([_section("p1", 10, 19)])
+        prepared = self.controller.prepare_config(loaded)
+
+        self.controller.apply_prepared(prepared, loaded.description, "party")
+
+        self.assertEqual("party", self.controller.active_configuration)
+
     def test_prepare_leaves_controller_unchanged(self) -> None:
         """Preparing a config builds sections but changes no state."""
         before = self.controller.list_sections()
@@ -57,7 +70,7 @@ class TestApplyingConfig(TestCase):
         loaded = self._loaded([_section("p1", 10, 19, is_on=False)], "Friday lights")
         prepared = self.controller.prepare_config(loaded)
 
-        self.controller.apply_prepared(prepared, loaded.description)
+        self.controller.apply_prepared(prepared, loaded.description, "party")
 
         sections = self.controller.list_sections()
         self.assertEqual(["p1"], [s.id for s in sections])
@@ -101,7 +114,8 @@ class TestApplyingConfig(TestCase):
             patch.object(self.controller._strip, "show", side_effect=RuntimeError),  # noqa: SLF001
             self.assertRaises(RuntimeError),
         ):
-            self.controller.apply_prepared(prepared, loaded.description)
+            self.controller.apply_prepared(prepared, loaded.description, "party")
 
         self.assertEqual(before, self.controller.list_sections())
         self.assertEqual(self.config.description, self.controller._description)  # noqa: SLF001
+        self.assertEqual("default", self.controller.active_configuration)

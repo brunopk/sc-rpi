@@ -21,13 +21,28 @@ from test.config_dir_test import ConfigDirTest, make_section
 class TestUseConfig(ConfigDirTest):
     """Tests for `use_config` command and `apply_named_config`."""
 
+    def test_active_configuration_is_loaded_name(self) -> None:
+        """The loaded name becomes the active configuration."""
+        self._save_config("night", [make_section("night_1", 0, 9)])
+        self.assertEqual("default", self._status().active_configuration)
+        self._use({"name": "night"})
+        self.assertEqual("night", self._status().active_configuration)
+
     def test_description_loaded(self) -> None:
         """The description of the config becomes the running one."""
         self._save_config("party", [make_section("p1", 0, 9)], "Friday lights")
         self._use({"name": "party"})
-        self.assertEqual(
-            "Friday lights", self.hw_controller.get_current_config().description,
-        )
+        self.assertEqual("Friday lights", self._status().description)
+
+    def test_failed_load_keeps_active_configuration(self) -> None:
+        """A failed load leaves the active configuration unchanged."""
+        self._save_config("night", [make_section("night_1", 0, 9)])
+        (self._config_dir() / "bad.yaml").write_text("{ not: [valid")
+        self._use({"name": "night"})
+        for name in ["nope", "bad", "../x"]:
+            with self.subTest(name=name), self.assertRaises(ApiError):
+                self._use({"name": name})
+            self.assertEqual("night", self._status().active_configuration)
 
     def test_failure_building_result_leaves_state(self) -> None:
         """A failure before applying leaves controller and strip untouched."""
@@ -98,6 +113,15 @@ class TestUseConfig(ConfigDirTest):
         self.assertEqual("online", result[build_ha_availability_topic("night_1")])
         self.assertIn(build_ha_state_topic("night_1"), result)
 
+    def test_result_matches_status(self) -> None:
+        """The result payload is the same as the one of a `status` command."""
+        self._save_config("night", [make_section("night_1", 0, 9)], "Late")
+        result = self._use({"name": "night"})
+        status = self.run_command("status")
+        self.assertEqual(
+            status[SC_RPI_RESULT_TOPIC].payload, result[SC_RPI_RESULT_TOPIC].payload,
+        )
+
     def test_section_beyond_strip(self) -> None:
         """A section beyond the strip length gives INVALID_CONFIG."""
         self._save_config("long", [make_section("l1", 0, 300)])
@@ -126,6 +150,10 @@ class TestUseConfig(ConfigDirTest):
         """An unparsable file gives INVALID_CONFIG."""
         (self._config_dir() / "bad.yaml").write_text("{ not: [valid")
         self._assert_code(ErrorCode.INVALID_CONFIG, {"name": "bad"})
+
+    def _status(self):  # noqa: ANN202
+        """Return the payload of a `status` command."""
+        return self.run_command("status")[SC_RPI_RESULT_TOPIC].payload
 
     def _assert_code(self, code: ErrorCode, args: dict | None) -> None:
         """Assert that the command raises `code` and the state is unchanged."""

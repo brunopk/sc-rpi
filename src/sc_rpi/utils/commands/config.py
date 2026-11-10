@@ -49,10 +49,14 @@ def apply_named_config(
         SC_RPI_RESULT_TOPIC: StatusResult(
             HTTPStatus.ACCEPTED,
             command_name,
-            StatusResultPayload(map_section_list(prepared)),
+            StatusResultPayload(
+                map_section_list(prepared),
+                name,
+                loaded.description,
+            ),
         ),
     }
     result.update(build_ha_refresh_messages(previous_sections, prepared, brightness))
 
-    hw_controller.apply_prepared(prepared, loaded.description)
+    hw_controller.apply_prepared(prepared, loaded.description, name)
     return result

@@ -17,6 +17,7 @@ from sc_rpi.controllers.sections_controller import (
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.models import Color as ConfigColor
+from sc_rpi.utils.config.store import DEFAULT_NAME
 from sc_rpi.utils.logging import collapse_multiline_str_into_one_line
 
 if TYPE_CHECKING:
@@ -93,8 +94,14 @@ class HardwareController:
         self._config = config
         self._section_controller = SectionsController(config)
         self._strip_length = config.strip.strip_length
-        # Plain configuration metadata (one string), not section state
+        # Plain configuration metadata (one string each), not section state
         self._description = config.description
+        self.active_configuration = DEFAULT_NAME
+        """Name of the config last loaded by `use_config` or a named `reset`.
+
+        It lives in memory only (`default` after a restart), and `apply_prepared` is
+        the only method that changes it, so it changes only after a successful apply.
+        """
 
         _LOGGER.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
@@ -112,22 +119,25 @@ class HardwareController:
         self,
         sections: list[SectionInternalRepresentation],
         description: str,
+        active_configuration: str,
     ) -> None:
-        """Render prepared sections and then replace the sections and description.
+        """Render prepared sections and then replace the state.
 
         The strip is rendered first, from the given sections. Only if that raised no
         exception is the state replaced (a plain in-memory assignment), so a failure
-        leaves the sections and the description unchanged. It must be the last call of
-        a command, in place of `render()`.
+        leaves the sections, the description and the active configuration unchanged.
+        It must be the last call of a command, in place of `render()`.
 
         Args:
             sections (list[SectionInternalRepresentation]): Result of `prepare_config`.
             description (str): Description of the applied configuration.
+            active_configuration (str): Name of the applied configuration.
 
         """
         self._render(_concatenate_sections(sections, self._strip_length))
         self._section_controller.replace_sections(sections)
         self._description = description
+        self.active_configuration = active_configuration
 
     def concatenate_sections(self) -> list[tuple]:
         """Concatenates all sections in one list.
@@ -196,6 +206,10 @@ class HardwareController:
         ]
         strip = replace(self._config.strip, sections=sections)
         return replace(self._config, strip=strip, description=self._description)
+
+    def get_description(self) -> str:
+        """Return the description of the running configuration."""
+        return self._description
 
     def get_section(self, section_id: str) -> SectionInternalRepresentation:
         """Obtain a section by ID.

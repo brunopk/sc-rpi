@@ -93,13 +93,17 @@ class Result(Generic[ResultPayload], DataClassJSONMixin):
 
 @dataclass
 class StatusResultPayload(DataClassJSONMixin):
-  """Contains available sections."""
+  """Contains available sections, the active configuration and its description."""
 
   sections: list[Section]
 
+  active_configuration: str
+
+  description: str
+
 @dataclass
 class StatusResult(Result[StatusResultPayload]):
-    """Contains available sections."""
+    """Contains available sections and the active configuration."""
 
     payload: StatusResultPayload
 

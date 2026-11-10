@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
 from sc_rpi.utils.topics import (
@@ -14,6 +16,34 @@ from test.config_dir_test import ConfigDirTest, make_section
 
 class TestReset(ConfigDirTest):
     """Tests for `reset` command."""
+
+    def test_active_configuration_restored(self) -> None:
+        """Reset without a name reloads the config loaded by `use_config`."""
+        self._save_config("default", [make_section("d1", 0, 9)])
+        self._save_config("night", [make_section("n1", 0, 9)])
+        self.run_command("use_config", {"name": "night"})
+        self.hw_controller.edit_section("n1", None, None, (1, 2, 3))
+
+        self.run_command("reset")
+
+        section = self.hw_controller.get_section("n1")
+        self.assertEqual((0, 255, 0), section.color_list[0])
+        self.assertEqual(["n1"], [s.id for s in self.hw_controller.list_sections()])
+        self.assertEqual("night", self._status().active_configuration)
+
+    def test_active_file_invalid(self) -> None:
+        """An invalid active file fails and leaves the state and active name."""
+        self._save_config("night", [make_section("n1", 0, 9)])
+        self.run_command("use_config", {"name": "night"})
+        Path("config/night.yaml").write_text("{ not: [valid")
+        self._assert_unavailable(ErrorCode.INVALID_CONFIG)
+
+    def test_active_file_missing(self) -> None:
+        """A missing active file fails and leaves the state and active name."""
+        self._save_config("night", [make_section("n1", 0, 9)])
+        self.run_command("use_config", {"name": "night"})
+        Path("config/night.yaml").unlink()
+        self._assert_unavailable(ErrorCode.CONFIG_NOT_FOUND)
 
     def test_after_edits(self) -> None:
         """Edits and turn off are undone by reset."""
@@ -44,6 +74,18 @@ class TestReset(ConfigDirTest):
             self._to_dicts(use_config_result),
         )
 
+    def test_named_reset_sets_active_configuration(self) -> None:
+        """A named reset makes that name the one a reset without a name reloads."""
+        self._save_config("party", [make_section("p1", 0, 9)])
+        self.run_command("reset", {"name": "party"})
+        self.assertEqual("party", self._status().active_configuration)
+        self.hw_controller.edit_section("p1", None, None, (1, 2, 3))
+
+        self.run_command("reset")
+
+        section = self.hw_controller.get_section("p1")
+        self.assertEqual((0, 255, 0), section.color_list[0])
+
     def test_no_file_changed(self) -> None:
         """Reset, with or without a name, does not touch `config/`."""
         self._save_config("default", [make_section("d1", 0, 9)])
@@ -60,6 +102,19 @@ class TestReset(ConfigDirTest):
         result = self.run_command("reset")
         for section_id in previous:
             self.assertEqual("offline", result[build_ha_availability_topic(section_id)])
+
+    def test_result_matches_status(self) -> None:
+        """The result payload is the same as the one of a `status` command."""
+        self._save_config("default", [make_section("d1", 0, 9)])
+        self._save_config("party", [make_section("p1", 0, 9)], "Friday lights")
+        for args in (None, {"name": "party"}):
+            with self.subTest(args=args):
+                result = self.run_command("reset", args)
+                self.assertEqual(202, result[SC_RPI_RESULT_TOPIC].status)
+                self.assertEqual(
+                    self.run_command("status")[SC_RPI_RESULT_TOPIC].payload,
+                    result[SC_RPI_RESULT_TOPIC].payload,
+                )
 
     def test_section_configured_off(self) -> None:
         """A section configured off is off, also in Home Assistant."""
@@ -92,6 +147,19 @@ class TestReset(ConfigDirTest):
         self.assertEqual(202, payload.status)
         self.assertEqual("reset", payload.command_name)
         self.assertEqual(["d1"], [s.id for s in payload.payload.sections])
+
+    def _assert_unavailable(self, code: ErrorCode) -> None:
+        """Assert that `reset` without a name raises `code` and changes nothing."""
+        before = self.hw_controller.list_sections()
+        with self.assertRaises(ApiError) as ctx:
+            self.run_command("reset")
+        self.assertEqual(code, ctx.exception.code)
+        self.assertEqual(before, self.hw_controller.list_sections())
+        self.assertEqual("night", self._status().active_configuration)
+
+    def _status(self):  # noqa: ANN202
+        """Return the payload of a `status` command."""
+        return self.run_command("status")[SC_RPI_RESULT_TOPIC].payload
 
     def _to_dicts(self, result: dict) -> dict:
         """Return the payloads of a result as dicts (strings are kept as they are)."""

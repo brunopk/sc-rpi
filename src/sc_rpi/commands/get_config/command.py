@@ -42,7 +42,7 @@ class GetConfigResult(Result[Config]):
 
 @dataclass
 class GetConfig(Command[GetConfigArgs]):
-    """`get_config` command."""
+    """`get_config` command: return a saved configuration (secret values masked)."""
 
     command_args: GetConfigArgs | None = None
 
@@ -57,11 +57,8 @@ class GetConfig(Command[GetConfigArgs]):
 
         """
         name = self.command_args.name if self.command_args is not None else None
-        config = (
-            self._hw_controller.get_current_config()
-            if name is None
-            else store.load(name)
-        )
+        # Only reads the saved file: neither the strip nor the sections are touched
+        config = store.load(store.validate_name(name))
         return {
             SC_RPI_RESULT_TOPIC: GetConfigResult(
                 HTTPStatus.ACCEPTED,

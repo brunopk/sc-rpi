@@ -7,17 +7,37 @@ Lets users persist the current strip configuration, including live section state
 ## ADDED Requirements
 
 ### Requirement: Save current configuration under a name
-The system SHALL provide a `save_config` command that requires a `name` argument and accepts an optional `description` (text), and writes the current in-memory configuration, including the description and each section's range, color and on/off state, to the file `config/<name>.yaml` (the `.yaml` extension is appended by the system and SHALL NOT be part of `name`). If a saved config with that name already exists, the command SHALL be rejected with `status` 409 and error code `CONFIG_ALREADY_EXISTS`, and the existing file SHALL remain unchanged. The command SHALL NOT change any section's range, color or on/off state, and SHALL NOT re-render the strip. On success the result published to the SC RPi result topic SHALL have `status` 202, `command_name` `save_config`, and a `payload` with the saved `name` and, under `config`, the saved configuration. The saved configuration in the result SHALL have the same structure as a `get_config` result payload, with secret values obfuscated exactly as in a `get_config` result (the real values SHALL NOT appear in the result).
+The system SHALL provide a `save_config` command with an optional `name`, an optional `description` (text) and an optional boolean `overwrite` (default `false`). It SHALL write the running configuration (the description and each section's range, color and on/off state) to `config/<name>.yaml`; the system appends `.yaml`, so it SHALL NOT be part of `name`. When `name` is omitted, the active configuration's name is used, exactly as if it had been given.
 
-Example result payload shape: `{"name": "party", "config": {...}}`.
+If a saved config with that name already exists, the command SHALL be rejected with `status` 409 and error code `CONFIG_ALREADY_EXISTS` and leave the file unchanged, unless `overwrite` is `true`, in which case it SHALL replace the file atomically (old or new complete content, never a partial one).
+
+The command SHALL NOT change any section or re-render the strip.
+
+On success the SC RPi result topic SHALL receive `status` 202, `command_name` `save_config` and a `payload` holding the saved configuration. The `payload` SHALL be the same as the `payload` of a `get_config` result for that configuration (the `Config` structure, not nested under another key), with secrets obfuscated as there.
 
 #### Scenario: Save a new config
 - **WHEN** a `save_config` command is received with `name` `party`
-- **THEN** the current configuration is stored as `party` and the result has `status` 202, `command_name` `save_config`, `payload.name` `party`, and `payload.config` holding the saved configuration in the same structure as a `get_config` result payload
+- **THEN** the current configuration is stored as `party` and the result has `status` 202, `command_name` `save_config`, and a `payload` holding the saved configuration, the same as a `get_config` result payload
 
-#### Scenario: Secrets hidden
-- **WHEN** a `save_config` command succeeds and the config contains an MQTT password
-- **THEN** the result's MQTT password is an obfuscated placeholder, not the real value
+#### Scenario: Name omitted with overwrite
+- **WHEN** the active configuration is `night` and a `save_config` command is received without `name` and with `overwrite` `true`
+- **THEN** `config/night.yaml` holds the running configuration, the result has `status` 202, and the active configuration is still `night`
+
+#### Scenario: Name omitted without overwrite
+- **WHEN** the active configuration is `night` and a `save_config` command is received without `name` and `overwrite` `false` or omitted
+- **THEN** an error result with `status` 409 and code `CONFIG_ALREADY_EXISTS` is published and `night.yaml` is unchanged
+
+#### Scenario: Name omitted while default is active
+- **WHEN** the active configuration is `default` and a `save_config` command is received without `name`, with or without `overwrite`
+- **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published and `default.yaml` is unchanged
+
+#### Scenario: Secrets hidden in the result
+- **WHEN** a `save_config` command succeeds and the config contains secret values
+- **THEN** every secret value in the result is an obfuscated placeholder and the real values appear nowhere in the result
+
+#### Scenario: Secrets kept in the file
+- **WHEN** a `save_config` command succeeds and the config contains secret values
+- **THEN** the saved file holds the real values, so it remains a valid config
 
 #### Scenario: Strip unchanged
 - **WHEN** a `save_config` command succeeds
@@ -29,6 +49,18 @@ Example result payload shape: `{"name": "party", "config": {...}}`.
 
 #### Scenario: Name already exists
 - **WHEN** a `save_config` command is received with a `name` that already has a saved config
+- **THEN** an error result with `status` 409 and code `CONFIG_ALREADY_EXISTS` is published and the existing saved config is unchanged
+
+#### Scenario: Overwrite an existing name
+- **WHEN** a `save_config` command is received with a `name` that already has a saved config and `overwrite` `true`
+- **THEN** the result has `status` 202 and the file now holds the current configuration
+
+#### Scenario: Overwrite is atomic
+- **WHEN** a `save_config` command with `overwrite` `true` replaces an existing saved config and the write is interrupted
+- **THEN** the file holds either the complete old content or the complete new content, never a partial one
+
+#### Scenario: Overwrite false is the default
+- **WHEN** a `save_config` command is received with an existing `name` and `overwrite` `false` or omitted
 - **THEN** an error result with `status` 409 and code `CONFIG_ALREADY_EXISTS` is published and the existing saved config is unchanged
 
 #### Scenario: Section state round-trips
@@ -55,7 +87,7 @@ The `save_config` command SHALL save each section with the id and name it has in
 - **THEN** no message is published to any Home Assistant topic
 
 ### Requirement: Reserved name `default`
-The system SHALL reject `save_config` when `name` is `default` with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the initial config SHALL remain unchanged. The name `default` SHALL be compared case-insensitively.
+The system SHALL reject `save_config` when the name used (the given `name`, or the active configuration's name when `name` is omitted) is `default`, with `status` 400 and error code `RESERVED_CONFIG_NAME`, and the initial config SHALL remain unchanged. The name `default` SHALL be compared case-insensitively, and the rejection SHALL apply even when `overwrite` is `true`.
 
 #### Scenario: Save as default
 - **WHEN** a `save_config` command is received with `name` `default`
@@ -65,13 +97,13 @@ The system SHALL reject `save_config` when `name` is `default` with `status` 400
 - **WHEN** a `save_config` command is received with `name` `Default` or `DEFAULT`
 - **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published and no file is written (the reserved name is compared case-insensitively, as macOS and Windows file systems are case-insensitive)
 
+#### Scenario: Default with overwrite
+- **WHEN** a `save_config` command is received with `name` `default` and `overwrite` `true`
+- **THEN** an error result with `status` 400 and code `RESERVED_CONFIG_NAME` is published and `default.yaml` is unchanged
+
 ### Requirement: Config names are names, not paths
-The system SHALL accept only plain names for `name` (letters, digits, `-` and `_`) and SHALL reject any value that could refer to a location outside the `config/` directory, such as values containing path separators or `..`, with `status` 400 and error code `INVALID_CONFIG_NAME`. A missing `name` SHALL be rejected with `status` 400 and error code `MISSING_CONFIG_NAME`.
+The system SHALL accept only plain names for `name` (letters, digits, `-` and `_`) and SHALL reject any value that could refer to a location outside the `config/` directory, such as values containing path separators or `..`, with `status` 400 and error code `INVALID_CONFIG_NAME`.
 
 #### Scenario: Path traversal attempt
 - **WHEN** a `save_config` command is received with `name` `../secret`
 - **THEN** an error result with `status` 400 and code `INVALID_CONFIG_NAME` is published and no file is written
-
-#### Scenario: Missing name
-- **WHEN** a `save_config` command is received without `name`
-- **THEN** an error result with `status` 400 and code `MISSING_CONFIG_NAME` is published and no file is written

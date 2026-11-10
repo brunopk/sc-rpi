@@ -8,12 +8,11 @@ from sc_rpi.commands.base import Command, CommandResult
 from sc_rpi.commands.reset.args import ResetArgs
 from sc_rpi.utils.commands.config import apply_named_config
 from sc_rpi.utils.commands.decorators import log_before_running
-from sc_rpi.utils.config.store import DEFAULT_NAME
 
 
 @dataclass
 class Reset(Command[ResetArgs]):
-    """`reset` command: apply `config/default.yaml`, or the saved config `name`."""
+    """`reset` command: reload the active configuration, or apply the saved `name`."""
 
     command_args: ResetArgs | None = None
 
@@ -41,6 +40,6 @@ class Reset(Command[ResetArgs]):
         return apply_named_config(
             self._hw_controller,
             self.command_name,
-            DEFAULT_NAME if name is None else name,
+            self._hw_controller.active_configuration if name is None else name,
             self._config.strip.default_section_brightness,
         )

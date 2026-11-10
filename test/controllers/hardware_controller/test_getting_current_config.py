@@ -65,7 +65,7 @@ class TestGettingCurrentConfig(TestCase):
             description="Friday lights",
         )
         prepared = self.controller.prepare_config(loaded)
-        self.controller.apply_prepared(prepared, loaded.description)
+        self.controller.apply_prepared(prepared, loaded.description, "party")
 
         current = self.controller.get_current_config()
 

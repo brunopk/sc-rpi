@@ -72,18 +72,27 @@ def load(name: str) -> Config:
     return load_configurations(path)
 
 
-def save(name: str, config: Config) -> None:
-    """Save `config` as `config/<name>.yaml` without ever overwriting a file.
+def save(name: str, config: Config, *, overwrite: bool = False) -> None:
+    """Save `config` as `config/<name>.yaml`, replacing an existing file only if asked.
 
     The YAML is written to a temporary file (mode `0600`, as it holds credentials),
-    which is then given its final name with `os.link`. Unlike `os.rename`, `os.link`
-    fails if the target exists, so there is no check-then-write race and a crash
-    mid-write never leaves a half-written config under a real name.
+    which is then given its final name:
+    - `overwrite=False`: with `os.link`. Unlike `os.rename`, `os.link` fails if the
+      target exists, so there is no check-then-write race.
+    - `overwrite=True`: with `Path.replace`, which atomically swaps the target.
+
+    Either way a crash mid-write never leaves a half-written config under a real name,
+    and a reader sees either the old or the new complete file.
+
+    Args:
+        name (str): Name of the config.
+        config (Config): Configuration to save.
+        overwrite (bool): Replace the file if the name is taken.
 
     Raises:
-        ApiError: `RESERVED_CONFIG_NAME` (400) for `default` (case-insensitive),
-            `CONFIG_ALREADY_EXISTS` (409) if the name is taken, plus the errors of
-            `validate_name`.
+        ApiError: `RESERVED_CONFIG_NAME` (400) for `default` (case-insensitive, even
+            with `overwrite`), `CONFIG_ALREADY_EXISTS` (409) if the name is taken and
+            `overwrite` is false, plus the errors of `validate_name`.
 
     """
     target = path_for(name)
@@ -97,10 +106,16 @@ def save(name: str, config: Config) -> None:
     try:
         with os.fdopen(fd, "w") as f:
             yaml.safe_dump(config.to_dict(), f, sort_keys=False)
-        try:
-            os.link(tmp, target)
-        except FileExistsError as ex:
-            raise ApiError(HTTPStatus.CONFLICT, ErrorCode.CONFIG_ALREADY_EXISTS) from ex
+        if overwrite:
+            tmp.replace(target)
+        else:
+            try:
+                os.link(tmp, target)
+            except FileExistsError as ex:
+                raise ApiError(
+                    HTTPStatus.CONFLICT,
+                    ErrorCode.CONFIG_ALREADY_EXISTS,
+                ) from ex
     finally:
         with contextlib.suppress(FileNotFoundError):
             tmp.unlink()

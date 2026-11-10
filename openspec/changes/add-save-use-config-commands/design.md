@@ -32,7 +32,7 @@ Current state that shapes the approach:
 
 **Non-Goals:**
 - Hot-applying strip hardware or MQTT settings.
-- Listing or deleting saved configs, or overwriting an existing one.
+- Listing or deleting saved configs.
 - Cross-process locking of the `config/` directory (single service instance assumed).
 
 ## Decisions
@@ -54,19 +54,32 @@ New module with `validate_name`, `path_for(name)`, `load(name)` and `save(name, 
 - Alternative: accept paths and sandbox them with `resolve()` + `is_relative_to`.
   Rejected: larger attack surface for no user benefit.
 
-### 2. Save never overwrites, atomically
+### 2. Save does not overwrite unless asked, atomically
 
-`save` runs these steps:
+`save(name, config, overwrite=False)` runs these steps:
 
 1. Write the YAML to a temporary file in `config/` (mode `0600`, since it holds MQTT
    credentials).
-2. Give it its final name with `os.link(tmp, target)`.
-3. Delete the temporary name.
+2. Give it its final name:
+   - `overwrite=False`: `os.link(tmp, target)`.
+   - `overwrite=True`: `os.replace(tmp, target)`.
+3. Delete the temporary name (not needed after `os.replace`, which consumes it).
 
 `os.link` creates a second name for the same file contents and, unlike `os.rename`, fails
-with `FileExistsError` when the target exists instead of replacing it.
+with `FileExistsError` when the target exists instead of replacing it. `os.replace`
+atomically swaps the target, so a reader or a crash sees either the old or the new
+complete file, never a partial one.
 
-- That error maps to 409 `CONFIG_ALREADY_EXISTS`.
+- With `overwrite=False`, `FileExistsError` maps to 409 `CONFIG_ALREADY_EXISTS`.
+- `overwrite` is an optional boolean argument of `save_config`, default `false`. It only
+  matters when the name already exists; for a new name both values behave the same.
+- The reserved name check runs before and regardless of `overwrite`, so `default.yaml`
+  can never be replaced.
+- `SaveConfig` resolves the name before calling `store.save`: the given `name`, or
+  `hw_controller.active_configuration` when `name` is omitted. From there it is the same
+  flow as a given name, so the reserved check, the `overwrite` rule and name validation
+  apply unchanged. While `default` is active (startup), omitting `name` always fails with
+  `RESERVED_CONFIG_NAME`. `save_config` still does not change the active configuration.
 - There is no check-then-write race between concurrent saves of the same name.
 - A crash mid-write leaves only the temporary file, never a half-written config under a
   real name.
@@ -83,21 +96,26 @@ becomes the place to get and replace the configuration:
 - `Config` stays the immutable initial configuration, passed to commands as today. It gains
   an optional `description: str = ""`, so existing files without it remain valid.
 - `HardwareController` keeps creating `SectionsController` and delegating to it.
-- It gains three methods:
+- It gains three methods and one attribute:
   - `get_current_config() -> Config`: the initial `Config` with `strip.sections` and
     `description` taken from the live state at the time of the call. Changes made by
     earlier commands (`edit_section`, `turn_section_off`, `use_config`) are included.
-    `get_config` and `save_config` both use it.
+    `save_config` uses it; `get_config` does not, since it only reads saved files.
   - `prepare_config(loaded: Config) -> list[SectionInternalRepresentation]`: validates
     and builds the new sections without changing any state (see decision 4).
-  - `apply_prepared(sections: list[SectionInternalRepresentation], description: str)`:
-    renders the prepared sections and then replaces the sections and the description (see
-    decision 4).
+  - `apply_prepared(sections: list[SectionInternalRepresentation], description: str,
+    active_configuration: str)`: renders the prepared sections and then replaces the
+    sections, the description and the active configuration (see decision 4).
+  - `active_configuration: str`: the name of the config last loaded by `use_config` or a
+    named `reset`. It starts as `"default"`, lives in memory only (a restart goes back to
+    `"default"`), and only `apply_prepared` changes it, so it changes only when the
+    whole apply succeeded. `save_config` does not change it.
 
 Details:
 
-- The description is stored on `HardwareController` as plain configuration metadata, and
-  the docstring says so. It is one string, so it does not justify a new class.
+- The description and the active configuration name are stored on `HardwareController` as
+  plain configuration metadata, and the docstring says so. Each is one string, so they do
+  not justify a new class.
 - Section names are part of the live state:
   - `SectionsController` stores the name of each section, taken from the config.
   - `SectionInternalRepresentation` gains a `name` field, set by `SectionsController`
@@ -121,10 +139,11 @@ that may fail before the strip is touched:
    returns, and changes no state.
 2. The caller builds the command result and the Home Assistant messages from the prepared
    sections.
-3. `apply_prepared(sections, description)` takes the prepared sections and the loaded
-   config's description (a plain string that needs no building). It renders the strip from
-   the sections, without touching the controller's state. Only if the render raised no
-   exception, it replaces the controller's internal sections and the description.
+3. `apply_prepared(sections, description, active_configuration)` takes the prepared
+   sections, the loaded config's description and the name that was loaded (plain strings
+   that need no building). It renders the strip from the sections, without touching the
+   controller's state. Only if the render raised no exception, it replaces the controller's
+   internal sections, the description and the active configuration.
 
 - Two patterns coexist, one per kind of command:
   - `edit_section`, `turn_section_on` and `turn_section_off` keep their pattern: change
@@ -176,13 +195,18 @@ A helper `apply_named_config(hw_controller, command_name, config_name, brightnes
 5. Build the result dict: the SC RPi result entry first, then the Home Assistant messages
    from `build_ha_refresh_messages` (decision 6), called with the sections read in step 3,
    the prepared sections and the brightness.
-6. `hw_controller.apply_prepared(sections, loaded.description)`, the last step: it renders the prepared sections
-   on the strip and then replaces the controller's state. The commands return the result
-   right after, so nothing that can fail runs once the strip has changed.
+6. `hw_controller.apply_prepared(sections, loaded.description, config_name)`, the last
+   step: it renders the prepared sections on the strip and then replaces the controller's
+   state, including the active configuration. The commands return the result right after,
+   so nothing that can fail runs once the strip has changed.
 
 - `UseConfig` and `Reset` call it, passing their hardware controller, their
   `command_name` and the default section brightness from their config; `Reset` passes
-  `"default"` as `config_name` when the `reset` command omits the config name.
+  `hw_controller.active_configuration` as `config_name` when the `reset` command omits
+  the config name. Reloading the active config sets the same name again.
+- If the active configuration's file is missing or invalid, `store.load` fails with
+  `CONFIG_NOT_FOUND` or `INVALID_CONFIG` before anything is changed, so `reset` without
+  `name` leaves the state and the active name as they were.
 - The helper takes these values as arguments instead of the command, so it does not
   depend on the private attributes of `Command` and can be tested without a command
   instance.
@@ -233,20 +257,28 @@ exists and is available before its state arrives:
 
 This resolves the TODO in `commands/get_config/command.py` about duplicated config models.
 
-- The payload of `get_config` and `save_config` is `hw_controller.get_current_config()`
-  (or the loaded named `Config`) passed through `mask_secrets(config) -> Config`.
+- Both commands return `mask_secrets(config)` as the flat payload, with no extra or
+  nested keys. `get_config` takes the `Config` from `store.load(name)`; `save_config`
+  from `hw_controller.get_current_config()`, the same one it writes to the file.
+- `get_config` requires `name`; without it, it fails with `MISSING_CONFIG_NAME` (400)
+  like `use_config`. The live state is read with `status`.
 - `mask_secrets` returns a copy with every secret value replaced by a placeholder. The
   secret fields are listed in that one function (today only the MQTT password); all
   other values, including the MQTT username, are returned as they are. Adding a secret
   later means adding it to that list, and no command can leak a secret by forgetting.
+  A test fills every field in that list with a distinctive value and checks that none of
+  them appears in the masked output.
 - The saved YAML, the `get_config` payload and the `save_config` payload share one
   structure by construction, so a saved config read back with `get_config` matches what
   was saved.
-- `save_config`'s payload nests the configuration: `{"name": ..., "config": <Config>}`,
-  so `payload.config` equals the `get_config` payload.
+- `build_status_result` adds `active_configuration` and `description` (from
+  `hw_controller`) to `StatusResultPayload`, so the `status` result reports them. Every other result that lists
+  sections is built the same way and carries it too, which keeps `use_config` and `reset`
+  results identical.
 - **BREAKING** for `get_config` consumers: payload keys follow the `Config` model.
   `mqtt_config` becomes `mqtt` (and the `broker_config` inside it becomes `broker`), and
-  `strip_config` becomes `strip`. Recorded in the proposal and in `doc/commands.md`.
+  `strip_config` becomes `strip`. `get_config` without `name` is now an error instead of
+  returning the running configuration. Recorded in the proposal and in `doc/commands.md`.
 - Alternative: keep the old keys with mashumaro aliases. Rejected: it keeps a mapping
   layer and leaves the duplication TODO half resolved.
 
@@ -264,7 +296,7 @@ codes and statuses are defined in the specs.
   for now; the next apply or boot re-publishes.
 - [Results built from the initial config instead of the live state] → results must come
   from `hw_controller` (`list_sections()` or `get_current_config()`), never from
-  `config.strip.sections`; live state tests check this for every command whose result
+  `config.strip.sections`; `test_result_ignores_initial_config` tests check this for every command whose result
   includes sections.
 - [The existing overlap check in `SectionsController` misses boundary and enclosing
   overlaps (with an existing section at LEDs 10-20, a new one at 20-30 shares LED 20

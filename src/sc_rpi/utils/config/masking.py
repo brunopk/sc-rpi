@@ -10,13 +10,18 @@ if TYPE_CHECKING:
 
 SECRET_PLACEHOLDER = "********"  # noqa: S105 (placeholder, not a real password)
 
+SECRET_PATHS: tuple[tuple[str, ...], ...] = (("mqtt", "broker", "password"),)
+"""Location of every secret value in `Config`, as a path of attribute names.
+
+To add a new secret, add its path here: no command can leak it by forgetting to hide it.
+"""
+
 
 def mask_secrets(config: Config) -> Config:
     """Return a copy of `config` with every secret value replaced by a placeholder.
 
-    The secret fields are listed in this function (today only the MQTT password).
-    All other values, including the MQTT username, are returned as they are. To add
-    a new secret, mask it here: no command can leak it by forgetting to hide it.
+    The secret values are listed in `SECRET_PATHS` (today only the MQTT password).
+    All other values, including the MQTT username, are returned as they are.
 
     Args:
         config (Config): Configuration to mask. It is not modified.
@@ -25,6 +30,14 @@ def mask_secrets(config: Config) -> Config:
         Config: A copy of the configuration without secret values.
 
     """
-    broker = replace(config.mqtt.broker, password=SECRET_PLACEHOLDER)
-    mqtt = replace(config.mqtt, broker=broker)
-    return replace(config, mqtt=mqtt)
+    for path in SECRET_PATHS:
+        config = _replace_at(config, path, SECRET_PLACEHOLDER)
+    return config
+
+
+def _replace_at(obj: object, path: tuple[str, ...], value: object) -> object:
+    """Return a copy of the dataclass `obj` with the attribute at `path` replaced."""
+    name, *rest = path
+    if rest:
+        value = _replace_at(getattr(obj, name), tuple(rest), value)
+    return replace(obj, **{name: value})
