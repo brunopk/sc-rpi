@@ -129,26 +129,12 @@ class TestSaveConfig(ConfigDirTest):
         self.assertTrue((Path("config") / "party.yaml").exists())
 
     def test_save_then_get_config(self) -> None:
-        """The get_config result equals the save_config result's config."""
-        save_payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
-        # Apply the saved config
-        Command.from_dict_wrapper(
-            {"command_name": "use_config", "command_args": {"name": "party"}},
-            self.config,
-            self.hw_controller,
-        ).run()
-        # Get the config
-        get_result = Command.from_dict_wrapper(
-            {"command_name": "get_config"},
-            self.config,
-            self.hw_controller,
-        ).run()
-        get_payload = get_result[SC_RPI_RESULT_TOPIC].payload
-        # The sections should match (accounting for Color objects)
-        self.assertEqual(
-            len(save_payload.config.strip.sections),
-            len(get_payload.strip.sections),
-        )
+        """`get_config` with the saved name returns the `save_config` config."""
+        save_config_result = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC]
+        get_config_result = self.run_command("get_config", {"name": "party"})[
+            SC_RPI_RESULT_TOPIC
+        ]
+        self.assertEqual(save_config_result.payload.config, get_config_result.payload)
 
     def test_status_code(self) -> None:
         """The result has status 202."""
