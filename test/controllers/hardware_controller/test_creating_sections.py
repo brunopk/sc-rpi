@@ -1,21 +1,14 @@
 """Tests for src/controllers/hardware_controller.py."""
 
 from random import randint
-from unittest import TestCase
 
 from sc_rpi.errors.api_error import ApiError
-from test.controllers.hardware_controller.empty_controller import (
-    empty_hardware_controller,
-)
+from test.hardware_controller_test import HardwareControllerTest
 
 # TODO: validate section's id are not repeated
 
-class TestCreatingSections(TestCase):
+class TestCreatingSections(HardwareControllerTest):
     """Tests for src/controllers/hardware_controller.py."""
-
-    def setUp(self) -> None:
-        """Start each test case with a controller without sections."""
-        self.controller = empty_hardware_controller()
 
     def test_wrong_indexes(self) -> None:
         """Test case test_wrong_indexes."""

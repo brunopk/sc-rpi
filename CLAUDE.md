@@ -129,12 +129,16 @@ should prefer `structlog.get_logger(__name__)`, but most existing modules still 
   - `config_dir_test.py` (`ConfigDirTest`): extends `CommandTest` and runs each test in a
     temporary working directory with an empty `config/`; use it for anything that reads
     or writes saved configs, so tests never touch the real `config/`.
-- Every command whose result includes sections needs a `test_result_ignores_initial_config`
-  test in its own `test_<name>_cmd.py`. `CommandTest.tamper_initial_config()` saves the
-  running values of all sections and tampers with the initial configuration
-  (`hw_controller._config`). Run the command, then check with
-  `assert_other_sections_unchanged` that every section the test did not change still
-  shows its running values, never the tampered ones.
+  - `hardware_controller_test.py` (`HardwareControllerTest`): builds a fresh
+    `HardwareController` without sections for every test; use it for tests of the
+    controller itself (`test/controllers/`).
+- Every command whose result includes sections needs a
+  `test_result_ignores_initial_config` test in its own `test_<name>_cmd.py`:
+  - Call `CommandTest.tamper_initial_config()` first. It replaces the values of every
+    section in the initial configuration (`hw_controller._config`).
+  - Run the command.
+  - Check with `assert_other_sections_unchanged` that every section the test did not
+    change shows the same values as `hw_controller`, never the replaced ones.
 
 ### Documentation
 

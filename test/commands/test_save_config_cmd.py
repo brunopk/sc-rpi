@@ -102,15 +102,19 @@ class TestSaveConfig(ConfigDirTest):
         self.assertEqual("test", saved.mqtt.broker.password)
 
     def test_result_ignores_initial_config(self) -> None:
-        """The result shows the earlier change for A and the running values for B."""
+        """The result shows the earlier change for A and unchanged values for B.
+
+        A is the section changed earlier by `edit_section`; B is a section not modified.
+        """
         self.tamper_initial_config()
         a_id, b_id = (s.id for s in self.config.strip.sections[:2])
         self.hw_controller.edit_section(a_id, None, None, (4, 5, 6))
         payload = self._get_payload({"name": "party"})
         # Saved ids are rewritten as `party_section_<n>`, so map them back
-        sections = dict(zip((a_id, b_id), payload.config.strip.sections, strict=True))
-        self.assertEqual(Color(4, 5, 6), sections[a_id].color)
-        self.assert_other_sections_unchanged(sections, {a_id})
+        saved_sections = payload.config.strip.sections
+        result_sections = dict(zip((a_id, b_id), saved_sections, strict=True))
+        self.assertEqual(Color(4, 5, 6), result_sections[a_id].color)
+        self.assert_other_sections_unchanged(result_sections, {a_id})
 
     def test_round_trip_off_section(self) -> None:
         """An off section keeps its color and off state after a round trip."""

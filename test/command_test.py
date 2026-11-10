@@ -35,33 +35,31 @@ class CommandTest(TestCase):
         logging.basicConfig(level=None)
         self.config = load_configurations("config_test.yaml")
         self.hw_controller = HardwareController(self.config)
-        # Running (color, is_on) by section id, saved by `tamper_initial_config`
-        self._running_values: dict[str, tuple[Color, bool]] = {}
 
     def assert_other_sections_unchanged(
         self,
-        sections: dict,
+        result_sections: dict,
         changed_ids: set[str],
     ) -> None:
-        """Check that the sections the command did not change keep their running values.
+        """Check that the command result matches the controller for the other sections.
 
-        The running values are the ones saved by `tamper_initial_config`, so a result
-        built from the initial configuration (which that method tampered with) fails.
+        Every section of `result_sections` that is not in `changed_ids` must have the
+        same color and on/off state as in `hw_controller`. A result built from the
+        initial configuration shows the values set by `tamper_initial_config` instead,
+        so the check fails.
 
         Args:
-            sections: Sections shown by a command result, by id (objects with `color`
-                and `is_on`).
+            result_sections: Sections of the command result, by id (objects with
+                `color` and `is_on`).
             changed_ids: Ids of the sections the test changed, which are not checked.
 
         """
-        self.assertTrue(
-            self._running_values, "call `tamper_initial_config` before the command"
-        )
-        for section_id, (color, is_on) in self._running_values.items():
-            if section_id in changed_ids:
+        for expected in self.hw_controller.list_sections():
+            if expected.id in changed_ids:
                 continue
-            self.assertEqual(color, sections[section_id].color, section_id)
-            self.assertEqual(is_on, sections[section_id].is_on, section_id)
+            shown = result_sections[expected.id]
+            self.assertEqual(Color(*expected.color_list[0]), shown.color, expected.id)
+            self.assertEqual(expected.is_on, shown.is_on, expected.id)
 
     def assert_valid_command_result(
         self, result: CommandResult, expected_command_name: str | None = None
@@ -131,22 +129,18 @@ class CommandTest(TestCase):
         return command.run()
 
     def tamper_initial_config(self) -> None:
-        """Make the initial configuration differ from the running state.
+        """Make the initial configuration differ from the values the sections have.
 
-        Saves the running color and on/off state of every section, then replaces them
-        in the initial configuration (`hw_controller._config`) with `TAMPERED_COLOR`
-        and `is_on=True`. A command whose result is built from the initial
-        configuration instead of the running state then shows the tampered values.
-        Check the result with `assert_other_sections_unchanged`.
+        Replaces the color and on/off state of every section in the initial
+        configuration (`hw_controller._config`) with `TAMPERED_COLOR` and
+        `is_on=True`. A command whose result is built from the initial configuration
+        shows the tampered values. Check the result with
+        `assert_other_sections_unchanged`.
         """
-        for section in self.hw_controller.list_sections():
-            self._running_values[section.id] = (
-                Color(*section.color_list[0]),
-                section.is_on,
-            )
         for section in self.hw_controller._config.strip.sections:  # noqa: SLF001
             section.color = TAMPERED_COLOR
             section.is_on = True
-        for color, is_on in self._running_values.values():
-            self.assertNotEqual(TAMPERED_COLOR, color)
-            self.assertFalse(is_on)
+        # The tampered values must differ from the real ones, or the test proves nothing
+        for section in self.hw_controller.list_sections():
+            self.assertNotEqual(TAMPERED_COLOR, Color(*section.color_list[0]))
+            self.assertFalse(section.is_on)

@@ -29,11 +29,14 @@ class TestTurnSectionOff(CommandTest):
         self.assert_valid_command_result(result, expected_command_name="turn_section_off")
 
     def test_result_ignores_initial_config(self) -> None:
-        """The result shows A off and the running values for the others."""
+        """The result shows the change for A and unchanged values for B.
+
+        A is the section changed by `turn_section_off`; B is a section not modified.
+        """
         self.tamper_initial_config()
         a_id = self.config.strip.sections[0].id
         self.hw_controller.turn_section_on(a_id, (4, 5, 6))
         result = self.run_command("turn_section_off", {"section_id": a_id})
-        sections = self.get_result_sections(result)
-        self.assertFalse(sections[a_id].is_on)
-        self.assert_other_sections_unchanged(sections, {a_id})
+        result_sections = self.get_result_sections(result)
+        self.assertFalse(result_sections[a_id].is_on)
+        self.assert_other_sections_unchanged(result_sections, {a_id})

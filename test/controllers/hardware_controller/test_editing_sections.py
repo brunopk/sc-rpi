@@ -1,18 +1,10 @@
 """Tests for src/controllers/hardware_controller.py."""
 
-from unittest import TestCase
-
-from test.controllers.hardware_controller.empty_controller import (
-    empty_hardware_controller,
-)
+from test.hardware_controller_test import HardwareControllerTest
 
 
-class TestEditingSections(TestCase):
+class TestEditingSections(HardwareControllerTest):
     """Tests for src/controllers/hardware_controller.py."""
-
-    def setUp(self) -> None:
-        """Start each test case with a controller without sections."""
-        self.controller = empty_hardware_controller()
 
     def test_length(self) -> None:
         """Test case test_length."""
