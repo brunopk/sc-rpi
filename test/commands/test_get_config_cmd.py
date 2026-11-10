@@ -20,7 +20,7 @@ class TestGetConfig(ConfigDirTest):
         """The running config is returned, not the initial values."""
         section_id = self.config.strip.sections[0].id
         self.hw_controller.edit_section(section_id, None, None, (1, 2, 3))
-        payload = self._get_payload()
+        payload = self._run()[SC_RPI_RESULT_TOPIC].to_dict()["payload"]
         section = next(s for s in payload["strip"]["sections"] if s["id"] == section_id)
         self.assertEqual({"r": 1, "g": 2, "b": 3}, section["color"])
 
@@ -30,7 +30,7 @@ class TestGetConfig(ConfigDirTest):
         payload = result[SC_RPI_RESULT_TOPIC]
         self.assertEqual(202, payload.status)
         self.assertEqual("get_config", payload.command_name)
-        data = self._get_payload()
+        data = self._run()[SC_RPI_RESULT_TOPIC].to_dict()["payload"]
         self.assertIn("mqtt", data)
         self.assertIn("strip", data)
         self.assertEqual("homeassistant.local", data["mqtt"]["broker"]["host"])
@@ -50,34 +50,12 @@ class TestGetConfig(ConfigDirTest):
             self.config,
             self.hw_controller,
         ).run()
-        self.assertEqual("Friday lights", self._get_payload()["description"])
+        data = self._run()[SC_RPI_RESULT_TOPIC].to_dict()["payload"]
+        self.assertEqual("Friday lights", data["description"])
 
     def test_invalid_name(self) -> None:
         """A path-like name gives INVALID_CONFIG_NAME."""
         self._assert_code(ErrorCode.INVALID_CONFIG_NAME, {"name": "../config"})
-
-    def test_name_does_not_apply_config(self) -> None:
-        """Reading a saved config leaves the strip and sections unchanged."""
-        self._save_config("party", [make_section("p1", 0, 9)])
-        before = self.hw_controller.list_sections()
-        with (
-            patch.object(self.hw_controller, "prepare_config") as prepare,
-            patch.object(self.hw_controller, "apply_prepared") as apply,
-            patch.object(self.hw_controller, "_render") as render,
-        ):
-            self._get_payload({"name": "party"})
-        prepare.assert_not_called()
-        apply.assert_not_called()
-        render.assert_not_called()
-        self.assertEqual(before, self.hw_controller.list_sections())
-
-    def test_name_returns_saved_config_masked(self) -> None:
-        """A saved config is returned with its description and masked password."""
-        self._save_config("party", [make_section("p1", 0, 9)], "Friday lights")
-        data = self._get_payload({"name": "party"})
-        self.assertEqual("Friday lights", data["description"])
-        self.assertEqual(["p1"], [s["id"] for s in data["strip"]["sections"]])
-        self.assertEqual(SECRET_PLACEHOLDER, data["mqtt"]["broker"]["password"])
 
     def test_no_file_changed(self) -> None:
         """`get_config`, with or without a name, does not touch `config/`."""
@@ -100,6 +78,29 @@ class TestGetConfig(ConfigDirTest):
         self.assertEqual(Color(4, 5, 6), result_sections[a_id].color)
         self.assert_other_sections_unchanged(result_sections, {a_id})
 
+    def test_saved_config_is_not_applied(self) -> None:
+        """Reading a saved config leaves the strip and sections unchanged."""
+        self._save_config("party", [make_section("p1", 0, 9)])
+        before = self.hw_controller.list_sections()
+        with (
+            patch.object(self.hw_controller, "prepare_config") as prepare,
+            patch.object(self.hw_controller, "apply_prepared") as apply,
+            patch.object(self.hw_controller, "_render") as render,
+        ):
+            self._run({"name": "party"})
+        prepare.assert_not_called()
+        apply.assert_not_called()
+        render.assert_not_called()
+        self.assertEqual(before, self.hw_controller.list_sections())
+
+    def test_saved_config_is_returned_masked(self) -> None:
+        """A saved config is returned with its description and masked password."""
+        self._save_config("party", [make_section("p1", 0, 9)], "Friday lights")
+        data = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].to_dict()["payload"]
+        self.assertEqual("Friday lights", data["description"])
+        self.assertEqual(["p1"], [s["id"] for s in data["strip"]["sections"]])
+        self.assertEqual(SECRET_PLACEHOLDER, data["mqtt"]["broker"]["password"])
+
     def test_unknown_name(self) -> None:
         """An unknown name gives CONFIG_NOT_FOUND."""
         self._assert_code(ErrorCode.CONFIG_NOT_FOUND, {"name": "nope"})
@@ -110,15 +111,6 @@ class TestGetConfig(ConfigDirTest):
             self._run(args)
         self.assertEqual(code, ctx.exception.code)
 
-    def _get_payload(self, args: dict | None = None) -> dict:
-        """Run the command and return the payload of its result as a dict."""
-        return self._run(args)[SC_RPI_RESULT_TOPIC].to_dict()["payload"]
-
     def _run(self, args: dict | None = None) -> dict:
         """Run `get_config` and return its result."""
-        data = {"command_name": "get_config"}
-        if args is not None:
-            data["command_args"] = args
-        command = Command.from_dict_wrapper(data, self.config, self.hw_controller)
-        command.validate()
-        return command.run()
+        return self.run_command("get_config", args)

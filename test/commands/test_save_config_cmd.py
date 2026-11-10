@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from sc_rpi.commands.base import Command
 from sc_rpi.enums.error_code import ErrorCode
@@ -13,9 +12,6 @@ from sc_rpi.utils.config import store
 from sc_rpi.utils.config.masking import SECRET_PLACEHOLDER
 from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC
 from test.config_dir_test import ConfigDirTest, make_section
-
-if TYPE_CHECKING:
-    from sc_rpi.commands.save_config.command import SaveConfigPayload
 
 
 class TestSaveConfig(ConfigDirTest):
@@ -45,12 +41,13 @@ class TestSaveConfig(ConfigDirTest):
 
     def test_description_empty_by_default(self) -> None:
         """Without a description, the saved config has an empty description."""
-        payload = self._get_payload({"name": "party"})
+        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         self.assertEqual("", payload.config.description)
 
     def test_description_preserved(self) -> None:
         """The given description is saved and returned."""
-        payload = self._get_payload({"name": "party", "description": "Friday lights"})
+        result = self._run({"name": "party", "description": "Friday lights"})
+        payload = result[SC_RPI_RESULT_TOPIC].payload
         self.assertEqual("Friday lights", payload.config.description)
 
     def test_ids_prefixed_and_ordered(self) -> None:
@@ -59,7 +56,7 @@ class TestSaveConfig(ConfigDirTest):
         sections = self.config.strip.sections
         self.hw_controller.edit_section(sections[1].id, 100, 199, None)
         self.hw_controller.edit_section(sections[0].id, 0, 99, None)
-        payload = self._get_payload({"name": "party"})
+        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         ids = [s.id for s in payload.config.strip.sections]
         self.assertEqual(["party_section_1", "party_section_2"], ids)
 
@@ -81,7 +78,7 @@ class TestSaveConfig(ConfigDirTest):
         self.hw_controller.edit_section(
             self.config.strip.sections[1].id, None, None, None,
         )
-        payload = self._get_payload({"name": "party"})
+        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         names = [s.name for s in payload.config.strip.sections]
         # Default names are the section ids in uppercase
         self.assertTrue(any(n for n in names))
@@ -94,7 +91,7 @@ class TestSaveConfig(ConfigDirTest):
 
     def test_password_masked(self) -> None:
         """The password in the result is masked, but the file has the real value."""
-        payload = self._get_payload({"name": "party"})
+        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         self.assertEqual(SECRET_PLACEHOLDER, payload.config.mqtt.broker.password)
 
         # Load the saved file directly and check it has the real password
@@ -109,7 +106,7 @@ class TestSaveConfig(ConfigDirTest):
         self.tamper_initial_config()
         a_id, b_id = (s.id for s in self.config.strip.sections[:2])
         self.hw_controller.edit_section(a_id, None, None, (4, 5, 6))
-        payload = self._get_payload({"name": "party"})
+        payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         # Saved ids are rewritten as `party_section_<n>`, so map them back
         saved_sections = payload.config.strip.sections
         result_sections = dict(zip((a_id, b_id), saved_sections, strict=True))
@@ -146,7 +143,7 @@ class TestSaveConfig(ConfigDirTest):
 
     def test_save_then_get_config(self) -> None:
         """The get_config result equals the save_config result's config."""
-        save_payload = self._get_payload({"name": "party"})
+        save_payload = self._run({"name": "party"})[SC_RPI_RESULT_TOPIC].payload
         # Apply the saved config
         Command.from_dict_wrapper(
             {"command_name": "use_config", "command_args": {"name": "party"}},
@@ -177,10 +174,6 @@ class TestSaveConfig(ConfigDirTest):
         self._run({"name": "party"})
         after = self.hw_controller.list_sections()
         self.assertEqual(before, after)
-
-    def _get_payload(self, args: dict | None = None) -> SaveConfigPayload:
-        """Run the command and return the payload of its result."""
-        return self._run(args)[SC_RPI_RESULT_TOPIC].payload
 
     def _run(self, args: dict | None = None) -> dict:
         """Run `save_config` and return its result."""
