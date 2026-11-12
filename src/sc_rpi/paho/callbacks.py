@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
+
+import structlog
 
 from sc_rpi.paho.availability import publish_availability
 from sc_rpi.utils.topics import (
@@ -11,7 +12,7 @@ from sc_rpi.utils.topics import (
     build_ha_command_topic,
 )
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 if TYPE_CHECKING:
     from paho.mqtt.client import Client, MQTTMessage
@@ -49,14 +50,14 @@ def on_connect(
     if reason_code.is_failure:
         error_msg = f"Failed to connect: {reason_code}. "
         "loop_forever() will retry connection"
-        _LOGGER.error(error_msg)
+        logger.error(error_msg)
     else:
         publish_availability(client, available=True)
 
         ha_command_topic = build_ha_command_topic()
-        _LOGGER.info("Subscribing to %s", ha_command_topic)
+        logger.info("Subscribing to %s", ha_command_topic)
         client.subscribe(ha_command_topic)
 
-        _LOGGER.info("Subscribing to %s", SC_RPI_COMMAND_TOPIC)
+        logger.info("Subscribing to %s", SC_RPI_COMMAND_TOPIC)
         client.subscribe(SC_RPI_COMMAND_TOPIC)
 

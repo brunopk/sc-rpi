@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+
+import structlog
 
 from sc_rpi.commands.base import Command, CommandResult
 from sc_rpi.commands.turn_section_off.args import TurnSectionOffArgs
@@ -13,7 +14,7 @@ from sc_rpi.utils.commands.decorators import log_before_running
 from sc_rpi.utils.commands.results import build_status_result
 from sc_rpi.utils.topics import SC_RPI_RESULT_TOPIC, build_ha_state_topic
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 
 @dataclass
@@ -48,7 +49,7 @@ class TurnSectionOffCmd(Command[TurnSectionOffArgs]):
         )
 
         if section_to_be_turned_off.is_on:
-            _LOGGER.warning(
+            logger.warning(
                 "Trying to turn off an already off section (section_id={%s})",
                 section_id,
             )

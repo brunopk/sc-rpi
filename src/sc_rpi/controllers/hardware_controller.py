@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, replace
 from http import HTTPStatus
 from typing import TYPE_CHECKING
 
+import structlog
 from rpi_ws281x import Color, PixelStrip
 
 from sc_rpi.config.strip import Section
@@ -23,7 +23,7 @@ from sc_rpi.utils.logging import collapse_multiline_str_into_one_line
 if TYPE_CHECKING:
     from sc_rpi.config import Config
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 # TODO: test what happend after removing this @dataclass (it should not be necessary)
 
@@ -89,7 +89,7 @@ class HardwareController:
 
         """
         # Creates sections from config
-        _LOGGER.info("Initializing controller")
+        logger.info("Initializing controller")
 
         self._config = config
         self._section_controller = SectionsController(config)
@@ -97,7 +97,7 @@ class HardwareController:
         self._description = config.description
         self._active_configuration = DEFAULT_NAME
 
-        _LOGGER.info("Initializing PixelStrip instance")
+        logger.info("Initializing PixelStrip instance")
         self._strip = PixelStrip(
             config.strip.strip_length,
             config.strip.pin,
@@ -347,7 +347,7 @@ class HardwareController:
         if len(colors) == 0:
             warning_msg = """Nothing to render, probably sections were not defined
                 correctly or reset command was invoked"""
-            _LOGGER.warning(collapse_multiline_str_into_one_line(warning_msg))
+            logger.warning(collapse_multiline_str_into_one_line(warning_msg))
         else:
             for i, c in enumerate(colors):
                 self._strip.setPixelColor(i, Color(c[0], c[1], c[2]))

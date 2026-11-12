@@ -18,8 +18,6 @@ CommandArgs = TypeVar("CommandArgs")
 
 CommandResult = dict[str, Union[DataClassJSONMixin, str]]
 
-# TODO: add the "Rendering strip should be the last thing ..." comment to the development.md
-
 @dataclass
 class Command(Generic[CommandArgs], DataClassJSONMixin):
     """Represents a command of SC RPi.

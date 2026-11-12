@@ -6,8 +6,9 @@ after them.
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
+
+import structlog
 
 from sc_rpi.utils.homeassistant import AVAILABLE, UNAVAILABLE
 from sc_rpi.utils.topics import SC_RPI_AVAILABILITY_TOPIC
@@ -15,7 +16,7 @@ from sc_rpi.utils.topics import SC_RPI_AVAILABILITY_TOPIC
 if TYPE_CHECKING:
     from paho.mqtt.client import Client
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 _PUBLISH_TIMEOUT_SECONDS = 2
 
@@ -44,7 +45,7 @@ def publish_availability(
         try:
             info.wait_for_publish(_PUBLISH_TIMEOUT_SECONDS)
         except (RuntimeError, ValueError):
-            _LOGGER.exception("Could not publish %s", payload)
+            logger.exception("Could not publish %s", payload)
 
 
 def set_last_will(client: Client) -> None:

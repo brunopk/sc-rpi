@@ -14,7 +14,7 @@ from sc_rpi.worker import Worker
 
 # TODO: implement connection verification as before (sending ping to the default gateway)
 # TODO: generate folder structure diagram with Claude
-# TODO: CONTINUE use structlog.get_logger(__name__) Throughout the codebase (use formatted f-strings)
+# TODO: CONTINUE implement add_section command
 
 logger = structlog.get_logger(__name__)
 client = Client(CallbackAPIVersion.VERSION2)
@@ -46,7 +46,7 @@ try:
 
     client.loop_forever()
 except Exception:
-    logger.exception("Error")
+    logger.warning("Error sending result")
 finally:
     logger.info("Disconnecting from the MQTT broker")
     publish_availability(client, available=False, wait=True)

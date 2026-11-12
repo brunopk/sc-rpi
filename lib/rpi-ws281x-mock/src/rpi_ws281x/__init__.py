@@ -1,8 +1,8 @@
 """Provides a mock for classes in rpi_ws281x module."""
 
-import logging
+import structlog
 
-LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 
 class Color:
@@ -14,11 +14,11 @@ class PixelStrip:
     pass
 
   def begin(self):
-    LOGGER.debug("Initializing strip")
+    logger.debug("Initializing strip")
 
   def setPixelColor(self, index: int, color: Color):
     pass
 
   def show(self) -> None:
     """Show the actual state of the strip."""
-    LOGGER.debug("Changing colors")
+    logger.debug("Changing colors")

@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import logging
 from http import HTTPStatus
 from typing import TYPE_CHECKING
+
+import structlog
 
 from sc_rpi.enums.error_code import ErrorCode
 from sc_rpi.errors.api_error import ApiError
@@ -13,7 +14,7 @@ from sc_rpi.models.section_internal_representation import SectionInternalReprese
 if TYPE_CHECKING:
     from sc_rpi.config import Config
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 class SectionsController:
     """Used to control sections in the strip.
@@ -281,7 +282,7 @@ class SectionsController:
 
     def _initialize_sections(self) -> None:
         for section in self._config.strip.sections:
-            _LOGGER.info(
+            logger.info(
                 "Creating section %s from %d to %d",
                 section.id,
                 section.start,

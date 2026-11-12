@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-import logging
 from http import HTTPStatus
 from json import loads
 from queue import Queue
 from threading import Thread
 from typing import TYPE_CHECKING
+
+import structlog
 
 from sc_rpi.commands.base import Command
 from sc_rpi.controllers import HardwareController
@@ -34,7 +35,7 @@ if TYPE_CHECKING:
     from sc_rpi.commands.base import CommandResult
     from sc_rpi.config import Config
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def _parse_ha_cmd(cmd: str) -> HACommand:
@@ -110,7 +111,7 @@ class Worker(Thread):
         """
         super().__init__(daemon=True, name="WorkerThread")
 
-        _LOGGER.info("Initializing worker")
+        logger.info("Initializing worker")
 
         self._config = config
         self._client = client
@@ -142,7 +143,7 @@ class Worker(Thread):
             msg = self._message_queue.get()
             msg_decoded = msg.payload.decode()
 
-            _LOGGER.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
+            logger.debug("Message received on topic %s: %s", msg.topic, msg_decoded)
 
             """
             All commands, from Home Assistant or from user, are first converted to \
@@ -167,7 +168,7 @@ class Worker(Thread):
                         self._hw_controller,
                     )
                 else:
-                    _LOGGER.warning(
+                    logger.warning(
                         "Message received on unexpected topic %s", msg.topic
                     )
                     continue
@@ -178,7 +179,7 @@ class Worker(Thread):
                     command_result = sc_rpi_command.run()
 
                     if len(command_result.keys()) == 0:
-                        _LOGGER.warning(
+                        logger.warning(
                             "No topics to return result of %s command",
                             sc_rpi_command.command_name,
                         )
@@ -211,15 +212,15 @@ class Worker(Thread):
             else "Error executing command"
         )
         if isinstance(ex, ApiError):
-            _LOGGER.warning(msg, exc_info=ex)
+            logger.warning(msg, exc_info=ex)
         else:
-            _LOGGER.exception(msg, exc_info=ex)
+            logger.exception(msg, exc_info=ex)
 
         try:
             sc_rpi_result = map_exception(ex, sc_rpi_command)
             self._client.publish(SC_RPI_RESULT_TOPIC, sc_rpi_result.to_json())
-        except Exception as ex:
-            _LOGGER.warning("Error sending result", exc_info=ex)
+        except Exception:
+            logger.warning("Error sending result")
 
     def _publish_messages(self, messages: CommandResult) -> None:
         """Publish one message per topic, in the order of the dict.
@@ -230,5 +231,5 @@ class Worker(Thread):
         """
         for topic_name, payload in messages.items():
             topic_payload = payload if isinstance(payload, str) else payload.to_json()
-            _LOGGER.debug("Publishing result to %s topic", topic_name)
+            logger.debug("Publishing result to %s topic", topic_name)
             self._client.publish(topic_name, topic_payload)

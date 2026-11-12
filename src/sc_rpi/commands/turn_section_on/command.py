@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+
+import structlog
 
 from sc_rpi.commands.base import Command, CommandResult
 from sc_rpi.commands.turn_section_on.args import TurnSectionOnArgs
@@ -17,8 +18,7 @@ from sc_rpi.utils.topics import (
     build_ha_state_topic,
 )
 
-_LOGGER = logging.getLogger(__name__)
-
+logger = structlog.getLogger(__name__)
 
 @dataclass
 class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
@@ -44,7 +44,7 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
                 self.command_args.color.b,
             )
         else:
-            _LOGGER.info("Using default color")
+            logger.info("Using default color")
             new_color = Color(0, 0, 0)
             new_color_as_tuple = (0, 0, 0)
 
@@ -71,8 +71,9 @@ class TurnSectionOnCmd(Command[TurnSectionOnArgs]):
         ha_entity_state_topic = build_ha_state_topic(section_to_be_turned_on.id)
 
         if section_to_be_turned_on.is_on and previous_color == new_color:
-            _LOGGER.info(
-                "Trying to turn on an already on section with the same color (section_id={%s})",
+            logger.info(
+                "Trying to turn on an already on section with the same color ("
+                "section_id={%s})",
                 section_id,
             )
 

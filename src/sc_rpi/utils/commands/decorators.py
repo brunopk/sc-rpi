@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-import logging
 from functools import wraps
 from typing import TYPE_CHECKING, Callable
+
+import structlog
 
 from sc_rpi.commands.base import Command, CommandResult
 
 if TYPE_CHECKING:
   from mashumaro.mixins.json import DataClassJSONMixin
 
-_LOGGER = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 
 def log_before_running() -> Callable[
     [Callable[[object], CommandResult]],
@@ -30,7 +31,7 @@ def log_before_running() -> Callable[
             **kwargs: any
         ) -> dict[str, DataClassJSONMixin | str]:
 
-            _LOGGER.info("Executing %s command", self.command_name)
+            logger.info("Executing %s command", self.command_name)
             return run(self, *args, **kwargs)
 
         return _wrapped_run_func
