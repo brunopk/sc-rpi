@@ -46,7 +46,7 @@ try:
 
     client.loop_forever()
 except Exception:
-    logger.warning("Error sending result")
+    logger.exception("Error")
 finally:
     logger.info("Disconnecting from the MQTT broker")
     publish_availability(client, available=False, wait=True)
