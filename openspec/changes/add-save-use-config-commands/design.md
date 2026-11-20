@@ -312,6 +312,53 @@ This resolves the TODO in `commands/get_config/command.py` about duplicated conf
 New error codes are raised as `ApiError`, so `map_exception` needs no new path. The
 codes and statuses are defined in the specs.
 
+### 9. Test configuration fixture at `test/fixtures/config_test.yaml`
+
+The test configuration lives next to the tests that use it, so the repository root only
+holds files of the app.
+
+- The file is `test/fixtures/config_test.yaml`. It is not in `config/`, which is
+  git-ignored and holds credentials.
+- One shared constant, `TEST_CONFIG_PATH = Path(__file__).parent / "fixtures" /
+  "config_test.yaml"`, lives in `test/paths.py`. It is resolved from that module, not
+  from the working directory, so it stays valid when a test changes the working
+  directory. The module is not named `test_*.py`, so unittest does not collect it.
+- Every test that needs the test configuration uses `TEST_CONFIG_PATH`.
+- Tests are still run from the repository root, because other tests need it (for
+  example, the `version` test reads `pyproject.toml`).
+- Alternative: a literal `"test/fixtures/config_test.yaml"` in each test. Rejected: it
+  depends on the working directory and repeats the path in about 15 places.
+- Alternative: build the test `Config` in Python, with no file. Rejected: no test would
+  exercise the YAML loader on a real file.
+
+### 10. Shared test bases and helpers
+
+Tests of this change need three setups that the existing `CommandTest` does not give.
+Each one is a base class or helper at the root of `test/`, so no test repeats it.
+
+TODO: this phrase above is confusing
+
+- `HardwareControllerTest`: builds a fresh `HardwareController` without sections for
+  every test, from the test configuration. It is for tests of the controller itself
+  (`test/controllers/`), which add the sections they need.
+- `ConfigDirTest` (extends `CommandTest`): runs each test in an empty temporary working
+  directory that has an empty `config/`, and restores the working directory afterwards.
+  Commands read and write saved configs in `config/`, resolved from the working
+  directory (decision 1), so without it a test would read or write the real `config/`.
+  It also has helpers to write saved configs (`_save_config`) and to read the files in
+  `config/` (`_files`). It is for every test that reads or writes saved configs
+  (`use_config`, `reset`, `save_config`, `get_config`).
+
+CONTINUE HERE
+
+- `tamper_initial_config` and `assert_other_sections_unchanged` (in `CommandTest`): the
+  support for the `test_result_ignores_initial_config` tests, which check the risk of
+  results built from the initial configuration (see Risks). `tamper_initial_config`
+  replaces the values of every section in the initial configuration, so a result built
+  from it shows values that differ from the live ones.
+  `assert_other_sections_unchanged` checks that every section the test did not change
+  shows the same values as `hw_controller`.
+
 ## Risks / Trade-offs
 
 - [Secrets in `config/`] → git-ignore the directory, create saved files with `0600`.

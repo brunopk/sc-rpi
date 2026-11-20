@@ -61,6 +61,10 @@ switch between them over MQTT without editing files on the Pi or restarting the 
   availability topic, so all entities become unavailable if SC RPi goes offline.
 - The initial config moves from `config.yaml` to `config/default.yaml`. All configs live in
   a fixed `config/` directory, resolved from the working directory (not configurable).
+- The test configuration moves from `config_test.yaml` in the repository root to
+  `test/fixtures/config_test.yaml`. Tests get its path from one shared constant,
+  `TEST_CONFIG_PATH`, which does not depend on the working directory. This changes no
+  behavior of the app.
 
 Not changing: hardware-level strip settings and MQTT settings. Saved configs include them,
 but `use_config` and `reset` don't apply them.
@@ -101,4 +105,6 @@ but `use_config` and `reset` don't apply them.
   `doc/homeassistant.md` (entities, availability) and in `doc/commands.md`
   (`save_config`, `use_config`, and the changed `reset`, `get_config` and `status`,
   including arguments, results and the new error codes).
+- Tests: every test that loads the test configuration uses `TEST_CONFIG_PATH`;
+  `README.md`, `CLAUDE.md` and `doc/configurations.md` mention the new location.
 - Security: new file read/write driven by MQTT input; names only, never paths.

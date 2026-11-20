@@ -53,6 +53,9 @@ class ConfigDirTest(CommandTest):
         self, name: str, sections: list[Section], description: str = "",
     ) -> None:
         """Write `config/<name>.yaml` with the given sections."""
+
+        # TODO: description should say that this is saved in a temporary folder and file right?
+
         strip = replace(self.config.strip, sections=sections)
         config = replace(self.config, strip=strip, description=description)
         path = store.CONFIG_DIR / f"{name}.yaml"
