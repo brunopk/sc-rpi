@@ -65,6 +65,8 @@ New module with `validate_name`, `path_for(name)`, `load(name)` and `save(name, 
    - `overwrite=True`: `os.replace(tmp, target)`.
 3. Delete the temporary name (not needed after `os.replace`, which consumes it).
 
+TODO: 3. Deltet .. is confusing
+
 `os.link` creates a second name for the same file contents and, unlike `os.rename`, fails
 with `FileExistsError` when the target exists instead of replacing it. `os.replace`
 atomically swaps the target, so a reader or a crash sees either the old or the new
