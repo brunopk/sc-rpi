@@ -120,4 +120,6 @@ def save(name: str, config: Config, *, overwrite: bool = False) -> None:
                 ) from ex
     finally:
         with contextlib.suppress(FileNotFoundError):
+            # If other hard links exist (like your target after os.link), the data
+            # stays, because it still has a name.
             tmp.unlink()
